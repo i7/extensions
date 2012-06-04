@@ -1,4 +1,4 @@
-Version 1/120603 of Simple Unit Tests by Dannii Willis begins here.
+Version 1/120604 of Simple Unit Tests by Dannii Willis begins here.
 
 "Very simple unit tests."
 
@@ -155,7 +155,7 @@ Example: * Basic Unit Tests - Passing and Failing
 		say "hello!";
 		assert the captured output is "hello!";
 		assert the score is 0;
-		assert the player is enclosed by a room;
+		assert the player is enclosed by the location;
 
 	Unit test (this is the failing rule):
 		assert {1, 2, 3} is {1, 2, 3, 4};
