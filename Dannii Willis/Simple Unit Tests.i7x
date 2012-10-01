@@ -131,7 +131,7 @@ produces
 	2 of 2 assertions failed.
 
 If you are writing an extension, we suggest you name all your test rules, and that you place your tests under a section titled:
-	(for use with Simple Unit Tests by Dannii Willis) (not for release)
+	(not for release) (for use with Simple Unit Tests by Dannii Willis)
 
 The state of the VM will be saved before and restored after the unit tests are run, so you don't need to worry about your tests changing anything permanently.
 

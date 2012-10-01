@@ -1,5 +1,8 @@
-# We ignore all .i7x files so that we can simply copy our I7 extensions directory into the repository. Extensions we want to include should be added below, prefixed with !
+# We first ignore all .i7x files so that we can simply copy our I7 extensions
+# directory into the repository.
 *.i7x
-!Dannii Willis/Simple Unit Tests.i7x
+
+# But extensions we want to include are listed here, prefixed with !
+!Dannii Willis/*.i7x
 
 Reserved
