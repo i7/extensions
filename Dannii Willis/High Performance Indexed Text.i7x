@@ -1,13 +1,22 @@
-Version 1/121012 of High Performance Indexed Text by Dannii Willis begins here.
+Version 1/121013 of High Performance Indexed Text by Dannii Willis begins here.
 
 [
-Aim: Inline calls to BlkValueRead() and BlkValueWrite() in Indexed Text related loops
+Aim:
+	Inline calls to BlkValueRead() and BlkValueWrite() in Indexed Text related loops
+
 Note:
 	Sometimes the original code loops from 0 to <= BlkValueExtent(), other times only to < BlkValueExtent(). Is this buggy?
+	We now have one generic range error in UpdateBlkStruct. It doesn't give as much info as the old ones in BlkValue* do, but that info probably isn't useful anyway!
 
-See:
-	IT_CharacterLength - prototype single text loop
-	INDEXED_TEXT_TY_Compare - prototype multi text loop
+Templates:
+
+	!ch = BlkValueRead(indt, i);
+	#ifdef TARGET_ZCODE;
+		ch = (ITA-->1)++->0;
+	#ifnot;
+		@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+	#endif;
+	if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 	
 TODO:
 	BlockValues - Deep Copy
@@ -24,15 +33,38 @@ TODO:
 
 Section - Introduction
 
+[ In order to inline the BlkValue* calls we use structs (arrays) to refer to the important variables for each IT. An IT* struct has the following entries:
+	0: block addr
+	1: block data addr
+	2: end of block data addr ]
+
 Include (-
 
-#ifdef TARGET_ZCODE;
-	Constant HPIT_HEADER_SIZE = 8;
-#ifnot;
-	Constant HPIT_HEADER_SIZE = 16;
-#endif;
+Array ITA --> 3;
+Array ITB --> 3;
+Array ITC --> 3;
 
--) after "Definitions.i6t".
+! If you don't pass in a block, set to the next linked block
+[ UpdateBlkStruct array block	headersize;
+	if ( block == 0 )
+	{
+		block = (array-->0)-->BLK_NEXT;
+		if ( block == NULL )
+		{
+			"*** UpdateBlkStruct: reached end of multi-block structure! ***";
+		}
+	}
+	headersize = BLK_DATA_OFFSET;
+	if ( (block->BLK_HEADER_FLAGS) & BLK_FLAG_MULTIPLE )
+	{
+		headersize = BLK_DATA_MULTI_OFFSET;
+	}
+	array-->0 = block;
+	array-->1 = block + headersize;
+	array-->2 = block + BlkSize( block );
+];
+
+-).
 
 Section - Template replacements
 
@@ -153,8 +185,24 @@ Global IT_cast_nesting;
 	} else {
 		if (BlkValueSetExtent(indt, len+1, 1) == false) { indt = 0; jump Failed; }
 	}
-
-	INDEXED_TEXT_TY_Cast_Write( indt, buff + offs, len );
+	
+	!#ifdef TARGET_ZCODE;
+	!for (i=0:i<=len:i++) BlkValueWrite(indt, i, buff->(i+offs));
+	!#ifnot;
+	!for (i=0:i<=len:i++) BlkValueWrite(indt, i, buff-->(i+offs));
+	!#endif;
+	
+	UpdateBlkStruct( ITA, indt );
+	buff = buff + offs;
+	for ( i=0 : i <= len : i++ )
+	{
+		#ifdef TARGET_ZCODE;
+			(ITA-->1)++->0 = buff->i;
+		#ifnot;
+			@aload buff i sp; @aload ITA 1 sp; @astores sp 0 sp; ITA-->1 = ITA-->1 + 2;
+		#endif;
+		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+	}
 
 	.Failed;
 	if (freebuff) VM_FreeMemory(freebuff);
@@ -162,91 +210,41 @@ Global IT_cast_nesting;
 	return indt;
 ];
 
-[ INDEXED_TEXT_TY_Cast_Write indt buff len	i blockaddr dataaddr maxdataaddr val;
-	blockaddr = indt;
-	
-	while ( i < len )
-	{
-		if ( blockaddr == NULL )
-		{
-			"*** BlkValueWrite: writing to index out of range: ", i, " in ", indt, " ***";
-		}
-		
-		dataaddr = blockaddr + HPIT_HEADER_SIZE;
-		maxdataaddr = blockaddr + BlkSize( blockaddr );
-		
-		while ( dataaddr < maxdataaddr && i < len )
-		{
-			#ifdef TARGET_ZCODE;
-				dataaddr->0 = buff->i;
-				dataaddr = dataaddr + 1;
-			#ifnot;
-				val = buff-->i;
-				dataaddr->0 = ( val / 256 ) % 256;
-				dataaddr->1 = val % 256;
-				dataaddr = dataaddr + 2;
-			#endif;
-			i = i + 1;
-		}
-		
-		blockaddr = blockaddr-->BLK_NEXT;
-	}
-];
-
 -) instead of "Casting" in "IndexedText.i6t".
 
 [ Comparison ]
 Include (-
 
-[ INDEXED_TEXT_TY_Compare textA textB	lenA lenB i posA posB maxA maxB valA valB;
-	lenA = BlkValueExtent( textA );
-	lenB = BlkValueExtent( textB );
-	if ( lenA ~= lenB )
-	{
-		return lenA - lenB;
-	}
+[ INDEXED_TEXT_TY_Compare indtleft indtright pos ch1 ch2 dsizeleft dsizeright;
+	dsizeleft = BlkValueExtent(indtleft);
+	dsizeright = BlkValueExtent(indtright);
 	
-	! Initial blocks
-	posA = textA + HPIT_HEADER_SIZE;
-	maxA = textA + BlkSize( textA );
-	posB = textB + HPIT_HEADER_SIZE;
-	maxB = textB + BlkSize( textB );
+	UpdateBlkStruct( ITA, indtleft );
+	UpdateBlkStruct( ITB, indtright );
 	
-	while ( i < lenA )
+	for (pos=0:(pos<dsizeleft) && (pos<dsizeright):pos++)
 	{
-		while ( i < lenA && posA < maxA && posB < maxB )
-		{
-			#ifdef TARGET_ZCODE;
-				valA = posA->0;
-				valB = posB->0;
-				posA = posA + 1;
-				posB = posB + 1;
-			#ifnot;
-				valA = (posA->0) * 256 + posA->1;
-				valB = (posB->0) * 256 + posB->1;
-				posA = posA + 2;
-				posB = posB + 2;
-			#endif;
-			if ( valA ~= valB ) return valA - valB;
-			if ( valA == 0 ) return 0;
-			i = i + 1;
-		}
+		!ch1 = BlkValueRead(indtleft, pos);
+		#ifdef TARGET_ZCODE;
+			ch1 = (ITA-->1)++->0;
+		#ifnot;
+			@aload ITA 1 sp; @aloads sp 0 ch1; ITA-->1 = ITA-->1 + 2;
+		#endif;
+		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 		
-		! Reached the end of block A
-		if ( posA == maxA )
-		{
-			textA = textA-->BLK_NEXT;
-			posA = textA + HPIT_HEADER_SIZE;
-			maxA = textA + BlkSize( textA );
-		}
-		! Reached the end of block B
-		if ( posB == maxB )
-		{
-			textB = textB-->BLK_NEXT;
-			posB = textB + HPIT_HEADER_SIZE;
-			maxB = textB + BlkSize( textB );
-		}
+		!ch2 = BlkValueRead(indtright, pos);
+		#ifdef TARGET_ZCODE;
+			ch2 = (ITB-->1)++->0;
+		#ifnot;
+			@aload ITB 1 sp; @aloads sp 0 ch2; ITB-->1 = ITB-->1 + 2;
+		#endif;
+		if ( ITB-->1 >= ITB-->2 ) UpdateBlkStruct( ITB );
+		
+		if (ch1 ~= ch2) return ch1-ch2;
+		if (ch1 == 0) return 0;
 	}
+	if (pos == dsizeleft) return -1;
+	return 1;
 ];
 
 [ INDEXED_TEXT_TY_Distinguish indtleft indtright;
@@ -262,39 +260,28 @@ Include (-
 
 Include (-
 
-[ INDEXED_TEXT_TY_Say indt	i len blockaddr dataaddr maxdataaddr ch;
+[ INDEXED_TEXT_TY_Say indt  ch i dsize;
 	if ((indt==0) || (BlkType(indt) ~= INDEXED_TEXT_TY)) return;
 	
-	blockaddr = indt;
-	len = BlkValueExtent( indt );
+	UpdateBlkStruct( ITA, indt );
 	
-	while ( i < len )
-	{
-		dataaddr = blockaddr + HPIT_HEADER_SIZE;
-		maxdataaddr = blockaddr + BlkSize( blockaddr );
+	dsize = BlkValueExtent(indt);
+	for (i=0:i<dsize:i++) {
+	
+		!ch = BlkValueRead(indt, i);
+		#ifdef TARGET_ZCODE;
+			ch = (ITA-->1)++->0;
+		#ifnot;
+			@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+		#endif;
+		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 		
-		while ( dataaddr < maxdataaddr && i < len )
-		{
-			#ifdef TARGET_ZCODE;
-				ch = dataaddr->0;
-				dataaddr = dataaddr + 1;
-			#ifnot;
-				ch = (dataaddr->0) * 256 + dataaddr->1;
-				dataaddr = dataaddr + 2;
-			#endif;
-			if ( ch == 0 )
-			{
-				return;
-			}
-			#ifdef TARGET_ZCODE;
-				print (char) ch;
-			#ifnot; ! TARGET_ZCODE
-				glk_put_char_uni(ch);
-			#endif;
-			i = i + 1;
-		}
-		
-		blockaddr = blockaddr-->BLK_NEXT;
+		if (ch == 0) break;
+		#ifdef TARGET_ZCODE;
+		print (char) ch;
+		#ifnot; ! TARGET_ZCODE
+		glk_put_char_uni(ch);
+		#endif;
 	}
 ];
 
@@ -304,38 +291,30 @@ Include (-
 
 Include (-
 
-[ INDEXED_TEXT_TY_WriteFile indt	i len blockaddr dataaddr maxdataaddr ch;
+[ INDEXED_TEXT_TY_WriteFile txb len pos ch;
+	
+	UpdateBlkStruct( ITA, txb );
+	
+	len = BlkValueExtent(txb);
 	print "S";
-	
-	blockaddr = indt;
-	len = BlkValueExtent( indt );
-	
-	while ( i < len )
-	{
-		dataaddr = blockaddr + HPIT_HEADER_SIZE;
-		maxdataaddr = blockaddr + BlkSize( blockaddr );
-		
-		while ( dataaddr < maxdataaddr && i < len )
+	for (pos=0: pos<=len: pos++) {
+		!if (pos == len) ch = 0; else ch = BlkValueRead(txb, pos);
+		if (pos == len) ch = 0;
+		else
 		{
 			#ifdef TARGET_ZCODE;
-				ch = dataaddr->0;
-				dataaddr = dataaddr + 1;
+				ch = (ITA-->1)++->0;
 			#ifnot;
-				ch = (dataaddr->0) * 256 + dataaddr->1;
-				dataaddr = dataaddr + 2;
+				@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
 			#endif;
-			if ( ch == 0 )
-			{
-				jump End;
-			}
-			print ch, ",";
-			i = i + 1;
+			if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 		}
-		
-		blockaddr = blockaddr-->BLK_NEXT;
+		if (ch == 0) {
+			print "0;"; break;
+		} else {
+			print ch, ",";
+		}
 	}
-	.End;
-	print "0;";
 ];
 
 -) instead of "Serialisation" in "IndexedText.i6t".
@@ -346,52 +325,43 @@ Include (-
 
 Include (-
 
-[ INDEXED_TEXT_TY_ROGPR indt	i len blockaddr dataaddr maxdataaddr ch bdm own wpos wa wl;
+[ INDEXED_TEXT_TY_ROGPR indt
+	pos len wa wl wpos bdm ch own;
 	if (indt == 0) return GPR_FAIL;
 	
-	bdm = true; own = wn;
-	blockaddr = indt;
-	len = BlkValueExtent( indt );
+	UpdateBlkStruct( ITA, indt );
 	
-	while ( i < len )
-	{
-		dataaddr = blockaddr + HPIT_HEADER_SIZE;
-		maxdataaddr = blockaddr + BlkSize( blockaddr );
-		
-		while ( dataaddr < maxdataaddr && i < len )
+	bdm = true; own = wn;
+	len = BlkValueExtent(indt);
+	for (pos=0: pos<=len: pos++) {
+		!if (pos == len) ch = 0; else ch = BlkValueRead(indt, pos);
+		if (pos == len) ch = 0;
+		else
 		{
 			#ifdef TARGET_ZCODE;
-				ch = dataaddr->0;
-				dataaddr = dataaddr + 1;
+				ch = (ITA-->1)++->0;
 			#ifnot;
-				ch = (dataaddr->0) * 256 + dataaddr->1;
-				dataaddr = dataaddr + 2;
+				@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
 			#endif;
-
-			if (ch == 32 or 9 or 10 or 0) {
-				if (bdm) continue;
-				bdm = true;
-				if (wpos ~= wl) return GPR_FAIL;
-				if (ch == 0) jump End;
-			} else {
-				if (bdm) {
-					bdm = false;
-					if (NextWordStopped() == -1) return GPR_FAIL;
-					wa = WordAddress(wn-1);
-					wl = WordLength(wn-1);
-					wpos = 0;
-				}
-				if (wa->wpos ~= ch or IT_RevCase(ch)) return GPR_FAIL;
-				wpos++;
-			}
-			
-			i = i + 1;
+			if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 		}
-		
-		blockaddr = blockaddr-->BLK_NEXT;
+		if (ch == 32 or 9 or 10 or 0) {
+			if (bdm) continue;
+			bdm = true;
+			if (wpos ~= wl) return GPR_FAIL;
+			if (ch == 0) break;
+		} else {
+			if (bdm) {
+				bdm = false;
+				if (NextWordStopped() == -1) return GPR_FAIL;
+				wa = WordAddress(wn-1);
+				wl = WordLength(wn-1);
+				wpos = 0;
+			}
+			if (wa->wpos ~= ch or IT_RevCase(ch)) return GPR_FAIL;
+			wpos++;
+		}
 	}
-	
-	.End;
 	if (wn == own) return GPR_FAIL; ! Progress must be made to avoid looping
 	return GPR_PREPOSITION;
 ];
@@ -406,36 +376,25 @@ Include (-
 
 Include (-
 
-[ IT_CharacterLength indt	i len blockaddr dataaddr maxdataaddr ch;
+[ IT_CharacterLength indt ch i dsize;
 	if ((indt==0) || (BlkType(indt) ~= INDEXED_TEXT_TY)) return 0;
 	
-	blockaddr = indt;
-	len = BlkValueExtent( indt );
+	UpdateBlkStruct( ITA, indt );
 	
-	while ( i < len )
-	{
-		dataaddr = blockaddr + HPIT_HEADER_SIZE;
-		maxdataaddr = blockaddr + BlkSize( blockaddr );
+	dsize = BlkValueExtent(indt);
+	for (i=0:i<dsize:i++) {
+	
+		!ch = BlkValueRead(indt, i);
+		#ifdef TARGET_ZCODE;
+			ch = (ITA-->1)++->0;
+		#ifnot;
+			@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+		#endif;
+		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 		
-		while ( dataaddr < maxdataaddr && i < len )
-		{
-			#ifdef TARGET_ZCODE;
-				ch = dataaddr->0;
-				dataaddr = dataaddr + 1;
-			#ifnot;
-				ch = (dataaddr->0) * 256 + dataaddr->1;
-				dataaddr = dataaddr + 2;
-			#endif;
-			if ( ch == 0 )
-			{
-				return i;
-			}
-			i = i + 1;
-		}
-		
-		blockaddr = blockaddr-->BLK_NEXT;
+		if (ch == 0) return i;
 	}
-	return len;
+	return dsize;
 ];
 
 [ INDEXED_TEXT_TY_Empty indt;
