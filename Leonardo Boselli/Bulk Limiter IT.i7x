@@ -1,20 +1,48 @@
-Version 9/140530 of Bulk Limiter IT by Leonardo Boselli begins here.
+Version 7 of Bulk Limiter IT by Leonardo Boselli begins here.
 
-"Translation in italian of Version 9 of Bulk Limiter by Eric Eve.
+"Contenitori ed attori che limitano le dimensioni dei loro contenuti. L[']unica modifica è la traduzione in italiano."
 
-Containers and actors that limit their contents by bulk"
+"basato su Version 7 of Bulk Limiter by Eric Eve."
 
-Include Bulk Limiter by Eric Eve.
+Include Italian by Leonardo Boselli.
+[Include Plurality by Emily Short.]
 
-Chapter - Responses
+A thing has a number called bulk. 
+The bulk of a thing is normally 1.
 
-bulk test rule response (A) is "[The noun] [sei] troppo [ingombrante] per stare [inp the second noun].".
-bulk test rule response (B) is "[regarding nothing]Non [ci sei] abbastanza spazio [inp the second noun] per [the noun].".
-person bulk test rule response (A) is "[The noun] [sei] troppo [ingombrante] per essere [preso][if the actor is not the player] [dap the actor][end if].".
-person bulk test rule response (B) is "[If the player is the actor]Non[regarding the player][otherwise][The actor] non[end if] [puoi] portare [the noun].".
+A container has a number called bulk capacity. 
+The bulk capacity of a container is normally 10.
+
+A person has a number called bulk capacity.
+The bulk capacity of a person is normally 100.
+
+
+Check an actor inserting into when the second noun provides the property bulk capacity (this is the bulk test rule):   
+   if the bulk of the noun is greater than the bulk capacity of the second noun then 
+      say "[The noun] [is|are] troppo grande per essere contenuto [in-prep the second noun]." instead;
+   if the bulk of the noun is greater than the free capacity of the second noun then 
+      say "Non c[']è abbastanza spazio [in-prep the second noun] per [the noun]." instead;
+  
+Check an actor taking when the actor provides the property bulk capacity 
+   (this is the person bulk test rule):
+   if the bulk of the noun is greater than the bulk capacity of the actor then 
+      say "[The noun] [is|are] troppo pesante per [if the actor is the player]te[otherwise][the actor][end if]." instead;
+   if the bulk of the noun is greater than the free capacity of the actor then 
+      say "[if the actor is the player]Non puoi[otherwise][the actor] non può[end if] sollevare [the noun]." instead;
+ 
+To decide what number is the free capacity of (targetbox - a container):
+  let sum be the total bulk of the things in the targetbox;
+  change sum to the bulk capacity of the targetbox minus sum;
+  decide on the sum.
+
+To decide what number is the free capacity of (targetperson - a person):  
+   let sum be the total bulk of the things carried by targetperson;  
+   change sum to the bulk capacity of the targetperson minus sum;  
+   decide on the sum.
+
 
 Bulk Limiter IT ends here.
 
 ---- DOCUMENTATION ----
 
-Read the original documentation of Version 9 of Bulk Limiter by Eric Eve.
+Vedi la documentazione originale di Bulk Limiter by Eric Eve.

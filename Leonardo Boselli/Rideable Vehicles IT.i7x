@@ -1,9 +1,10 @@
-Version 2 of Rideable Vehicles IT by Leonardo Boselli begins here.
+Version 3 of Rideable Vehicles IT by Leonardo Boselli begins here.
 
 "Vehicles which one sits on top of, rather than inside, such as elephants or motorcycles. La traduzione in italiano è l'unica modifica apportata rispetto all'originale."
 
 "basato su Version 3 of Rideable Vehicles by Graham Smith."
 
+Include Italian by Leonardo Boselli.
 [Include Plurality by Emily Short.]
 
 A rideable animal is a kind of animal.
@@ -87,8 +88,8 @@ Unsuccessful attempt by someone trying mounting (this is the mounting excuses ru
 	if the reason the action failed is the can't mount something unrideable rule,
 		say "[The noun] non può essere cavalcato.";
 
-Understand "cavalca [something]" or "cavalca il/lo/la/i/gli/le/l [something]" as mounting.
-Understand "monta [something]" or "monta il/lo/la/i/gli/le/l [something]" or "monta sul/sullo/sulla/sui/sugli/sulle/sull [something]" as mounting.
+Understand "cavalca [something]" or "cavalca [art-det] [something]" as mounting.
+Understand "monta [something]" or "monta [art-det] [something]" or "monta [su-art] [something]" as mounting.
 
 Dismounting is an action applying to nothing.
 
@@ -99,18 +100,18 @@ Check an actor dismounting (this is the can't dismount when not mounted rule):
 
 Carry out an actor dismounting (this is the standard dismounting rule):
 	if the actor is carried by a rideable animal (called the steed),
-		now the noun is the steed;
+		change the noun to the steed;
 	if the actor is on a rideable vehicle (called the conveyance),
-		now the noun is the conveyance;
+		change the noun to the conveyance;
 	let the former exterior be the holder of the noun;
 	surreptitiously move the actor to the former exterior.
 
 Report an actor dismounting (this is the standard report dismounting rule):
 	if the actor is the player:
-		say "Scendi [dap the noun].[line break][run paragraph on]";
+		say "Scendi [da-prep the noun].[line break][run paragraph on]";
 		produce a room description with going spacing conventions;
 	otherwise:
-		say "[The actor] scende [dap the noun]."
+		say "[The actor] scende [da-prep the noun]."
 	
 Unsuccessful attempt by someone trying dismounting (this is the dismounting excuses rule):
 	if the reason the action failed is the can't dismount when not mounted rule,

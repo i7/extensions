@@ -1,4 +1,4 @@
-Version 2 of Creative Commons Public License IT by Leonardo Boselli begins here.
+Creative Commons Public License IT by Leonardo Boselli begins here.
 
 "Un'estensione in italiano per facilitare il rilascio di 'interactive fiction' secondo la Creative Commons License v25. Basata sull'estensione GNU General Public License v3 di Otis T. Dog."
 
@@ -25,23 +25,14 @@ The author can be reached via email at tetractys@users.sf.net.
 
 Chapter 1 - Text to Display
 
-Section 1 - The recommended announcement banner for use at startup (for use without Hyperlink Interface IT by Leonardo Boselli)
+Section 1 - The recommended announcement banner for use at startup
 
 To announce the CCL:
 	say "[bold type]Copyright © [story creation year] [story author][roman type][line break]";
 	say "[italic type]Quest[']opera è fornita SENZA ALCUNA GARANZIA e può[line break]";
 	say "essere ridistribuita rispettando determinate condizioni:[line break]";
 	say "per i dettagli scrivi [bold type]garanzia[roman type][italic type] o [bold type]licenza.[roman type][paragraph break]";
-	[say "[bold type]'[story title]' di [story author][roman type][paragraph break]";]
-
-Section H (for use with Hyperlink Interface IT by Leonardo Boselli)
-
-To announce the CCL:
-	say "[bold type]Copyright © [story creation year] [story author][roman type][line break]";
-	say "[italic type]Quest[']opera è fornita SENZA ALCUNA GARANZIA e può[line break]";
-	say "essere ridistribuita rispettando determinate condizioni:[line break]";
-	say "per i dettagli scrivi [o]garanzia[x][italic type] o [o]licenza[x].[paragraph break]";
-	[say "[bold type]'[story title]' di [story author][roman type][paragraph break]".]
+	say "[bold type]'[story title]' di [story author][roman type][paragraph break]".
 
 Section 2 - The recommended warranty text
 

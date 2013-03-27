@@ -39,16 +39,16 @@ number	effect
 27	quit rule
 
 This is the quit rule:  
-	now menu depth is menu depth - 1;
+	change menu depth to menu depth - 1;
 	rule succeeds. 
 
 This is the move down rule: 
-	if current menu selection is less than the number of filled rows in the current menu, now current menu selection is current menu selection + 1;
+	if current menu selection is less than the number of filled rows in the current menu, change current menu selection to current menu selection + 1;
 	reprint the current menu;
 	make no decision.
 
 This is the move up rule:
-	if current menu selection is greater than 1, now current menu selection is current menu selection - 1;
+	if current menu selection is greater than 1, change current menu selection to current menu selection - 1;
 	reprint the current menu;
 	make no decision.
 
@@ -60,21 +60,21 @@ This is the select rule:
 	otherwise;
 		if there is a subtable entry
 		begin;
-			now the current menu title is title entry;
-			now the current menu selection is 1; 
-			now the current menu is subtable entry;
+			change the current menu title to title entry;
+			change the current menu selection to 1; 
+			change the current menu to subtable entry;
 			show menu contents;
 		otherwise;
 			let the temporary title be the current menu title;
-			now the current menu title is title entry;
-			now the endnode flag is 1;
+			change the current menu title to title entry;
+			change the endnode flag to 1;
 			redraw status line;
-			now the endnode flag is 0;
+			change the endnode flag to 0;
 			clear only the main screen;
 			say "[variable letter spacing][description entry][paragraph	 break]";
 			say "Premi SPAZIO per continuare."; 
 			wait for the SPACE key;
-			now the current menu title is temporary title;
+			change the current menu title to temporary title;
 			reprint the current menu;
 		end if;
 	end if.
@@ -94,12 +94,12 @@ To reprint (selected menu - a table-name):
 	begin;
 		if __index is current menu selection, say " >"; otherwise say "  ";
 		say " [title entry][line break]";
-		now __index is __index + 1;
+		change __index to __index + 1;
 	end repeat;
 	say variable letter spacing;
 
 To show menu contents:
-	now menu depth is menu depth + 1;
+	change menu depth to menu depth + 1;
 	let temporary depth be the menu depth;
 	let temporary menu be the current menu;
 	let temporary title be the current menu title;
@@ -107,28 +107,28 @@ To show menu contents:
 	let __index be 0;
 	while __index is not 1
 	begin;
-		now the current menu is the temporary menu; 
+		change the current menu to the temporary menu; 
 		let __n be 0;
 		repeat through current menu
 		begin;
 			increase __n by 1;
-			if title entry is current menu title, now current menu selection is __n;
+			if title entry is current menu title, change current menu selection to __n;
 		end repeat;
-		now the current menu title is the temporary title; 
+		change the current menu title to the temporary title; 
 		reprint current menu;
 		let __x be the chosen letter;
 		if __x is a number listed in the Table of Menu Commands
 		begin;
-			follow the effect entry; 
+			consider the effect entry; 
 			if temporary depth > menu depth
 			begin;
-				now __index is 1; 
+				change __index to 1; 
 			end if;
 		end if;
 	end while.
 
 Rule for displaying (this is the basic menu contents rule): 
-	now current menu selection is 1;
+	change current menu selection to 1;
 	show menu contents.
 
 Rule for constructing the status line while displaying (this is the constructing status line while displaying rule):  
@@ -156,14 +156,14 @@ To say known hints from (hint booklet - table-name):
 	clear only the main screen; 
 	repeat through hint booklet
 	begin;
-		now __index is __index + 1;
+		change __index to __index + 1;
 		if there is a used entry
 		begin;
 			say "[__index]/[number of rows in hint booklet]: [hint entry][paragraph break]";
 		otherwise;
 			if __index is 1
 			begin;
-				now used entry is turn count;
+				change used entry to turn count;
 				say "[__index]/[number of rows in hint booklet]: [hint entry][paragraph break]";
 			end if;
 		end if;
@@ -176,13 +176,13 @@ To say hints from (hint booklet - table-name):
 	clear only the main screen; 
 	repeat through hint booklet
 	begin;
-		now __index is __index + 1;
+		change __index to __index + 1;
 		say "[__index]/[number of rows in hint booklet]: [hint entry][paragraph break]"; 
 		if there is a used entry
 		begin;
 			do nothing;
 		otherwise;
-			now used entry is turn count;
+			change used entry to turn count;
 			say "Premi SPAZIO per tornare al menù[if __index < number of rows in hint booklet] o H per rivelare un altro suggerimento[end if].";
 			make no decision; 
 		end if;  
@@ -192,10 +192,10 @@ To say hints from (hint booklet - table-name):
 This is the hint toggle rule:
 	choose row current menu selection in the current menu;
 	let the temporary title be the current menu title;
-	now the current menu title is title entry;
-	now the endnode flag is 1;
+	change the current menu title to title entry;
+	change the endnode flag to 1;
 	redraw status line;
-	now the endnode flag is 0;
+	change the endnode flag to 0;
 	say known hints from the subtable entry; 
 	let __index be 0;
 	while __index < 1
@@ -204,7 +204,7 @@ This is the hint toggle rule:
 		if __x is 13 or __x is 31 or __x is 32, let __index be 1;
 		if __x is 72 or __x is 104, say hints from the subtable entry;
 	end while;
-	now the current menu title is temporary title.
+	change the current menu title to temporary title.
 
 Section 2 (for Glulx only) 
 
