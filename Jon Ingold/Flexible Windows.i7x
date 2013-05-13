@@ -1,8 +1,8 @@
-Version 12/110611 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130514 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
-"with contributions by Erik Temple"
+"with contributions by Erik Temple and Dannii Willis"
 
 [Changed:
 6/26/10	Made the main-window a text-buffer g-window.
@@ -12,6 +12,7 @@ Version 12/110611 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 7/31/10	Added documentation for manual setting of rock values.
 7/31/10	Removed out-of-date section on hyperlinking from the documentation.
 21/6/11 Added a "does window exist" check before setting background colour.
+14 May 2013: Performance improvements (Changed spawning to be an alias of regular containment)
 ]
 
 Include Glulx Entry Points by Emily Short.
@@ -32,7 +33,7 @@ Chapter 1 - Initialisations, windows and values
 
 Section - Definitions of properties and values
 
-A g-window is a kind of thing.
+A g-window is a kind of container.
 
 Include (-
 
@@ -132,24 +133,24 @@ To decide if rocks are currently unassigned:
 
 Section - Spawning relations
 
-Spawning relates various g-windows to various g-windows.
+[Spawning relates various g-windows to various g-windows.]
 
-The verb to spawn (he spawns, they spawn, he spawned, it is spawned, he is spawning) implies the spawning relation.
+The verb to spawn (he spawns, they spawn, he spawned, it is spawned, he is spawning) implies the containment relation.
 
-The verb to be the spawner of implies the spawning relation.
+The verb to be the spawner of implies the containment relation.
 
-Ancestry relates a g-window (called X) to a g-window (called Y) when the number of steps via the spawning relation from X to Y is at least 0. The verb to be ancestral to implies the ancestry relation.
+[Ancestry relates a g-window (called X) to a g-window (called Y) when the number of steps via the containment relation from X to Y is at least 0.] The verb to be ancestral to implies the enclosure relation.
 
-Descendency relates a g-window (called X) to a g-window (called Y) when the number of steps via the spawning relation from Y to X is at least zero. The verb to be descended from implies the descendency relation.
+[Descendency relates a g-window (called X) to a g-window (called Y) when the number of steps via the containment relation from Y to X is at least zero.] The verb to be descended from implies the reversed enclosure relation.
 
-Definition: a g-window is paternal if it spawns something g-present.
-Definition: a g-window is childless if it is not paternal.
+Definition: a g-window is paternal rather than childless if it spawns something g-present.
 
 To decide which g-window is the direct-parent of (g - a g-window):
-	repeat with item running through g-windows
+	decide on the holder of g;
+	[repeat with item running through g-windows
 	begin;
 		if item spawns g, decide on item;
-	end repeat.
+	end repeat.]
 
 
 Section - Test spawning relations (not for release)
@@ -172,8 +173,8 @@ tracking it to is an action applying to two visible  things.
 Understand "track [any g-window] to [any g-window]" as tracking it to.
 
 Carry out tracking it to:
-	say "no. =>: [number of steps via the spawning relation from noun to second noun].";
-	say "no. <=: [number of steps via the spawning relation from second noun to noun].";
+	say "no. =>: [number of steps via the containment relation from noun to second noun].";
+	say "no. <=: [number of steps via the containment relation from second noun to noun].";
 
 Throwing open is an action applying to one visible  thing.
 Slamming shut is an action applying to one visible  thing.
@@ -195,11 +196,10 @@ Section - Opening window chains
 [ which then calls back to the construct window routine given here ]
 
 To open up (g - a g-window):
-	if g is g-unpresent and the main-window is ancestral to g
-	begin;
+	if g is g-unpresent and the main-window is ancestral to g:
+		now g is g-required;
 		now every g-window ancestral to g is g-required;
 		calibrate windows;
-	end if.
 
 Section - Closing window chains
 [ so set deletion flags for children too, then call delete window safely routine ]
@@ -215,11 +215,10 @@ To shut down (g - a g-window):
 Window-shutting something is an activity.
 
 For window-shutting a g-window (called g):
-	if g is g-present and g is not the main-window
-	begin;
+	if g is g-present and g is not the main-window:
+		now g is g-unrequired;
 		now every g-window descended from g is g-unrequired;
 		calibrate windows;
-	end if;
 
 
 Section - Calibrating the window set to match expectations
@@ -227,20 +226,20 @@ Section - Calibrating the window set to match expectations
 Definition: a g-window is a next-step if it is spawned by something g-present.
 
 To calibrate windows:
-[ open g-required ung-present windows. start with directly spawned windows.
+[ open g-required g-unpresent windows. start with directly spawned windows.
   close g-unrequired g-present windows. start with childless! ]
-	let h be a random g-unrequired g-present childless g-window;
-	while h is a g-window
-	begin;
+	repeat with h running through g-unrequired g-present childless g-windows:
 		g-destroy h;
-		let h be a random g-unrequired g-present childless g-window;
-	end while;
-	let g be a random next-step g-required g-unpresent g-window;
-	while g is a g-window
-	begin;
+	[let h be a random g-unrequired g-present childless g-window;
+	while h is a g-window:
+		g-destroy h;
+		let h be a random g-unrequired g-present childless g-window;]
+	repeat with h running through next-step g-required g-unpresent g-windows:
+		g-make h;
+	[let g be a random next-step g-required g-unpresent g-window;
+	while g is a g-window:
 		g-make g;
-		let g be a random next-step g-required g-unpresent g-window;
-	end while;
+		let g be a random next-step g-required g-unpresent g-window;]
 
 
 Chapter 3 - I6 and Glulx Calls
@@ -1395,3 +1394,4 @@ What follows is some I6 code for handling the glulx imagery. Note that you may n
 	-).
 
 	Test me with "examine letter/z/attack letter".
+
