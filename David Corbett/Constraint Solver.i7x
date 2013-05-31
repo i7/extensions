@@ -3,14 +3,12 @@ Constraint Solver by David Corbett begins here.
 [TODO:
 constraints as rules/activities?
 infinite domains (with initial value(s) and successor function)
-remove repeated code
 speed tests
 readable code
 better name than "var"
 write validation rules for debugging
 remove debugging
 multiple independent CSPs i.e. no single Table of Constraints
-remove repeated code
 ]
 
 A var is a kind of thing.
@@ -44,58 +42,22 @@ To solve (CSP - list of vars):
 			say "[entry i in the CSP]([D_i]): [entry D_i in the domain of entry i in the CSP] ~ [entry D_i in the history of entry i in the CSP].";
 			now the previous value index of entry i in the CSP is D_i;
 			if entry D_i in the history of entry i in the CSP is not 0:
-				next; [i.e. this value in the domain was marked inconsistent in a previous iteration]
+				next; [This value was marked inconsistent in a previous iteration.]
 			now entry i of the value list is entry D_i in the domain of entry i in the CSP;
-			now good-to-go is whether or not the CSP is consistent with the value list through i;
-			if good-to-go is true: [passed all constraints]
-				say "passed all constraints.";
-				now good-to-go is whether or not forward checking passes on the value list through i;
-				if good-to-go is true:
-[					now entry i in the value list is entry D_i in the domain of entry i in the CSP;]
-					increment i;
-					say "passed forward checking; i = [i].";
-					break;
+			now good-to-go is whether or not forward checking passes on the value list through i;
+			if good-to-go is true:
+				increment i;
+				break;
 			otherwise:
-				end the story saying "This should never happen."; [TODO: remove this then]
-			if good-to-go is false: [failed any constraint or forward checking failed]
-				say "failed a constraint or failed forward checking.";
-				[unmark-as-inconsistent members of the domain with mark i-1:]
-				repeat with H_i running from 1 to the number of entries in the history of entry i in the CSP:
-					if entry H_i in the history of entry i in the CSP is i - 1:
-						now entry H_i in the history of entry i in the CSP is 0; [TODO: duplicated in forward-checking? maybe this is unneeded here]
 				now the previous value index of entry i in the CSP is 0;
-			otherwise:
-				end the story saying "This should not happen."; [TODO: remove this then]
 		if good-to-go is false:
 			decrement i;
-			say "decrement i to [i].";
 	[debugging info:]
 	say "final i: [i].";
 	say "vars: [CSP in brace notation].";
 	say "values: [value list in brace notation]."
 
 [TODO: parameterize by constraint set]
-To decide whether (CSP - list of vars) is consistent with (value list - list of numbers) through (i - number):
-	say "decide whether [CSP in brace notation] is consistent with [value list in brace notation] through [i].";
-	let the current var be entry i in the CSP;
-	let V be a list of numbers;
-	repeat through the Table of Constraints:
-		let relevant be true;
-		now V is {};
-		repeat with x running through the vars entry:
-			if the index of x is greater than i:
-				now relevant is false;
-				break;
-			add entry (index of x) in the value list to V;
-		if relevant is false:
-			say "	irrelevant: [constraint entry].";
-			next;
-		say "	relevant: [constraint entry].";
-		if constraint entry applied to V is 0:
-			say "	failed on [V in brace notation].";
-			no;
-	yes.
-
 To decide whether forward checking passes on (value list - list of numbers) through (i - number):
 	say "decide whether forward checking passes on [value list in brace notation] through [i].";
 	let forward-checking-passes be true;
@@ -121,7 +83,7 @@ To decide whether forward checking passes on (value list - list of numbers) thro
 		say "	the unassigned var: [unassigned var].";
 		say "	the unassigned index: [unassigned index].";
 		say "	cand val list: [candidate value list in brace notation].";
-		[check each value against the constraint]
+		[Check each value against the constraint:]
 		repeat with D_i running from 1 to the number of entries in the domain of the unassigned var:
 			say "	unvar([D_i]): [entry D_i in the domain of the unassigned var] ~ [entry D_i in the history of the unassigned var].";
 			if entry D_i in the history of the unassigned var is not 0:
@@ -130,7 +92,7 @@ To decide whether forward checking passes on (value list - list of numbers) thro
 			if the constraint entry applied to the candidate value list is 0:
 				now entry D_i in the history of the unassigned var is i;
 		if 0 is not listed in the history of the unassigned var:
-			[the domain is empty so we will roll back]
+			[The domain is empty so we will roll back.]
 			now forward-checking-passes is false;
 			break;
 	if forward-checking-passes is true:
