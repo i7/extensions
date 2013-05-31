@@ -1,26 +1,23 @@
 Constraint Solver by David Corbett begins here.
 
 [TODO:
-constraints as rules/activities
+constraints as rules/activities?
 infinite domains (with initial value(s) and successor function)
-look-ahead
 remove repeated code
 speed tests
 readable code
 better name than "var"
 write validation rules for debugging
-non-binary constraints
-backtrack immediately when a domain is empty
 remove debugging
-deal with unsolvable problems
 multiple independent CSPs i.e. no single Table of Constraints
 remove repeated code
 ]
 
 A var is a kind of thing.
 A var has a list of numbers called the domain.
-A var has a number called the index.
 A var has a list of numbers called the history.
+A var has a number called the index.
+A var has a number called the previous value index.
 
 Table of Constraints
 vars	constraint
@@ -28,7 +25,8 @@ vars	constraint
 
 When play begins:
 	repeat with x running through vars:
-		change the history of x to have (number of entries in the domain of x) entries.
+		change the history of x to have (number of entries in the domain of x) entries;
+		change the previous value index of x to 0.
 
 To solve (CSP - list of vars):
 	let n be the number of entries in the CSP;
@@ -42,8 +40,9 @@ To solve (CSP - list of vars):
 		say "current vars: [CSP in brace notation].";
 		say "current values: [value list in brace notation].";
 		let good-to-go be a truth state;
-		repeat with D_i running from 1 to the number of entries in the domain of entry i in the CSP:
+		repeat with D_i running from the previous value index of entry i in the CSP + 1 to the number of entries in the domain of entry i in the CSP:
 			say "[entry i in the CSP]([D_i]): [entry D_i in the domain of entry i in the CSP] ~ [entry D_i in the history of entry i in the CSP].";
+			now the previous value index of entry i in the CSP is D_i;
 			if entry D_i in the history of entry i in the CSP is not 0:
 				next; [i.e. this value in the domain was marked inconsistent in a previous iteration]
 			now entry i of the value list is entry D_i in the domain of entry i in the CSP;
@@ -52,18 +51,26 @@ To solve (CSP - list of vars):
 				say "passed all constraints.";
 				now good-to-go is whether or not forward checking passes on the value list through i;
 				if good-to-go is true:
-					say "passed forward checking.";
 [					now entry i in the value list is entry D_i in the domain of entry i in the CSP;]
-					increase i by 2;
+					increment i;
+					say "passed forward checking; i = [i].";
 					break;
+			otherwise:
+				end the story saying "This should never happen."; [TODO: remove this then]
 			if good-to-go is false: [failed any constraint or forward checking failed]
-				say "failed any constraint or failed forward checking.";
+				say "failed a constraint or failed forward checking.";
 				[unmark-as-inconsistent members of the domain with mark i-1:]
 				repeat with H_i running from 1 to the number of entries in the history of entry i in the CSP:
 					if entry H_i in the history of entry i in the CSP is i - 1:
 						now entry H_i in the history of entry i in the CSP is 0; [TODO: duplicated in forward-checking? maybe this is unneeded here]
-		decrement i;
+				now the previous value index of entry i in the CSP is 0;
+			otherwise:
+				end the story saying "This should not happen."; [TODO: remove this then]
+		if good-to-go is false:
+			decrement i;
+			say "decrement i to [i].";
 	[debugging info:]
+	say "final i: [i].";
 	say "vars: [CSP in brace notation].";
 	say "values: [value list in brace notation]."
 
