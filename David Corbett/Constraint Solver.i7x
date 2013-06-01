@@ -3,12 +3,14 @@ Constraint Solver by David Corbett begins here.
 [TODO:
 constraints as rules/activities?
 infinite domains (with initial value(s) and successor function)
+non-numeric domains
 speed tests
 readable code
 better name than "var"
 write validation rules for debugging
 remove debugging
 multiple independent CSPs i.e. no single Table of Constraints
+forward checking with multiple unassigned vars
 ]
 
 A var is a kind of thing.
@@ -26,7 +28,11 @@ When play begins:
 		change the history of x to have (number of entries in the domain of x) entries;
 		change the previous value index of x to 0.
 
-To solve (CSP - list of vars):
+To decide what list of lists of numbers is all solutions of (CSP - list of vars):
+	decide on -1 solutions of CSP.
+
+To decide what list of lists of numbers is (solution limit - number) solutions/solution of (CSP - list of vars):
+	let the solutions be a list of lists of numbers;
 	let n be the number of entries in the CSP;
 	repeat with i running from 1 to n:
 		now the index of entry i in the CSP is i;
@@ -37,25 +43,27 @@ To solve (CSP - list of vars):
 		say "[line break]i: [i].";
 		say "current vars: [CSP in brace notation].";
 		say "current values: [value list in brace notation].";
-		let good-to-go be a truth state;
+		let forward-checking-passed be a truth state;
 		repeat with D_i running from the previous value index of entry i in the CSP + 1 to the number of entries in the domain of entry i in the CSP:
 			say "[entry i in the CSP]([D_i]): [entry D_i in the domain of entry i in the CSP] ~ [entry D_i in the history of entry i in the CSP].";
 			now the previous value index of entry i in the CSP is D_i;
 			if entry D_i in the history of entry i in the CSP is not 0:
 				next; [This value was marked inconsistent in a previous iteration.]
 			now entry i of the value list is entry D_i in the domain of entry i in the CSP;
-			now good-to-go is whether or not forward checking passes on the value list through i;
-			if good-to-go is true:
-				increment i;
+			now forward-checking-passed is whether or not forward checking passes on the value list through i;
+			if forward-checking-passed is true:
 				break;
-			otherwise:
-				now the previous value index of entry i in the CSP is 0;
-		if good-to-go is false:
+		if forward-checking-passed is false or i is n and the number of entries in the solutions is not the solution limit:
+			if forward-checking-passed is true, add the value list to the solutions;
+			now the previous value index of entry i in the CSP is 0;
 			decrement i;
-	[debugging info:]
+		otherwise:
+			increment i;
 	say "final i: [i].";
 	say "vars: [CSP in brace notation].";
-	say "values: [value list in brace notation]."
+	say "values: [value list in brace notation].";
+	say "solutions: [solutions in brace notation].";
+	decide on the solutions.
 
 [TODO: parameterize by constraint set]
 To decide whether forward checking passes on (value list - list of numbers) through (i - number):
