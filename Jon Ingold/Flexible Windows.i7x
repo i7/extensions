@@ -929,9 +929,9 @@ Flexible Windows allows the Glulx author to construct and fill a series of multi
 
 Although Flexible Windows does not supply any rules for using graphical windows beyond the most basic, several can be found in Emily Short's Simple Graphical Window extension. The examples below demonstrate some ideas. However, Flexible Windows is not compatible with Simple Graphical Window. The Glimmr family of extensions provides extensive support for graphics in Flexible Windows.
 
-Flexible Windows requires Glulx Entry Points by Emily Short.
-
 Note that as of version 9, the method of specifying drawing rules for windows has changed. See the Window Rules section below.
+
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requestions or questions should be made at <https://github.com/i7/extensions/issues>.
 
 	Chapter: Constructing a Layout
 
