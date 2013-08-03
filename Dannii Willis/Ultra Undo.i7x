@@ -97,7 +97,7 @@ Global ultra_undo_counter = 0;
 
 [ Ultra_Undo_Filename ix;
 	print "undo-";
-	for ( ix=6: ix <= UUID_ARRAY->0: ix++ )
+	for ( ix=8 : ix + 2 <= UUID_ARRAY->0 : ix++ )
 	{
 		print (char) UUID_ARRAY->ix;
 	}
