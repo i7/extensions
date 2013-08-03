@@ -1,4 +1,4 @@
-Version 13/130802 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130803 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -12,7 +12,7 @@ Version 13/130802 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 7/31/10	Added documentation for manual setting of rock values.
 7/31/10	Removed out-of-date section on hyperlinking from the documentation.
 21/6/11 Added a "does window exist" check before setting background colour.
-2 Aug 2013: Performance improvements (Changed spawning to be an alias of regular containment)
+3 Aug 2013: Performance improvements (Changed spawning to be an alias of regular containment)
 ]
 
 Include Glulx Entry Points by Emily Short.
@@ -931,7 +931,7 @@ Although Flexible Windows does not supply any rules for using graphical windows 
 
 Note that as of version 9, the method of specifying drawing rules for windows has changed. See the Window Rules section below.
 
-The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requestions or questions should be made at <https://github.com/i7/extensions/issues>.
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 	Chapter: Constructing a Layout
 
@@ -1244,7 +1244,7 @@ Finally, it is possible to write directly to the echo stream of a window, bypass
 
 	Chapter: Change log
 
-Version 13 - 2/8/13
+Version 13 - 3/8/13
 
 	Changes how spawning works under the hood, so that the extension performs up to 30 times as fast. g-windows are now containers, so be careful not to repeat through all containers. Additionally, a window is no longer ancestral to/descended from itself.
 

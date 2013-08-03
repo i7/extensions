@@ -1,4 +1,4 @@
-Version 1/120610 of Benchmarking (for Glulx only) by Dannii Willis begins here.
+Version 1/130803 of Benchmarking (for Glulx only) by Dannii Willis begins here.
 
 "A general purpose benchmarking test framework that produces statistically significant results."
 
@@ -721,7 +721,7 @@ Benchmarking is based on the Javascript library Benchmark.js. http://benchmarkjs
 
 Benchmarking depends on Real-Time Delays by Erik Temple and Flexible Windows by Jon Ingold.
 
-The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Contact the author at <curiousdannii@gmail.com>
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Section: Writing test cases
 

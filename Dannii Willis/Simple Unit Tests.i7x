@@ -1,4 +1,4 @@
-Version 1/120604 of Simple Unit Tests by Dannii Willis begins here.
+Version 1/130803 of Simple Unit Tests by Dannii Willis begins here.
 
 "Very simple unit tests."
 
@@ -137,7 +137,7 @@ The state of the VM will be saved before and restored after the unit tests are r
 
 Lastly, run the tests by entering the command "run the unit tests" (or just simply "unit"), or use "try running the unit tests" in your code. Happy testing!
 
-The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Contact the author at <curiousdannii@gmail.com>
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Example: * Basic Unit Tests - Passing and Failing
 

@@ -1,4 +1,4 @@
-Version 1/121013 of High Performance Indexed Text by Dannii Willis begins here.
+Version 1/121014 of High Performance Indexed Text by Dannii Willis begins here.
 
 [
 Aim:
@@ -8,17 +8,6 @@ Note:
 	Sometimes the original code loops from 0 to <= BlkValueExtent(), other times only to < BlkValueExtent(). Is this buggy?
 	We now have one generic range error in UpdateBlkStruct. It doesn't give as much info as the old ones in BlkValue* do, but that info probably isn't useful anyway!
 	BlkValueSetExtent() can turn a single-block text into a multi-block text -> Block structs must be reinitialised!
-	If a function using block structs calls another function using block structs they cannot use the same structs!
-
-Templates:
-
-	!ch = BlkValueRead(indt, i);
-	#ifdef TARGET_ZCODE;
-		ch = (ITA-->1)++->0;
-	#ifnot;
-		@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
-	#endif;
-	if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
 	
 TODO:
 	IndexedText - Unserialisation
@@ -31,32 +20,33 @@ TODO:
 
 Section - Introduction
 
-[ In order to inline the BlkValue* calls we use structs (arrays) to refer to the important variables for each IT. An IT* struct has the following entries:
-	0: block addr
-	1: block data addr
-	2: end of block data addr
-	3: original block addr ]
+[ In order to inline the BlkValue* calls we use structs (arrays) to refer to the important variables for each IT. An IT* struct has the following structure:
+	0: head block addr
+	1: multi-block?
+	2: block addr
+	3: block data addr
+	4: end of block data addr ]
 
 Include (-
 
-Array ITA --> 4;
-Array ITB --> 4;
-Array ITC --> 4;
-Array ITD --> 4;
-Array ITE --> 4;
-
 #ifdef TARGET_ZCODE;
-	Constant HPIT_WSIZE 1;
+	Constant HPIT_SIZE 1;
 #ifnot;
-	Constant HPIT_WSIZE 2;
+	Constant HPIT_SIZE 2;
 #endif;
 
-! If you don't pass in a block, set to the next linked block
 [ UpdateBlkStruct array block	overflow headersize;
+	! If you don't pass in an array, get a new block value
+	if ( array == 0 )
+	{
+		array = BlkAllocate( 5 * WORDSIZE );
+		array = array + 2 * WORDSIZE;
+	}
+	! If you don't pass in a block, set to the next linked block
 	if ( block == 0 )
 	{
-		overflow = array-->1 - array-->2;
-		block = (array-->0)-->BLK_NEXT;
+		overflow = array-->3 - array-->4;
+		block = (array-->2)-->BLK_NEXT;
 		if ( block == NULL )
 		{
 			"*** UpdateBlkStruct: reached end of multi-block structure! ***";
@@ -64,37 +54,43 @@ Array ITE --> 4;
 	}
 	else
 	{
-		array-->3 = block;
+		array-->0 = block;
+		array-->1 = ( (block->BLK_HEADER_FLAGS) & BLK_FLAG_MULTIPLE ) && block-->BLK_NEXT;
 	}
 	headersize = BLK_DATA_OFFSET;
 	if ( (block->BLK_HEADER_FLAGS) & BLK_FLAG_MULTIPLE )	
 	{
 		headersize = BLK_DATA_MULTI_OFFSET;
 	}
-	array-->0 = block;
-	array-->1 = block + headersize + overflow;
-	array-->2 = block + BlkSize( block );
+	array-->2 = block;
+	array-->3 = block + headersize + overflow;
+	array-->4 = block + BlkSize( block );
 	! Keep going if we're still overflowing!
-	if ( array-->1 >= array-->2 )
+	if ( array-->3 >= array-->4 )
 	{
 		UpdateBlkStruct( array );
 	}
+	return array;
 ];
 
 ! Set a Block Struct to a particular array address
 [ SetBlkStructAddr array i;
-	UpdateBlkStruct( array, array-->3, i * HPIT_WSIZE );
+	UpdateBlkStruct( array, array-->0, i * HPIT_SIZE );
+];
+
+[ FreeBlkStruct array;
+	BlkFreeSingleBlock( array - 2 * WORDSIZE );
 ];
 
 -).
 
 Section - Template replacements
 
-[ Deep Copy - uses A B ]
+[ Deep Copy ]
 
 Include (-
 
-[ BlkValueCopy blockto blockfrom dsize i sf;
+[ BlkValueCopy blockto blockfrom dsize i sf	ITA ITB z;
 	if (blockto == 0) { print "*** Deep copy failed: destination empty ***^"; rfalse; }
 	if (blockfrom == 0) { print "*** Deep copy failed: source empty ***^"; rfalse; }
 
@@ -124,19 +120,22 @@ Include (-
 	! If we are copying indexed text take some short cuts
 	if ( BlkType( blockfrom ) == INDEXED_TEXT_TY )
 	{
-		UpdateBlkStruct( ITA, blockfrom );
-		UpdateBlkStruct( ITB, blockto );
+		ITA = UpdateBlkStruct( 0, blockfrom );
+		ITB = UpdateBlkStruct( 0, blockto );
 		for ( i = 0 : i < dsize : i++ )
 		{
-			if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
-			if ( ITB-->1 >= ITB-->2 ) UpdateBlkStruct( ITB );
+			if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
+			if ( ITB-->3 >= ITB-->4 ) UpdateBlkStruct( ITB );
 			#ifdef TARGET_ZCODE;
-				(ITB-->1)++->0 = (ITA-->1)++->0;
+				@loadw ITA 3 z; @loadb z 0 sp; @inc z; @storew ITA 3 z;
+				@loadw ITB 3 z; @storeb z 0 sp; @inc z; @storew ITB 3 z;
 			#ifnot;
-				@aload ITA 1 sp; @aloads sp 0 sp; ITA-->1 = ITA-->1 + 2;
-				@aload ITB 1 sp; @astores sp 0 sp; ITB-->1 = ITB-->1 + 2;
+				@aload ITA 3 z; @aloads z 0 sp; @add z 2 z; @astore ITA 3 z;
+				@aload ITB 3 z; @astores z 0 sp; @add z 2 z; @astore ITB 3 z;
 			#endif;
 		}
+		FreeBlkStruct( ITB );
+		FreeBlkStruct( ITA );
 	}
 	else
 	{
@@ -150,7 +149,7 @@ Include (-
 
 -) instead of "Deep Copy" in "BlockValues.i6t".
 
-[ Casting - uses A ]
+[ Casting ]
 Include (-
 
 #ifndef IT_MemoryBufferSize;
@@ -274,17 +273,8 @@ Global IT_cast_nesting;
 	!for (i=0:i<=len:i++) BlkValueWrite(indt, i, buff-->(i+offs));
 	!#endif;
 	
-	UpdateBlkStruct( ITA, indt );
 	buff = buff + offs;
-	for ( i=0 : i <= len : i++ )
-	{
-		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
-		#ifdef TARGET_ZCODE;
-			(ITA-->1)++->0 = buff->i;
-		#ifnot;
-			@aload buff i sp; @aload ITA 1 sp; @astores sp 0 sp; ITA-->1 = ITA-->1 + 2;
-		#endif;
-	}
+	INDEXED_TEXT_TY_Cast_Inner( indt, buff, len );
 
 	.Failed;
 	if (freebuff) VM_FreeMemory(freebuff);
@@ -292,30 +282,53 @@ Global IT_cast_nesting;
 	return indt;
 ];
 
+[ INDEXED_TEXT_TY_Cast_Inner indt buff len	ITA i z;
+	ITA = UpdateBlkStruct( 0, indt );
+	
+	for ( i=0 : i <= len : i++ )
+	{
+		if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
+		#ifdef TARGET_ZCODE;
+			@loadw ITA 3 z; @loadb buff i sp; @storeb z 0 sp; @inc z; @storew ITA 3 z;
+		#ifnot;
+			@aload ITA 3 z; @aload buff i sp; @astores z 0 sp; @add z 2 z; @astore ITA 3 z;
+		#endif;
+	}
+	
+	FreeBlkStruct( ITA );
+];
+
 -) instead of "Casting" in "IndexedText.i6t".
 
-[ Comparison - uses A B ]
+[ Comparison ]
 Include (-
 
-[ INDEXED_TEXT_TY_Compare indtleft indtright pos ch1 ch2 dsizeleft dsizeright;
+[ INDEXED_TEXT_TY_Compare indtleft indtright ITA ITB ret;
+	ITA = UpdateBlkStruct( 0, indtleft );
+	ITB = UpdateBlkStruct( 0, indtright );
+	ret = INDEXED_TEXT_TY_Compare_Inner( indtleft, indtright, ITA, ITB );
+	FreeBlkStruct( ITB );
+	FreeBlkStruct( ITA );
+	return ret;
+];
+
+[ INDEXED_TEXT_TY_Compare_Inner indtleft indtright ITA ITB
+		pos ch1 ch2 dsizeleft dsizeright z;
 	dsizeleft = BlkValueExtent(indtleft);
 	dsizeright = BlkValueExtent(indtright);
-	
-	UpdateBlkStruct( ITA, indtleft );
-	UpdateBlkStruct( ITB, indtright );
 	
 	for (pos=0:(pos<dsizeleft) && (pos<dsizeright):pos++)
 	{
 		!ch1 = BlkValueRead(indtleft, pos);
 		!ch2 = BlkValueRead(indtright, pos);
-		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
-		if ( ITB-->1 >= ITB-->2 ) UpdateBlkStruct( ITB );
+		if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
+		if ( ITB-->3 >= ITB-->4 ) UpdateBlkStruct( ITB );
 		#ifdef TARGET_ZCODE;
-			ch1 = (ITA-->1)++->0;
-			ch2 = (ITB-->1)++->0;
+			@loadw ITA 3 z; @loadb z 0 ch1; @inc z; @storew ITA 3 z;
+			@loadw ITB 3 z; @loadb z 0 ch2; @inc z; @storew ITB 3 z;
 		#ifnot;
-			@aload ITA 1 sp; @aloads sp 0 ch1; ITA-->1 = ITA-->1 + 2;
-			@aload ITB 1 sp; @aloads sp 0 ch2; ITB-->1 = ITB-->1 + 2;
+			@aload ITA 3 z; @aloads z 0 ch1; @add z 2 z; @astore ITA 3 z;
+			@aload ITB 3 z; @aloads z 0 ch2; @add z 2 z; @astore ITB 3 z;
 		#endif;
 		
 		if (ch1 ~= ch2) return ch1-ch2;
@@ -332,50 +345,50 @@ Include (-
 
 -) instead of "Comparison" in "IndexedText.i6t".
 
-[ Hashing - uses A ]
+[ Hashing ]
 
 Include (-
 
-[ INDEXED_TEXT_TY_Hash indt  rv len i temp;
-	UpdateBlkStruct( ITA, indt );
+[ INDEXED_TEXT_TY_Hash indt  rv len i	ITA z temp;
+	ITA = UpdateBlkStruct( 0, indt );
 	rv = 0;
 	len = BlkValueExtent(indt);
 	for (i=0: i<len: i++)
 	{
 		!rv = rv * 33 + BlkValueRead(indt, i);
-		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+		if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
 		#ifdef TARGET_ZCODE;
-			temp = (ITA-->1)++->0;
+			@loadw ITA 3 z; @loadb z 0 temp; @inc z; @storew ITA 3 z;
 		#ifnot;
-			@aload ITA 1 sp; @aloads sp 0 temp; ITA-->1 = ITA-->1 + 2;
+			@aload ITA 3 z; @aloads z 0 temp; @add z 2 z; @astore ITA 3 z;
 		#endif;
 		rv = rv * 33 + temp;
 	}
+	FreeBlkStruct( ITA );
 	return rv;
 ];
 
 -) instead of "Hashing" in "IndexedText.i6t".
 
-[ Printing - uses A ]
+[ Printing ]
 
 Include (-
 
-[ INDEXED_TEXT_TY_Say indt  ch i dsize;
+[ INDEXED_TEXT_TY_Say indt  ch i dsize	ITA z;
 	if ((indt==0) || (BlkType(indt) ~= INDEXED_TEXT_TY)) return;
 	
-	UpdateBlkStruct( ITA, indt );
+	ITA = UpdateBlkStruct( 0, indt );
 	
 	dsize = BlkValueExtent(indt);
 	for (i=0:i<dsize:i++)
 	{
 		!ch = BlkValueRead(indt, i);
-		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+		if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
 		#ifdef TARGET_ZCODE;
-			ch = (ITA-->1)++->0;
+			@loadw ITA 3 z; @loadb z 0 ch; @inc z; @storew ITA 3 z;
 		#ifnot;
-			@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+			@aload ITA 3 z; @aloads z 0 ch; @add z 2 z; @astore ITA 3 z;
 		#endif;
-		!print BlkValueRead(indt, i), " ", ch, "^";
 		
 		if (ch == 0) break;
 		#ifdef TARGET_ZCODE;
@@ -384,17 +397,17 @@ Include (-
 		glk_put_char_uni(ch);
 		#endif;
 	}
+	FreeBlkStruct( ITA );
 ];
 
 -) instead of "Printing" in "IndexedText.i6t".
 
-[ Serialisation - uses A ]
+[ Serialisation ]
 
 Include (-
 
-[ INDEXED_TEXT_TY_WriteFile txb len pos ch;
-	
-	UpdateBlkStruct( ITA, txb );
+[ INDEXED_TEXT_TY_WriteFile txb len pos ch	ITA z;
+	ITA = UpdateBlkStruct( 0, txb );
 	
 	len = BlkValueExtent(txb);
 	print "S";
@@ -403,11 +416,11 @@ Include (-
 		if (pos == len) ch = 0;
 		else
 		{
-			if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+			if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
 			#ifdef TARGET_ZCODE;
-				ch = (ITA-->1)++->0;
+				@loadw ITA 3 z; @loadb z 0 ch; @inc z; @storew ITA 3 z;
 			#ifnot;
-				@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+				@aload ITA 3 z; @aloads z 0 ch; @add z 2 z; @astore ITA 3 z;
 			#endif;
 		}
 		if (ch == 0) {
@@ -416,6 +429,7 @@ Include (-
 			print ch, ",";
 		}
 	}
+	FreeBlkStruct( ITA );
 ];
 
 -) instead of "Serialisation" in "IndexedText.i6t".
@@ -426,11 +440,16 @@ Include (-
 
 Include (-
 
-[ INDEXED_TEXT_TY_ROGPR indt
-	pos len wa wl wpos bdm ch own;
+[ INDEXED_TEXT_TY_ROGPR indt ITA ret;
 	if (indt == 0) return GPR_FAIL;
-	
-	UpdateBlkStruct( ITA, indt );
+	ITA = UpdateBlkStruct( 0, indt );
+	ret = INDEXED_TEXT_TY_ROGPR_Inner( indt, ITA );
+	FreeBlkStruct( ITA );
+	return ret;
+];
+
+[ INDEXED_TEXT_TY_ROGPR_Inner indt ITA z
+	pos len wa wl wpos bdm ch own;
 	
 	bdm = true; own = wn;
 	len = BlkValueExtent(indt);
@@ -439,11 +458,11 @@ Include (-
 		if (pos == len) ch = 0;
 		else
 		{
-			if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+			if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
 			#ifdef TARGET_ZCODE;
-				ch = (ITA-->1)++->0;
+				@loadw ITA 3 z; @loadb z 0 ch; @inc z; @storew ITA 3 z;
 			#ifnot;
-				@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+				@aload ITA 3 z; @aloads z 0 ch; @add z 2 z; @astore ITA 3 z;
 			#endif;
 		}
 		if (ch == 32 or 9 or 10 or 0) {
@@ -471,7 +490,7 @@ Include (-
 
 [ Skipping Blobs etc - for now ]
 
-[ Replace Text - uses C D E ]
+[ Replace Text ]
 
 Include (-
 
@@ -486,33 +505,12 @@ Include (-
 	cindt = BlkValueCreate(INDEXED_TEXT_TY);
 	csize = BlkValueExtent(cindt);
 	mpos = 0;
-	
-	UpdateBlkStruct( ITD, indt );
-	UpdateBlkStruct( ITE, findt );
-	UpdateBlkStruct( ITC, cindt );
-	
+
 	whitespace = true; punctuation = false;
-	for (i=0:i<=ilen:i++)
-	{
-		!ch = BlkValueRead(indt, i);
-		if ( ITD-->1 >= ITD-->2 ) UpdateBlkStruct( ITD );
-		#ifdef TARGET_ZCODE;
-			ch = (ITD-->1)++->0;
-		#ifnot;
-			@aload ITD 1 sp; @aloads sp 0 ch; ITD-->1 = ITD-->1 + 2;
-		#endif;
-		
+	for (i=0:i<=ilen:i++) {
+		ch = BlkValueRead(indt, i);
 		.MoreMatching;
-		
-		!chm = BlkValueRead(findt, mpos++);
-		if ( ITE-->1 >= ITE-->2 ) UpdateBlkStruct( ITE );
-		#ifdef TARGET_ZCODE;
-			chm = (ITE-->1)++->0;
-		#ifnot;
-			@aload ITE 1 sp; @aloads sp 0 chm; ITE-->1 = ITE-->1 + 2;
-		#endif;
-		mpos++;
-		
+		chm = BlkValueRead(findt, mpos++);
 		if (mpos == 1) {
 			switch (blobtype) {
 				WORD_BLOB:
@@ -524,68 +522,38 @@ Include (-
 		punctuation = false;
 		if (ch == '.' or ',' or '!' or '?'
 			or '-' or '/' or '"' or ':' or ';'
-			or '(' or ')' or '[' or ']' or '{' or '}') {
+			or '(' or ')' or '[' or ']' or '{' or '}')
+		{
 			if (blobtype == WORD_BLOB) chm = -1;
 			punctuation = true;
 		}
 		if (ch == chm) {
 			if (mpos == flen) {
 				if (i == ilen) chm = 0;
-				else
-				{
-					!chm = BlkValueRead(indt, i+1);
-					#ifdef TARGET_ZCODE;
-						chm = (ITD-->1)->0;
-					#ifnot;
-						@aload ITD 1 sp; @aloads sp 0 chm;
-					#endif;
-				}
+				else chm = BlkValueRead(indt, i+1);
 				if ((blobtype == CHR_BLOB) ||
 					(chm == 0 or 10 or 13 or 32 or 9) ||
 					(chm == '.' or ',' or '!' or '?'
 						or '-' or '/' or '"' or ':' or ';'
-						or '(' or ')' or '[' or ']' or '{' or '}')) {
-					
+						or '(' or ')' or '[' or ']' or '{' or '}'))
+				{
 					mpos = 0;
-					SetBlkStructAddr( ITE, 0 );
-					
 					cl = cl - (flen-1);
-					SetBlkStructAddr( ITC, cl );
-					
-					!BlkValueWrite(cindt, cl, 0);
-					#ifdef TARGET_ZCODE;
-						(ITC-->1)->0 = 0;
-					#ifnot;
-						@aload ITC 1 sp; @astores sp 0 0;
-					#endif;
-					
+					BlkValueWrite(cindt, cl, 0);
 					IT_Concatenate(cindt, rindt, CHR_BLOB);
 					csize = BlkValueExtent(cindt);
 					cl = IT_CharacterLength(cindt);
-					
-					SetBlkStructAddr( ITC, cl );
-					
 					continue;
 				}
 			}
 		} else {
 			mpos = 0;
-			SetBlkStructAddr( ITE, 0 );
 		}
 		if (cl+1 >= csize) {
 			if (BlkValueSetExtent(cindt, 2*cl, 9) == false) break;
 			csize = BlkValueExtent(cindt);
-			SetBlkStructAddr( ITC, cl );
 		}
-		
-		!BlkValueWrite(cindt, cl++, ch);
-		if ( ITC-->1 >= ITC-->2 ) UpdateBlkStruct( ITC );
-		#ifdef TARGET_ZCODE;
-			(ITC-->1)++->0 = ch;
-		#ifnot;
-			@aload ITC 1 sp; @astores sp 0 ch; ITC-->1 = ITC-->1 + 2;
-		#endif;
-		cl++;
+		BlkValueWrite(cindt, cl++, ch);
 	}
 	BlkValueCopy(indt, cindt);	
 	BlkFree(cindt);
@@ -593,28 +561,34 @@ Include (-
 
 -) instead of "Replace Text" in "IndexedText.i6t".
 
-[ Character Length - uses A ]
+[ Character Length ]
 
 Include (-
 
-[ IT_CharacterLength indt ch i dsize;
+[ IT_CharacterLength indt ch i dsize	ITA z;
 	if ((indt==0) || (BlkType(indt) ~= INDEXED_TEXT_TY)) return 0;
 	
-	UpdateBlkStruct( ITA, indt );
+	ITA = UpdateBlkStruct( 0, indt );
 	
 	dsize = BlkValueExtent(indt);
 	for (i=0:i<dsize:i++) {
 	
 		!ch = BlkValueRead(indt, i);
-		if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
+		if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
 		#ifdef TARGET_ZCODE;
-			ch = (ITA-->1)++->0;
+			@loadw ITA 3 z; @loadb z 0 ch; @inc z; @storew ITA 3 z;
 		#ifnot;
-			@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
+			@aload ITA 3 z; @aloads z 0 ch; @add z 2 z; @astore ITA 3 z;
 		#endif;
 		
-		if (ch == 0) return i;
+		if (ch == 0)
+		{
+			!return i;
+			dsize = i;
+			break;
+		}
 	}
+	FreeBlkStruct( ITA );
 	return dsize;
 ];
 
@@ -626,12 +600,12 @@ Include (-
 
 -) instead of "Character Length" in "IndexedText.i6t".
 
-[ Concatenation - uses A B ]
+[ Concatenation ]
 
 Include (-
 
 [ IT_Concatenate indt_to indt_from blobtype indt_ref
-	pos len ch i tosize x y case;
+	pos len ch i tosize x y case	ITA ITB z;
 	if ((indt_to==0) || (BlkType(indt_to) ~= INDEXED_TEXT_TY)) rfalse;
 	if ((indt_from==0) || (BlkType(indt_from) ~= INDEXED_TEXT_TY)) return indt_to;
 	
@@ -641,22 +615,26 @@ Include (-
 			len = IT_CharacterLength(indt_from);
 			if (BlkValueSetExtent(indt_to, pos+len+1, 10) == false) return indt_to;
 			
-			UpdateBlkStruct( ITA, indt_from );
-			UpdateBlkStruct( ITB, indt_to, pos * HPIT_WSIZE );
+			ITA = UpdateBlkStruct( 0, indt_from );
+			ITB = UpdateBlkStruct( 0, indt_to, pos * HPIT_SIZE );
 
 			for (i=0:i<len:i++)
 			{
 				!ch = BlkValueRead(indt_from, i);
 				!BlkValueWrite(indt_to, i+pos, ch);
-				if ( ITA-->1 >= ITA-->2 ) UpdateBlkStruct( ITA );
-				if ( ITB-->1 >= ITB-->2 ) UpdateBlkStruct( ITB );
+				if ( ITA-->3 >= ITA-->4 ) UpdateBlkStruct( ITA );
+				if ( ITB-->3 >= ITB-->4 ) UpdateBlkStruct( ITB );
 				#ifdef TARGET_ZCODE;
-					(ITB-->1)++->0 = (ITA-->1)++->0;
+					@loadw ITA 3 z; @loadb z 0 sp; @inc z; @storew ITA 3 z;
+					@loadw ITB 3 z; @storeb z 0 sp; @inc z; @storew ITB 3 z;
 				#ifnot;
-					@aload ITA 1 sp; @aloads sp 0 ch; ITA-->1 = ITA-->1 + 2;
-					@aload ITB 1 sp; @astores sp 0 ch; ITB-->1 = ITB-->1 + 2;
+					@aload ITA 3 z; @aloads z 0 sp; @add z 2 z; @astore ITA 3 z;
+					@aload ITB 3 z; @astores z 0 sp; @add z 2 z; @astore ITB 3 z;
 				#endif;
 			}
+			FreeBlkStruct( ITB );
+			FreeBlkStruct( ITA );
+			
 			BlkValueWrite(indt_to, len+pos, 0);
 			return indt_to;
 		REGEXP_BLOB:
