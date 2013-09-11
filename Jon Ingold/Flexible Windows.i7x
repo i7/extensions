@@ -1,4 +1,4 @@
-Version 13/130803 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130911 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -146,7 +146,8 @@ The verb to be descended from implies the reversed enclosure relation.
 Definition: a g-window is paternal rather than childless if it spawns something g-present.
 
 To decide which g-window is the direct-parent of (g - a g-window):
-	decide on the holder of g;
+	if the holder of g is a g-window:
+		decide on the holder of g;
 
 
 Section - Test spawning relations (not for release)
@@ -1387,4 +1388,3 @@ What follows is some I6 code for handling the glulx imagery. Note that you may n
 	-).
 
 	Test me with "examine letter/z/attack letter".
-
