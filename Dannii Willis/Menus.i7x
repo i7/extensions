@@ -1,4 +1,4 @@
-Version 1/130823 of Menus by Dannii Willis begins here.
+Version 1/130922 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -237,15 +237,18 @@ Displaying a menu rule (this is the process a menu command rule):
 		let key be the chosen letter;
 		let command be the chosen menu option for key;
 		if command is -1:
-			choose row menu depth in Table of Menu history;
-			blank out the whole row;
-			decrement menu depth;
+			leave the current menu;
 			stop;
 		if command is 0:
 			next;
 		[ We have a menu choice! ]
 		if processing menu option command is valid:
 			stop;
+
+To leave the current menu:
+	choose row menu depth in Table of Menu history;
+	blank out the whole row;
+	decrement menu depth;
 
 
 
