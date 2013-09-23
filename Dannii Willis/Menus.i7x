@@ -1,10 +1,14 @@
-Version 1/130922 of Menus by Dannii Willis begins here.
+Version 1/130923 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
 Use authorial modesty.
 
 Include Basic Screen Effects by Emily Short.
+
+Section (for Glulx only)
+
+Include Flexible Windows by Jon Ingold.
 
 
 
@@ -97,11 +101,11 @@ To wait for any non navigating key:
 			next;
 		stop;
 
-Section - Clearing the main menu window unindexed
+Chapter - Clearing the menu window (for Z-machine only)
 
-[ TODO: In Glulx hide the main window rather than clearing ]
+Section - unindexed
 
-To clear the main menu window:
+To clear the menu window:
 	clear the screen;
 
 
@@ -136,17 +140,17 @@ Rule for displaying (this is the display a menu rule):
 Chapter - Clearing the screen
 
 Before displaying (this is the clear the window before displaying rule):
-	clear the main menu window;
+	clear the menu window;
 
 After displaying (this is the clear the window after displaying rule):
-	clear the main menu window;
+	clear the menu window;
 
 
 
 Chapter - Displaying one single menu
 
 Displaying a menu rule (this is the main menu display rule):
-	clear the main menu window;
+	clear the menu window;
 	let count be 1;
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
@@ -220,9 +224,15 @@ To show submenu (m - a table-name) with title (t - a text):
 	now the title entry is t;
 	now the submenu entry is m;
 
+[ Authors may use the phrase to show a single page, so we need to take care of the before/after displaying rules manually ]
 To show menu page (page - a text) with title (t - a text):
-	clear the main menu window;
-	say "[line break][page][paragraph break][italic type]Press a key to go back.[roman type]";
+	let manually running be a number;
+	if the displaying activity is not going on:
+		now manually running is 1;
+	if manually running is 1:
+		begin the displaying activity;
+	clear the menu window;
+	say "[line break][page][paragraph break][italic type]Press a key to go back.[roman type][run paragraph on]";
 	now the menu header is Table of Shallow Menu Status;
 	let temp menu title be the current menu title;
 	now the current menu title is t;
@@ -230,7 +240,9 @@ To show menu page (page - a text) with title (t - a text):
 	now the current menu title is the temp menu title;
 	now the menu header is Table of Deep Menu Status;
 	wait for any non navigating key;
-	clear the main menu window;
+	clear the menu window;
+	if manually running is 1:
+		end the displaying activity;
 
 Displaying a menu rule (this is the process a menu command rule):
 	while 1 is 1:
@@ -249,6 +261,37 @@ To leave the current menu:
 	choose row menu depth in Table of Menu history;
 	blank out the whole row;
 	decrement menu depth;
+
+
+
+Book - Glulx interface tricks (for Glulx only)
+
+Part - Glulx Menu options
+
+disable the popover menu window is a truth state variable. Disable the popover menu window is false.
+
+
+
+Chapter - Popover menu window unindexed
+
+The menu window is a g-window variable. The menu window is the main-window.
+
+The popover menu window is a text-buffer g-window spawned by the main-window.
+The position of the popover menu window is g-placeabove.
+The scale method of the popover menu window is g-proportional.
+The measurement of the popover menu window is 100.
+
+First before displaying rule (this is the switch to the popover menu window rule):
+	if disable the popover menu window is false:
+		now the menu window is the popover menu window;
+		open up the popover menu window;
+		shift focus to the popover menu window;
+
+Last after displaying rule (this is the switch back to the main-window rule):
+	if disable the popover menu window is false:
+		now the menu window is the main-window;
+		shut down the popover menu window;
+		shift focus to the main-window;
 
 
 
