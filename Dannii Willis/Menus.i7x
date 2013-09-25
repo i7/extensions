@@ -1,4 +1,4 @@
-Version 1/130923 of Menus by Dannii Willis begins here.
+Version 1/130925 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -181,7 +181,7 @@ Displaying a menu rule (this is the force a status line refresh rule):
 	redraw status line;
 	now the current menu title is the temp menu title;
 
-Rule for constructing the status line while displaying (this is the constructing status line while displaying rule):  
+Rule for constructing the status line while displaying (this is the constructing status line while displaying rule):
 	fill status bar with the Menu header;
 	rule succeeds;
 
@@ -264,7 +264,7 @@ To leave the current menu:
 
 
 
-Book - Glulx interface tricks (for Glulx only)
+Book - Glulx interface effects (for Glulx only)
 
 Part - Glulx Menu options
 
@@ -285,6 +285,10 @@ First before displaying rule (this is the switch to the popover menu window rule
 	if disable the popover menu window is false:
 		now the menu window is the popover menu window;
 		open up the popover menu window;
+		shift focus to the popover menu window;
+
+First displaying a menu rule (this is the focus the popover menu rule):
+	if disable the popover menu window is false:
 		shift focus to the popover menu window;
 
 Last after displaying rule (this is the switch back to the main-window rule):

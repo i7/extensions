@@ -1,4 +1,4 @@
-Version 13/130911 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130925 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -505,7 +505,6 @@ To text-clear the/-- (g - a g-window):
 To graphics-clear the/-- (g - a g-window):
 (-    if ({g} has g_present) BlankWindowToColor({g}); -).
 
-
 Include (-
 
 [ BlankWindowToColor g result graph_width graph_height col;
@@ -517,8 +516,141 @@ Include (-
     glk_window_fill_rect(g.ref_number, col, 0, 0, graph_width, graph_height);
 ];
 
+-).
+
+
+
+Section - What window is actually focused? unindexed
+
+To decide which g-window is the actually focused g-window:
+	let target be the current stream;
+	repeat with w running through g-windows:
+		if target is the stream of w:
+			decide on w;
+
+To say the misbehaving g-window:
+	let target be the actually focused g-window;
+	say "[if target is not the current g-window][target][otherwise]";
+
+To decide which number is the current stream:
+ (- (CurrentStream()) -).
+ 
+ To decide which number is the stream of (win - g-window):
+ (- (StreamOfWindow( {win}.ref_number )) -).
+
+Include (-
+
+[ CurrentStream;
+	return glk_stream_get_current();
+];
+
+[ StreamOfWindow win;
+	return glk_window_get_stream( win );
+];
 
 -).
+
+
+
+Section - Ensure we've still got the right window
+
+Last after constructing the status line rule (this is the refocus the current g-window rule):
+	set focus to the current g-window;
+
+[ If we don't pass a window to VM_KeyChar(), use the current g-window ]
+
+[Include (- Replace VM_KeyChar; -) before "Keyboard Input" in "Glulx.i6t".
+
+Include (-
+
+[ VM_KeyChar win nostat done res ix jx ch;
+	jx = ch; ! squash compiler warnings
+	if ( win == 0 )
+	{
+		win = (+ the current g-window +).ref_number;
+	}
+	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+		done = glk_get_line_stream(gg_commandstr, gg_arguments, 31);
+		if (done == 0) {
+			glk_stream_close(gg_commandstr, 0);
+			gg_commandstr = 0;
+			gg_command_reading = false;
+			! fall through to normal user input.
+		} else {
+			! Trim the trailing newline
+			if (gg_arguments->(done-1) == 10) done = done-1;
+			res = gg_arguments->0;
+			if (res == '\') {
+				res = 0;
+				for (ix=1 : ix<done : ix++) {
+					ch = gg_arguments->ix;
+					if (ch >= '0' && ch <= '9') {
+						@shiftl res 4 res;
+						res = res + (ch-'0');
+					} else if (ch >= 'a' && ch <= 'f') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'a');
+					} else if (ch >= 'A' && ch <= 'F') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'A');
+					}
+				}
+			}
+	   		jump KCPContinue;
+		}
+	}
+	done = false;
+	glk_request_char_event(win);
+	while (~~done) {
+		glk_select(gg_event);
+		switch (gg_event-->0) {
+		  5: ! evtype_Arrange
+			if (nostat) {
+				glk_cancel_char_event(win);
+				res = $80000000;
+				done = true;
+				break;
+			}
+			DrawStatusLine();
+		  2: ! evtype_CharInput
+			if (gg_event-->1 == win) {
+				res = gg_event-->2;
+				done = true;
+				}
+		}
+		ix = HandleGlkEvent(gg_event, 1, gg_arguments);
+		if (ix == 2) {
+			res = gg_arguments-->0;
+			done = true;
+		} else if (ix == -1)  done = false;
+	}
+	if (gg_commandstr ~= 0 && gg_command_reading == false) {
+		if (res < 32 || res >= 256 || (res == '\' or ' ')) {
+			glk_put_char_stream(gg_commandstr, '\');
+			done = 0;
+			jx = res;
+			for (ix=0 : ix<8 : ix++) {
+				@ushiftr jx 28 ch;
+				@shiftl jx 4 jx;
+				ch = ch & $0F;
+				if (ch ~= 0 || ix == 7) done = 1;
+				if (done) {
+					if (ch >= 0 && ch <= 9) ch = ch + '0';
+					else                    ch = (ch - 10) + 'A';
+					glk_put_char_stream(gg_commandstr, ch);
+				}
+			}
+		} else {
+			glk_put_char_stream(gg_commandstr, res);
+		}
+		glk_put_char_stream(gg_commandstr, 10); ! newline
+	}
+  .KCPContinue;
+	return res;
+];
+
+-) after "Keyboard Input" in "Glulx.i6t".]
+
 
 
 Section - Returning to the main screen
@@ -1027,7 +1159,7 @@ The only point to note is that the "open up" command will, if necessary, also op
 
 We set the cursor using
 		
-	set the cursor to the main-window;
+	shift focus to the main-window;
 
 When writing and drawing to windows we should be careful they exist, otherwise the game will crash strangely. You can check the existence of a window at any time by testing for the g-present property.
 
@@ -1388,3 +1520,4 @@ What follows is some I6 code for handling the glulx imagery. Note that you may n
 	-).
 
 	Test me with "examine letter/z/attack letter".
+
