@@ -1,11 +1,6 @@
-# We first ignore all .i7x files so that we can simply copy our I7 extensions
+# We ignore all .i7x files so that we can simply copy our I7 extensions
 # directory into the repository.
+# Use git add -f filename to add extensions to git
 *.i7x
-
-# But extensions we want to include are listed here, prefixed with !
-!Dannii Willis/*.i7x
-!David Corbett/*.i7x
-!Emily Short/Menus.i7x
-!Juhana Leinonen/*.i7x
 
 Reserved

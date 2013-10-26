@@ -1,4 +1,4 @@
-Version 13/130514 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 13/130925 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -12,7 +12,7 @@ Version 13/130514 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 7/31/10	Added documentation for manual setting of rock values.
 7/31/10	Removed out-of-date section on hyperlinking from the documentation.
 21/6/11 Added a "does window exist" check before setting background colour.
-14 May 2013: Performance improvements (Changed spawning to be an alias of regular containment)
+3 Aug 2013: Performance improvements (Changed spawning to be an alias of regular containment)
 ]
 
 Include Glulx Entry Points by Emily Short.
@@ -33,7 +33,7 @@ Chapter 1 - Initialisations, windows and values
 
 Section - Definitions of properties and values
 
-A g-window is a kind of container.
+A g-window is a kind of container. [ So be careful iterating through all containers! ]
 
 Include (-
 
@@ -133,24 +133,21 @@ To decide if rocks are currently unassigned:
 
 Section - Spawning relations
 
-[Spawning relates various g-windows to various g-windows.]
+[ Spawning used to be a custom relation between g-windows, but Inform doesn't produce optimised code, meaning that rearranging windows was very slow. Piggy-backing onto the containment relation allows us to get the benefit of Inform's much better optimised code for that relation, resulting in a 30 times speed improvement! And by defining a new verb, old code doesn't need to be updated. ]
 
 The verb to spawn (he spawns, they spawn, he spawned, it is spawned, he is spawning) implies the containment relation.
 
 The verb to be the spawner of implies the containment relation.
 
-[Ancestry relates a g-window (called X) to a g-window (called Y) when the number of steps via the containment relation from X to Y is at least 0.] The verb to be ancestral to implies the enclosure relation.
-
-[Descendency relates a g-window (called X) to a g-window (called Y) when the number of steps via the containment relation from Y to X is at least zero.] The verb to be descended from implies the reversed enclosure relation.
+[ There is a slight change here: previously these verbs would say that a window was ancestral to/descended from itself. I can't see when that would ever be desired however, so the change shouldn't impact anyone. ]
+The verb to be ancestral to implies the enclosure relation.
+The verb to be descended from implies the reversed enclosure relation.
 
 Definition: a g-window is paternal rather than childless if it spawns something g-present.
 
 To decide which g-window is the direct-parent of (g - a g-window):
-	decide on the holder of g;
-	[repeat with item running through g-windows
-	begin;
-		if item spawns g, decide on item;
-	end repeat.]
+	if the holder of g is a g-window:
+		decide on the holder of g;
 
 
 Section - Test spawning relations (not for release)
@@ -192,6 +189,7 @@ Carry out throwing open:
 Chapter 2 - Opening, closing and calibrating
 
 Section - Opening window chains
+
 [ set opening flags for necessary parents, then call open window safely routine ]
 [ which then calls back to the construct window routine given here ]
 
@@ -202,15 +200,11 @@ To open up (g - a g-window):
 		calibrate windows;
 
 Section - Closing window chains
+
 [ so set deletion flags for children too, then call delete window safely routine ]
 
 To shut down (g - a g-window):
 	carry out the window-shutting activity with g.
-	[if g is g-present and g is not the main-window
-	begin;
-		now every g-window descended from g is g-unrequired;
-		calibrate windows;
-	end if;]
 
 Window-shutting something is an activity.
 
@@ -227,19 +221,15 @@ Definition: a g-window is a next-step if it is spawned by something g-present.
 
 To calibrate windows:
 [ open g-required g-unpresent windows. start with directly spawned windows.
-  close g-unrequired g-present windows. start with childless! ]
-	repeat with h running through g-unrequired g-present childless g-windows:
-		g-destroy h;
-	[let h be a random g-unrequired g-present childless g-window;
-	while h is a g-window:
-		g-destroy h;
-		let h be a random g-unrequired g-present childless g-window;]
-	repeat with h running through next-step g-required g-unpresent g-windows:
-		g-make h;
-	[let g be a random next-step g-required g-unpresent g-window;
-	while g is a g-window:
-		g-make g;
-		let g be a random next-step g-required g-unpresent g-window;]
+  close g-unrequired g-present windows. start with childless!
+  Try the loop multiple times to check we get them all ]
+	while the number of g-unrequired g-present childless g-windows > 0:
+		repeat with h running through g-unrequired g-present childless g-windows:
+			g-destroy h;
+	while the number of next-step g-required g-unpresent g-windows > 0:
+		repeat with h running through next-step g-required g-unpresent g-windows:
+			g-make h;
+
 
 
 Chapter 3 - I6 and Glulx Calls
@@ -515,7 +505,6 @@ To text-clear the/-- (g - a g-window):
 To graphics-clear the/-- (g - a g-window):
 (-    if ({g} has g_present) BlankWindowToColor({g}); -).
 
-
 Include (-
 
 [ BlankWindowToColor g result graph_width graph_height col;
@@ -527,8 +516,141 @@ Include (-
     glk_window_fill_rect(g.ref_number, col, 0, 0, graph_width, graph_height);
 ];
 
+-).
+
+
+
+Section - What window is actually focused? unindexed
+
+To decide which g-window is the actually focused g-window:
+	let target be the current stream;
+	repeat with w running through g-windows:
+		if target is the stream of w:
+			decide on w;
+
+To say the misbehaving g-window:
+	let target be the actually focused g-window;
+	say "[if target is not the current g-window][target][otherwise]";
+
+To decide which number is the current stream:
+ (- (CurrentStream()) -).
+ 
+ To decide which number is the stream of (win - g-window):
+ (- (StreamOfWindow( {win}.ref_number )) -).
+
+Include (-
+
+[ CurrentStream;
+	return glk_stream_get_current();
+];
+
+[ StreamOfWindow win;
+	return glk_window_get_stream( win );
+];
 
 -).
+
+
+
+Section - Ensure we've still got the right window
+
+Last after constructing the status line rule (this is the refocus the current g-window rule):
+	set focus to the current g-window;
+
+[ If we don't pass a window to VM_KeyChar(), use the current g-window ]
+
+[Include (- Replace VM_KeyChar; -) before "Keyboard Input" in "Glulx.i6t".
+
+Include (-
+
+[ VM_KeyChar win nostat done res ix jx ch;
+	jx = ch; ! squash compiler warnings
+	if ( win == 0 )
+	{
+		win = (+ the current g-window +).ref_number;
+	}
+	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+		done = glk_get_line_stream(gg_commandstr, gg_arguments, 31);
+		if (done == 0) {
+			glk_stream_close(gg_commandstr, 0);
+			gg_commandstr = 0;
+			gg_command_reading = false;
+			! fall through to normal user input.
+		} else {
+			! Trim the trailing newline
+			if (gg_arguments->(done-1) == 10) done = done-1;
+			res = gg_arguments->0;
+			if (res == '\') {
+				res = 0;
+				for (ix=1 : ix<done : ix++) {
+					ch = gg_arguments->ix;
+					if (ch >= '0' && ch <= '9') {
+						@shiftl res 4 res;
+						res = res + (ch-'0');
+					} else if (ch >= 'a' && ch <= 'f') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'a');
+					} else if (ch >= 'A' && ch <= 'F') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'A');
+					}
+				}
+			}
+	   		jump KCPContinue;
+		}
+	}
+	done = false;
+	glk_request_char_event(win);
+	while (~~done) {
+		glk_select(gg_event);
+		switch (gg_event-->0) {
+		  5: ! evtype_Arrange
+			if (nostat) {
+				glk_cancel_char_event(win);
+				res = $80000000;
+				done = true;
+				break;
+			}
+			DrawStatusLine();
+		  2: ! evtype_CharInput
+			if (gg_event-->1 == win) {
+				res = gg_event-->2;
+				done = true;
+				}
+		}
+		ix = HandleGlkEvent(gg_event, 1, gg_arguments);
+		if (ix == 2) {
+			res = gg_arguments-->0;
+			done = true;
+		} else if (ix == -1)  done = false;
+	}
+	if (gg_commandstr ~= 0 && gg_command_reading == false) {
+		if (res < 32 || res >= 256 || (res == '\' or ' ')) {
+			glk_put_char_stream(gg_commandstr, '\');
+			done = 0;
+			jx = res;
+			for (ix=0 : ix<8 : ix++) {
+				@ushiftr jx 28 ch;
+				@shiftl jx 4 jx;
+				ch = ch & $0F;
+				if (ch ~= 0 || ix == 7) done = 1;
+				if (done) {
+					if (ch >= 0 && ch <= 9) ch = ch + '0';
+					else                    ch = (ch - 10) + 'A';
+					glk_put_char_stream(gg_commandstr, ch);
+				}
+			}
+		} else {
+			glk_put_char_stream(gg_commandstr, res);
+		}
+		glk_put_char_stream(gg_commandstr, 10); ! newline
+	}
+  .KCPContinue;
+	return res;
+];
+
+-) after "Keyboard Input" in "Glulx.i6t".]
+
 
 
 Section - Returning to the main screen
@@ -940,9 +1062,9 @@ Flexible Windows allows the Glulx author to construct and fill a series of multi
 
 Although Flexible Windows does not supply any rules for using graphical windows beyond the most basic, several can be found in Emily Short's Simple Graphical Window extension. The examples below demonstrate some ideas. However, Flexible Windows is not compatible with Simple Graphical Window. The Glimmr family of extensions provides extensive support for graphics in Flexible Windows.
 
-Flexible Windows requires Glulx Entry Points by Emily Short.
-
 Note that as of version 9, the method of specifying drawing rules for windows has changed. See the Window Rules section below.
+
+The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 	Chapter: Constructing a Layout
 
@@ -1037,7 +1159,7 @@ The only point to note is that the "open up" command will, if necessary, also op
 
 We set the cursor using
 		
-	set the cursor to the main-window;
+	shift focus to the main-window;
 
 When writing and drawing to windows we should be careful they exist, otherwise the game will crash strangely. You can check the existence of a window at any time by testing for the g-present property.
 
@@ -1254,6 +1376,10 @@ Finally, it is possible to write directly to the echo stream of a window, bypass
 
 
 	Chapter: Change log
+
+Version 13 - 3/8/13
+
+	Changes how spawning works under the hood, so that the extension performs up to 30 times as fast. g-windows are now containers, so be careful not to repeat through all containers. Additionally, a window is no longer ancestral to/descended from itself.
 
 Version 9 - 27/5/10
 
