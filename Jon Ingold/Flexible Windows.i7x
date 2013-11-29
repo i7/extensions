@@ -1,4 +1,4 @@
-Version 13/130925 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/131129 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -234,7 +234,7 @@ To calibrate windows:
 
 Chapter 3 - I6 and Glulx Calls
 
-Section - I6 for making a window
+Section - I6 for making a window   unindexed
 
 Constructing something is an activity.
 
@@ -292,7 +292,7 @@ Include (-
 
 -)
 
-Section - I6 for destroying a window
+Section - I6 for destroying a window   unindexed
 
 To g-destroy (g - a g-window):
 	now g is g-unpresent;
@@ -300,7 +300,7 @@ To g-destroy (g - a g-window):
 
 To delete (N - a number):	(- glk_window_close({N}, 0); 	-)
 
-section - Identify glx rubbish
+section - Identify glx rubbish   unindexed
 
 A glulx zeroing-reference rule (this is the default removing references rule):
 	doll-up properties; 	[ rebuild I7 properties, if we need to. ]
@@ -356,15 +356,12 @@ A glulx object-updating rule (this is the updating-after-undo all rule):
 
 This is the refresh windows rule:
 	let old current be the current g-window;
-	repeat with item running through g-present g-windows begin;
+	repeat with item running through g-present g-windows:
 		now current g-window is the item;
 		follow the window-drawing rules for the item;
-	end repeat;
-	if the old current is g-present
-	begin;
+	if the old current is g-present:
 		now current g-window is the old current;
-		set focus to the current g-window;
-	end if.
+		set focus to the current g-window, without setting variables;
 	
 To refresh windows:
 	follow the refresh windows rule.
@@ -478,20 +475,24 @@ Chapter 5 - Writing to different windows
 
 Section - Shifting and knowing where we are
 
-[ Updated code by Erik Temple. ] 
+[ With version 14 we incorporate Erik Temple's Text Window Input-Output Control extension. There are now two APIs, which update the same variables. Using both at the same time is not recommended. ]
 
-The current g-window is a g-window that varies. The current g-window is the main-window.
+The current g-window is a g-window variable. The current g-window is the main-window.
+The current text input window is a g-window variable. The current text input window is the main-window.
+The current text output window is a g-window variable. The current text output window is the main-window.
 
-To set/move/shift the/-- focus to (g - a g-window), clearing the window:
-    if g is g-present 
-    begin;
-        now the current g-window is g;
-        set cursor to ref-number of g;    
-        if clearing the window, clear the current g-window;
-    end if.
+To set/move/shift the/-- focus to (g - a g-window), clearing the window or without setting variables:
+	if g is g-present:
+		if not without setting variables:
+			now the current g-window is g;
+			now the current text output window is g;
+			now the current text input window is g;
+		set cursor to ref-number of g;
+		if clearing the window:
+			clear the current g-window;
 
 To set cursor to the/-- (N - a number):
-(-       glk_set_window({n}); -)
+	(- glk_set_window({n}); -).
 
 To clear the/-- (win - a g-window):
 	if the type of win is g-graphics:
@@ -518,9 +519,34 @@ Include (-
 
 -).
 
+Section - Opening a window as the main input/output window
+
+To open up (win - a g-window) as the/-- main/current/-- text/-- output window:
+	if win is g-unpresent:
+		open up win;
+	now the current text output window is win;
+	echo the stream of win to the transcript;
+	set focus to the win, without setting variables;
+	
+To open up (win - a g-window) as the/-- main/current/-- text/-- input window:
+	if win is g-unpresent:
+		open up win;
+	now the current text input window is win;
+	echo the stream of win to the transcript;
 
 
-Section - What window is actually focused? unindexed
+Section - Addition for the window-shutting activity
+
+Before window-shutting a g-window (called the window):
+	if the window is the current text output window:
+		now the current text output window is the main-window;
+		set focus to the main-window, without setting variables;
+	if the window is the current text input window:
+		now the current text input window is the main-window;
+
+
+
+Section - Which window is actually focused? (not for release) unindexed
 
 To decide which g-window is the actually focused g-window:
 	let target be the current stream;
@@ -552,23 +578,106 @@ Include (-
 
 
 
-Section - Ensure we've still got the right window
+Chapter 5A - Replacing the user's input
 
-Last after constructing the status line rule (this is the refocus the current g-window rule):
-	set focus to the current g-window;
+[Glulx Entry Points' routines for pasting commands need to be modified for our purposes.]
 
-[ If we don't pass a window to VM_KeyChar(), use the current g-window ]
+Section - Cancelling input before printing to the input line
 
-[Include (- Replace VM_KeyChar; -) before "Keyboard Input" in "Glulx.i6t".
+[First, we eliminate the standard rule that cancels input in the main window when a mouse click generates a command. We need to make this happen in the current text input window, so we provide the flexible cancelling input rule.]
+
+The cancelling input in the main window rule is not listed in any rulebook.
+
+An input-cancelling rule (this is the flexible calling input rule):
+	cancel line input in the current text input window;
+	cancel character input in the current text input window.
+		
+To cancel line input in (win - a g-window):
+	(- glk_cancel_line_event({win}.ref_number, GLK_NULL); -)
+	
+To cancel character input in (win - a g-window):
+	(- glk_cancel_char_event({win}.ref_number); -)
+
+Section - Pasting commands to the input window
+
+[ Here we provide a new command-pasting rule that targets our current text input window. We also provide some control over the state of paragraphing across the sometimes troublesome switch between windows. This control comes via the "command-pasting terminator" a global text variable that we can set to whatever we need to make things look good. By default, there is no terminator (the value is ""). If we are clearing the input window after each input, however, we will want to set the command-pasting terminator equal to "[run paragraph on]", or we will get an extra line break in the output window after each pasted command. ]
+
+The print text to the input prompt rule is not listed in any rulebook.
+
+The command-pasting terminator is a text variable.
+
+A command-showing rule (this is the print text to the input window rule):
+	set focus to the current text input window, without setting variables;
+	say "[input-style-for-glulx][Glulx replacement command][roman type][command-pasting terminator]";
+	set focus to current text output window, without setting variables;
+
+
+
+Chapter 5B - Printing prompts in the correct main window
+
+Section - Printing the command prompt
+
+[Here we rewrite the basic command prompt routine as an I7 activity. We can customize this as we see fit, or we can use it as a hook for other behavior.]
+
+Printing the command prompt is an activity.
+
+Rule for printing the command prompt (this is the standard prompt printing rule):
+	set focus to the current text input window, without setting variables;
+	ensure break before prompt;
+	say "[roman type][command prompt][run paragraph on]";
+	set focus to current text output window, without setting variables;
+	clear boxed quotation;
+	clear paragraphing.
+	
+To ensure break before prompt:
+	(- EnsureBreakBeforePrompt(); -)
+	
+To clear boxed quotation:
+	(- ClearBoxedText(); -)
+	
+To clear paragraphing:
+	(- ClearParagraphing(); -)
+
+Section - Printing the final prompt
+
+[The final prompt (i.e., the prompt for the final question, after play has ended) is printed independently of the in-game command prompt. Here we substitute a new rule for the Standard Rules' "print the final prompt rule" to handle this correctly.]
+
+The print the final prompt rule is not listed in any rulebook.
+
+The flexible print the final prompt rule is listed before the read the final answer rule in before handling the final question. 
+
+This is the flexible print the final prompt rule:
+	carry out the printing the command prompt activity.
+
+Section - Yes-No question prompting
+
+[There is one other situation in which the prompt is not controlled by the standard prompt printing activity. This is when the player answers a yes-no question, such as in response to whether she wishes to quit or restart the game, or to the "if the player consents" phrase. To handle these cases, we provide a rulebook and a global variable for holding an alternate prompt that can be used in the input window for yes/no questions only.]
+
+The yes-no prompting rules are a rulebook.
+
+The yes-no prompt is a text variable. The yes-no prompt is "".
+
+[Ths saving, switching, and restoring of the prompt text is a bit awkward, but it allows for a different prompt to be used w/o requiring the surrounding behavior--i.e., the before and after rules for the command prompt activity to be specified twice--i.e., with one activity for the standard prompt, and one for the yes-no prompt.]
+
+Last yes-no prompting rule (this is the default yes-no prompting rule):
+	if the yes-no prompt is not "":
+		say line break;
+	let saved-prompt be the command prompt;
+	now the command prompt is the yes-no prompt;
+	carry out the printing the command prompt activity;
+	now the command prompt is the saved-prompt.
+
+
+
+Chapter 5C - Hacking the templates
+
+Section - Keyboard input
 
 Include (-
 
 [ VM_KeyChar win nostat done res ix jx ch;
 	jx = ch; ! squash compiler warnings
-	if ( win == 0 )
-	{
-		win = (+ the current g-window +).ref_number;
-	}
+	if (win == 0) win = (+ current text input window +).ref_number;
 	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
 		done = glk_get_line_stream(gg_commandstr, gg_arguments, 31);
 		if (done == 0) {
@@ -649,13 +758,330 @@ Include (-
 	return res;
 ];
 
--) after "Keyboard Input" in "Glulx.i6t".]
+[ VM_KeyDelay tenths  key done ix;
+	glk_request_char_event( (+ current text input window +).ref_number );
+	glk_request_timer_events(tenths*100);
+	while (~~done) {
+		glk_select(gg_event);
+		ix = HandleGlkEvent(gg_event, 1, gg_arguments);
+		if (ix == 2) {
+			key = gg_arguments-->0;
+			done = true;
+		}
+		else if (ix >= 0 && gg_event-->0 == 1 or 2) {
+			key = gg_event-->2;
+			done = true;
+		}
+	}
+	glk_cancel_char_event( (+ current text input window +).ref_number );
+	glk_request_timer_events(0);
+	return key;
+];
+
+[ VM_ReadKeyboard  a_buffer a_table done ix;
+	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+		done = glk_get_line_stream(gg_commandstr, a_buffer+WORDSIZE,
+			(INPUT_BUFFER_LEN-WORDSIZE)-1);
+		if (done == 0) {
+			glk_stream_close(gg_commandstr, 0);
+			gg_commandstr = 0;
+			gg_command_reading = false;
+			! L__M(##CommandsRead, 5); would come after prompt
+			! fall through to normal user input.
+		}
+		else {
+			! Trim the trailing newline
+			if ((a_buffer+WORDSIZE)->(done-1) == 10) done = done-1;
+			a_buffer-->0 = done;
+			VM_Style(INPUT_VMSTY);
+			glk_put_buffer(a_buffer+WORDSIZE, done);
+			VM_Style(NORMAL_VMSTY);
+			print "^";
+			jump KPContinue;
+		}
+	}
+	done = false;
+	glk_request_line_event( (+ current text input window +).ref_number, a_buffer+WORDSIZE, INPUT_BUFFER_LEN-WORDSIZE, 0);
+	while (~~done) {
+		glk_select(gg_event);
+		switch (gg_event-->0) {
+		  5: ! evtype_Arrange
+			DrawStatusLine();
+		  3: ! evtype_LineInput
+			if (gg_event-->1 == (+ current text input window +).ref_number) {
+				a_buffer-->0 = gg_event-->2;
+				done = true;
+			}
+		}
+		ix = HandleGlkEvent(gg_event, 0, a_buffer);
+		if (ix == 2) done = true;
+		else if (ix == -1) done = false;
+	}
+	if (gg_commandstr ~= 0 && gg_command_reading == false) {
+		glk_put_buffer_stream(gg_commandstr, a_buffer+WORDSIZE, a_buffer-->0);
+		glk_put_char_stream(gg_commandstr, 10); ! newline
+	}
+  .KPContinue;
+	VM_Tokenise(a_buffer,a_table);
+	! It's time to close any quote window we've got going.
+	if (gg_quotewin) {
+		glk_window_close(gg_quotewin, 0);
+		gg_quotewin = 0;
+	}
+   #ifdef ECHO_COMMANDS;
+	print "** ";
+	for (ix=WORDSIZE: ix<(a_buffer-->0)+WORDSIZE: ix++) print (char) a_buffer->ix;
+	print "^";
+	#endif; ! ECHO_COMMANDS
+];
+
+-) instead of "Keyboard Input" in "Glulx.i6t"
+
+Section - The command prompt routine
+
+Include (-
+
+[ PrintPrompt i;
+	!style roman;
+	!EnsureBreakBeforePrompt();
+	!glk_set_window( (+ current text input window +).ref_number );
+	!PrintText( (+ command prompt +) );
+	!glk_set_window( (+ current text output window +).ref_number );
+	!ClearBoxedText();
+	!ClearParagraphing();
+	CarryOutActivity( (+ printing the command prompt +) );
+	enable_rte = true;
+];
+
+-) instead of "Prompt" in "Printing.i6t"
+
+Chapter - Inline graphics
+
+Include (-
+
+[ VM_Picture resource_ID;
+	if (glk_gestalt(gestalt_Graphics, 0)) {
+		glk_image_draw( (+ current text output window +).ref_number, resource_ID, imagealign_InlineCenter, 0);
+	} else {
+		print "[Picture number ", resource_ID, " here.]^";
+	}
+];
+
+!No change made to sound effect code by Text Window I-O Control; included only as part of the same source code section as the figure display code.
+
+[ VM_SoundEffect resource_ID;
+	if (glk_gestalt(gestalt_Sound, 0)) {
+		glk_schannel_play(gg_foregroundchan, resource_ID);
+	} else {
+		print "[Sound effect number ", resource_ID, " here.]^";
+	}
+];
+
+-) instead of "Audiovisual Resources" in "Glulx.i6t"
+
+Section - Screen routines
+
+Include (-
+
+[ VM_ClearScreen window;
+	if (window == WIN_ALL or WIN_MAIN) {
+		glk_window_clear( (+ current text output window +).ref_number );
+		if (gg_quotewin) {
+			glk_window_close(gg_quotewin, 0);
+			gg_quotewin = 0;
+		}
+	}
+	if (gg_statuswin && window == WIN_ALL or WIN_STATUS) glk_window_clear(gg_statuswin);
+];
+
+[ VM_ScreenWidth  id;
+	id= (+ current text output window +).ref_number;
+	if (gg_statuswin && statuswin_current) id = gg_statuswin;
+	glk_window_get_size(id, gg_arguments, 0);
+	return gg_arguments-->0;
+];
+
+[ VM_ScreenHeight;
+	glk_window_get_size( (+ current text output window +).ref_number, 0, gg_arguments);
+	return gg_arguments-->0;
+];
+
+-) instead of "The Screen" in "Glulx.i6t"
+
+[
+Section - Window color routines
+
+Include (-
+
+[ VM_SetWindowColours f b window doclear  i fwd bwd swin;
+	if (clr_on && f && b) {
+		if (window) swin = 5-window; ! 4 for TextGrid, 3 for TextBuffer
+
+		fwd = MakeColourWord(f);
+		bwd = MakeColourWord(b);
+		for (i=0 : i<style_NUMSTYLES: i++) {
+			if (f == CLR_DEFAULT || b == CLR_DEFAULT) {  ! remove style hints
+				glk_stylehint_clear(swin, i, stylehint_TextColor);
+				glk_stylehint_clear(swin, i, stylehint_BackColor);
+			} else {
+				glk_stylehint_set(swin, i, stylehint_TextColor, fwd);
+				glk_stylehint_set(swin, i, stylehint_BackColor, bwd);
+			}
+		}
+
+		! Now re-open the windows to apply the hints
+		if (gg_statuswin) glk_window_close(gg_statuswin, 0);
+		gg_statuswin = 0;
+
+		if (doclear || ( window ~= 1 && (clr_fg ~= f || clr_bg ~= b) ) ) {
+			glk_window_close( (+ current text output window +).ref_number, 0);
+			gg_mainwin = glk_window_open(0, 0, 0, wintype_TextBuffer, (+ current text output window +).rock_value);
+			if (gg_scriptstr ~= 0)
+				glk_window_set_echo_stream((+ current text output window +).ref_number, gg_scriptstr);
+		}
+
+		gg_statuswin =
+			glk_window_open(gg_mainwin, winmethod_Fixed + winmethod_Above,
+				statuswin_cursize, wintype_TextGrid, GG_STATUSWIN_ROCK);
+		if (statuswin_current && gg_statuswin) VM_MoveCursorInStatusLine(); else VM_MainWindow();
+
+		if (window ~= 2) {
+			clr_fgstatus = f;
+			clr_bgstatus = b;
+		}
+		if (window ~= 1) {
+			clr_fg = f;
+			clr_bg = b;
+		}
+	}
+];
+
+[ VM_RestoreWindowColours; ! used after UNDO: compare I6 patch L61007
+	if (clr_on) { ! check colour has been used
+		VM_SetWindowColours(clr_fg, clr_bg, 2); ! make sure both sets of variables are restored
+		VM_SetWindowColours(clr_fgstatus, clr_bgstatus, 1, true);
+		VM_ClearScreen();
+	}
+];
+
+[ MakeColourWord c;
+	if (c > 9) return c;
+	c = c-2;
+	return $ff0000*(c&1) + $ff00*(c&2 ~= 0) + $ff*(c&4 ~= 0);
+];
+
+-) instead of "Window Colours" in "Glulx.i6t"
+]
+
+Section - Main window routine
+
+Include (-
+
+[ VM_MainWindow;
+	glk_set_window( (+ current text output window +).ref_number ); ! set_window
+	statuswin_current=0;
+];
+
+-) instead of "Main Window" in "Glulx.i6t"
+
+Section - Box quote window routine
+
+Include (-
+
+[ Box__Routine maxwid arr ix lines lastnl parwin;
+	maxwid = 0; ! squash compiler warning
+	lines = arr-->0;
+
+	if (gg_quotewin == 0) {
+		gg_arguments-->0 = lines;
+		ix = InitGlkWindow(GG_QUOTEWIN_ROCK);
+		if (ix == 0)
+			gg_quotewin =
+				glk_window_open(gg_mainwin, winmethod_Fixed + winmethod_Above,
+					lines, wintype_TextBuffer, GG_QUOTEWIN_ROCK);
+	} else {
+		parwin = glk_window_get_parent(gg_quotewin);
+		glk_window_set_arrangement(parwin, $12, lines, 0);
+	}
+
+	lastnl = true;
+	if (gg_quotewin) {
+		glk_window_clear(gg_quotewin);
+		glk_set_window(gg_quotewin);
+		lastnl = false;
+	}
+
+	VM_Style(BLOCKQUOTE_VMSTY);
+	for (ix=0 : ix<lines : ix++) {
+		print (string) arr-->(ix+1);
+		if (ix < lines-1 || lastnl) new_line;
+	}
+	VM_Style(NORMAL_VMSTY);
+
+	if (gg_quotewin) glk_set_window( (+ current text output window +).ref_number );
+];
+
+-) instead of "Quotation Boxes" in "Glulx.i6t"
+
+Section - Transcript routine
+
+Include (-
+
+[ SWITCH_TRANSCRIPT_ON_R;
+	if (actor ~= player) rfalse;
+	if (gg_scriptstr ~= 0) return GL__M(##ScriptOn, 1);
+	if (gg_scriptfref == 0) {
+		gg_scriptfref = glk_fileref_create_by_prompt($102, $05, GG_SCRIPTFREF_ROCK);
+		if (gg_scriptfref == 0) jump S1Failed;
+	}
+	! stream_open_file
+	gg_scriptstr = glk_stream_open_file(gg_scriptfref, $05, GG_SCRIPTSTR_ROCK);
+	if (gg_scriptstr == 0) jump S1Failed;
+	BeginActivity( (+activating the transcript+) );
+	ForActivity( (+activating the transcript+) );
+	!	glk_window_set_echo_stream(gg_mainwin, gg_scriptstr);
+	!	GL__M(##ScriptOn, 2);
+	!	VersionSub();
+	EndActivity( (+activating the transcript+) );
+	return;
+	.S1Failed;
+	GL__M(##ScriptOn, 3);
+];
+
+-) instead of "Switch Transcript On Rule" in "Glulx.i6t"
+
+Section - Yes-no question routine
+
+Include (-
+
+[ YesOrNo i j;
+	for (::) {
+	RunParagraphOn();
+		ProcessRulebook( (+ yes-no prompting rules +) );
+
+	KeyboardPrimitive(buffer, parse);
+		j = parse-->0;
+		
+		if (j) { ! at least one word entered
+			i = parse-->1;
+			if (i == YES1__WD or YES2__WD or YES3__WD) rtrue;
+			if (i == NO1__WD or NO2__WD or NO3__WD) rfalse;
+		}
+		L__M(##Quit, 1); 
+	}
+];
+
+-) instead of "Yes/No Questions" in "Parser.i6t"
 
 
 
-Section - Returning to the main screen
+Chapter 5D - Miscellaneous stuff that should probably be moved somewhere else
 
-To return to main screen/window: set focus to main-window.
+
+Section - Returning to the main window
+
+To return to the/-- main window/screen:
+	set focus to the main-window;
 
 
 Section - Setting the cursor
@@ -671,6 +1097,8 @@ Include (-
 ];
 
 -).
+
+
 
 Section - Background colours
 
@@ -874,6 +1302,19 @@ To decide whether we are writing to/-- the/a/-- transcript:
 	
 To echo the/-- text/-- stream of (win - a g-window) to the/-- transcript:
 	(- if (gg_scriptstr) glk_window_set_echo_stream({win}.ref_number, gg_scriptstr); -)
+
+Section - Transcript control for the current input/output window
+
+[The Inform library directs only input from the main window to the transcript by default. This rule sends output from both of our windows to the transcript. It also recreates the library output. To change the standard library output, you can replace this rule with one of your own.]
+
+Activating the transcript is an activity.
+
+For activating the transcript (this is the transcript activation rule):
+	echo the stream of the current text output window to the transcript;
+	echo the stream of the current text input window to the transcript;
+	say "Start of a transcript of[line break]";
+	consider the announce the story file version rule.
+
 
 
 Chapter 7 - Glk event handling phrases
