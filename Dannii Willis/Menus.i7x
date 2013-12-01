@@ -1,4 +1,4 @@
-Version 1/130925 of Menus by Dannii Willis begins here.
+Version 1/131201 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -8,7 +8,7 @@ Include Basic Screen Effects by Emily Short.
 
 Section (for Glulx only)
 
-Include Flexible Windows by Jon Ingold.
+Include version 14/131201 of Flexible Windows by Jon Ingold.
 
 
 
@@ -284,7 +284,7 @@ The measurement of the popover menu window is 100.
 First before displaying rule (this is the switch to the popover menu window rule):
 	if disable the popover menu window is false:
 		now the menu window is the popover menu window;
-		open up the popover menu window;
+		open up the popover menu window as the main text output window;
 		shift focus to the popover menu window;
 
 First displaying a menu rule (this is the focus the popover menu rule):
@@ -295,7 +295,6 @@ Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
 		now the menu window is the main-window;
 		shut down the popover menu window;
-		shift focus to the main-window;
 
 
 

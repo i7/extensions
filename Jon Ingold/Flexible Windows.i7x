@@ -1,4 +1,4 @@
-Version 14/131129 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/131201 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -361,7 +361,7 @@ This is the refresh windows rule:
 		follow the window-drawing rules for the item;
 	if the old current is g-present:
 		now current g-window is the old current;
-		set focus to the current g-window, without setting variables;
+		purely focus the current g-window;
 	
 To refresh windows:
 	follow the refresh windows rule.
@@ -481,15 +481,15 @@ The current g-window is a g-window variable. The current g-window is the main-wi
 The current text input window is a g-window variable. The current text input window is the main-window.
 The current text output window is a g-window variable. The current text output window is the main-window.
 
-To set/move/shift the/-- focus to (g - a g-window), clearing the window or without setting variables:
+To set/move/shift the/-- focus to (g - a g-window), clearing the window:
 	if g is g-present:
-		if not without setting variables:
-			now the current g-window is g;
-			now the current text output window is g;
-			now the current text input window is g;
+		now the current g-window is g;
 		set cursor to ref-number of g;
 		if clearing the window:
 			clear the current g-window;
+
+To purely focus (g - a g-window):
+	set cursor to ref-number of g;
 
 To set cursor to the/-- (N - a number):
 	(- glk_set_window({n}); -).
@@ -526,7 +526,7 @@ To open up (win - a g-window) as the/-- main/current/-- text/-- output window:
 		open up win;
 	now the current text output window is win;
 	echo the stream of win to the transcript;
-	set focus to the win, without setting variables;
+	set focus to the win;
 	
 To open up (win - a g-window) as the/-- main/current/-- text/-- input window:
 	if win is g-unpresent:
@@ -540,7 +540,7 @@ Section - Addition for the window-shutting activity
 Before window-shutting a g-window (called the window):
 	if the window is the current text output window:
 		now the current text output window is the main-window;
-		set focus to the main-window, without setting variables;
+		set focus to the main-window;
 	if the window is the current text input window:
 		now the current text input window is the main-window;
 
@@ -607,9 +607,9 @@ The print text to the input prompt rule is not listed in any rulebook.
 The command-pasting terminator is a text variable.
 
 A command-showing rule (this is the print text to the input window rule):
-	set focus to the current text input window, without setting variables;
+	purely focus the current text input window;
 	say "[input-style-for-glulx][Glulx replacement command][roman type][command-pasting terminator]";
-	set focus to current text output window, without setting variables;
+	purely focus the current g-window;
 
 
 
@@ -622,10 +622,10 @@ Section - Printing the command prompt
 Printing the command prompt is an activity.
 
 Rule for printing the command prompt (this is the standard prompt printing rule):
-	set focus to the current text input window, without setting variables;
+	purely focus the current text input window;
 	ensure break before prompt;
 	say "[roman type][command prompt][run paragraph on]";
-	set focus to current text output window, without setting variables;
+	purely focus the current g-window;
 	clear boxed quotation;
 	clear paragraphing.
 	
@@ -1049,6 +1049,38 @@ Include (-
 ];
 
 -) instead of "Switch Transcript On Rule" in "Glulx.i6t"
+
+Section - FileIO_Close()
+
+Include (-
+
+[ FileIO_Close extf  struc;
+	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
+		return FileIO_Error(extf, "tried to open a non-file");
+	struc = TableOfExternalFiles-->extf;
+	if (struc-->AUXF_STATUS ~=
+		AUXF_STATUS_IS_OPEN_FOR_READ or
+		AUXF_STATUS_IS_OPEN_FOR_WRITE or
+		AUXF_STATUS_IS_OPEN_FOR_APPEND)
+		return FileIO_Error(extf, "tried to close a file which is not open");
+	if ((struc-->AUXF_BINARY == false) &&
+		(struc-->AUXF_STATUS ==
+		AUXF_STATUS_IS_OPEN_FOR_WRITE or
+		AUXF_STATUS_IS_OPEN_FOR_APPEND)) {
+		!glk_set_window(gg_mainwin);
+		glk_set_window( (+ current text output window +).ref_number );
+	}
+	if (struc-->AUXF_STATUS ==
+		AUXF_STATUS_IS_OPEN_FOR_WRITE or
+		AUXF_STATUS_IS_OPEN_FOR_APPEND) {
+		glk_stream_set_position(struc-->AUXF_STREAM, 0, 0); ! seek start
+		glk_put_char_stream(struc-->AUXF_STREAM, '*'); ! mark as complete
+	}
+	glk_stream_close(struc-->AUXF_STREAM, 0);
+	struc-->AUXF_STATUS = AUXF_STATUS_IS_CLOSED;
+];
+
+-) instead of "Close File" in "FileIO.i6t".
 
 Section - Yes-no question routine
 
