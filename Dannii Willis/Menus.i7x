@@ -1,4 +1,4 @@
-Version 1/131201 of Menus by Dannii Willis begins here.
+Version 1/131207 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -8,7 +8,7 @@ Include Basic Screen Effects by Emily Short.
 
 Section (for Glulx only)
 
-Include version 14/131201 of Flexible Windows by Jon Ingold.
+Include version 14/131207 of Flexible Windows by Jon Ingold.
 
 
 
@@ -86,7 +86,7 @@ To decide what number is the chosen menu option for (x - a number):
 
 
 
-Part - Interface phrases unindexed
+Part - Interface phrases - unindexed
 
 [ Wait for a safe non navigating key. The user might press Down/PgDn or use the mouse scroll wheel when reading a menu page, so we will stop those key codes from returning to the menu. ]
 To wait for any non navigating key:
@@ -100,13 +100,6 @@ To wait for any non navigating key:
 				stop;
 			next;
 		stop;
-
-Chapter - Clearing the menu window (for Z-machine only)
-
-Section - unindexed
-
-To clear the menu window:
-	clear the screen;
 
 
 
@@ -135,22 +128,42 @@ Rule for displaying (this is the display a menu rule):
 	while menu depth > 0:
 		consider the displaying a menu rules;
 
+[ Authors may use this phrase to show a single page, so we need to take care of the before/after displaying rules manually ]
+To show menu page (page - a text) with title (t - a text):
+	let manually running be a number;
+	if the displaying activity is not going on:
+		now manually running is 1;
+	if manually running is 1:
+		begin the displaying activity;
+	clear the screen;
+	say "[line break][page][paragraph break][italic type]Press a key to go back.[roman type][run paragraph on]";
+	now the menu header is Table of Shallow Menu Status;
+	let temp menu title be the current menu title;
+	now the current menu title is t;
+	redraw status line;
+	now the current menu title is the temp menu title;
+	now the menu header is Table of Deep Menu Status;
+	wait for any non navigating key;
+	clear the screen;
+	if manually running is 1:
+		end the displaying activity;
+
 
 
 Chapter - Clearing the screen
 
 Before displaying (this is the clear the window before displaying rule):
-	clear the menu window;
+	clear the screen;
 
 After displaying (this is the clear the window after displaying rule):
-	clear the menu window;
+	clear the screen;
 
 
 
 Chapter - Displaying one single menu
 
 Displaying a menu rule (this is the main menu display rule):
-	clear the menu window;
+	clear the screen;
 	let count be 1;
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
@@ -170,7 +183,7 @@ Displaying a menu rule (this is the main menu display rule):
 
 
 
-Chapter - The menu's status line unindexed
+Chapter - The menu's status line - unindexed
 
 To redraw status line:
 	(- DrawStatusLine(); -).
@@ -187,7 +200,7 @@ Rule for constructing the status line while displaying (this is the constructing
 
 
 
-Chapter - Process a command unindexed
+Chapter - Process a command - unindexed
 
 To decide whether processing menu option (x - a number) is valid:
 	let count be 1;
@@ -224,26 +237,6 @@ To show submenu (m - a table-name) with title (t - a text):
 	now the title entry is t;
 	now the submenu entry is m;
 
-[ Authors may use the phrase to show a single page, so we need to take care of the before/after displaying rules manually ]
-To show menu page (page - a text) with title (t - a text):
-	let manually running be a number;
-	if the displaying activity is not going on:
-		now manually running is 1;
-	if manually running is 1:
-		begin the displaying activity;
-	clear the menu window;
-	say "[line break][page][paragraph break][italic type]Press a key to go back.[roman type][run paragraph on]";
-	now the menu header is Table of Shallow Menu Status;
-	let temp menu title be the current menu title;
-	now the current menu title is t;
-	redraw status line;
-	now the current menu title is the temp menu title;
-	now the menu header is Table of Deep Menu Status;
-	wait for any non navigating key;
-	clear the menu window;
-	if manually running is 1:
-		end the displaying activity;
-
 Displaying a menu rule (this is the process a menu command rule):
 	while 1 is 1:
 		let key be the chosen letter;
@@ -272,9 +265,7 @@ disable the popover menu window is a truth state variable. Disable the popover m
 
 
 
-Chapter - Popover menu window unindexed
-
-The menu window is a g-window variable. The menu window is the main-window.
+Chapter - Popover menu window
 
 The popover menu window is a text-buffer g-window spawned by the main-window.
 The position of the popover menu window is g-placeabove.
@@ -283,18 +274,29 @@ The measurement of the popover menu window is 100.
 
 First before displaying rule (this is the switch to the popover menu window rule):
 	if disable the popover menu window is false:
-		now the menu window is the popover menu window;
 		open up the popover menu window as the main text output window;
-		shift focus to the popover menu window;
-
-First displaying a menu rule (this is the focus the popover menu rule):
-	if disable the popover menu window is false:
-		shift focus to the popover menu window;
 
 Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
-		now the menu window is the main-window;
 		shut down the popover menu window;
+
+
+
+Chapter - Open the status window if required - unindexed
+
+The old status-window presence is a truth state variable.
+
+[ The order is important: this must be before the switch to the popover menu window rule, or else there'll be no room for the status window ]
+The open the status window if required rule is listed before the switch to the popover menu window rule in the before displaying rules.
+
+First before displaying rule (this is the open the status window if required rule):
+	now the old status-window presence is whether or not the status-window is g-present;
+	if the old status-window presence is false:
+		open up the status-window;
+
+Last after displaying rule (this is the shut down the status window if required rule):
+	if the old status-window presence is false:
+		shut down the status-window;
 
 
 

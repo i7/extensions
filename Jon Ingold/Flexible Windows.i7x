@@ -1,4 +1,4 @@
-Version 14/131201 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/131207 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -29,6 +29,8 @@ Constant USE_NO_STATUS_LINE 0;
 #endif;
 -). 
 
+
+
 Chapter 1 - Initialisations, windows and values
 
 Section - Definitions of properties and values
@@ -36,11 +38,8 @@ Section - Definitions of properties and values
 A g-window is a kind of container. [ So be careful iterating through all containers! ]
 
 Include (-
-
 Attribute g_present;
-
 -) after "Definitions.i6t". 
-
 
 A g-window can be g-present or g-unpresent. A g-window can be g-required or g-unrequired.
 
@@ -53,6 +52,7 @@ A g-window-position is a kind of value. The g-window-positions are g-placenull, 
 A g-window-type is a kind of value. The g-window-types are g-proportional, g-using-minimum and g-fixed-size.
 
 A g-window-kind is a kind of value. The g-window-kinds are g-text-buffer, g-text-grid and g-graphics.
+
 
 Section - Assigning properties to g-windows
 
@@ -79,56 +79,6 @@ A text-buffer g-window is a kind of g-window. The type of a text-buffer g-window
 A text-grid g-window is a kind of g-window. The type of a text-grid g-window is g-text-grid.
 
 The window-drawing rules are an object-based rulebook.
-
-
-When play begins (this is the allocate rocks rule):
-	let cnt be 200;
-	repeat with item running through g-windows:
-		if the rock-value of item is 0:
-			set item rock to cnt;
-			increase cnt by 10;
-		now the direct parent of item is the direct-parent of item;
-	set main-window ref.
-
-To set main-window ref:
-(- MainWinRef(); -).
-
-Include
-(-  
-[ MainWinRef;
-     (+main-window+).rock_value = GG_MAINWIN_ROCK; 
-     (+main-window+).ref_number = gg_mainwin;
-     give (+main-window+) g_present;
-];
- -).
-
-To set (g - a g-window) rock to (n - a number):
-(-   {g}.rock_value = {n};
--)
-
-
-Section - Validating rock numbers (not for release)
-
-When play begins (this is the rock validation rule):
-	repeat with item running through g-windows:
-		let L be the list of g-windows;
-		remove item from L;
-		repeat with compared running through L:
-			if the rock-value of item is the rock-value of compared:
-				say "***Warning: There appears to be a conflict in the rock numbers of the g-windows '[item]' and '[compared]'. Assign all rock-values for custom windows manually to remedy this problem. Avoid using 201 or 202, as these are reserved.";
-				stop.
-
-
-Section - The main-window object, to spawn windows from
-
-The main-window is a text-buffer g-window.
-The main-window is g-present. The main-window is g-required.
-The position of the main-window is g-placebelow.
-
-The rock-value of the main-window is 100.
-
-To decide if rocks are currently unassigned: 
-	if rock-value of main-window is 100, yes; no.
 
 
 Section - Spawning relations
@@ -186,6 +136,89 @@ Carry out throwing open:
 	open up the noun;
 
 
+Section - The built in windows unindexed
+
+The main-window is a text-buffer g-window.
+The main-window is g-present.
+The main-window is g-required.
+The rock-value of the main-window is 100.
+
+The status-window is a text-grid g-window.
+The status-window is g-present.
+The status-window is g-required.
+The scale method of the status-window is g-fixed-size.
+The measurement of the status-window is 1.
+The position of the status-window is g-placeabove.
+The main-window spawns the status-window.
+
+After constructing a g-window (called win) (this is the update built in windows rule):
+	if win is the main-window:
+		set gg_mainwin to the ref-number of main-window;
+	if win is the status-window:
+		set gg_statuswin to the ref-number of status-window;
+
+After window-shutting a g-window (called win) (this is the reset built in windows rule):
+	if win is the main-window:
+		set gg_mainwin to 0;
+	if win is the status-window:
+		set gg_statuswin to 0;
+
+To set gg_mainwin to (X - a number):
+	(- gg_mainwin = {X}; -).
+
+To set gg_statuswin to (X - a number):
+	(- gg_statuswin = {X}; -).
+
+Section - Allocating window rocks unindexed
+
+When play begins (this is the allocate rocks rule):
+	let cnt be 200;
+	repeat with item running through g-windows:
+		if the rock-value of item is 0:
+			set item rock to cnt;
+			increase cnt by 10;
+		now the direct parent of item is the direct-parent of item;
+	set main-window ref.
+
+To set main-window ref:
+(- MainWinRef(); -).
+
+Include (-
+
+[ MainWinRef;
+	(+ main-window +).rock_value = GG_MAINWIN_ROCK; 
+	(+ main-window +).ref_number = gg_mainwin;
+	give (+ main-window +) g_present;
+	(+ status-window +).rock_value = GG_STATUSWIN_ROCK; 
+	(+ status-window +).ref_number = gg_statuswin;
+	give (+ status-window +) g_present;
+];
+
+ -).
+
+To set (g - a g-window) rock to (n - a number):
+	(- {g}.rock_value = {n}; -).
+
+To decide if rocks are currently unassigned: 
+	if rock-value of main-window is 100:
+		yes;
+	no;
+
+
+Section - Validating rock numbers (not for release)
+
+When play begins (this is the rock validation rule):
+	repeat with item running through g-windows:
+		let L be the list of g-windows;
+		remove item from L;
+		repeat with compared running through L:
+			if the rock-value of item is the rock-value of compared:
+				say "***Warning: There appears to be a conflict in the rock numbers of the g-windows '[item]' and '[compared]'. Assign all rock-values for custom windows manually to remedy this problem. Avoid using 201 or 202, as these are reserved.";
+				stop.
+
+
+
+
 Chapter 2 - Opening, closing and calibrating
 
 Section - Opening window chains
@@ -240,21 +273,23 @@ Constructing something is an activity.
 
 The pending g-window is a g-window that varies.
 
-To g-make (g - a g-window):
-	now g is g-present;
-	now the pending g-window is g;
-	begin the constructing activity with the pending g-window;
-	let p1 be the pos-val for g of the position of g + method-val of the scale method of g;
-	if the scale method of g is g-using-minimum, let p2 be the minimum size of g; 
-	otherwise let p2 be the measurement of g;
-	let p3 be the kind-val of the type of g;
-	let p0 be the ref-number of the direct parent of g;	
-	now the  ref-number of g is the reference created from p0 with p1 and p2 and p3 and rock value rock-value of g;
+To g-make (win - a g-window):
+	now win is g-present;
+	now the pending g-window is win;
+	begin the constructing activity with win;
+	let p0 be the ref-number of the direct parent of win;	
+	let p1 be the pos-val for win of the position of win + method-val of the scale method of win;
+	let p2 be a number;
+	if the scale method of win is g-using-minimum:
+		now p2 is the minimum size of win;
+	otherwise:
+		now p2 is the measurement of win;
+	let p3 be the kind-val of the type of win;
+	now the ref-number of win is the reference created from p0 with p1 and p2 and p3 and rock value rock-value of win;
 	end the constructing activity with the pending g-window;
 
 To decide which number is the reference created from (p0 - a number) with (p1 - a number) and (p2 - a number) and (p3 - a number) and rock value (rock - a number):
-(- (glk_window_open({p0},{p1}, {p2}, {p3}, {rock}))
--)
+	(- ( glk_window_open( {p0},{p1}, {p2}, {p3}, {rock} ) ) -)
 
 To decide which number is the pos-val for (g - a g-window) of (N - a g-window-position): (-  (GetPos({N}, {g})) -).
 To decide which number is the method-val of (N - a g-window-type): (- (GetMethod({N})) -).
@@ -412,8 +447,9 @@ Before constructing a g-window when the scale method of the pending g-window is 
 	let p2 be the measurement of the pending g-window multiplied by width of the direct parent of the pending g-window;
 	if p1 > p2, now the scale method of the pending g-window is g-using-minimum.
  
-The first after constructing a g-window :
-	if the ref-number of the pending g-window is zero, now the pending g-window is g-unpresent instead.
+The first after constructing a g-window (this is the window could not be created rule):
+	if the ref-number of the pending g-window is zero:
+		now the pending g-window is g-unpresent instead;
 
 The last after constructing a g-window (this is the draw window after construction rule):
 	if the pending g-window is g-present, follow the window-drawing rules for the pending g-window.
@@ -471,14 +507,18 @@ Include (-
 -).
 
 
+
 Chapter 5 - Writing to different windows
 
 Section - Shifting and knowing where we are
 
-[ With version 14 we incorporate Erik Temple's Text Window Input-Output Control extension. There are now two APIs, which update the same variables. Using both at the same time is not recommended. ]
+[ With version 14 we incorporate Erik Temple's Text Window Input-Output Control extension. ]
 
+[ The current g-window refers to where the current focus is - when you print text, where will it go? ]
 The current g-window is a g-window variable. The current g-window is the main-window.
+[ The current text input window can be used to change where line input is requested ]
 The current text input window is a g-window variable. The current text input window is the main-window.
+[ The current text output window can be used to effectively change what Inform considers the main window to be - all Inform's normal behaviour will use it instead ]
 The current text output window is a g-window variable. The current text output window is the main-window.
 
 To set/move/shift the/-- focus to (g - a g-window), clearing the window:
@@ -489,7 +529,7 @@ To set/move/shift the/-- focus to (g - a g-window), clearing the window:
 			clear the current g-window;
 
 To purely focus (g - a g-window):
-	set cursor to ref-number of g;
+	(- if ( {g} has g_present ) { glk_set_window( {g}.ref_number ); } -).
 
 To set cursor to the/-- (N - a number):
 	(- glk_set_window({n}); -).
@@ -885,6 +925,7 @@ Include (-
 
 [ VM_ClearScreen window;
 	if (window == WIN_ALL or WIN_MAIN) {
+		!glk_window_clear(gg_mainwin);
 		glk_window_clear( (+ current text output window +).ref_number );
 		if (gg_quotewin) {
 			glk_window_close(gg_quotewin, 0);
@@ -895,14 +936,16 @@ Include (-
 ];
 
 [ VM_ScreenWidth  id;
-	id= (+ current text output window +).ref_number;
+	!id=gg_mainwin;
+	id = (+ current text output window +).ref_number;
 	if (gg_statuswin && statuswin_current) id = gg_statuswin;
 	glk_window_get_size(id, gg_arguments, 0);
 	return gg_arguments-->0;
 ];
 
 [ VM_ScreenHeight;
-	glk_window_get_size( (+ current text output window +).ref_number, 0, gg_arguments);
+	!glk_window_get_size(gg_mainwin, 0, gg_arguments);
+	glk_window_get_size( (+ current text output window +).ref_number, 0, gg_arguments );
 	return gg_arguments-->0;
 ];
 
@@ -997,8 +1040,9 @@ Include (-
 		ix = InitGlkWindow(GG_QUOTEWIN_ROCK);
 		if (ix == 0)
 			gg_quotewin =
-				glk_window_open(gg_mainwin, winmethod_Fixed + winmethod_Above,
-					lines, wintype_TextBuffer, GG_QUOTEWIN_ROCK);
+				!glk_window_open(gg_mainwin, winmethod_Fixed + winmethod_Above,
+				!	lines, wintype_TextBuffer, GG_QUOTEWIN_ROCK);
+				glk_window_open( (+ current text output window +).ref_number, winmethod_Fixed + winmethod_Above, lines, wintype_TextBuffer, GG_QUOTEWIN_ROCK );
 	} else {
 		parwin = glk_window_get_parent(gg_quotewin);
 		glk_window_set_arrangement(parwin, $12, lines, 0);
@@ -1113,7 +1157,7 @@ Chapter 5D - Miscellaneous stuff that should probably be moved somewhere else
 Section - Returning to the main window
 
 To return to the/-- main window/screen:
-	set focus to the main-window;
+	set focus to the current text output window;
 
 
 Section - Setting the cursor
@@ -1871,6 +1915,7 @@ Version 8 - 26/6/09
 
 
 
+
 Example: * Inventory Window - A simple example showing how to place an side window displaying the player's inventory.
 
 	*: "Inventory Window"
@@ -1898,6 +1943,9 @@ Finally, two rules: one to make the window appear, and the other to keep it up-t
 	Every turn when the side-window is g-present: follow the window-drawing rules for the side-window.
 
 	Test me with "take pen/take letter/i/take all".
+
+
+
 
 
 Example: ** Inventory Window and Picture - A more complex example, that also provides an image panel above the inventory.
