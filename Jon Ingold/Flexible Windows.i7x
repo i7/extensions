@@ -81,7 +81,7 @@ A text-grid g-window is a kind of g-window. The type of a text-grid g-window is 
 The window-drawing rules are an object-based rulebook.
 
 
-Section - Spawning relations
+Section - Spawning relations - unindexed
 
 [ Spawning used to be a custom relation between g-windows, but Inform doesn't produce optimised code, meaning that rearranging windows was very slow. Piggy-backing onto the containment relation allows us to get the benefit of Inform's much better optimised code for that relation, resulting in a 30 times speed improvement! And by defining a new verb, old code doesn't need to be updated. ]
 
@@ -136,7 +136,7 @@ Carry out throwing open:
 	open up the noun;
 
 
-Section - The built in windows unindexed
+Section - The built in windows - unindexed
 
 The main-window is a text-buffer g-window.
 The main-window is g-present.
@@ -151,27 +151,25 @@ The measurement of the status-window is 1.
 The position of the status-window is g-placeabove.
 The main-window spawns the status-window.
 
-After constructing a g-window (called win) (this is the update built in windows rule):
+gg_mainwin is a number variable. The gg_mainwin variable translates into I6 as "gg_mainwin".
+gg_statuswin is a number variable. The gg_statuswin variable translates into I6 as "gg_statuswin".
+
+First after constructing a g-window (called win) (this is the update built in windows rule):
 	if win is the main-window:
-		set gg_mainwin to the ref-number of main-window;
+		now gg_mainwin is the ref-number of main-window;
 	if win is the status-window:
-		set gg_statuswin to the ref-number of status-window;
+		now gg_statuswin is the ref-number of status-window;
 
-After window-shutting a g-window (called win) (this is the reset built in windows rule):
+First after window-shutting a g-window (called win) (this is the reset built in windows rule):
 	if win is the main-window:
-		set gg_mainwin to 0;
+		now gg_mainwin is 0;
 	if win is the status-window:
-		set gg_statuswin to 0;
+		now gg_statuswin is 0;
 
-To set gg_mainwin to (X - a number):
-	(- gg_mainwin = {X}; -).
 
-To set gg_statuswin to (X - a number):
-	(- gg_statuswin = {X}; -).
+Section - Allocating window rocks - unindexed
 
-Section - Allocating window rocks unindexed
-
-When play begins (this is the allocate rocks rule):
+First when play begins (this is the allocate rocks rule):
 	let cnt be 200;
 	repeat with item running through g-windows:
 		if the rock-value of item is 0:
@@ -221,34 +219,24 @@ When play begins (this is the rock validation rule):
 
 Chapter 2 - Opening, closing and calibrating
 
-Section - Opening window chains
+Section - Opening and closing windows
 
-[ set opening flags for necessary parents, then call open window safely routine ]
-[ which then calls back to the construct window routine given here ]
+[ Set the specified windows to be required or unrequried, as well as any ancestral or descendant windows, and then call calibrate, which will do the actual work ]
 
-To open up (g - a g-window):
-	if g is g-unpresent and the main-window is ancestral to g:
-		now g is g-required;
-		now every g-window ancestral to g is g-required;
+To open up (win - a g-window):
+	if win is g-unpresent and (win is the main-window or the main-window is ancestral to win):
+		now win is g-required;
+		now every g-window ancestral to win is g-required;
 		calibrate windows;
 
-Section - Closing window chains
-
-[ so set deletion flags for children too, then call delete window safely routine ]
-
-To shut down (g - a g-window):
-	carry out the window-shutting activity with g.
-
-Window-shutting something is an activity.
-
-For window-shutting a g-window (called g):
-	if g is g-present and g is not the main-window:
-		now g is g-unrequired;
-		now every g-window descended from g is g-unrequired;
+To shut down (win - a g-window):
+	if win is g-present:
+		now win is g-unrequired;
+		now every g-window descended from win is g-unrequired;
 		calibrate windows;
 
 
-Section - Calibrating the window set to match expectations
+Section - Calibrating the window set to match expectations - unindexed
 
 Definition: a g-window is a next-step if it is spawned by something g-present.
 
@@ -258,25 +246,26 @@ To calibrate windows:
   Try the loop multiple times to check we get them all ]
 	while the number of g-unrequired g-present childless g-windows > 0:
 		repeat with h running through g-unrequired g-present childless g-windows:
-			g-destroy h;
+			carry out the window-shutting activity with h;
 	while the number of next-step g-required g-unpresent g-windows > 0:
 		repeat with h running through next-step g-required g-unpresent g-windows:
-			g-make h;
+			carry out the constructing activity with h;
 
 
 
 Chapter 3 - I6 and Glulx Calls
 
-Section - I6 for making a window   unindexed
+Section - I6 for making a window - unindexed
 
 Constructing something is an activity.
 
 The pending g-window is a g-window that varies.
 
-To g-make (win - a g-window):
+First before constructing a g-window (called win) (this is the prepare the window for construction rule):
 	now win is g-present;
 	now the pending g-window is win;
-	begin the constructing activity with win;
+
+For constructing a g-window (called win) (this is the basic constructing a window rule):
 	let p0 be the ref-number of the direct parent of win;	
 	let p1 be the pos-val for win of the position of win + method-val of the scale method of win;
 	let p2 be a number;
@@ -286,7 +275,11 @@ To g-make (win - a g-window):
 		now p2 is the measurement of win;
 	let p3 be the kind-val of the type of win;
 	now the ref-number of win is the reference created from p0 with p1 and p2 and p3 and rock value rock-value of win;
-	end the constructing activity with the pending g-window;
+
+For constructing the main-window (this is the construct the main-window rule):
+	let p3 be the kind-val of the type of the main-window;
+	let rock be the rock-value of the main-window;
+	now the ref-number of the main-window is the reference created from 0 with 0 and 0 and p3 and rock value rock;
 
 To decide which number is the reference created from (p0 - a number) with (p1 - a number) and (p2 - a number) and (p3 - a number) and rock value (rock - a number):
 	(- ( glk_window_open( {p0},{p1}, {p2}, {p3}, {rock} ) ) -)
@@ -327,15 +320,20 @@ Include (-
 
 -)
 
-Section - I6 for destroying a window   unindexed
 
-To g-destroy (g - a g-window):
-	now g is g-unpresent;
-	delete ref-number of g;
+Section - I6 for destroying a window - unindexed
 
-To delete (N - a number):	(- glk_window_close({N}, 0); 	-)
+Window-shutting something is an activity.
 
-section - Identify glx rubbish   unindexed
+For window-shutting a g-window (called win) (this is the basic shut down rule):
+	now win is g-unpresent;
+	delete ref-number of win;
+
+To delete (N - a number):
+	(- glk_window_close( {N}, 0 ); -).
+
+
+section - Identify glx rubbish - unindexed
 
 A glulx zeroing-reference rule (this is the default removing references rule):
 	doll-up properties; 	[ rebuild I7 properties, if we need to. ]
@@ -559,6 +557,7 @@ Include (-
 
 -).
 
+
 Section - Opening a window as the main input/output window
 
 To open up (win - a g-window) as the/-- main/current/-- text/-- output window:
@@ -567,6 +566,7 @@ To open up (win - a g-window) as the/-- main/current/-- text/-- output window:
 	now the current text output window is win;
 	echo the stream of win to the transcript;
 	set focus to the win;
+	now gg_mainwin is the ref-number of win;
 	
 To open up (win - a g-window) as the/-- main/current/-- text/-- input window:
 	if win is g-unpresent:
@@ -577,10 +577,11 @@ To open up (win - a g-window) as the/-- main/current/-- text/-- input window:
 
 Section - Addition for the window-shutting activity
 
-Before window-shutting a g-window (called the window):
+Before window-shutting a g-window (called the window) (this is the fix the current text output and input windows rule):
 	if the window is the current text output window:
 		now the current text output window is the main-window;
 		set focus to the main-window;
+		now gg_mainwin is the ref-number of the main-window;
 	if the window is the current text input window:
 		now the current text input window is the main-window;
 
