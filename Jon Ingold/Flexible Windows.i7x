@@ -1,4 +1,4 @@
-Version 14/131207 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/131208 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -157,6 +157,7 @@ gg_statuswin is a number variable. The gg_statuswin variable translates into I6 
 First after constructing a g-window (called win) (this is the update built in windows rule):
 	if win is the main-window:
 		now gg_mainwin is the ref-number of main-window;
+		set focus to the main-window;
 	if win is the status-window:
 		now gg_statuswin is the ref-number of status-window;
 
@@ -238,7 +239,7 @@ To shut down (win - a g-window):
 
 Section - Calibrating the window set to match expectations - unindexed
 
-Definition: a g-window is a next-step if it is spawned by something g-present.
+Definition: a g-window is a next-step if it is the main-window or it is spawned by something g-present.
 
 To calibrate windows:
 [ open g-required g-unpresent windows. start with directly spawned windows.
@@ -259,12 +260,6 @@ Section - I6 for making a window - unindexed
 
 Constructing something is an activity.
 
-The pending g-window is a g-window that varies.
-
-First before constructing a g-window (called win) (this is the prepare the window for construction rule):
-	now win is g-present;
-	now the pending g-window is win;
-
 For constructing a g-window (called win) (this is the basic constructing a window rule):
 	let p0 be the ref-number of the direct parent of win;	
 	let p1 be the pos-val for win of the position of win + method-val of the scale method of win;
@@ -275,14 +270,16 @@ For constructing a g-window (called win) (this is the basic constructing a windo
 		now p2 is the measurement of win;
 	let p3 be the kind-val of the type of win;
 	now the ref-number of win is the reference created from p0 with p1 and p2 and p3 and rock value rock-value of win;
+	now win is g-present;
 
 For constructing the main-window (this is the construct the main-window rule):
 	let p3 be the kind-val of the type of the main-window;
 	let rock be the rock-value of the main-window;
 	now the ref-number of the main-window is the reference created from 0 with 0 and 0 and p3 and rock value rock;
+	now the main-window is g-present;
 
 To decide which number is the reference created from (p0 - a number) with (p1 - a number) and (p2 - a number) and (p3 - a number) and rock value (rock - a number):
-	(- ( glk_window_open( {p0},{p1}, {p2}, {p3}, {rock} ) ) -)
+	(- ( glk_window_open( {p0}, {p1}, {p2}, {p3}, {rock} ) ) -).
 
 To decide which number is the pos-val for (g - a g-window) of (N - a g-window-position): (-  (GetPos({N}, {g})) -).
 To decide which number is the method-val of (N - a g-window-type): (- (GetMethod({N})) -).
@@ -319,6 +316,10 @@ Include (-
 ];
 
 -)
+
+First after constructing a g-window (called win) (this is the window could not be created rule):
+	if the ref-number of win is zero:
+		now win is g-unpresent;
 
 
 Section - I6 for destroying a window - unindexed
@@ -376,6 +377,7 @@ This is the create-required rule:
 		open up a random g-required g-unpresent g-window;
 	end while.
 
+
 Section - Updating the contents of the windows
 
 A glulx arranging rule (this is the arranging all rule):
@@ -398,6 +400,10 @@ This is the refresh windows rule:
 	
 To refresh windows:
 	follow the refresh windows rule.
+
+The last after constructing a g-window (called win) (this is the draw window after construction rule):
+	if win is g-present:
+		follow the window-drawing rules for win;
 
 
 Section - Some useful little functions
@@ -422,35 +428,33 @@ Include (-
 
 -)
 
+
+
 Chapter 4 - The constructing activity
 
 Section - Fixing problems with window scaling 
 
-Before constructing a g-window when the scale method of the pending g-window is g-using-minimum (this is the reset minimum rule): 
-	now the scale method of the pending g-window is g-proportional; 
-
-The reset minimum rule is listed before the use minimum size instead rule in the Before constructing rulebook.
-
-Before constructing a g-window when the scale method of the pending g-window is g-proportional (this is the fix broken proportions rule):
-	if the measurement of the pending g-window > 100 or the measurement of the pending g-window < 0, 
-	now the scale method of the pending g-window is g-fixed-size;  
-
-Before constructing a g-window when the position of the pending g-window is g-placenull (this is the tile automatically windows rule):
-	if the position of the direct parent of the pending g-window is at least g-placeabove, now the position of the pending g-window is g-placeright; 
-	otherwise now the position of the pending g-window is g-placeabove.
-
-Before constructing a g-window when the scale method of the pending g-window is g-proportional  (this is the use minimum size instead rule):
-	let p1 be 100 multiplied by the minimum size of the pending g-window;
-[actually, this should be the size of the direct parent, shouldn't it? ]
-	let p2 be the measurement of the pending g-window multiplied by width of the direct parent of the pending g-window;
-	if p1 > p2, now the scale method of the pending g-window is g-using-minimum.
- 
-The first after constructing a g-window (this is the window could not be created rule):
-	if the ref-number of the pending g-window is zero:
-		now the pending g-window is g-unpresent instead;
-
-The last after constructing a g-window (this is the draw window after construction rule):
-	if the pending g-window is g-present, follow the window-drawing rules for the pending g-window.
+Before constructing a g-window (called win) (this is the fix method and measurement rule):
+	[ Fix broken proportions ]
+	if the scale method of win is g-proportional:
+		if the measurement of win > 100 or the measurement of win < 0:
+			now the scale method of win is g-fixed-size;
+	[ Tile windows automatically ]
+	if the position of win is g-placenull:
+		if the position of the direct parent of win is at least g-placeabove:
+			now the position of win is g-placeright; 
+		otherwise:
+			now the position of win is g-placeabove;
+	[ Reset the minimum ]
+	if the scale method of win is g-using-minimum:
+		now the scale method of win is g-proportional;
+	[ Use the minimum size ]
+	if the scale method of win is g-proportional:
+		let p1 be 100 multiplied by the minimum size of win;
+		[actually, this should be the size of the direct parent, shouldn't it? ]
+		let p2 be the measurement of win multiplied by width of the direct parent of win;
+		if p1 > p2:
+			now the scale method of win is g-using-minimum;
 
 
 Section - Gargoyle Workaround
@@ -486,11 +490,12 @@ The phrase used to accomplish this could also be used to set the Gargoyle border
 
 ]
 
-After constructing a g-window when the type of the pending g-window is g-text-buffer (this is the Gargoyle text-buffer workaround rule):
-	if the back-colour of the main-window is g-placenullcol:
-		set the text-buffer background color to g-white;
-	otherwise:
-		reset the text-buffer background color to the back-colour of the main-window.
+After constructing a g-window (called win) (this is the Gargoyle text-buffer workaround rule):
+	if the type of win is g-text-buffer:
+		if the back-colour of the main-window is g-placenullcol:
+			set the text-buffer background color to g-white;
+		otherwise:
+			reset the text-buffer background color to the back-colour of the main-window;
 
 To set/reset the/-- Gargoyle/-- text/text-buffer/-- window/-- background color/-- to the/-- color/-- (color_value - a glulx color value):
 	(- HintGargoyleBorder ({color_value});-)
@@ -1213,14 +1218,17 @@ g-pink		16761035
 
 A g-window has a glulx color value called back-colour. The back-colour of a g-window is usually g-placenullcol. The back-colour property translates into I6 as "back_colour".
 
-Before constructing  when the type of the pending g-window is g-text-buffer (this is the set text-colours rule):
-	set the background text-colour of the pending g-window; 
+Before constructing a g-window (called win) (this is the set text-colours rule):
+	if the type of win is g-text-buffer:
+		set the background text-colour of win;
 
-After constructing when the type of the pending g-window is g-text-buffer (this is the reset text-colours rule):
-	reset the background text-colour of the pending g-window;
+After constructing a g-window (called win) (this is the reset text-colours rule):
+	if the type of win is g-text-buffer:
+		reset the background text-colour of win;
 
-After constructing when the type of the pending g-window is g-graphics (this is the colour-graphics rule):
-	set the background colour of the pending g-window;
+After constructing a g-window (called win) (this is the colour-graphics rule):
+	if the type of win is g-graphics:
+		set the background colour of win;
 
 To set the background text-colour of (g - a g-window):
 (-	SetBTcol({g});	-).
@@ -1494,8 +1502,9 @@ When play begins (this is the initial hyperlink request rule):
 	request glulx hyperlink event in the main-window;
 	request glulx hyperlink event in the status window.
 	
-After constructing a g-window when the type of the pending g-window is not g-graphics (this is the look for links on opening rule):
-	request glulx hyperlink event in the pending g-window.
+After constructing a g-window (called win) (this is the look for links on opening rule):
+	if the type of win is not g-graphics:
+		request glulx hyperlink event in win;
 	
 The look for links on opening rule is listed after the draw window after construction rule in after constructing.
 
