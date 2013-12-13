@@ -1,4 +1,4 @@
-Version 1/131207 of Menus by Dannii Willis begins here.
+Version 1/131213 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -8,6 +8,7 @@ Include Basic Screen Effects by Emily Short.
 
 Section (for Glulx only)
 
+Include version 10 of Glulx Entry Points by Emily Short.
 Include version 14/131207 of Flexible Windows by Jon Ingold.
 
 
@@ -71,6 +72,15 @@ To say menu label (x - a number):
 	otherwise:
 		say menu character number x;
 
+[ For use with glulx hyperlinks ]
+To decide what number is the character number for menu label (x - a number):
+	if x is -1:
+		decide on 81;
+	if x < 10:
+		decide on x + 48;
+	otherwise:
+		decide on x + 55;
+
 [ -1 = Go back, 0 = invalid, 1+ = menu choice (but the menu must be checked to see if the row even exists!) ]
 To decide what number is the chosen menu option for (x - a number):
 	[ Esc/Q ]
@@ -100,6 +110,9 @@ To wait for any non navigating key:
 				stop;
 			next;
 		stop;
+
+To request a key press:
+	say "[italic type]Press a key to go back.[roman type][run paragraph on]";
 
 
 
@@ -136,7 +149,8 @@ To show menu page (page - a text) with title (t - a text):
 	if manually running is 1:
 		begin the displaying activity;
 	clear the screen;
-	say "[line break][page][paragraph break][italic type]Press a key to go back.[roman type][run paragraph on]";
+	say "[line break][page][paragraph break]";
+	request a key press;
 	now the menu header is Table of Shallow Menu Status;
 	let temp menu title be the current menu title;
 	now the current menu title is t;
@@ -261,7 +275,8 @@ Book - Glulx interface effects (for Glulx only)
 
 Part - Glulx Menu options
 
-disable the popover menu window is a truth state variable. Disable the popover menu window is false.
+disable the popover menu window is a truth state variable. [ False by default - i.e. will use the popover window ]
+enable menu hyperlinks is a truth state variable. [ False by default ]
 
 
 
@@ -279,6 +294,7 @@ First before displaying rule (this is the switch to the popover menu window rule
 Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
 		shut down the popover menu window;
+		cancel character input in the main window;
 
 
 
@@ -297,6 +313,68 @@ First before displaying rule (this is the open the status window if required rul
 Last after displaying rule (this is the shut down the status window if required rule):
 	if the old status-window presence is false:
 		shut down the status-window;
+
+
+
+Chapter - Menu hyperlinks - unindexed
+
+After starting the virtual machine (this is the check if menus can use hyperlinks rule):
+	unless glulx hyperlinks are supported:
+		now enable menu hyperlinks is false;
+
+The main menu display with hyperlinks rule is listed instead of the main menu display rule in the displaying a menu rules.
+Displaying a menu rule (this is the main menu display with hyperlinks rule):
+	clear the screen;
+	let count be 1;
+	let my menu be the submenu in row menu depth of Table of Menu history;
+	repeat through my menu:
+		say line break;
+		[ Blank rows are okay! ]
+		if there is no title entry or the title entry is "":
+			next;
+		[ Say the menu entry label only if there's something to do ]
+		say fixed letter spacing;
+		if there is a text entry or there is a description entry or there is a submenu entry or there is a subtable entry or there is a rule entry or there is a toggle entry:
+			if enable menu hyperlinks is true:
+				set menu hyperlink for (the character number for menu label count);
+			say " [menu label count]  ";
+			increment count;
+		otherwise:
+			say "    ";
+		say "[variable letter spacing][title entry]";
+		if enable menu hyperlinks is true:
+			end menu hyperlink;
+	if enable menu hyperlinks is true:
+		say paragraph break;
+		set menu hyperlink for 81; [Q]
+		say "[fixed letter spacing]    [variable letter spacing][italic type]Go back[roman type]";
+		end menu hyperlink;
+	say run paragraph on;
+
+To request a key press:
+	if enable menu hyperlinks is true:
+		set menu hyperlink for 81; [Q]
+	say "[italic type]Press a key to go back.[roman type][run paragraph on]";
+	if enable menu hyperlinks is true:
+		end menu hyperlink;
+
+To set menu hyperlink for (N - a number):
+	(- glk_set_hyperlink( {N} ); -).
+
+To end menu hyperlink:
+	(- glk_set_hyperlink( 0 ); -).
+
+A glulx input handling rule for a hyperlink-event while displaying (this is the intercept menu hyperlinks rule):
+	if enable menu hyperlinks is true:
+		change the glk event type to character input;
+		request hyperlink input again;
+		replace player input;
+
+To change the glk event type to character input:
+	(- gg_arguments-->0 = gg_event-->2; -).
+
+To request hyperlink input again:
+	(- glk_request_hyperlink_event( gg_event-->1 ); -).
 
 
 
