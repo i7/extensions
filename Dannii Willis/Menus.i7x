@@ -1,4 +1,4 @@
-Version 1/131213 of Menus by Dannii Willis begins here.
+Version 1/131214 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -100,16 +100,30 @@ Part - Interface phrases - unindexed
 
 [ Wait for a safe non navigating key. The user might press Down/PgDn or use the mouse scroll wheel when reading a menu page, so we will stop those key codes from returning to the menu. ]
 To wait for any non navigating key:
-	while 1 is 1:
-		let key be the chosen letter;
-		[ Exclude Up/Down/PgUp/PgDn and ? which Gargoyle+Bocfel returns for unknown keys such as PgDn/Mouse scroll. Both Z-Machine and Glulx key codes are handled ]
-		if key is 63 or key is 129 or key is 130:
-			next;
-		if key < 0:
-			if key is -8 or key is -6:
-				stop;
-			next;
-		stop;
+	(- WaitForNonNavigatingKey(); -).
+	
+Include (-
+
+[ WaitForNonNavigatingKey key;
+	while ( 1 )
+	{
+		key = VM_KeyChar();
+		#Ifdef TARGET_ZCODE;
+		if ( key == 63 or 129 or 130 or 132 )
+		{
+			continue;
+		}
+		#Ifnot; ! TARGET_GLULX
+		if ( key == -4 or -5 or -10 or -11 or -12 or -13 )
+		{
+			continue;
+		}
+		#Endif; ! TARGET_
+		rfalse;
+	}
+];
+
+-).
 
 To request a key press:
 	say "[italic type]Press a key to go back.[roman type][run paragraph on]";
@@ -275,7 +289,7 @@ Book - Glulx interface effects (for Glulx only)
 
 Part - Glulx Menu options
 
-disable the popover menu window is a truth state variable. [ False by default - i.e. will use the popover window ]
+disable the popover menu window is a truth state variable. [ False by default - i.e. the popover window will be used ]
 enable menu hyperlinks is a truth state variable. [ False by default ]
 
 
@@ -294,6 +308,7 @@ First before displaying rule (this is the switch to the popover menu window rule
 Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
 		shut down the popover menu window;
+		[ Cancel in case we left the menu by clicking the go back link ]
 		cancel character input in the main window;
 
 
@@ -366,11 +381,12 @@ To end menu hyperlink:
 
 A glulx input handling rule for a hyperlink-event while displaying (this is the intercept menu hyperlinks rule):
 	if enable menu hyperlinks is true:
-		change the glk event type to character input;
+		convert the hyperlink code to the character code;
 		request hyperlink input again;
 		replace player input;
 
-To change the glk event type to character input:
+[ gg_arguments-->0 will be used as the character code selected, so set it to the hyperlink code ]
+To convert the hyperlink code to the character code:
 	(- gg_arguments-->0 = gg_event-->2; -).
 
 To request hyperlink input again:
