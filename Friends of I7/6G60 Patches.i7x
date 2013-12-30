@@ -232,7 +232,6 @@ Include (-
 		pattern-->k = PATTERN_NULL;
 		pattern2-->k = PATTERN_NULL;
 	}
-	print "A["; PrintCommand(1); print "]B.^";
 ! END CHANGE FOR 0000396
 -) after "Parser Letter I" in "Parser.i6t".
 
