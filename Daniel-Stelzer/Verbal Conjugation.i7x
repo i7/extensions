@@ -101,9 +101,9 @@ By default this Table contains all the irregular actionss in the Standard Rules:
 
 This particular verb is unlikely to be required in a story, but if it were it would require an exception. Note that only the participle is given, not the full action name ("answering" instead of "answering it that", for example).
 
-Example: * The Faithful Companion - A character who repeats the player's actions with a one turn delay.
+Example: * Phase - A character who repeats the player's actions with a one turn delay.
 
-	"The Faithful Companion"
+	"Phase"
 	
 	Include Verbal Conjugation by Daniel Stelzer.
 	
