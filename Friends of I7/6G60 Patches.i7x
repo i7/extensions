@@ -18,8 +18,33 @@ To decide whether a library message should be issued: (- (actor == player && ~~u
 
 Chapter "Output Control"
 
-To hide output: (- -). [TODO]
-To unhide output: (- -). [TODO]
+Include (-
+#ifdef TARGET_ZCODE;
+	Constant DISCARDED_OUTPUT_LENGTH = 256;
+	Array discarded_output buffer DISCARDED_OUTPUT_LENGTH;
+#endif;
+-) after "Definitions.i6t".
+
+To hide output: (-
+#ifdef TARGET_ZCODE;
+	@output_stream 3 discarded_output;
+#ifnot;
+	@getiosys sp sp;
+	@setiosys 0 0;
+#endif;
+-).
+
+To unhide output: (-
+#ifdef TARGET_ZCODE;
+	@output_stream -3;
+	if (discarded_output-->0 > DISCARDED_OUTPUT_LENGTH - WORDSIZE) {
+		print "Error: Overflow in hiding output.^";
+	}
+#ifnot;
+	@stkswap;
+	@setiosys sp sp;
+#endif;
+-).
 
 Chapter "Extra Runtime Problems"
 
@@ -340,243 +365,7 @@ Include (-
 	];
 -) instead of "Table Row Corresponding" in "Tables.i6t".
 
-Volume "0000565"
-
-Yourself is privately-named.
-Understand "your former self" or "my former self" or "former self" or "former" as yourself when the player is not yourself.
-
-Volume "0000602"
-
-Include (-
-	Global can_undo = false;
--) after "Definitions.i6t".
-
-Undo available is a truth state that varies.
-The undo available variable translates into I6 as "can_undo".
-
-Last after reading a command (this is the enable undo once the player has entered a command rule):
-	now undo available is true.
-
-Include (-
-	[ Perform_Undo;
-		#ifdef PREVENT_UNDO; L__M(##Miscellany, 70); return; #endif;
-! BEGIN CHANGE FOR 0000602
-		if (~~can_undo) { L__M(##Miscellany, 11); return; }
-! END CHANGE FOR 0000602
-		if (undo_flag == 0) { L__M(##Miscellany, 6); return; }
-		if (undo_flag == 1) { L__M(##Miscellany, 7); return; }
-		if (VM_Undo() == 0) L__M(##Miscellany, 7);
-	];
--) instead of "Perform Undo" in "OutOfWorld.i6t".
-
-Volume "0000604"
-
-The going action has an object called the prior location.
-
-Setting action variables for going (this is the set the prior location variable for going rule):
-	now the prior location is the location.
-
-Carry out an actor going (this is the revised move player and vehicle rule):
-	if the vehicle gone by is nothing:
-		surreptitiously move the actor to the room gone to during going;
-	otherwise:
-		surreptitiously move the vehicle gone by to the room gone to during going;
-		now the location is the location of the player.
-The revised move player and vehicle rule is listed instead of the move player and vehicle rule in the carry out going rulebook.
-
-Carry out an actor going (this is the revised move floating objects rule):
-	if the location is not the prior location:
-		update backdrop positions.
-The revised move floating objects rule is listed instead of the move floating objects rule in the carry out going rulebook.
-
-Carry out an actor going (this is the revised check light in new location rule):
-	if the location is not the prior location:
-		surreptitiously reckon darkness.
-The revised check light in new location rule is listed instead of the check light in new location rule in the carry out going rulebook.
-
-Report an actor going (this is the revised describe room gone into rule):
-	let the actual location be the location;
-	now the location is the prior location;
-	follow the describe room gone into rule;
-	now the location is the actual location.
-The revised describe room gone into rule is listed instead of the describe room gone into rule in the report going rulebook.
-
-Volume "0000630"
-
-Check an actor going (this is the can't push an enclosing vehicle rule):
-	if the vehicle gone by is not nothing and the vehicle gone by is the thing gone with:
-		stop the action with library message going action number 1 for the vehicle gone by.
-
-Volume "0000787"
-
-Check an actor taking off (this is the can't exceed carrying capacity by taking off clothing rule):
-	if the number of things carried by the actor is at least the carrying capacity of the actor:
-		stop the action with library message taking action number 12 for the actor.
-
-Volume "0000788"
-
-Check an actor giving (this is the can't exceed carrying capacity by giving rule):
-	if the number of things carried by the second noun is at least the carrying capacity of the second noun:
-		if a library message should be issued:
-			say "[The second noun] [if the second noun is singular-named]is[otherwise]are[end if] carrying too many things already.";
-		stop the action.
-
-Volume "0000806"
-
-Carry out an actor entering (this is the check light after entering rule):
-	if the actor is the player:
-		surreptitiously reckon darkness.
-
-Carry out an actor exiting (this is the check light after exiting rule):
-	if the actor is the player:
-		surreptitiously reckon darkness.
-
-Volume "0000807"
-
-[Workaround originally by SJ_43.]
-
-Include (-
-	[ POSITION_PLAYER_IN_MODEL_R player_to_be;
-	
-		player = selfobj;
-		player_to_be = InitialSituation-->PLAYER_OBJECT_INIS;
-		
-		location = LocationOf(player_to_be);
-		if (location == 0) {
-			location = InitialSituation-->START_ROOM_INIS;
-			if (InitialSituation-->START_OBJECT_INIS)
-				move player_to_be to InitialSituation-->START_OBJECT_INIS;
-			else move player_to_be to location;
-		}
-	
-		if (player_to_be ~= player) {
-			remove selfobj;
-			ChangePlayer(player_to_be);
-! BEGIN CHANGE FOR 0000807
-		} else {
-! END CHANGE FOR 0000807
-			real_location = location;
-			SilentlyConsiderLight();
-		}
-	
-		NOTE_OBJECT_ACQUISITIONS_R(); MoveFloatingObjects();
-		
-		actor = player; act_requester = nothing; actors_location = real_location; action = ##Wait;
-	
-		InitialSituation-->DONE_INIS = true;
-		rfalse;
-	];
--) instead of "Position Player In Model World Rule" in "OrderOfPlay.i6t".
-
-Volume "0000827"
-
-The touch persona is an object that varies.
-The touch persona variable translates into I6 as "touch_persona".
-
-To decide whether considering (R - a value of kind K based rule producing a value) for (V - a K) as ACCESS_THROUGH_BARRIERS_R does results in failure:
-	(- (ProcessRulebook({R}, {V}) && RulebookFailed()) -).
-
-[Based on ACCESS_THROUGH_BARRIERS_R in Light.i6t.]
-To decide what object is the touchability ceiling of (P - a person):
-	let the saved touch persona be the touch persona;
-	now the touch persona is P;
-	let the saved person reaching be the person reaching;
-	now the person reaching is P;
-	hide output;
-	let the candidate be P;
-	repeat until a break:
-		let the prior candidate be the candidate;
-		let the candidate be the I6 parent of the component parts core of the candidate;
-		let the candidate core be the component parts core of the candidate;
-		let the external flag be whether or not the candidate is not the candidate core;
-		if the external flag is true:
-			now the candidate is the candidate core;
-		if the candidate is nothing:
-			now the touch persona is the saved touch persona;
-			now the person reaching is the saved person reaching;
-			unhide output;
-			decide on the prior candidate;
-		if the external flag is false and considering the reaching outside rulebook for the candidate as ACCESS_THROUGH_BARRIERS_R does results in failure:
-			now the touch persona is the saved touch persona;
-			now the person reaching is the saved person reaching;
-			unhide output;
-			decide on the candidate.
-
-For supplying a missing noun while an actor smelling (this is the revised ambient odour rule):
-	now the noun is the touchability ceiling of the player.
-The revised ambient odour rule is listed instead of the ambient odour rule in the for supplying a missing noun rulebook.
-
-For supplying a missing noun while an actor listening (this is the revised ambient sound rule):
-	now the noun is the touchability ceiling of the player.
-The revised ambient sound rule is listed instead of the ambient sound rule in the for supplying a missing noun rulebook.
-
-Volume "0000833"
-
-To --/-- now (O - an object) is/are regionally/-- in (L - an object):
-	if O is a room and L is a region:
-		now the map region of O is L;
-		update backdrop positions;
-	otherwise:
-		move O to L.
-
-Volume "0000852"
-
-Include (-
-	[ ChangePlayer obj flag i;
-		if (~~(obj ofclass K8_person)) return RunTimeProblem(RTP_CANTCHANGE, obj);
-		if (~~(OnStage(obj, -1))) return RunTimeProblem(RTP_CANTCHANGEOFFSTAGE, obj);
-! BEGIN CHANGE FOR 0000852
-		if (obj provides component_parent && obj.component_parent ~= nothing) return ExtraRunTimeProblem(RTP_CANTCHANGETOPART, obj, obj.component_parent);
-! END CHANGE FOR 0000852
-		if (obj == player) return;
-	
-	    give player ~concealed;
-	    if (player has remove_proper) give player ~proper;
-	    if (player == selfobj) {
-	    	player.saved_short_name = player.short_name; player.short_name = FORMER__TX;
-	    }
-	    player = obj;
-	    if (player == selfobj) {
-	    	player.short_name = player.saved_short_name;
-	    }
-	    if (player hasnt proper) give player remove_proper; ! when changing out again
-	    give player concealed proper;
-	
-	    location = LocationOf(player); real_location = location;
-	    MoveFloatingObjects();
-	    SilentlyConsiderLight();
-	];
--) instead of "Changing the Player" in "WorldModel.i6t".
-
-Include (-
-	[ MakePart P Of First;
-! BEGIN CHANGE FOR 0000852
-		if (player == P) return ExtraRunTimeProblem(RTP_CANTMAKEPLAYERPART, Of);
-! END CHANGE FOR 0000852
-		if (parent(P)) remove P; give P ~worn;
-		if (Of == nothing) { DetachPart(P); return; }
-		if (P.component_parent) DetachPart(P);
-		P.component_parent = Of;
-		First = Of.component_child;
-		Of.component_child = P; P.component_sibling = First;
-	];
-	
-	[ DetachPart P From Daddy O;
-		Daddy = P.component_parent; P.component_parent = nothing;
-		if (Daddy == nothing) { P.component_sibling = nothing; return; }
-		if (Daddy.component_child == P) {
-			Daddy.component_child = P.component_sibling;
-			P.component_sibling = nothing; return;
-		}
-		for (O = Daddy.component_child: O: O = O.component_sibling)
-			if (O.component_sibling == P) {
-				O.component_sibling = P.component_sibling;
-				P.component_sibling = nothing; return;
-			}
-	];
--) instead of "Making Parts" in "WorldModel.i6t".
-
-Volume "0000854"
+Volume "0000409a and 0000854"
 
 Include (-
 	[ LanguageLM n x1 x2;
@@ -841,17 +630,18 @@ Include (-
 	            WriteListFrom(child(x1),
 	              ENGLISH_BIT+RECURSE_BIT+PARTINV_BIT+TERSE_BIT+CONCEAL_BIT+ISARE_BIT);
 	            ".";
-	        5,6:
+	        5:
 	            if (x1 ~= location) {
 	                if (x1 has supporter) print "On "; else print "In ";
 	                print (the) x1, " you";
 	            }
 	            else print "You";
 	            print " can ";
-	            if (n == 5) print "also ";
+! BEGIN CHANGE FOR 0000409a
+	            if ((+ locale paragraph count +) > 0) print "also ";
 	            print "see ";
-	            WriteListFrom(child(x1),
-	              ENGLISH_BIT+RECURSE_BIT+PARTINV_BIT+TERSE_BIT+CONCEAL_BIT+WORKFLAG_BIT);
+		6:
+! END CHANGE FOR 0000409a
 	            if (x1 ~= location) "."; else " here.";
 	        7:  "You see nothing unexpected in that direction.";
 	        8:  if (x1 has supporter) print " (on "; else print " (in ";
@@ -1242,6 +1032,287 @@ Include (-
 	];
 -) instead of "Long Texts" in "Language.i6t".
 
+[0000409a]
+For printing the locale description (this is the revised you-can-also-see rule):
+	let the domain be the parameter-object;
+	let the mentionable count be 0;
+	repeat with item running through things:
+		now the item is not marked for listing;
+	repeat through the Table of Locale Priorities:
+		[say "[notable-object entry] - [locale description priority entry].";]
+		if the locale description priority entry is greater than 0,
+			now the notable-object entry is marked for listing;
+		increase the mentionable count by 1;
+	if the mentionable count is greater than 0:
+		repeat with item running through things:
+			if the item is mentioned:
+				now the item is not marked for listing;
+		begin the listing nondescript items activity with the domain;
+		if the number of marked for listing things is 0:
+			abandon the listing nondescript items activity with the domain;
+		otherwise:
+			if handling the listing nondescript items activity:
+				issue library message looking action number 5 for the domain;
+				let the common holder be nothing;
+				let contents form of list be true;
+				repeat with list item running through marked for listing things:
+					if the holder of the list item is not the common holder:
+						if the common holder is nothing,
+							now the common holder is the holder of the list item;
+						otherwise now contents form of list is false;
+					if the list item is mentioned, now the list item is not marked for listing;
+				filter list recursion to unmentioned things;
+				if contents form of list is true and the common holder is not nothing,
+					list the contents of the common holder, as a sentence, including contents,
+						giving brief inventory information, tersely, not listing
+						concealed items, listing marked items only;
+				otherwise say "[a list of marked for listing things including contents]";
+				issue library message looking action number 6 for the domain;
+				unfilter list recursion;
+			end the listing nondescript items activity with the domain;
+	continue the activity.
+The revised you-can-also-see rule is listed instead of the you-can-also-see rule in the for printing the locale description rulebook.
+
+Volume "0000433"
+
+
+
+Volume "0000565"
+
+Yourself is privately-named.
+Understand "your former self" or "my former self" or "former self" or "former" as yourself when the player is not yourself.
+
+Volume "0000602"
+
+Include (-
+	Global can_undo = false;
+-) after "Definitions.i6t".
+
+Undo available is a truth state that varies.
+The undo available variable translates into I6 as "can_undo".
+
+Last after reading a command (this is the enable undo once the player has entered a command rule):
+	now undo available is true.
+
+Include (-
+	[ Perform_Undo;
+		#ifdef PREVENT_UNDO; L__M(##Miscellany, 70); return; #endif;
+! BEGIN CHANGE FOR 0000602
+		if (~~can_undo) { L__M(##Miscellany, 11); return; }
+! END CHANGE FOR 0000602
+		if (undo_flag == 0) { L__M(##Miscellany, 6); return; }
+		if (undo_flag == 1) { L__M(##Miscellany, 7); return; }
+		if (VM_Undo() == 0) L__M(##Miscellany, 7);
+	];
+-) instead of "Perform Undo" in "OutOfWorld.i6t".
+
+Volume "0000604"
+
+The going action has an object called the prior location.
+
+Setting action variables for going (this is the set the prior location variable for going rule):
+	now the prior location is the location.
+
+Carry out an actor going (this is the revised move player and vehicle rule):
+	if the vehicle gone by is nothing:
+		surreptitiously move the actor to the room gone to during going;
+	otherwise:
+		surreptitiously move the vehicle gone by to the room gone to during going;
+		now the location is the location of the player.
+The revised move player and vehicle rule is listed instead of the move player and vehicle rule in the carry out going rulebook.
+
+Carry out an actor going (this is the revised move floating objects rule):
+	if the location is not the prior location:
+		update backdrop positions.
+The revised move floating objects rule is listed instead of the move floating objects rule in the carry out going rulebook.
+
+Carry out an actor going (this is the revised check light in new location rule):
+	if the location is not the prior location:
+		surreptitiously reckon darkness.
+The revised check light in new location rule is listed instead of the check light in new location rule in the carry out going rulebook.
+
+Report an actor going (this is the revised describe room gone into rule):
+	let the actual location be the location;
+	now the location is the prior location;
+	follow the describe room gone into rule;
+	now the location is the actual location.
+The revised describe room gone into rule is listed instead of the describe room gone into rule in the report going rulebook.
+
+Volume "0000630"
+
+Check an actor going (this is the can't push an enclosing vehicle rule):
+	if the vehicle gone by is not nothing and the vehicle gone by is the thing gone with:
+		stop the action with library message going action number 1 for the vehicle gone by.
+
+Volume "0000787"
+
+Check an actor taking off (this is the can't exceed carrying capacity by taking off clothing rule):
+	if the number of things carried by the actor is at least the carrying capacity of the actor:
+		stop the action with library message taking action number 12 for the actor.
+
+Volume "0000788"
+
+Check an actor giving (this is the can't exceed carrying capacity by giving rule):
+	if the number of things carried by the second noun is at least the carrying capacity of the second noun:
+		if a library message should be issued:
+			say "[The second noun] [if the second noun is singular-named]is[otherwise]are[end if] carrying too many things already.";
+		stop the action.
+
+Volume "0000806"
+
+Carry out an actor entering (this is the check light after entering rule):
+	if the actor is the player:
+		surreptitiously reckon darkness.
+
+Carry out an actor exiting (this is the check light after exiting rule):
+	if the actor is the player:
+		surreptitiously reckon darkness.
+
+Volume "0000807"
+
+[Workaround originally by SJ_43.]
+
+Include (-
+	[ POSITION_PLAYER_IN_MODEL_R player_to_be;
+	
+		player = selfobj;
+		player_to_be = InitialSituation-->PLAYER_OBJECT_INIS;
+		
+		location = LocationOf(player_to_be);
+		if (location == 0) {
+			location = InitialSituation-->START_ROOM_INIS;
+			if (InitialSituation-->START_OBJECT_INIS)
+				move player_to_be to InitialSituation-->START_OBJECT_INIS;
+			else move player_to_be to location;
+		}
+	
+		if (player_to_be ~= player) {
+			remove selfobj;
+			ChangePlayer(player_to_be);
+! BEGIN CHANGE FOR 0000807
+		} else {
+! END CHANGE FOR 0000807
+			real_location = location;
+			SilentlyConsiderLight();
+		}
+	
+		NOTE_OBJECT_ACQUISITIONS_R(); MoveFloatingObjects();
+		
+		actor = player; act_requester = nothing; actors_location = real_location; action = ##Wait;
+	
+		InitialSituation-->DONE_INIS = true;
+		rfalse;
+	];
+-) instead of "Position Player In Model World Rule" in "OrderOfPlay.i6t".
+
+Volume "0000827"
+
+The touch persona is an object that varies.
+The touch persona variable translates into I6 as "touch_persona".
+
+To decide whether considering (R - a value of kind K based rule producing a value) for (V - a K) as ACCESS_THROUGH_BARRIERS_R does results in failure:
+	(- (ProcessRulebook({R}, {V}) && RulebookFailed()) -).
+
+[Based on ACCESS_THROUGH_BARRIERS_R in Light.i6t.]
+To decide what object is the touchability ceiling of (P - a person):
+	let the saved touch persona be the touch persona;
+	now the touch persona is P;
+	let the saved person reaching be the person reaching;
+	now the person reaching is P;
+	let the candidate be P;
+	repeat until a break:
+		let the prior candidate be the candidate;
+		let the candidate be the I6 parent of the component parts core of the candidate;
+		let the candidate core be the component parts core of the candidate;
+		let the external flag be whether or not the candidate is not the candidate core;
+		if the external flag is true:
+			now the candidate is the candidate core;
+		if the candidate is nothing:
+			now the touch persona is the saved touch persona;
+			now the person reaching is the saved person reaching;
+			decide on the prior candidate;
+		hide output;
+		if the external flag is false and considering the reaching outside rulebook for the candidate as ACCESS_THROUGH_BARRIERS_R does results in failure:
+			unhide output;
+			now the touch persona is the saved touch persona;
+			now the person reaching is the saved person reaching;
+			decide on the candidate;
+		unhide output.
+
+For supplying a missing noun while an actor smelling (this is the revised ambient odour rule):
+	now the noun is the touchability ceiling of the player.
+The revised ambient odour rule is listed instead of the ambient odour rule in the for supplying a missing noun rulebook.
+
+For supplying a missing noun while an actor listening (this is the revised ambient sound rule):
+	now the noun is the touchability ceiling of the player.
+The revised ambient sound rule is listed instead of the ambient sound rule in the for supplying a missing noun rulebook.
+
+Volume "0000833"
+
+To --/-- now (O - an object) is/are regionally/-- in (L - an object):
+	if O is a room and L is a region:
+		now the map region of O is L;
+		update backdrop positions;
+	otherwise:
+		move O to L.
+
+Volume "0000852"
+
+Include (-
+	[ ChangePlayer obj flag i;
+		if (~~(obj ofclass K8_person)) return RunTimeProblem(RTP_CANTCHANGE, obj);
+		if (~~(OnStage(obj, -1))) return RunTimeProblem(RTP_CANTCHANGEOFFSTAGE, obj);
+! BEGIN CHANGE FOR 0000852
+		if (obj provides component_parent && obj.component_parent ~= nothing) return ExtraRunTimeProblem(RTP_CANTCHANGETOPART, obj, obj.component_parent);
+! END CHANGE FOR 0000852
+		if (obj == player) return;
+	
+	    give player ~concealed;
+	    if (player has remove_proper) give player ~proper;
+	    if (player == selfobj) {
+	    	player.saved_short_name = player.short_name; player.short_name = FORMER__TX;
+	    }
+	    player = obj;
+	    if (player == selfobj) {
+	    	player.short_name = player.saved_short_name;
+	    }
+	    if (player hasnt proper) give player remove_proper; ! when changing out again
+	    give player concealed proper;
+	
+	    location = LocationOf(player); real_location = location;
+	    MoveFloatingObjects();
+	    SilentlyConsiderLight();
+	];
+-) instead of "Changing the Player" in "WorldModel.i6t".
+
+Include (-
+	[ MakePart P Of First;
+! BEGIN CHANGE FOR 0000852
+		if (player == P) return ExtraRunTimeProblem(RTP_CANTMAKEPLAYERPART, Of);
+! END CHANGE FOR 0000852
+		if (parent(P)) remove P; give P ~worn;
+		if (Of == nothing) { DetachPart(P); return; }
+		if (P.component_parent) DetachPart(P);
+		P.component_parent = Of;
+		First = Of.component_child;
+		Of.component_child = P; P.component_sibling = First;
+	];
+	
+	[ DetachPart P From Daddy O;
+		Daddy = P.component_parent; P.component_parent = nothing;
+		if (Daddy == nothing) { P.component_sibling = nothing; return; }
+		if (Daddy.component_child == P) {
+			Daddy.component_child = P.component_sibling;
+			P.component_sibling = nothing; return;
+		}
+		for (O = Daddy.component_child: O: O = O.component_sibling)
+			if (O.component_sibling == P) {
+				O.component_sibling = P.component_sibling;
+				P.component_sibling = nothing; return;
+			}
+	];
+-) instead of "Making Parts" in "WorldModel.i6t".
+
 6G60 Patches ends here.
 
 ---- DOCUMENTATION ----
@@ -1415,11 +1486,16 @@ Example: * Test Case for Bug 0000827 - Smelling or Listening in a Closing Contai
 	The isolation chamber can be heard.
 	Before smelling the isolation chamber:
 		now the isolation chamber is heard.
+	Reaching inside:
+		say "Warning: output from reaching inside rule not hidden."
+	Reaching outside:
+		say "Warning: output from reaching outside rule not hidden."
 	When play begins:
 		try smelling;
 		try listening;
 		let test case passed be whether or not the isolation chamber is smelt and the isolation chamber is heard;
-		showme test case passed.
+		showme test case passed;
+		say "Also check that no warnings appear."
 
 Example: * Test Case for Bug 0000833 - Moving a Room to a Region.
 
