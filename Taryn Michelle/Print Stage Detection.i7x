@@ -71,7 +71,6 @@ Include (-
 
 	Cap (artform-->acode, ~~capitalise); ! print article
 	if (pluralise) return;
-	! Shouldn't there be some way to just output the buffered result we obtained above? One would think, but I have yet to find it...thus the article_choosing flag approach implemented above.
 	print (PSN__) obj;
 ]; -) instead of "Object Names II" in "Printing.i6t";
 
@@ -82,6 +81,7 @@ Section - Adding pass-detection to the printing the name activity
 
 To decide whether name-printing is choosing articles:  (- ( article_choosing ) -).
 
+[We'd like to say "print stage is a kind of value." ... and then "the printing the name activity has a print-stage." ... which would work for objects, but unfortunately not for activities, thus the following:]
 printing-the-name-stage is a kind of value. the printing-the-name-stages are article-choosing and name-printing.
 The printing the name activity has a printing-the-name-stage called the print-stage.
 
@@ -116,10 +116,10 @@ In this simple example, we count the number of times an object is printed. Witho
 
 If a rule is going to print up a name, then it must do so in both stages, and obviously it should print up the same name in both stages. The good news is, for the vast majority of cases, this just means writing 'printing the name' rules the way we always have -- without concern for what print stage is happening under the covers:
 
-	for printing the name of the gorgeous flower during allergy attack: [assume the flower are an object and allergy attack is a scene]
+	for printing the name of the gorgeous flower during allergy attack: [assume the gorgeous flower is something defined and allergy attack is a scene]
 		say "awful, allergen-spewing flower";
 		
-As expected an ordinary 'printing the name' rule like this one this will correctly produce output such as "You can see an awful, allergen-spewing flower here." as opposed to "a gorgeous flower" elsewhere.
+An ordinary 'printing the name' rule like this one this will correctly produce output such as "You can see an awful, allergen-spewing flower here." during the allergy attack scene, as opposed to "a gorgeous flower" elsewhere.
 
 In actuality, a rule only needs to print the same *beginning* of the name in both stages for article-chosing to work properly. It's a fine point of detail, but the following would also work just fine:
 	
@@ -128,7 +128,7 @@ In actuality, a rule only needs to print the same *beginning* of the name in bot
 		if print-stage is name-printing:
 			say "allergen-spewing flower";
 			
-Obviously there's no reason to do this -- for this trivial example, the original straightforward rule will do. However, if we had instead written a rule to follow up the name of a container, say, with its contents, then it could be reasonable to defer doing anything with the contents until the name-printing stage. While not strictly necessary (the included fix for reentrance is included largely to address this sort of situation) it is arguably cleaner to print only what needs to be printed during article-choosing, and defer any 'extras' to the name-printing stage.
+Obviously there's no reason to do this -- for this trivial example, the original straightforward rule will do. However, if we had instead written a rule to follow up the name of a container, say, with its contents, then it could be reasonable to defer doing anything with the contents until the name-printing stage. While not strictly necessary (the included fix for reentrance is included precisely to address this sort of situation) it is arguably cleaner to print only what needs to be printed during article-choosing, and defer any significant extra work to the name-printing stage.
 
 If a rule is going to print anything in front of the object name that we do not want to be considered by the article-choosing rules, then such output should be omitted from the article-choosing pass. For example:
 
@@ -140,7 +140,7 @@ If a rule is going to print anything in front of the object name that we do not 
 		if print-stage is name-printing:
 			end markup;
 
-where it's assumed "begin markup" and "end markup" are defined elsewhere. The example below does this by placing "-->" and "<--" around printed object names for illustrative purposes, but the markup could in fact be anything, such as HTML, for example. The point is, allowing anything else to be printed in front of the object name during the article-choosing stage can cause an incorrect article to be chosen.  Deferring such markup to the name-printing stage prevents the problem.
+where it's assumed "begin markup" and "end markup" are defined elsewhere. The example below places "-->" and "<--" around printed object names for illustrative purposes, but the markup could in fact be anything, such as HTML, for example. The point is, allowing anything else to be printed in front of the object name during the article-choosing stage can cause an incorrect article to be chosen.  Deferring such markup to the name-printing stage prevents the problem.
 
 Finally, note that only the name-printing stage is always guaranteed to occur. The article-choosing stage occurs only for improper-named objects which do not already explicitly specify the article property, and then only if we asked for an article to be printed (i.e., a phrase such as say "[an item]" or "[the item]" was used, as opposed to say "[item]" without any article). 
 
@@ -154,7 +154,7 @@ Internally, this extension creates the following rule and places it first in the
 		otherwise:
 			now the print-stage is name-printing;
 
-Be careful of accidentally placing other 'printing the name' rules ahead of this one, as the print-stage variable will not be properly initialized. If writing a before printing the name rule that relies on this extension, either place it after the detect name-printing stage rule, or else include the initialization of the print-stage variable (as above) in that rule.
+Be careful of  placing other 'before printing the name' rules that depend on knowing the print-stage 'first', ahead of this one, as the print-stage variable will not yet be initialized.  Either ensure that the 'detect name-printing stage rule' remains listed first in the before printing the name rules, or else initialize the print-stage variable (as above) in whatever rule does end up being placed first.
 		
 Example: ** Print Stage Demo - A simple demonstration of the two passes the printing the name activity makes when printing an object with an article, and the use of Print Stage Detection to deal with some issues that arise.
 
@@ -162,14 +162,7 @@ Example: ** Print Stage Demo - A simple demonstration of the two passes the prin
 
 	Include Print Stage Detection by Taryn Michelle.
 
-	[First, a place to track the times we hit a rule for an object]
-	A rule-counter is a kind of object.
-	A rule-counter has a number called before-count. before-count of a rule-counter is usually 0.
-	A rule-counter has a number called for-count. for-count of a rule-counter is usually 0.
-	A rule-counter has a number called after-count. after-count of a rule-counter is usually 0.
-
-	null-counter is a rule-counter.
-
+	[Set up some properties to track how many times things are printed]
 	A thing has a number called the look-examine-count. The look-examine-count of a thing is usually 0.
 	A thing has a number called the times-printed. The times-printed of a thing is usually 0.
 	A thing has a number called the examine-count. The examine-count of a thing is usually 0.
