@@ -81,15 +81,11 @@ Section - Adding pass-detection to the printing the name activity
 
 To decide whether name-printing is choosing articles:  (- ( article_choosing ) -).
 
-[We'd like to say "print stage is a kind of value." ... and then "the printing the name activity has a print-stage." ... which would work for objects, but unfortunately not for activities, thus the following:]
-printing-the-name-stage is a kind of value. the printing-the-name-stages are article-choosing and name-printing.
-The printing the name activity has a printing-the-name-stage called the print-stage.
-
-First before printing the name (this is the detect name-printing stage rule):
+A printing-stage is a kind of value.  The printing-stages are article-choosing and name-printing.
+To decide what printing-stage is the print-stage:
 	if name-printing is choosing articles:
-		now the print-stage is article-choosing;
-	otherwise:
-		now the print-stage is name-printing;
+		decide on article-choosing;
+	decide on name-printing.
 
 Print Stage Detection ends here.
 
@@ -97,105 +93,105 @@ Print Stage Detection ends here.
 
 'Printing the name' rules make TWO passes over the same object when Inform needs to determine the appropriate article to print. This is a non-issue for many rules, but 'printing the name' rules with side effects may need to know which stage is currently being processed (article-choosing or name-printing), so that they can avoid double-execution of any side effects.
 
-This extension also addresses a potential issue with reentrance, whereby printing the name of a second object from within a 'printing the name' rule could end up causing an incorrect indefinite article to be chosen for the first object. (Thanks to Brady Garvin for pointing this issue out!)
+This extension also addresses an issue with reentrance, whereby printing the name of a second object from within a 'printing the name' rule could end up causing an incorrect indefinite article to be chosen for the first object. (Thanks to Brady Garvin for pointing this out! The modified I6 PrefaceByArticle routine included here incorporates the same fix as that previously packaged up by Daniel Steltzer at https://dl.dropboxusercontent.com/u/20455422/Article%20Bug%20Fix.i7x.) 
 
 The two 'printing the name' passes are non-obvious, since the first pass quietly redirects all printing to an internal buffer, where it examines the result to decide what article should be selected.  If you're surprised by this (I certainly was when I first encountered it), run the example code to see that printing the name rules do indeed get fired off TWICE each time an object is printed up with an article. 
 
-Section: New printing the name activity variable: print-stage
+Section: Testing the print-stage:
 
-This extension adds an activity variable called "print-stage" to the printing the name activity. Print-stage will be either "article-choosing" (nothing is printed up during article choosing, all print output goes to an internal array buffer) or "name-printing" which is when the results get printed out.
+This extension adds a kind of value called printing-stage. The values are either "article-choosing" (nothing is printed up during the article-choosing stage; all print output goes to an internal array buffer) or "name-printing" which is when the results get printed out. 
 
-When writing any 'printing the name' rules with side effects, it's usually important to make sure those side effects happen only once, most likely during the name-printing stage. That can be accomplished as follows:
+When writing any 'printing the name' rules with side effects, it's usually important to make sure those side effects happen only once, most likely during the name-printing stage.  The value "print-stage" is used to test which stage the printing the name activity is processing, as follows:
 
-	every thing has a number called times-printed.
-	for printing the name of something (called the target):
-	if print-stage is name-printing:
-		increase times-printed of the target by 1.
+	Every thing has a number called times-printed.
+	For printing the name of something (called the target):
+		if print-stage is name-printing:
+			increase times-printed of the target by 1.
 			
 In this simple example, we count the number of times an object is printed. Without the check for which stage the rules are in, the times-printed would end up being incorrectly doubled.
 
 If a rule is going to print up a name, then it must do so in both stages, and obviously it should print up the same name in both stages. The good news is, for the vast majority of cases, this just means writing 'printing the name' rules the way we always have -- without concern for what print stage is happening under the covers:
 
-	for printing the name of the gorgeous flower during allergy attack: [assume the gorgeous flower is something defined and allergy attack is a scene]
-		say "awful, allergen-spewing flower";
+	For printing the name of the gorgeous flower during allergy attack: [assume the gorgeous flower is something defined and allergy attack is a scene]
+		say "awful, allergen-spewing flower".
 		
 An ordinary 'printing the name' rule like this one this will correctly produce output such as "You can see an awful, allergen-spewing flower here." during the allergy attack scene, as opposed to "a gorgeous flower" elsewhere.
 
 In actuality, a rule only needs to print the same *beginning* of the name in both stages for article-chosing to work properly. It's a fine point of detail, but the following would also work just fine:
 	
-	for printing the name of the gorgeous flower during allergy attack:
+	For printing the name of the gorgeous flower during allergy attack:
 		say "awful, ";
 		if print-stage is name-printing:
-			say "allergen-spewing flower";
+			say "allergen-spewing flower".
 			
 Obviously there's no reason to do this -- for this trivial example, the original straightforward rule will do. However, if we had instead written a rule to follow up the name of a container, say, with its contents, then it could be reasonable to defer doing anything with the contents until the name-printing stage. While not strictly necessary (the included fix for reentrance is included precisely to address this sort of situation) it is arguably cleaner to print only what needs to be printed during article-choosing, and defer any significant extra work to the name-printing stage.
 
 If a rule is going to print anything in front of the object name that we do not want to be considered by the article-choosing rules, then such output should be omitted from the article-choosing pass. For example:
 
-	before printing the name of something (called the target) (this is the begin markup around printed objects rule):
+	Before printing the name of something (called the target) (this is the begin markup around printed objects rule):
 		if print-stage is name-printing:
-			begin markup;
+			begin markup.
 	
-	after printing the name of something (called the target) (this is the end markup around printed objects rule):
+	After printing the name of something (called the target) (this is the end markup around printed objects rule):
 		if print-stage is name-printing:
-			end markup;
+			end markup.
 
 where it's assumed "begin markup" and "end markup" are defined elsewhere. The example below places "-->" and "<--" around printed object names for illustrative purposes, but the markup could in fact be anything, such as HTML, for example. The point is, allowing anything else to be printed in front of the object name during the article-choosing stage can cause an incorrect article to be chosen.  Deferring such markup to the name-printing stage prevents the problem.
 
 Finally, note that only the name-printing stage is always guaranteed to occur. The article-choosing stage occurs only for improper-named objects which do not already explicitly specify the article property, and then only if we asked for an article to be printed (i.e., a phrase such as say "[an item]" or "[the item]" was used, as opposed to say "[item]" without any article). 
 
-Section: On placement of before printing the name rules
+Section: Tweaking article determination
 
-Internally, this extension creates the following rule and places it first in the list of before printing the name rules:
+The section above mainly discussed various things to avoid in the article-choosing stage, but we can also take advantage of knowing when article-choosing is happening to deal with some tricky cases. Here is an example (again, courtesy of Brady Garvin) that Inform, by default, doesn't get quite right:
 
-	First before printing the name (this is the detect name-printing stage rule):
-		if name-printing is choosing articles:
-			now the print-stage is article-choosing;
-		otherwise:
-			now the print-stage is name-printing;
+	*: Include Print Stage Detection by Taryn Michelle.
+	Use the American dialect.
+	Kitchen is a room.
+	An olive oil blend is a thing in the kitchen.
+	The olive oil blend can be herb-infused; it is herb-infused.
+	Before printing the name of the herb-infused olive oil blend:
+		if the print-stage is article-choosing and the American dialect option is active:
+			say "erb-infused "; [Americans don't pronounce the 'h', so choose the article accordingly.]
+		otherwise: 
+			say "herb-infused ".
 
-Be careful of  placing other 'before printing the name' rules that depend on knowing the print-stage 'first', ahead of this one, as the print-stage variable will not yet be initialized.  Either ensure that the 'detect name-printing stage rule' remains listed first in the before printing the name rules, or else initialize the print-stage variable (as above) in whatever rule does end up being placed first.
-		
 Example: ** Print Stage Demo - A simple demonstration of the two passes the printing the name activity makes when printing an object with an article, and the use of Print Stage Detection to deal with some issues that arise.
 
 	*: "Print Stage Demo" 
 
 	Include Print Stage Detection by Taryn Michelle.
 
-	[Set up some properties to track how many times things are printed]
-	A thing has a number called the look-examine-count. The look-examine-count of a thing is usually 0.
+	A thing has a number called the look-examine-count. The look-examine-count of a thing is usually 0. [Set up some properties to track how many times things are printed]
 	A thing has a number called the times-printed. The times-printed of a thing is usually 0.
 	A thing has a number called the examine-count. The examine-count of a thing is usually 0.
 	A thing has a number called the rule-count. The rule-count of a thing is usually 0.
 	A thing can be tracked. A thing is usually not tracked.
 
-	[Simple before-after printing rules with stage-checking]
-	before printing the name of something (called the target):
+	Before printing the name of something (called the target): 	[Simple before-after printing rules with stage-checking]
 		if the print-stage is name-printing:
-			say "-->";
+			say "-->".
 		
-	after printing the name of something (called the target):
+	After printing the name of something (called the target):
 		increase rule-count of the target by 1;
 		if the print-stage is name-printing:
 			say "<--";
 			increase times-printed of the target by 1.
 
-	[Don't apply stage-checking to one of our objects, to illustrate the difference]
-	before printing the name of the awful quirkiness:
+	Before printing the name of the awful quirkiness: 	[Don't apply stage-checking to one of our objects, to illustrate the difference]
 		say "-->";
-		rule succeeds;
+		rule succeeds.
 
-	after printing the name of the awful quirkiness:
+	After printing the name of the awful quirkiness:
 		say "<--";
 		increase rule-count of the quirkiness by 1;
 		increase times-printed of the quirkiness by 1;
 		rule succeeds.
 
-	the Chamber of Demonstration is a room. "[chamber-description]";
+	The Chamber of Demonstration is a room. "[chamber-description]".
 
 	To say chamber-description:
 		say "Wherein we shall demonstrate [an awful quirkiness] that can happen when Inform runs TWO printing-the-name passes for a single object. Besides causing side effects to happen TWICE each time the object is printed (see the counts below), it can also cause a WRONG ARTICLE to be printed (as is the case here), depending on what we do in our name-printing rules.[paragraph break]";
-		say "Whereas, notice that [an articulated thing] prints with the proper article, and also that it's times-printed count, below, is correct, because we used print-stage checking for this object."; 
+		say "Whereas, notice that [an articulated thing] prints with the proper article, and also that it's times-printed count, below, is correct, because we used print-stage checking for this object."
 
 	The articulated thing is scenery in the chamber. The articulated thing is tracked.
 	The awful quirkiness is scenery in the chamber. The quirkiness is tracked.
@@ -205,15 +201,15 @@ Example: ** Print Stage Demo - A simple demonstration of the two passes the prin
 		if the target is not tracked:
 			say " is not being tracked";
 		otherwise:
-			say "has been printed (by looking or examining) a total of [look-examine-count of the target] time(s). It has triggered the printing the name activity [rule-count of the target] times. Within that activity we've counted the times it has been printed as [times-printed of the target][if times-printed of target > look-examine-count of target] (this last value is INCORRECTLY DOUBLED, demonstrating the side effect problem that can happen without print-stage checking)[end if].";
+			say " has been printed (by looking or examining) a total of [look-examine-count of the target] time[s]. It has triggered the printing the name activity [rule-count of the target] time[s]. Within that activity we've counted the times it has been printed as [times-printed of the target][if times-printed of target > look-examine-count of target] (this last value is INCORRECTLY DOUBLED, demonstrating the side effect problem that can happen without print-stage checking)[end if]."
 
-	after looking:
+	After looking:
 		repeat with item running through tracked things in the chamber:
 			increase look-examine-count of the item by 1;
-			say "[rule count of item][line break]";
+			say "[rule count of item][line break]".
 
-	after examining a tracked thing (called the item):
+	After examining a tracked thing (called the item):
 		increase the look-examine-count of the item by 1;
-		say "[rule count of item][line break]";
+		say "[rule count of item][line break]".
 		
-	test me with "x articulated /  x quirkiness / look".
+	Test me with "x articulated /  x quirkiness / look".
