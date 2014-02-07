@@ -7,6 +7,8 @@ Section - I6 Code
 [The PrefaceByArticle routine is copied from Printing.i6t and modified to set a global flag which will tell us when PSN__ (the routine that ends up invoking the 'printing the name' activity) is printing to a buffer (to determine what article to choose) or displaying output.]
 
 Include (- 
+Global short_name_case;
+Global article_choosing = false; ! flag to signal when printing to array for article determination
 
 [ PrefaceByArticle obj acode pluralise capitalise  i artform findout artval;
 	if ( article_choosing ) { ! prevent reentrant calls from also attempting to choose an article, thereby disrupting article-choosing for the original object. (This is okay -- they will get their turn to print as requested later on, during the name-printing stage for the original object.)
@@ -73,9 +75,6 @@ Include (-
 	if (pluralise) return;
 	print (PSN__) obj;
 ]; -) instead of "Object Names II" in "Printing.i6t";
-
-Include (- Global short_name_case; -) before "Object Names II" in "Printing.i6t";
-Include (- Global article_choosing; ! flag to signal printing the name activity when printing to array for article determination -) after "Definitions.i6t";
 
 Section - Adding pass-detection to the printing the name activity
 
