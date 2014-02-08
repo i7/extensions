@@ -271,6 +271,8 @@ Section "CocoaGlk Test" (unindexed)
 The CocoaGlk detection flag is a truth state that varies; the CocoaGlk detection flag is false.
 
 Include (-
+	Array is_cocoaMethodCheck --> 1;
+	Array is_cocoaSizeCheck --> 1;
 	Array is_cocoaKeyWindowCheck --> 1;
 	[ is_detectCocoaGlk
 		glkSupported root nonroot firstWindow secondWindow;
@@ -324,7 +326,7 @@ Include (-
 			if (secondWindow) {
 				! Finally, we have our two windows whose circumstances of creation we know about.
 				! We ask the Glk implementation for the key of firstWindow, expecting it to be secondWindow.
-				glk_window_get_arrangement(glk_window_get_parent(firstWindow), 0, 0, is_cocoaKeyWindowCheck);
+				glk_window_get_arrangement(glk_window_get_parent(firstWindow), is_cocoaMethodCheck, is_cocoaSizeCheck, is_cocoaKeyWindowCheck);
 				! If, instead, we got a result of firstWindow, that's bug 819, and we're dealing with CocoaGlk.
 				(+ CocoaGlk detection flag +) = (is_cocoaKeyWindowCheck-->0) == firstWindow;
 				! Now clean up the second window.
