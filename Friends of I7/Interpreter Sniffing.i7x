@@ -1,8 +1,10 @@
-Version 1 of Interpreter Sniffing (for Glulx only) by Friends of I7 begins here.
+Version 1/140209 of Interpreter Sniffing (for Glulx only) by Friends of I7 begins here.
 
 "Phrases for testing, as far as is possible, which interpreter the story is running under."
 
 "Including Contributions from Dannii Willis and Brady Garvin."
+
+
 
 Book "Kinds for Describing Interpreters"
 

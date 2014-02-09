@@ -1,4 +1,4 @@
-Version 1/131214 of Menus by Dannii Willis begins here.
+Version 1/140209 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -9,7 +9,7 @@ Include Basic Screen Effects by Emily Short.
 Section (for Glulx only)
 
 Include version 10 of Glulx Entry Points by Emily Short.
-Include version 14/131207 of Flexible Windows by Jon Ingold.
+Include version 14/131208 of Flexible Windows by Jon Ingold.
 
 
 
@@ -18,8 +18,8 @@ Part - Tables
 [ Define the column types for Menus. The old column names will still work. ]
 
 Table of Menu column definitions
-title	text	description	submenu	subtable	rule	toggle
-""	""	""	a table-name	a table-name	a rule	a rule
+title	text	description	submenu	subtable	rule	toggle	hidden-row
+""	""	""	a table-name	a table-name	a rule	a rule	a truth state
 
 [ These tables define how the status bar is shown in menus ]
 
@@ -195,6 +195,9 @@ Displaying a menu rule (this is the main menu display rule):
 	let count be 1;
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
+		[ Skip hidden rows]
+		if there is a hidden-row entry:
+			next;
 		say line break;
 		[ Blank rows are okay! ]
 		if there is no title entry or the title entry is "":
@@ -234,6 +237,9 @@ To decide whether processing menu option (x - a number) is valid:
 	let count be 1;
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
+		[ Skip hidden rows]
+		if there is a hidden-row entry:
+			next;
 		if there is no title entry or the title entry is "":
 			next;
 		if there is a text entry or there is a description entry or there is a submenu entry or there is a subtable entry or there is a rule entry or there is a toggle entry:
@@ -343,6 +349,9 @@ Displaying a menu rule (this is the main menu display with hyperlinks rule):
 	let count be 1;
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
+		[ Skip hidden rows]
+		if there is a hidden-row entry:
+			next;
 		say line break;
 		[ Blank rows are okay! ]
 		if there is no title entry or the title entry is "":
