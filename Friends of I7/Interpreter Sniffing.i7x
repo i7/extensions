@@ -2,7 +2,7 @@ Version 1/140209 of Interpreter Sniffing (for Glulx only) by Friends of I7 begin
 
 "Phrases for testing, as far as is possible, which interpreter the story is running under."
 
-"Including Contributions from Dannii Willis and Brady Garvin."
+"with contributions by Dannii Willis and Brady Garvin"
 
 
 
