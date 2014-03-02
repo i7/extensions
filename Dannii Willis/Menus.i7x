@@ -1,4 +1,4 @@
-Version 1/140209 of Menus by Dannii Willis begins here.
+Version 1/140221 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -134,7 +134,10 @@ Part - Displaying a menu
 
 Displaying is an activity.
 
+[ The entering and exiting rules can be used to alter menu tables, which can be useful for options menus ]
+The entering a menu rules are a table-name based rulebook.
 The displaying a menu rules are a rulebook.
+The exiting a menu rules are a table-name based rulebook.
 
 To display the/-- (t - a table-name) menu with title (x - text):
 	blank out the whole of Table of Menu history;
@@ -150,6 +153,9 @@ First before displaying rule (this is the fix the Table of Menu history rule):
 		now the title entry is the current menu title;
 		now the submenu entry is the current menu;
 	now menu depth is the number of filled rows in Table of Menu history;
+
+Before displaying (this is the run the entering a menu rules rule):
+	consider the entering a menu rules for the submenu in row 1 of the Table of Menu history;
 
 Rule for displaying (this is the display a menu rule):
 	while menu depth > 0:
@@ -175,6 +181,9 @@ To show menu page (page - a text) with title (t - a text):
 	clear the screen;
 	if manually running is 1:
 		end the displaying activity;
+
+After displaying (this is the run the exiting a menu rules rule):
+	consider the exiting a menu rules for the submenu in row 1 of the Table of Menu history;
 
 
 
@@ -270,6 +279,7 @@ To show submenu (m - a table-name) with title (t - a text):
 	choose row menu depth in Table of Menu history;
 	now the title entry is t;
 	now the submenu entry is m;
+	consider the entering a menu rules for m;
 
 Displaying a menu rule (this is the process a menu command rule):
 	while 1 is 1:
@@ -285,6 +295,7 @@ Displaying a menu rule (this is the process a menu command rule):
 			stop;
 
 To leave the current menu:
+	consider the exiting a menu rules for the submenu in row menu depth of Table of Menu history;
 	choose row menu depth in Table of Menu history;
 	blank out the whole row;
 	decrement menu depth;
