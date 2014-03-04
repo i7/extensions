@@ -1,4 +1,4 @@
-Version 1 of Object Kinds by Brady Garvin begins here.
+Version 2 of Object Kinds by Brady Garvin begins here.
 
 "The ability to treat object kinds as values."
 
@@ -11,9 +11,23 @@ Object Kind #9999 specifies an object kind.  [I opt for an arithmetic kind of va
 
 To decide what object kind is the generic object kind: (- 0 -).
 
-Chapter "The Spare Object"
+Chapter "Yourself as the Spare Object"
 
-The spare object is an object.
+Include (-
+	[ ok_imbue_selfobj kind_index;
+		(selfobj.&2)-->0 = KindHierarchy-->(2 * kind_index);
+		(selfobj.&2)-->1 = KindHierarchy-->(2 * kind_index);
+		(selfobj.&2)-->2 = KindHierarchy-->(2 * kind_index);
+	];
+	[ ok_unimbue_selfobj;
+		(selfobj.&2)-->0 = K8_person;
+		(selfobj.&2)-->1 = K2_thing;
+		(selfobj.&2)-->2 = K0_kind;
+	];
+-)
+
+To make yourself temporarily behave as if it has the kind (K - an object kind): (- ok_imbue_selfobj({K}); -).
+To make yourself behave as if it has its proper kinds again: (- ok_unimbue_selfobj(); -).
 
 Chapter "Counting Object Kinds on the Z-Machine" (for Z-Machine only)
 
@@ -50,14 +64,14 @@ Include (-
 
 Definition: an object kind is valid rather than invalid if I6 routine "object_kind_is_valid" says so (it is at least zero, the minimum object kind, and at most the maximum object kind).
 
-To repeat with (I - a nonexisting object kind variable) running through object kinds begin -- end: (- for({I} = 1: {I} < (+ the last object kind +): ++{I}) -).
+To repeat with (I - a nonexisting object kind variable) running through object kinds begin -- end: (- for({I} = 0: {I} < (+ the last object kind +): ++{I}) -).
 
 To decide what object kind is the parent of (K - an object kind): (- KindHierarchy-->({K} * 2 + 1) -).
 
 To decide what list of object kinds is the children of (K - an object kind):
 	let the result be a list of object kinds;
 	repeat with the candidate running through object kinds:
-		if the parent of the candidate is K:
+		if the candidate is not the generic object kind and the parent of the candidate is K:
 			add the candidate to the result;
 	decide on the result.
 
@@ -73,8 +87,9 @@ To say the plural of (K - an object kind): (-
 		1: print "rooms";
 		2: print "things";
 		default:
-			((+ the spare object +).&2)-->0 = KindHierarchy-->(2 * {K});
-			print (string)(+ the spare object +).(KindHierarchy-->(2 * {K}))::plural;
+			ok_imbue_selfobj({K});
+			print (string)(+ yourself +).(KindHierarchy-->(2 * {K}))::plural;
+			ok_unimbue_selfobj();
 	}
 -).
 
@@ -82,29 +97,32 @@ Chapter "Identifying Object Kinds from Descriptions"
 
 Cached object kind identification relates various descriptions of objects to one object kind.
 
-[At present, declaring something as an object actually makes it a thing.  So we have to write the kind property twice below.]
-To make the spare object temporarily behave as if it has the kind (K - an object kind): (-
-	((+ the spare object +).&2)-->0 = KindHierarchy-->(2 * {K});
-	((+ the spare object +).&2)-->1 = KindHierarchy-->(2 * {K});
--).
-
 To decide what object kind is the object kind for (D - a description of values of kind K):
-	let the test object be an object;
-	now the test object is the spare object;
 	if D relates to an object kind by the cached object kind identification relation:
 		decide on the object kind that D relates to by the cached object kind identification relation;
 	repeat with the candidate running through object kinds:
-		make the spare object temporarily behave as if it has the kind candidate;
-		if the test object matches D:
+		make yourself temporarily behave as if it has the kind the candidate;
+		if yourself matches D:
+			make yourself behave as if it has its proper kinds again;
 			now the cached object kind identification relation relates D to the candidate;
 			decide on the candidate;
+	make yourself behave as if it has its proper kinds again;
 	now the cached object kind identification relation relates D to the generic object kind;
 	decide on the generic object kind.
 
 Chapter "Relating Objects and Object Kinds"
 
+Section "Private I6 Hook" - unindexed
+
+To decide whether (O - an object) is of kind (K - an object kind) according to I6: (- ({O} ofclass (KindHierarchy-->(2 * {K}))) -).
+
+Section "Decider, Relation, and Verb"
+
 To decide what object kind is the object kind of (O - an object): (- ({O}.KD_Count) -).
-To decide whether (O - an object) is of kind (K - an object kind): (- ({O} ofclass (KindHierarchy-->(2 * {K}))) -).
+
+Being of the kind relates an object (called O) to an object kind (called K) when O is of kind K according to I6.
+The verb to be of kind implies the being of the kind relation.
+The verb to be of the kind implies the being of the kind relation.
 
 Object Kinds ends here.
 
@@ -162,12 +180,13 @@ as well as a list of its children (its direct subkinds):
 
 	the children of (K - an object kind)
 
-It is also possible to test whether an object has a certain kind:
+It is also possible to test whether an object has a certain kind via the being
+of the kind relation.  For instance:
 
 	if (O - an object) is of kind (K - an object kind):
 		....
 
-and to say the preferred singular and plural forms:
+And we can say the preferred singular and plural forms:
 
 	say "[the singular of (K - an object kind)]"
 
@@ -181,6 +200,7 @@ Example: * Object Kinds Demonstration - Printing a summary of the story's kind h
 
 	There is a room.
 	A pteranodon is a kind of animal; a military-grade flying hamster ball is a kind of device.
+	Fido is a pteranodon.
 	When play begins:
 		say "Object kind of the player: [the singular of the object kind of the player].";
 		say "Object kind of pteranodons: [the singular of the object kind for pteranodons].";
@@ -192,4 +212,5 @@ Example: * Object Kinds Demonstration - Printing a summary of the story's kind h
 				now child printed is true;
 			if child printed is false:
 				say "(none)";
-			say ".[line break]    Whether the player is of this kind: [whether or not the player is of kind I].";
+			say ".[line break]    Whether the player is of this kind: [whether or not the player is of kind I].[line break]";
+			say "    Instance things: [the list of things that are of the kind I]."
