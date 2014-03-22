@@ -478,7 +478,7 @@ The phrase used to accomplish this could also be used to set the Gargoyle border
 ]
 
 After constructing a g-window (called win) (this is the Gargoyle text-buffer workaround rule):
-	if the type of win is g-text-buffer:
+	if the type of win is g-text-buffer or the type of win is g-text-grid:
 		if the back-colour of the main-window is g-placenullcol:
 			set the text-buffer background color to g-white;
 		otherwise:
@@ -1205,15 +1205,15 @@ g-pink		16761035
 
 A g-window has a glulx color value called back-colour. The back-colour of a g-window is usually g-placenullcol. The back-colour property translates into I6 as "back_colour".
 
-Before constructing a g-window (called win) (this is the set text-colours rule):
-	if the type of win is g-text-buffer:
+Before constructing a g-window (called win) (this is the set background colour of text windows rule):
+	if the type of win is g-text-buffer or the type of win is g-text-grid:
 		set the background text-colour of win;
 
-After constructing a g-window (called win) (this is the reset text-colours rule):
-	if the type of win is g-text-buffer:
+After constructing a g-window (called win) (this is the reset background colours rule):
+	if the type of win is g-text-buffer or the type of win is g-text-grid:
 		reset the background text-colour of win;
 
-After constructing a g-window (called win) (this is the colour-graphics rule):
+After constructing a g-window (called win) (this is the set background colour of graphics windows rule):
 	if the type of win is g-graphics:
 		set the background colour of win;
 
@@ -1244,7 +1244,7 @@ Constant glulx_colour_table = (+Table of Common color Values+);
 
 [ ResetBTCol i;
   for (i = 0: i < style_NUMSTYLES : i++)
-	glk_stylehint_clear(wintype_textbuffer, i, stylehint_backcolor);
+	glk_stylehint_clear( wintype_AllTypes, i, stylehint_backcolor );
 ];
 
 
@@ -1253,7 +1253,7 @@ Constant glulx_colour_table = (+Table of Common color Values+);
   if (col == (+g-placenullcol+)) rfalse;
   col = ColVal(col);
   for (i = 0: i < style_NUMSTYLES : i++)
- 	 glk_stylehint_set(wintype_Textbuffer, i, stylehint_BackColor, col);
+ 	 glk_stylehint_set( wintype_AllTypes, i, stylehint_BackColor, col );
 ];
 
 [ SetBCol win col result;
