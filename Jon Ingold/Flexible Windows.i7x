@@ -1,4 +1,4 @@
-Version 14/131208 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/140322 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -242,15 +242,11 @@ Section - Calibrating the window set to match expectations - unindexed
 Definition: a g-window is a next-step if it is the main-window or it is spawned by something g-present.
 
 To calibrate windows:
-[ open g-required g-unpresent windows. start with directly spawned windows.
-  close g-unrequired g-present windows. start with childless!
-  Try the loop multiple times to check we get them all ]
-	while the number of g-unrequired g-present childless g-windows > 0:
-		repeat with h running through g-unrequired g-present childless g-windows:
-			carry out the window-shutting activity with h;
-	while the number of next-step g-required g-unpresent g-windows > 0:
-		repeat with h running through next-step g-required g-unpresent g-windows:
-			carry out the constructing activity with h;
+	[ close windows that shouldn't be open and then open windows that shouldn't be closed ]
+	while there is a g-unrequired g-present childless g-window (called H):
+		carry out the window-shutting activity with H;
+	while there is a g-required g-unpresent next-step g-windows (called H):
+		carry out the constructing activity with H;
 
 
 
@@ -357,25 +353,16 @@ A glulx resetting-windows rule (this is the default reobtaining references rule)
 		now the ref-number of g is the current glulx rock-ref;
 		now g is g-present; [ the window is RIGHT HERE ]
 	end if;
-
 	[ by the end of this, all the windows which are actually present are marked thus, and have ref numbers. All those which aren't present are also marked. We then match this up to requirements. ]
 
-The first glulx object-updating rule:
+The first glulx object-updating rule (this is the recalibrate windows when needed rule):
 	set main-window ref;
-	follow the delete-unrequired rule;
-	follow the create-required rule.
+	[ We'd like to just call calibrate windows, but we can't because its next-step/childless restrictions mean it may not catch all the windows ]
+	while there is a g-unrequired g-present g-window (called H):
+		shut down H;
+	while there is a g-required g-unpresent g-windows (called H):
+		open up H;
 
-This is the delete-unrequired rule:
-	while the number of g-unrequired g-present g-windows is not zero
-	begin;
-		shut down a random g-unrequired g-present g-window;
-	end while.
-
-This is the create-required rule:
-	while the number of g-required g-unpresent g-windows is not zero
-	begin;
-		open up a random g-required g-unpresent g-window;
-	end while.
 
 
 Section - Updating the contents of the windows
@@ -1651,7 +1638,7 @@ Window type can be changed during the game, however, it will only take effect wh
 
 	Section: Defaults and Corrections
 
-Opening a new window is an activity that gets called for the pending window. This activity is the "constructing something" activity, and it's used to set background colours, neatly arranged unpositioned new windows, and apply the minimum width rules. New rules can be written before and after this activity. These rules may refer to "the pending g-window"; note that before, this window will not yet be in existence on the screen but its properties can be changed, and after it should be present on the screen.
+Opening a new window is an activity that gets called for the pending window. This activity is the "constructing something" activity, and it's used to set background colours, neatly arranged unpositioned new windows, and apply the minimum width rules. New rules can be written before and after this activity. Note that for before rules the window will not yet be in existence on the screen but its properties can be changed, and for after rules it should be present on the screen.
 
 Should you want to make changes to the styles for the windows, this is also the place to do it (see the Glk spec for more information on this). During the before phase, set the stylehint you want. During the after phase, remove it again, so that it doesn't affect other newly created windows. (See background colour rules for an example of this). 
 
