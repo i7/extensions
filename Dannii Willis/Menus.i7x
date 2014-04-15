@@ -1,4 +1,4 @@
-Version 1/140221 of Menus by Dannii Willis begins here.
+Version 1/140416 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -9,7 +9,7 @@ Include Basic Screen Effects by Emily Short.
 Section (for Glulx only)
 
 Include version 10 of Glulx Entry Points by Emily Short.
-Include version 14/131208 of Flexible Windows by Jon Ingold.
+Include version 14/140416 of Flexible Windows by Jon Ingold.
 
 
 
@@ -325,8 +325,6 @@ First before displaying rule (this is the switch to the popover menu window rule
 Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
 		shut down the popover menu window;
-		[ Cancel in case we left the menu by clicking the go back link ]
-		cancel character input in the main window;
 
 
 
@@ -411,6 +409,9 @@ To convert the hyperlink code to the character code:
 
 To request hyperlink input again:
 	(- glk_request_hyperlink_event( gg_event-->1 ); -).
+
+Last after displaying rule (this is the cancel character input if we left by clicking a hyperlink rule):
+	cancel character input in the main window;
 
 
 

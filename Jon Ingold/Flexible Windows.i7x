@@ -1,4 +1,4 @@
-Version 14/140322 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/140416 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -139,13 +139,13 @@ Carry out throwing open:
 Section - The built in windows - unindexed
 
 The main-window is a text-buffer g-window.
-The main-window is g-present.
-The main-window is g-required.
+The main-window is g-unpresent.
+The main-window is g-unrequired.
 The rock-value of the main-window is 100.
 
 The status-window is a text-grid g-window.
-The status-window is g-present.
-The status-window is g-required.
+The status-window is g-unpresent.
+The status-window is g-unrequired.
 The scale method of the status-window is g-fixed-size.
 The measurement of the status-window is 1.
 The position of the status-window is g-placeabove.
@@ -177,7 +177,11 @@ First when play begins (this is the allocate rocks rule):
 			set item rock to cnt;
 			increase cnt by 10;
 		now the direct parent of item is the direct-parent of item;
-	set main-window ref.
+	set main-window ref;
+	if the main-window is g-present:
+		now the main-window is g-required;
+	if the status-window is g-present:
+		now the status-window is g-required;
 
 To set main-window ref:
 (- MainWinRef(); -).
@@ -185,12 +189,18 @@ To set main-window ref:
 Include (-
 
 [ MainWinRef;
-	(+ main-window +).rock_value = GG_MAINWIN_ROCK; 
+	(+ main-window +).rock_value = GG_MAINWIN_ROCK;
 	(+ main-window +).ref_number = gg_mainwin;
-	give (+ main-window +) g_present;
+	if ( gg_mainwin )
+		give (+ main-window +) g_present;
+	else
+		give (+ main-window +) ~g_present;
 	(+ status-window +).rock_value = GG_STATUSWIN_ROCK; 
 	(+ status-window +).ref_number = gg_statuswin;
-	give (+ status-window +) g_present;
+	if ( gg_statuswin )
+		give (+ status-window +) g_present;
+	else
+		give (+ status-window +) ~g_present;
 ];
 
  -).
@@ -334,14 +344,12 @@ section - Identify glx rubbish - unindexed
 
 A glulx zeroing-reference rule (this is the default removing references rule):
 	doll-up properties; 	[ rebuild I7 properties, if we need to. ]
-	if rocks are currently unassigned, follow the allocate rocks rule;
-	repeat with g running through g-windows begin;
-		if g is not main-window
-		begin;
+	if rocks are currently unassigned:
+		follow the allocate rocks rule;
+	repeat with g running through g-windows:
+		if g is not main-window:
 			now the ref-number of g is 0;
 			now g is g-unpresent;
-		end if;
-	end repeat;
 
 To doll-up properties: (- CreatePropertyOffsets(); -)
 
@@ -349,10 +357,9 @@ Definition: a g-window is on-call if the rock-value of it is the current glulx r
 
 A glulx resetting-windows rule (this is the default reobtaining references rule):
 	let g be a random on-call g-window; [ get the particular window we're looking to build]
-	if g is a g-window and the current glulx rock is not zero begin;
+	if g is a g-window and the current glulx rock is not zero:
 		now the ref-number of g is the current glulx rock-ref;
 		now g is g-present; [ the window is RIGHT HERE ]
-	end if;
 	[ by the end of this, all the windows which are actually present are marked thus, and have ref numbers. All those which aren't present are also marked. We then match this up to requirements. ]
 
 The first glulx object-updating rule (this is the recalibrate windows when needed rule):
