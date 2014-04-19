@@ -1,4 +1,4 @@
-Version 14/140416 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/140419 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -139,13 +139,11 @@ Carry out throwing open:
 Section - The built in windows - unindexed
 
 The main-window is a text-buffer g-window.
-The main-window is g-unpresent.
-The main-window is g-unrequired.
+The main-window is g-required.
 The rock-value of the main-window is 100.
 
 The status-window is a text-grid g-window.
-The status-window is g-unpresent.
-The status-window is g-unrequired.
+The status-window is g-required.
 The scale method of the status-window is g-fixed-size.
 The measurement of the status-window is 1.
 The position of the status-window is g-placeabove.
@@ -166,6 +164,10 @@ First after window-shutting a g-window (called win) (this is the reset built in 
 		now gg_mainwin is 0;
 	if win is the status-window:
 		now gg_statuswin is 0;
+
+Before starting the virtual machine (this is the unrequire the status-window rule):
+	if the no status line option is active:
+		now the status-window is g-unrequired;
 
 
 Section - Allocating window rocks - unindexed
@@ -347,20 +349,20 @@ A glulx zeroing-reference rule (this is the default removing references rule):
 	if rocks are currently unassigned:
 		follow the allocate rocks rule;
 	repeat with g running through g-windows:
-		if g is not main-window:
-			now the ref-number of g is 0;
-			now g is g-unpresent;
+		now the ref-number of g is 0;
+		now g is g-unpresent;
 
 To doll-up properties: (- CreatePropertyOffsets(); -)
 
 Definition: a g-window is on-call if the rock-value of it is the current glulx rock.
 
 A glulx resetting-windows rule (this is the default reobtaining references rule):
-	let g be a random on-call g-window; [ get the particular window we're looking to build]
-	if g is a g-window and the current glulx rock is not zero:
-		now the ref-number of g is the current glulx rock-ref;
-		now g is g-present; [ the window is RIGHT HERE ]
-	[ by the end of this, all the windows which are actually present are marked thus, and have ref numbers. All those which aren't present are also marked. We then match this up to requirements. ]
+	if the current glulx rock is not zero:
+		while there is an on-call g-window (called g):
+			now the ref-number of g is the current glulx rock-ref;
+			now g is g-present;
+			break;
+	[ By the end of this, all the windows which are actually present are marked thus, and have ref numbers. All those which aren't present are also marked. We then match this up to requirements. ]
 
 The first glulx object-updating rule (this is the recalibrate windows when needed rule):
 	set main-window ref;
