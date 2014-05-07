@@ -1,4 +1,4 @@
-Version 2 of Bulky Items by Juhana Leinonen begins here.
+Version 3 of Bulky Items by Juhana Leinonen begins here.
 
 "Bulky items that can be carried only if the player is not carrying anything else."
 
@@ -14,29 +14,27 @@ Definition: a thing is substantial if it is not insubstantial.
 Chapter Taking bulky items
 
 Before taking a bulky thing when the player is carrying something substantial and the player is not carrying the noun (this is the making room before taking a bulky item rule):
-	say "(first dropping [the list of substantial things carried by the player] to make room)[command clarification break]";
+	say "(first dropping [the list of substantial things carried by the player] to make room)[command clarification break]" (A);
 	repeat with x running through substantial things carried by the player:
-		silently try dropping x;
-	continue the action.
+		silently try dropping x.
 
 Before taking something not bulky when the player is carrying a bulky thing (this is the dropping a bulky item before taking something else rule):
-	say "(first dropping [the random bulky thing carried by the player] to make room)[command clarification break]";
+	say "(first dropping [the random bulky thing carried by the player] to make room)[command clarification break]" (A);
 	repeat with x running through substantial things carried by the player:
-		silently try dropping x;
-	continue the action.
+		silently try dropping x.
+
+To lift is a verb.
 
 Report taking a bulky thing (this is the bulky item taken rule):
-	say "You lift [the noun] to your arms." instead.
+	say "[We] [lift] [the noun] to [our] arms." (A) instead.
 	
 Before of taking a bulky thing while multiple taking (this is the can't lift bulky things during take all rule):
 	if the player is carrying a substantial thing:
-		say "Your hands are already full.";
-		stop the action;
-	continue the action.
+		say "[Our] hands [are] already full." (A);
+		stop the action.
 	
 The can't lift bulky things during take all rule is listed first in the before rules.
 	
-
 
 Chapter Multiple taking
 
@@ -56,10 +54,15 @@ Bulky Items ends here.
 ---- DOCUMENTATION ----
 
 
+Chapter: Usage
 
-This extension introduces two new properties: "bulky" and "insubstantial". "Bulky" means the player can carry the item, but they may not carry anything else at the same time. Picking up such item will make the player automatically drop everything else they are carrying, also picking up something when the player is carrying a bulky item will make them drop it. "Insubstantial" means the thing is so small or carried in such location that it doesn't have to be dropped to carry a bulky item. Worn items are never dropped.
+This extension introduces two new properties: "bulky" and "insubstantial". 
 
-To illustrate, if the code contains following items:
+"Bulky" means the player can carry the item, but may not carry anything else at the same time. Picking up such item will make the player automatically drop everything else they are carrying. Picking up something when the player is carrying a bulky item will make them drop the bulky item first. 
+
+"Insubstantial" means the thing is so small or carried in such location that it doesn't have to be dropped to carry a bulky item. Worn items are never dropped so they don't need to be marked insubstantial manually.
+
+To illustrate, if the story contains the following items:
 
 	The huge boulder is a thing. It is bulky.
 	The pocket lint is a thing. It is insubstantial.
@@ -67,7 +70,7 @@ To illustrate, if the code contains following items:
 
 If the player carries the walking stick and the pocket lint when they pick up the boulder, they would drop the walking stick but not the pocket lint. Likewise they could pick up the pocket lint while carrying the boulder, but if they picked up the walking stick they would drop the boulder before doing so.
 
-Note that by default inserting bulky items in containers does not make the containers bulky; thus you could insert a boulder into a matchbox and circumvent the mechanics. See below for examples of containers that either change their bulkiness based on their contents or reject inserting bulky items.
+Note that by default inserting bulky items in containers (or on supporters) does not make the containers bulky; thus you could insert a boulder into a matchbox and circumvent the mechanics. See below for examples of containers that either change their bulkiness based on their contents or reject inserting bulky items.
 
 
 By default, if the player is carrying something when they try to pick up a bulky item, they will automatically drop everything they have before picking it up. If we wish to block the action instead, the following code accomplishes this:
@@ -76,21 +79,17 @@ By default, if the player is carrying something when they try to pick up a bulky
 	The dropping a bulky item before taking something else rule is not listed in any rulebook.
 
 	Instead of taking a bulky thing when the player is carrying something not bulky:
-		say "[The noun] is too big to carry with your hands full."
+		say "[The noun] [are] too big to carry with your hands full."
 
 	Instead of taking something when the player is carrying a bulky thing:
 		say "You can't carry anything else as long as you're hauling [the random bulky thing carried by the player] with you."
 
 
-Taking a bulky item is reported differently than other items. The default message is "You lift [the noun] to your arms." This can be changed by replacing the bulky item taken rule (note that the second part can be left out and taking bulky items is then reported with "Taken." just like any other items):
+Chapter: Release history
 
-	The bulky item taken rule is not listed in any rulebook.
+Version 3 (released April 2014) adds compatibility with the new release of Inform.
 
-	Report taking a bulky thing:
-		say "With some effort you take [the noun]."
-
-
-Version 2 of the extension fixes a bug where you would drop and lift again a bulky item you were already carrying when you tried to pick it up and adds the example for a smarter TAKE ALL.
+Version 2 fixed a bug where you would drop and lift again a bulky item you were already carrying when you tried to pick it up and added the example for a smarter TAKE ALL.
 
 
 Example: * Going Camping - A small game where you have to carry all the items in the room in order to win.
@@ -146,7 +145,7 @@ The example includes three bulky items (a tent, a sleeping bag and an inflated r
 
 	Every turn when the number of portable things in the garage is 1: [the player counts as one]
 		say "Having everything you need for the camping trip with you, you're ready to set off!";
-		end the game in victory.
+		end the story finally.
 	
 	Before inserting something into when the player is not carrying the noun:
 		say "(first taking [the noun])[command clarification break]";
@@ -171,9 +170,8 @@ Example: ** Bulky Containers - Containers that become bulky when a bulky thing i
 	A remote control is in the living room.
 	A tv guide is in the living room.
 
-	Check inserting something bulky into the sack:
-		if a bulky thing is in the sack:
-			say "There's no room for [the noun] anymore when [the random bulky thing in the sack] is in the sack." instead.
+	Check inserting something bulky into the sack when a bulky thing (called the previous occupant) is in the sack:
+			say "There's no room for [the noun] anymore when [the previous occupant] [are] in the sack." instead.
 	
 	After inserting something bulky into the sack:
 		now the sack is bulky;

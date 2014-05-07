@@ -1,9 +1,9 @@
-Version 5 of Object Response Tests by Juhana Leinonen begins here.
+Version 6 of Object Response Tests by Juhana Leinonen begins here.
 
 "A development tool for testing all actions on any given object - or one acton on all objects - at once to see whether the game's responses are sensible."
 
 
-Book 0 - Testing actor
+Book 1 - Testing actor
 	
 The test-actor is a person that varies.
 
@@ -13,12 +13,15 @@ This is the set testing actor rule:
 The set testing actor rule is listed last in the when play begins rulebook.
 
 
-Book 1 - Testing rules
+Book 2 - Testing rules
 
 To remove (test-rule - a rule):
 	repeat through the Table of analyzing actions:
 		if the testing rule entry is test-rule:
-			blank out the whole row.
+			blank out the whole row;
+	repeat through the Table of nounless analyzing actions:
+		if the testing rule entry is test-rule:
+			blank out the whole row;
 	
 
 To announce tests for (_txt - indexed text):
@@ -73,8 +76,7 @@ This is the test closing rule:
 	announce tests for "closing [the noun]";
 	try the test-actor closing the noun.
 
-[for some reason if it's called "test wearing rule" the extension refuses to compile in some situations. Don't ask me why.]
-This is the test clothing rule:
+This is the test wearing rule:
 	announce tests for "wearing [the noun]";
 	try the test-actor wearing the noun.
 
@@ -258,8 +260,53 @@ This is the test climbing rule:
 	try the test-actor climbing the noun.
 
 
+[Nounless rules]
+This is the test taking inventory rule:
+	announce tests for "taking inventory";
+	try the test-actor taking inventory.
 
-Book 2 - Analyzing action 
+This is the test jumping rule:
+	announce tests for "jumping";
+	try the test-actor jumping.
+
+This is the test thinking rule:
+	announce tests for "thinking";
+	try the test-actor thinking.
+
+This is the test waiting rule:
+	announce tests for "waiting";
+	try the test-actor waiting.
+
+This is the test sleeping rule:
+	announce tests for "sleeping";
+	try the test-actor sleeping.
+
+This is the test waking up rule:
+	announce tests for "waking up";
+	try the test-actor waking up.
+
+This is the test waving hands rule:
+	announce tests for "waving hands";
+	try the test-actor waving hands.
+
+This is the test saying yes rule:
+	announce tests for "saying yes";
+	try the test-actor saying yes.
+
+This is the test saying no rule:
+	announce tests for "saying no";
+	try the test-actor saying no.
+
+This is the test nounless listening rule:
+	announce tests for "nounless listening";
+	try the test-actor listening.
+
+This is the test nounless smelling rule:
+	announce tests for "nounless smelling";
+	try the test-actor smelling.
+
+
+Book 3 - Analyzing action 
 
 Part 1 - Table of analyzing actions
 
@@ -284,13 +331,12 @@ topic	testing rule
 "taking"	test taking rule
 "switching on"	test switching on rule
 "switching off"	test switching off rule
-"wearing"	test clothing rule
+"wearing"	test wearing rule
 "taking off"	test taking off rule
 "throwing at"	test throwing at rule
 "showing to"	test showing to rule
 "giving to"	test giving to rule
 "waking"	test waking rule
-"attacking"	test attacking rule
 "kissing"	test kissing rule
 "touching"	test touching rule
 "rubbing"	test rubbing rule
@@ -305,8 +351,22 @@ topic	testing rule
 "eating"	test eating rule
 "dropping"	test dropping rule
 
+Table of nounless analyzing actions
+topic	testing rule
+"taking inventory"	test taking inventory rule
+"jumping"	test jumping rule
+"thinking"	test thinking rule
+"waiting"	test waiting rule
+"sleeping"	test sleeping rule
+"waking up"	test waking up rule
+"waving hands"	test waving hands rule
+"saying yes"	test saying yes rule
+"saying no"	test saying no rule
+"nounless listening"	test nounless listening rule
+"nounless smelling"	test nounless smelling rule
 
-Book 3 - Actions - Not for release
+
+Book 4 - Actions - Not for release
 
 
 Object-analyzing is an action applying to one visible thing.
@@ -329,6 +389,16 @@ Carry out all-encompassing analyzing (this is the analyze everything in the loca
 			try object-analyzing x.
 
 Understand "analyze all" as all-encompassing analyzing.
+
+
+Nounless analyzing is an action applying to nothing.
+
+Understand "analyze nounless" and "analyse nounless" and "nounless" as nounless analyzing.
+
+Carry out nounless analyzing (this is the go through all nounless analyzing rules rule):
+	repeat through the table of nounless analyzing actions:
+		if there is a testing rule entry:
+			follow the testing rule entry.
 
 
 Test-verb-trying is an action applying to one topic.
@@ -366,6 +436,8 @@ Chapter: Basic usage
 
 Object Response Tests adds new testing commands ANALYZE and TRY. ANALYZE can be used to execute all available commands on a single object to see whether all the messages make sense. TRY is similar but in 'reverse': it tests one verb with all the objects currently in the location. The syntax is TRY <action>, for example TRY PUSHING.
 
+For actions that don't act on a noun, like jumping or waiting, there's an ANALYZE NOUNLESS (or just NOUNLESS) command that runs all such actions.
+
 There's also an ANALYZE ALL command for those who are feeling adventurous. It runs all the tests on all the objects currently in the location. It is mainly useful for locations with not that many objects to test.
 
 For testing the default library actions, just include the extension in your project and both these commands will become available. Actions related to speaking with persons (saying, telling, asking) are excluded because of the various ways different games handle conversation.
@@ -394,6 +466,8 @@ Of course, most games have custom actions that are not defined in the standard l
 	topic	testing rule
 	"swimming in"	test swimming in rule
 	"kicking"	test kicking rule
+	
+For nounless commands the procedure is the same but the table is called "Table of nounless analyzing actions".
 
 
 Chapter: Changing the actor
@@ -412,10 +486,18 @@ The extension automatically disables itself in release versions. Any abovementio
 
 Chapter: Version history
 
-Section: Version 5 (2013-??-??)
+Section: Version 6 (2014-04-30)
 
- - updated to work with the new release of Inform 7
- - added the 'remove (rule)' phrase to remove actions from the test set instead of procedural rules
+ - updated to work with the new release of Inform 7.
+ - added the 'analyze nounless' action.
+
+
+Section: Version 5 (2013-10-26)
+
+ - added a way to disable tests without using the deprecated procedural rules.
+ - changed deprecated "change" phrases to "now".
+ - removed a duplicate test attacking rule from the test set.
+ - renamed the test clothing rule to test wearing rule. Older versions of I7 choked on the word "wearing" in the rule but it seems to work in the latest.
 
 
 Section: Version 4 (2010-06-14)
@@ -446,7 +528,7 @@ Section: Version 1 (2008-11-18)
  - initial release
 
 
-Example: * Camp Fire - An example of basic use of the extension.
+Example: * Camp Fire - An example of basic use of the extension
 
 	*: "Camp Fire"
 
@@ -461,12 +543,12 @@ Example: * Camp Fire - An example of basic use of the extension.
 	Instead of touching the bonfire:
 		say "Ow! You almost burn your fingers."
 
-	Test me with "analyze bonfire/try touching/actor is Alice/analyze all".
+	Test me with "analyze bonfire/try touching/analyze nounless/actor is Alice/analyze bonfire".
 
 When we run the test, we notice that at least the response to "taste bonfire" should be changed to something more appropriate.
 
 
-Example: ** Porcelain - Skipping tests that destroy or alter the object.
+Example: ** Porcelain - Skipping tests that have destructive side effects
 
 Ignoring a verb in certain cases involves removing the existing rules and writing new ones that take special cases into account.
 
