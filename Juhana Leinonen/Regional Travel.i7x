@@ -1,26 +1,24 @@
-Regional Travel by Juhana Leinonen begins here.
+Version 2 of Regional Travel by Juhana Leinonen begins here.
 
 "Allows the player to travel between regions. Useful for example when the player travels between large regions far apart from each other (e.g. cities), or for traveling in vehicles and public transportation."
 
 
 Chapter 1
 
-Use travel destination announcements translates as (- Constant USE_TRAVEL_DEST_ANNOUNCEMENTS; -).
-
 A region has a room called travel entry point.
 
 Traveling regionally to is an action applying to one visible thing.
 
 Understand "travel to [any room]" as traveling regionally to.
-Understand "travel to [text]" as a mistake ("[unknown travel destination message][run paragraph on]").
+Understand "travel to [text]" as a mistake ("That's not a place where [we] [can] travel to.").
 
 Does the player mean traveling regionally to an unvisited room: it is unlikely.
 
 
 Chapter 2a (for use without Epistemology by Eric Eve)
 
-Check traveling regionally to (this is the can only travel to visited rooms rule):
-	if the noun is unvisited, say "[unknown travel destination message]" instead.
+Check traveling regionally to an unvisited room (this is the can only travel to visited rooms rule):
+	say "That's not a place where [we] [can] travel to." (A) instead.
 
 
 Chapter 2b (for use with Epistemology by Eric Eve)
@@ -34,8 +32,8 @@ Definition: a room is unseen if it is not seen.
 Definition: a room is known if it is familiar or it is seen.
 Definition: a room is unknown if it is not known.
 
-Check traveling regionally to (this is the can only travel to visited rooms rule):
-	if the noun is unknown, say "[unknown travel destination message]" instead.
+Check traveling regionally to an unknown room (this is the can only travel to visited rooms rule):
+	say "That's not a place where [we] [can] travel to." (A) instead.
 
 Does the player mean traveling regionally to a known room: it is very likely.
 
@@ -43,19 +41,19 @@ Does the player mean traveling regionally to a known room: it is very likely.
 Chapter 3
 
 Check traveling regionally to (this is the can only travel to room in a region rule):
-	if the noun is not in a region, say "[destination not in a region message]" instead.
+	if the noun is not in a region, say "[We] [can't] travel there." (A) instead.
 
 Check traveling regionally to (this is the can't travel where you already are rule):
 	if the noun is in a region (called the target region):
 		if the location of the player is the travel entry point of the target region:
-			say "[already there message]" instead;
+			say "[We] [are] already there." (A) instead;
 		otherwise if the location of the player is in the target region:
-			say "[already in the region message]" instead.
+			say "[We] [are] already near [the noun]." (B) instead.
 
 Carry out traveling regionally to (this is the clarify the region we're traveling to rule):
 	[this can't be a report rule because it has to print before we move the player and show the new room description]
-	if using the travel destination announcements option and the noun is in a region (called the target region):
-		say "(traveling to [the target region])[command clarification break]".
+	if the noun is in a region (called the target region):
+		say "(travel[if the American dialect option is not active]l[end if]ing to [the target region])[command clarification break]" (A).
 
 After traveling regionally to (this is the move player to the new region rule):
 	if the noun is in a region (called the target region):
@@ -63,20 +61,12 @@ After traveling regionally to (this is the move player to the new region rule):
 	continue the action.
 
 
-Chapter 4 
-
-The unknown travel destination message is some text that varies. The unknown travel destination message is "That's not a place where you could travel to.[line break]"
-
-The destination not in a region message is some text that varies. The destination not in a region message is "You can't travel there.[line break]"
-
-The already there message is some text that varies. The already there message is "You are already there.[line break]"
-
-The already in the region message is some text that varies. The already in the region message is "You are already near [the noun].[line break]"
-
 Regional Travel ends here.
 
 
 ---- DOCUMENTATION ----
+
+Chapter: Usage
 
 The Regional Travel extension adds a new action, traveling regionally to, that allows the player to travel between different regions with the command TRAVEL TO. This kind of technique is sometimes used in games where the player can travel between distant locations, for example between cities or between separate locations inside a city. The extension can also be used when the player needs a vehicle for traveling to certain areas (see example B for a demonstration).
 
@@ -84,19 +74,15 @@ The minimal setup is to group rooms into regions (see chapter 3.4 in Inform 7 (5
 
 By default the player can't travel to any region that is unvisited. If we want the player to be able at any point of the game to travel somewhere they haven't visited yet it's recommended to include another extension, Epistemology by Eric Eve. When we're using Epistemology we can make a room 'familiar' which allows traveling there. See Epistemology's documentation for more information or example B for another method for granting travel access to an unvisited location.
 
-There are some default messages that are displayed to the player in different situations. They are: The unknown travel destination message, the destination not in a region message, the already there message and the already in the region message. These are "some text that varies" and they can be changed during the game or in a "when play begins" rule:
 
-	When play begins:
-		change the unknown travel destination message to "That sounds like an implausible place to go to.";
-		change the already in the region message to "[The noun] is just around the corner."
+Chapter: Version history
+
+Version 2 (April 2014): Modified the extension for compatibility with the new release of Inform. Message variables are now removed and changing messages is handled through means provided by Inform itself. The travel destination announcements option is removed and removing the announcement is done by removing the rule that prints it.
 
 
-Example: * East Side West Side - A bare minimum example of setting up Regional Travel.
+Example: * East Side West Side - A bare minimum example of setting up Regional Travel
 
 In this example we set up the rooms in chapter 1 as we normally would and divide them into two regions. In chapter 2 we add travel entry points to both regions and allow traveling to "west bank" and "east bank" by making "bank" a synonym for the entry points.
-
-Note that here we have used the "travel destination announcements" option, which clarifies to the player where they are heading to. 
-
 
 	* : Include Regional Travel by Juhana Leinonen.
 
@@ -123,26 +109,27 @@ Note that here we have used the "travel destination announcements" option, which
 	Test me with "e/e/s/travel to church/travel to foobar/travel to eastern main road/travel to blacksmith/travel to west bank/w/s/travel to blacksmith/e/travel to church/travel to east bank".
 
 
-Example: ** The Detective - Driving around the city in a car.
+Example: ** The Detective - Driving around the city in a car
 
 	* : Include Regional Travel by Juhana Leinonen.
 	
 	Chapter Setup
 	
 	Understand "drive to [any room]" as traveling regionally to.
-	Understand "drive to [text]" as a mistake ("[unknown travel destination message][run paragraph on]").
+	Understand "drive to [text]" as a mistake ("That's not a place you could drive to.").
 	
-	When play begins:
-		now the unknown travel destination message is "That's not a place you could drive to.[line break]".
+	The can only travel to visited rooms rule response (A) is "That's not a place you could drive to."
 	
 	A room can be known or unknown. A room is usually unknown.
 	
-	Check traveling regionally to a known room (this is the can travel to unvisited but known rooms rule):
-		ignore the can only travel to visited rooms rule.
+	The can only travel to visited rooms rule is not listed in any rulebook.
+	
+	Check traveling regionally to an unknown room (this is the can travel to unvisited but known rooms rule):
+		say "That's not a place you can drive to."
 	
 	Check traveling regionally to when the player is not in a vehicle (this is the can only travel in a vehicle rule):
 		say "You need to be in a car before you can drive anywhere." instead.
-		
+	
 	Before traveling regionally to when the player is not in a vehicle and the player can see a vehicle (called the transportation method):
 		say "(first entering [the transportation method])[command clarification break]";
 		silently try entering the transportation method.
@@ -157,7 +144,6 @@ Example: ** The Detective - Driving around the city in a car.
 		if the room noun of the location is a room and the room noun of the location is not a road:
 			say "You can't drive there!" instead.
 	
-	
 	Chapter Setting
 	
 	The Mansion is a room. Rule for printing the name of the mansion while asking which do you mean: say "inside the mansion". Understand "inside" as the mansion.
@@ -170,11 +156,11 @@ Example: ** The Detective - Driving around the city in a car.
 	
 	After examining the business card:
 		now Bob's Garage is known.
-		
-	The Mansion driveway is a road. It is outside of the mansion. 
+	
+	The Mansion driveway is a road. It is outside of the mansion.
 	
 	The car is a vehicle in the mansion driveway.
-		
+	
 	The murder scene is a region. The mansion and mansion driveway is in the murder scene.
 	The travel entry point of the murder scene is the mansion driveway.
 	
@@ -188,8 +174,7 @@ Example: ** The Detective - Driving around the city in a car.
 	The garage area is a region. Bob's Garage, Maple Street, and Entrance to Garage are in the garage area.
 	The travel entry point of the garage area is the Maple Street.
 	
-	
 	Test me with "x body/x hand/read card/drive to bob's garage/out/drive to bob's garage/s/out/in".
-
+	
 
 

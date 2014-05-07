@@ -1,4 +1,4 @@
-Version 1 of Debug Files (for Glulx only) by Juhana Leinonen begins here.
+Version 2 of Debug Files (for Glulx only) by Juhana Leinonen begins here.
 
 "A development tool for saving debugging information to an external text file during beta testing."
 
@@ -9,20 +9,20 @@ The prompt count is a number that varies. The PSIN is a number that varies.
 Use debug files translates as (- Constant USE_FILE_DEBUGGING; -).
 	
 When play begins (this is the initialize the Debug Files extension rule):
-	if using the debug files option:
+	if the debug files option is active:
 		now PSIN is a random number from 10000 to 99999;
-		change the command prompt to "[bracket][the advanced prompt count][close bracket] >";
+		now the command prompt is "[bracket][the advanced prompt count][close bracket] >";
 		append "[paragraph break]---[paragraph break][banner text][paragraph break]" to the file of debug information.
 	
-After printing the banner text when using the debug files option (this is the print PSIN after the banner rule):
-	say "Play session identifier number: [PSIN][line break]".
+After printing the banner text when the debug files option is active (this is the print PSIN after the banner rule):
+	say "Play session identifier number: [PSIN][line break]" (A).
 
 To say the advanced prompt count:
 	increase the prompt count by 1;
 	say prompt count.
 	
 To debug (txt - indexed text):
-	if using the debug files option:
+	if the debug files option is active:
 		append "[bracket][prompt count][close bracket]: [txt][paragraph break]" to the file of debug information.
 
 Debug Files ends here.
@@ -81,6 +81,11 @@ The location where the debug file is saved will depend on the interpreter. This 
 If the interpreter can't save the debug file for some reason, the game will probably crash.
 
 If the debug file already exists, new information will be appended to the old data.
+
+
+Chapter: Version history
+
+Version 2 (April 2014): Modified the extension for compatibility with the new release of Inform.
 
 
 Example: * Bear Hunter - An example where some information of the game mechanics is saved to the debug file.

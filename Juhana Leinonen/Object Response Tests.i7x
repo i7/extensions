@@ -1,9 +1,9 @@
-Version 5 of Object Response Tests by Juhana Leinonen begins here.
+Version 6 of Object Response Tests by Juhana Leinonen begins here.
 
 "A development tool for testing all actions on any given object - or one action on all objects - at once to see whether the game's responses are sensible."
 
 
-Book 0 - Testing actor
+Book 1 - Testing actor
 	
 The test-actor is a person that varies.
 
@@ -13,7 +13,16 @@ This is the set testing actor rule:
 The set testing actor rule is listed last in the when play begins rulebook.
 
 
-Book 1 - Testing rules
+Book 2 - Testing rules
+
+To remove (test-rule - a rule):
+	repeat through the Table of analyzing actions:
+		if the testing rule entry is test-rule:
+			blank out the whole row;
+	repeat through the Table of nounless analyzing actions:
+		if the testing rule entry is test-rule:
+			blank out the whole row;
+	
 
 To announce tests for (_txt - indexed text):
 	say "[italic type][_txt]:[roman type]".
@@ -78,7 +87,10 @@ This is the test taking off rule:
 This is the test giving to rule:
 	if the noun is a person:
 		if the test-actor is not carrying something:
-			say "[italic type](no inventory items; can't test giving to.)[roman type][line break]";
+			say italic type;
+			say "(no inventory items; can't test giving to.)" (A);
+			say roman type;
+			say line break;
 			rule succeeds;
 		let give-object be a random thing carried by the test-actor;
 		announce tests for "giving [the give-object] to [the noun]";
@@ -86,8 +98,11 @@ This is the test giving to rule:
 		rule succeeds;
 	if the test-actor is not carrying the noun:
 		rule succeeds;
-	if the test-actor can not see a person who is not the test-actor:
-		say "[italic type](no persons in the location; can't test giving to.)[roman type][line break]";
+	unless the test-actor can see a person who is not the test-actor:
+		say italic type;
+		say "(no other people in the location; can't test giving to.)" (B);
+		say roman type;
+		say line break;
 		rule succeeds;
 	let give-target be a random visible person who is not the test-actor; 
 	announce tests for "giving [the noun] to [the give-target]";
@@ -96,7 +111,10 @@ This is the test giving to rule:
 This is the test showing to rule:
 	if the noun is a person:
 		if the test-actor is not carrying something:
-			say "[italic type](no inventory items; can't test showing to.)[roman type]";
+			say italic type;
+			say "(no inventory items; can't test showing to.)" (A);
+			say roman type;
+			say line break;
 			rule succeeds;
 		let show-object be a random thing carried by the test-actor;
 		announce tests for "showing [the show-object] to [the noun]";
@@ -104,8 +122,11 @@ This is the test showing to rule:
 		rule succeeds; 	
 	if the test-actor is not carrying the noun:
 		rule succeeds;
-	if the test-actor can not see a person who is not the test-actor:
-		say "[italic type](no persons in the location; can't test showing to.)[roman type]";
+	unless the test-actor can see a person who is not the test-actor:
+		say italic type;
+		say "(no other people in the location; can't test showing to.)" (B);
+		say roman type;
+		say line break;
 		rule succeeds;
 	let show-target be a random visible person who is not the test-actor in the location of the test-actor; 
 	announce tests for "showing [the noun] to [the show-target]";
@@ -115,7 +136,10 @@ This is the test showing to rule:
 This is the test throwing at rule:
 	if the noun is a person:
 		if the test-actor is not carrying something:
-			say "[italic type](no inventory items; can't test throwing at.)[roman type]";
+			say italic type;
+			say "(no inventory items; can't test throwing at.)" (A);
+			say roman type;
+			say line break;
 			rule succeeds;
 		let throw-object be a random thing carried by the test-actor;
 		announce tests for "throwing [the throw-object] at [the noun]";
@@ -123,8 +147,11 @@ This is the test throwing at rule:
 		rule succeeds;
  	if the test-actor is not carrying the noun:
 		rule succeeds;
-	if the test-actor can not see a person who is not the test-actor:
-		say "[italic type](no persons in the location; can't test throwing at.)[roman type]";
+	unless the test-actor can see a person who is not the test-actor:
+		say italic type;
+		say "(no other people in the location; can't test throwing at.)" (B);
+		say roman type;
+		say line break;
 		rule succeeds;
 	let throw-target be a random visible person who is not the test-actor in the location of the test-actor; 
 	announce tests for "throwing [the noun] at [the throw-target]";
@@ -171,7 +198,10 @@ Definition: a direction is push-to-possible if the room it from the location of 
 This is the test pushing to rule:
 	let push-direction be a random push-to-possible direction;
 	if the push-direction is nothing:
-		say "[italic type](no exits; can't test pushing to.)[roman type][line break]";
+		say italic type;
+		say "(no exits; can't test pushing to.)" (A);
+		say roman type;
+		say line break;
 		rule succeeds;
 	announce tests for "pushing [the noun] to [push-direction]";
 	try the test-actor pushing the noun to push-direction.
@@ -230,8 +260,53 @@ This is the test climbing rule:
 	try the test-actor climbing the noun.
 
 
+[Nounless rules]
+This is the test taking inventory rule:
+	announce tests for "taking inventory";
+	try the test-actor taking inventory.
 
-Book 2 - Analyzing action 
+This is the test jumping rule:
+	announce tests for "jumping";
+	try the test-actor jumping.
+
+This is the test thinking rule:
+	announce tests for "thinking";
+	try the test-actor thinking.
+
+This is the test waiting rule:
+	announce tests for "waiting";
+	try the test-actor waiting.
+
+This is the test sleeping rule:
+	announce tests for "sleeping";
+	try the test-actor sleeping.
+
+This is the test waking up rule:
+	announce tests for "waking up";
+	try the test-actor waking up.
+
+This is the test waving hands rule:
+	announce tests for "waving hands";
+	try the test-actor waving hands.
+
+This is the test saying yes rule:
+	announce tests for "saying yes";
+	try the test-actor saying yes.
+
+This is the test saying no rule:
+	announce tests for "saying no";
+	try the test-actor saying no.
+
+This is the test nounless listening rule:
+	announce tests for "nounless listening";
+	try the test-actor listening.
+
+This is the test nounless smelling rule:
+	announce tests for "nounless smelling";
+	try the test-actor smelling.
+
+
+Book 3 - Analyzing action 
 
 Part 1 - Table of analyzing actions
 
@@ -276,8 +351,22 @@ topic	testing rule
 "eating"	test eating rule
 "dropping"	test dropping rule
 
+Table of nounless analyzing actions
+topic	testing rule
+"taking inventory"	test taking inventory rule
+"jumping"	test jumping rule
+"thinking"	test thinking rule
+"waiting"	test waiting rule
+"sleeping"	test sleeping rule
+"waking up"	test waking up rule
+"waving hands"	test waving hands rule
+"saying yes"	test saying yes rule
+"saying no"	test saying no rule
+"nounless listening"	test nounless listening rule
+"nounless smelling"	test nounless smelling rule
 
-Book 3 - Actions - Not for release
+
+Book 4 - Actions - Not for release
 
 Object-analyzing is an action applying to one visible thing.
 
@@ -286,9 +375,9 @@ Understand "analyse [something]" as object-analyzing.
 
 
 Carry out object-analyzing (this is the go through all analyzing rules rule):
-	repeat with x running from 1 to the number of rows in the table of analyzing actions:
-		if there is a testing rule in row x of the table of analyzing actions:
-			follow the testing rule in row x of the table of analyzing actions.
+	repeat through the table of analyzing actions:
+		if there is a testing rule entry:
+			follow the testing rule entry.
 
 
 All-encompassing analyzing is an action applying to nothing.
@@ -301,6 +390,16 @@ Carry out all-encompassing analyzing (this is the analyze everything in the loca
 Understand "analyze all" as all-encompassing analyzing.
 
 
+Nounless analyzing is an action applying to nothing.
+
+Understand "analyze nounless" and "analyse nounless" and "nounless" as nounless analyzing.
+
+Carry out nounless analyzing (this is the go through all nounless analyzing rules rule):
+	repeat through the table of nounless analyzing actions:
+		if there is a testing rule entry:
+			follow the testing rule entry.
+
+
 Test-verb-trying is an action applying to one topic.
 
 Understand "try [text]" as test-verb-trying.
@@ -308,7 +407,7 @@ Understand "try [text]" as test-verb-trying.
 
 Check test-verb-trying (this is the unknown verb test label rule):
 	if the topic understood is not a topic listed in the Table of analyzing actions:
-		say "Unknown verb test." instead.
+		say "Unknown verb test." (A) instead.
 
 Carry out test-verb-trying (this is the repeat an action with all objects rule):
 	if the topic understood is a topic listed in the Table of analyzing actions:
@@ -324,8 +423,7 @@ Understand "actor is [any person]" as test-actor changing.
 
 Carry out test-actor changing (this is the change testing actor rule):
 	now the test-actor is the noun;
-	say "Object Response Tests now uses [the noun] as the actor."
-
+	say "Object Response Tests now uses [the noun] as the actor." (A).
 
 To remove the/-- (r - a rule) from object response tests:
 	choose row with testing rule of r in Table of analyzing actions;
@@ -335,11 +433,14 @@ To remove the/-- (r - a rule) from object response tests:
 
 Object Response Tests ends here.
 
+
 ---- DOCUMENTATION ----
 
 Chapter: Basic usage
 
 Object Response Tests adds new testing commands ANALYZE and TRY. ANALYZE can be used to execute all available commands on a single object to see whether all the messages make sense. TRY is similar but in 'reverse': it tests one verb with all the objects currently in the location. The syntax is TRY <action>, for example TRY PUSHING.
+
+For actions that don't act on a noun, like jumping or waiting, there's an ANALYZE NOUNLESS (or just NOUNLESS) command that runs all such actions.
 
 There's also an ANALYZE ALL command for those who are feeling adventurous. It runs all the tests on all the objects currently in the location. It is mainly useful for locations with not that many objects to test.
 
@@ -348,9 +449,11 @@ For testing the default library actions, just include the extension in your proj
 
 Chapter: Removing and adding tests
 
-Some games may disable some of the standard library actions. To avoid confusion it might be better to skip testing these actions altogether. 
+Some games may disable some of the standard library actions. To avoid confusion it might be better to skip testing these actions altogether.
 
-To remove actions from the testing list, use:
+	When play begins:
+		remove the test burning rule;
+		remove the test pushing to rule.
 
 	When play begins:
 		remove the test burning rule from object response tests;
@@ -362,16 +465,18 @@ Of course, most games have custom actions that are not defined in the standard l
 
 	This is the test swimming in rule:
 		announce tests for "swimming in [the noun]";
-		try swimming in the noun.
+		try the test-actor swimming in the noun.
 
 	This is the test kicking rule:
 		announce tests for "kicking [the noun]";
-		try kicking the noun.
+		try the test-actor kicking the noun.
 
 	Table of analyzing actions (continued)
 	topic	testing rule
 	"swimming in"	test swimming in rule
 	"kicking"	test kicking rule
+	
+For nounless commands the procedure is the same but the table is called "Table of nounless analyzing actions".
 
 
 Chapter: Changing the actor
@@ -390,12 +495,18 @@ The extension automatically disables itself in release versions. Any abovementio
 
 Chapter: Version history
 
+Section: Version 6 (2014-04-30)
+
+ - updated to work with the new release of Inform 7.
+ - added the 'analyze nounless' action.
+
+
 Section: Version 5 (2013-10-26)
 
-	- added a way to disable tests without using the deprecated procedural rules.
-	- changed deprecated "change" phrases to "now".
-	- removed a duplicate test attacking rule from the test set.
-	- renamed the test clothing rule to test wearing rule. Older versions of I7 choked on the word "wearing" in the rule but it seems to work in the latest.
+ - added a way to disable tests without using the deprecated procedural rules.
+ - changed deprecated "change" phrases to "now".
+ - removed a duplicate test attacking rule from the test set.
+ - renamed the test clothing rule to test wearing rule. Older versions of I7 choked on the word "wearing" in the rule but it seems to work in the latest.
 
 
 Section: Version 4 (2010-06-14)
@@ -427,7 +538,7 @@ Section: Version 1 (2008-11-18)
 	- initial release
 
 
-Example: * Camp Fire - An example of basic use of the extension.
+Example: * Camp Fire - An example of basic use of the extension
 
 	*: "Camp Fire"
 
@@ -442,12 +553,14 @@ Example: * Camp Fire - An example of basic use of the extension.
 	Instead of touching the bonfire:
 		say "Ow! You almost burn your fingers."
 
-	Test me with "analyze bonfire/try touching/actor is Alice/analyze all".
+	Test me with "analyze bonfire/try touching/analyze nounless/actor is Alice/analyze bonfire".
 
 Running the tests shows that at least the response to "taste bonfire" should be changed to something more appropriate.
 
 
-Example: ** Porcelain - Skipping tests that destroy or alter the object.
+Example: ** Porcelain - Skipping tests that have destructive side effects
+
+Ignoring a verb in certain cases involves removing the existing rules and writing new ones that take special cases into account.
 
 The Ming vase will be broken if it's pushed or touched, so we'll remove those tests and replace them with new ones that do nothing if the target is the vase.
 
@@ -468,25 +581,24 @@ The Ming vase will be broken if it's pushed or touched, so we'll remove those te
 		remove the Ming dynasty vase from play.
 	
 	Chapter Tests - Not for release
-	
-	When play begins (this is the remove destructive tests rule):
-		remove the test pushing rule from object response tests;
-		remove the test touching rule from object response tests.
-		
-	This is the new test pushing rule:
+
+	When play begins:
+		remove the test pushing rule;
+		remove the test touching rule.
+
+	This is the test pushing non-fragile things in rule:
 		if the noun is not the Ming dynasty vase:
 			announce tests for "pushing [the noun]";
 			try pushing the noun.
-	
-	This is the new test touching rule:
+
+	This is the test touching non-fragile things in rule:
 		if the noun is not the Ming dynasty vase:
 			announce tests for "touching [the noun]";
 			try touching the noun.
-			
+
 	Table of analyzing actions (continued)
-	topic    	 testing rule
-	"pushing"    	 new test pushing rule
-	"touching"    	 new test touching rule
-	
+	topic	testing rule
+	"pushing"	test pushing rule
+	"touching"	test touching rule
+
 	Test me with "analyze vase/push vase".
-	
