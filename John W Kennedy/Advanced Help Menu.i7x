@@ -1,4 +1,4 @@
-Advanced Help Menu by John W Kennedy begins here.
+Version 1/140513 of Advanced Help Menu by John W Kennedy begins here.
 
 "Builds on Emily Short's Basic Help Menu, with hints that are enabled under program control and sample transcriptions"
 
@@ -11,9 +11,9 @@ To activate hint (H - table-name):
 		let T be the title entry;
 		blank out the whole row;
 		choose a blank row in M;
-		change the title entry to T;
-		change the subtable entry to H;
-		change toggle entry to the hint toggle rule;
+		now the title entry is T;
+		now the subtable entry is H;
+		now toggle entry is the hint toggle rule;
 	end if.
 
 To activate hint menu (M - table-name):
@@ -23,8 +23,8 @@ To activate hint menu (M - table-name):
 		let T be the title entry;
 		blank out the whole row;
 		choose a blank row in P;
-		change the title entry to T;
-		change the subtable entry to M;
+		now the title entry is T;
+		now the subtable entry is M;
 	end if.
 
 This is the sample-transcript rule:
@@ -70,6 +70,13 @@ A further feature is that one or more sample transcripts can be created. To do s
 
 A sample-transcription table contains a column called "sample text", filled with material to be emitted. Each one will be displayed with a trailing paragraph break.
 
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+
+
 Example: * Samplex - A small game mostly consisting of such help.
 
 	"Samplex" by John W Kennedy
@@ -78,7 +85,7 @@ Example: * Samplex - A small game mostly consisting of such help.
 
 	When play begins:
 		choose row 1 in Table of Basic Help Options;
-		change description entry to "This is a demonstration of John W. Kennedy's Advanced Help Menu.";
+		now description entry is "This is a demonstration of John W. Kennedy's Advanced Help Menu.";
 		activate hint menu Table of Entrance hints menu;
 		activate hint Table of entering hints.
 
@@ -95,7 +102,7 @@ Example: * Samplex - A small game mostly consisting of such help.
 
 	The treasure chest is an openable closed container in the Cave Interior.
 	After opening the treasure chest:
-		end the game in victory.
+		end the story finally saying "You have won."
 
 	Table of Basic Help Options (continued)
 	title	subtable	description	toggle
@@ -120,18 +127,18 @@ Example: * Samplex - A small game mostly consisting of such help.
 	Table of Cave hints menu	"In the cave"	Table of general hint menus
 
 	Table of general hint menus
-	title	subtable	description	toggle
-	--	a table-name	--	a rule
+	title		subtable (a table name)	description	toggle (a rule)
+	--		-- 	--	--
 	with 1 blank row. [2 blank rows total]
 
 	Table of Entrance hints menu
-	title	subtable	description	toggle
-	--	a table-name	--	a rule
+	title	subtable (a table-name)	description	toggle (a rule)
+	--	--	--	--
 	[1 blank row total]
 
 	Table of Cave hints menu
-	title	subtable	description	toggle
-	--	a table-name	--	a rule
+	title	subtable (a table-name)	description	toggle (a rule)
+	--	--	--	--
 	[1 blank row total]
 
 	Table of all hints
@@ -140,11 +147,11 @@ Example: * Samplex - A small game mostly consisting of such help.
 	Table of opening hints	"How can I open the chest?"	Table of Cave hints menu
 
 	Table of entering hints
-	hint	used
-	"Well, you could simply wish yourself into the cave."	a number
-	"Something simpler would work better."
-	"Just go south."
+	hint	used (a number)
+	"Well, you could simply wish yourself into the cave."	--
+	"Something simpler would work better."	--
+	"Just go south."	--
 
 	Table of opening hints
-	hint	used
-	"Just open it!"	a number
+	hint	used (a number)
+	"Just open it!"	--

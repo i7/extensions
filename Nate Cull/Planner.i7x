@@ -1,4 +1,4 @@
-Version 2/080503 of Planner by Nate Cull begins here.
+Version 2/140513 of Planner by Nate Cull begins here.
 
 "A universal goal planner for self-directed NPCs."
 
@@ -65,26 +65,26 @@ Section - Main Routines
 To have (A - a person) plan an action for (C - a planning-relation) with (P1 - an object) and (P2 - an object):
 	if debugging planner, say "Planner: starting planning for [A].";
 	if debugging planner, say "Planner: testing goal 1: [C] [P1] [P2]: [run paragraph on]";
-	change the planning actor to A;
-	change the requested relation to C;
-	change the requested param1 to P1;
-	change the requested param2 to P2;
-	change the planned action to no-action;
-	change the planned param1 to no-object;
-	change the planned param2 to no-object;
+	now the planning actor is A;
+	now the requested relation is C;
+	now the requested param1 is P1;
+	now the requested param2 is P2;
+	now the planned action is no-action;
+	now the planned param1 is no-object;
+	now the planned param2 is no-object;
 	if goal C with P1 and P2 is true begin;
-		change the planned action to success-action;
+		now the planned action is success-action;
 		if debugging planner, say "true, no work to do[line break]";
 	otherwise;
 		if debugging planner, say "false, generating plans [run paragraph on]";
 		clear the goal table;
 		choose row 1 in the Table of Goals;
-		change the Token entry to the requested relation;
-		change the Param1 entry to the requested param1;
-		change the Param2 entry to the requested param2;
-		change the Parent entry to 0;
-		change the Plan entry to 0;
-		change the Step entry to 0;
+		now the Token entry is the requested relation;
+		now the Param1 entry is the requested param1;
+		now the Param2 entry is the requested param2;
+		now the Parent entry is 0;
+		now the Plan entry is 0;
+		now the Step entry is 0;
 		expand goal 1;
 		advance all goals;
 	end if;
@@ -131,7 +131,7 @@ Scanning a Plan, checking each of its subgoals, I have called Advancing.
 To advance all goals:
 	repeat with G running from 2 to the number of filled rows in the Table of Goals begin;
 		advance goal G;
-		if an action was planned, change G to 9999;
+		if an action was planned, now G is 9999;
 	end repeat;
 
 
@@ -146,9 +146,9 @@ To advance goal (G - a number):
 	choose row G in the Table of Goals;
 	let our parent be the Parent entry;
 	let our plan be the Plan entry;
-	change the suggested token to the Token entry;
-	change the suggested param1 to the Param1 entry;
-	change the suggested param2 to the Param2 entry;
+	now the suggested token is the Token entry;
+	now the suggested param1 is the Param1 entry;
+	now the suggested param2 is the Param2 entry;
 	choose row our parent in the Table of Goals;
 	let our relation be the Token entry;
 	let our param1 be the Param1 entry;
@@ -158,11 +158,11 @@ To advance goal (G - a number):
 	repeat with Sx running from 1 to 9 begin;
 		suggest a goal for our relation with our param1 and our param2 for plan our plan at step Sx;
 		if the suggested token is a planning-marker begin; 
-			change Sx to 9999;
+			now Sx is 9999;
 			choose row G in the Table of Goals;
-			change the Token entry to no-plan;
-			change the Param1 entry to no-object;
-			change the Param2 entry to no-object;
+			now the Token entry is no-plan;
+			now the Param1 entry is no-object;
+			now the Param2 entry is no-object;
 		end if;
 		if the suggested token is a planning-relation begin;
 			if debugging planner, say "Planner: testing step [Sx]: [suggested token] [suggested param1] [suggested param2]: [run paragraph on]"; 
@@ -171,22 +171,22 @@ To advance goal (G - a number):
 				if goal the suggested token with the suggested param1 and the suggested param2 is unique begin;
 					if debugging planner, say "and unique, generating plans [run paragraph on]";
 					choose row G in the Table of Goals;
-					change the Token entry to the suggested token;
-					change the Param1 entry to the suggested param1;	
-					change the Param2 entry to the suggested param2;
-					change the Step entry to Sx;
-					change the final step to Sx;
-					change Sx to 9999;
+					now the Token entry is the suggested token;
+					now the Param1 entry is the suggested param1;	
+					now the Param2 entry is the suggested param2;
+					now the Step entry is Sx;
+					now the final step is Sx;
+					now Sx is 9999;
 					expand goal G;						
 				otherwise;
 					if debugging planner, say "but duplicate, cancelling plan[line break]";
 					choose row G in the Table of Goals;
-					change the Token entry to no-plan;
-					change the Param1 entry to no-object;	
-					change the Param2 entry to no-object;
-					change the Step entry to Sx;
-					change the final step to Sx;
-					change Sx to 9999;
+					now the Token entry is no-plan;
+					now the Param1 entry is no-object;	
+					now the Param2 entry is no-object;
+					now the Step entry is Sx;
+					now the final step is Sx;
+					now Sx is 9999;
 				end if;
 			otherwise;
 				if debugging planner, say "true";
@@ -194,16 +194,16 @@ To advance goal (G - a number):
 		end if;
 		if the suggested token is a planning-action begin;
 			if debugging planner, say "Planner: testing step [Sx]: [the suggested token] [the suggested param1] [the suggested param2]: action[line break]";
-			change the planned action to the suggested token;
-			change the planned param1 to the suggested param1;
-			change the planned param2 to the suggested param2;
+			now the planned action is the suggested token;
+			now the planned param1 is the suggested param1;
+			now the planned param2 is the suggested param2;
 			choose row G in the Table of Goals;
-			change the Token entry to the suggested token;
-			change the Param1 entry to the suggested param1;
-			change the Param2 entry to the suggested param2;
-			change the Step entry to Sx;
-			change the final step to Sx;
-			change Sx to 9999;
+			now the Token entry is the suggested token;
+			now the Param1 entry is the suggested param1;
+			now the Param2 entry is the suggested param2;
+			now the Step entry is Sx;
+			now the final step is Sx;
+			now Sx is 9999;
 		end if; 
 	end repeat;
 
@@ -220,7 +220,7 @@ To expand goal (G - a number):
 		suggest a goal for our relation with our param1 and our param2 for plan P at step 1;
 		if the suggested token is no-plan begin;
 			[we've run out of plans]
-			change P to 9999;
+			now P is 9999;
 		otherwise;
 			[add new goal, checking for out of space]
 			if the number of blank rows in the Table of Goals is greater than 0 begin;
@@ -228,12 +228,12 @@ To expand goal (G - a number):
 				let the last row be the number of filled rows in the Table of Goals;
 				increase the last row by 1;
 				choose row the last row in the Table of Goals;
-				change the Parent entry to G;
-				change the Plan entry to P;
-				change the Step entry to 1;
-				change the Token entry to plan-pending;
-				change the Param1 entry to no-object;
-				change the Param2 entry to no-object;
+				now the Parent entry is G;
+				now the Plan entry is P;
+				now the Step entry is 1;
+				now the Token entry is plan-pending;
+				now the Param1 entry is no-object;
+				now the Param2 entry is no-object;
 				if debugging planner, say "[P] [run paragraph on]";
 			otherwise;
 				if debugging planner, say "Planner: goal table is full, ignoring new goal.";
@@ -284,25 +284,25 @@ Section - Planning Routines
 
 
 To suggest a goal for (C - a planning-relation) with (P1 - an object) and (P2 - an object) for plan (P - a number) at step (Sx - a number):
-	change the desired relation to C;
-	change the desired param1 to P1;
-	change the desired param2 to P2;
-	change the desired plan to P;
-	change the desired step to Sx;
-	change the suggested token to no-plan;
-	change the suggested param1 to no-object;
-	change the suggested param2 to no-object;
+	now the desired relation is C;
+	now the desired param1 is P1;
+	now the desired param2 is P2;
+	now the desired plan is P;
+	now the desired step is Sx;
+	now the suggested token is no-plan;
+	now the suggested param1 is no-object;
+	now the suggested param2 is no-object;
 	follow the planning rulebook;
 
 To really suggest (T - a planning-token) with (P1 - an object) and (P2 - an object):
-	change the suggested token to T;
-	change the suggested param1 to P1;
-	change the suggested param2 to P2;
+	now the suggested token is T;
+	now the suggested param1 is P1;
+	now the suggested param2 is P2;
 
 To plan (P - a number):
-	change the working plan to P;
-	change the working step to 0;
-	if the desired plan is the working plan, change the suggested token to no-step;
+	now the working plan is P;
+	now the working step is 0;
+	if the desired plan is the working plan, now the suggested token is no-step;
 
 To suggest (T - a planning-token) with (P1 - an object) and (P2 - an object):
 	increase the working step by 1;
@@ -320,12 +320,12 @@ To suggest (T - a planning-token):
 Section - Executing Actions
 
 [Carry out someone trying doing something:
-	change the action success flag to 1;]
+	now the action success flag is 1;]
 
 The successful-action rule is listed after the check stage rule in the specific action-processing rules.
 
 This is the successful-action rule: 
-	if the actor is not the player, change the action success flag to 1.
+	if the actor is not the player, now the action success flag is 1.
 
 To execute the planned action:
 	if the planned action is no-action begin;
@@ -334,7 +334,7 @@ To execute the planned action:
 		if the planned action is success-action begin;
 			follow the planning-success rules;
 		otherwise;	
-			change the action success flag to 0;
+			now the action success flag is 0;
 			follow the planning-acting rules;
 			if the action success flag is 0, follow the planning-acting-failure rules;
 		end if;
@@ -364,10 +364,10 @@ To clear the goal table:
 	end repeat;
 
 To decide whether goal (C - a planning-relation) with (P1 - an object) and (P2 - an object) is true:
-	change the desired relation to C;
-	change the desired param1 to P1;
-	change the desired param2 to P2;
-	consider the planning-testing rules;
+	now the desired relation is C;
+	now the desired param1 is P1;
+	now the desired param2 is P2;
+	follow the planning-testing rules;
 	if rule succeeded begin;
 		decide yes;
 	end if;
@@ -390,13 +390,13 @@ Understand "plans on" as enabling the planner verbosity.
 Understand "plans" as enabling the planner verbosity.
 Carry out enabling the planner verbosity:
 	say "Planner will now show debugging messages. Type 'plans off' to run silently, or 'plans list' to show the current planning table.";
-	change the planner verbosity to 1;
+	now the planner verbosity is 1;
 
 Disabling the planner verbosity is an action out of world.
 Understand "plans off" as disabling the planner verbosity.
 Carry out disabling the planner verbosity:
 	say "Planner will now run silently.";
-	change the planner verbosity to 0;
+	now the planner verbosity is 0;
 
 Dumping the planner table is an action out of world.
 Understand "plans list" as dumping the planner table.
@@ -410,6 +410,8 @@ Carry out dumping the planner table:
 Planner ends here.
 
 ---- DOCUMENTATION ----
+
+Section: Introduction
 
 The short version: Planner is a stateless goal-planning engine for IF actors. It is an Inform 7 
 reimplementation of the library formerly known as RAP (Reactive Agent Planner) for Inform 6 and TADS.
@@ -450,6 +452,7 @@ to find the key, and find the the door, and make sure the door is open. But you'
 
 So that's it. Planner lets you give IF actors their own mind - of a fairly mechanical, goal-focused, efficiency-driven sort. You may want to dress up their actions a bit, or use Planner only in the parts of your game where it makes sense. With Inform 7, you've got a lot of freedom to mix and match libraries and rules, so give it a go, explore the possibilities, and most importantly, have fun!
 
+Section: Extension
 
 How to extend Planner:
 
@@ -478,7 +481,8 @@ How to extend Planner:
     
     Check 'Basic Plans' and the demo game 'Alchemy' to see examples of writing plans.
 
-
+Section: Design Notes
+	
 Some notes on the design:
 
 Planner (and its predecessor, RAP) was influenced by a paper [1] describing the architecture of the Carnegie Mellon University 'Oz' interactive storytelling system. I have never seen Oz running, but the paper described a goal-planning framework called Hap. Like the rest of Oz, it was built in Lisp, a dynamic language which is well-suited to building complicated data structures in memory and manipulating them efficiently. Interactive Fiction systems, however, tend to deal much better with static data and routines. There were also a few design decisions in Hap that I just plain didn't understand, so when I tried to build a planner myself, I simplified the design down to 
@@ -497,7 +501,11 @@ SHRDLU may yet surpass their elders. We've come a long way from Blocks World as 
 
 [1] "Hap: A Reactive, Adaptive Architecture for Agents". A. Bryan Loyall and Joseph Bates. Technical Report CMU-CS-91-147, School of Computer Science, Carnegie Mellon University, Pittsburgh, PA, June 1991. Downloadable postscript version available as of 2006-05-28 from http://www.cs.cmu.edu/afs/cs.cmu.edu/project/oz/web/papers.html
 
+Section: 6L02 Compatibility Update
 
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 
 

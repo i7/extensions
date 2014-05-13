@@ -1,29 +1,30 @@
-Version 4/080508 of Achievements by Mikael Segercrantz begins here.
+Version 4/140513 of Achievements by Mikael Segercrantz begins here.
 
 "A table-based way to assign scores for actions, rooms and objects."
 
+Use scoring.
 
 Chapter 1 - The objects
 
 Section 1(a) - Table of Achievements
 
 Table of Achievements
-message		points		used
-text		a number	a number
+message (text)		points (a number)		used (a number)
+--		--		--
 
 
 Section 1(b) - Table of Scored Objects
 
 Table of Scored Objects
-object		points		used
-a thing		a number	a number
+object (a thing)		points (a number)		used (a number)
+--		--		--	
 
 
 Section 1(c) - Table of Scored Places
 
 Table of Scored Places
-loci		points		used
-a room		a number	a number
+loci (a room)		points (a number)		used (a number)
+--		--		--
 
 
 Section 1(d) - Globals
@@ -64,10 +65,8 @@ Chapter 2 - Rules
 
 Section 2(a) - Overriding the standard rules
 
-Procedural rule: 
-	substitute the announce the short score rule for the announce the score rule;
-	substitute the announce the final score rule for the print final score rule.
-
+The announce the short score rule substitutes for the announce the score rule.
+The announce the final score rule substitutes for the print final score rule.
 
 Section 2(b) - Final question
 
@@ -149,8 +148,8 @@ This is the announce the achievements rule:
 Section 2(f) - Ranking
 
 Table of Achievement Rankings
-minimum	rank
-a number	text
+minimum (a number)	rank (text)
+--	--
 
 
 To decide whether using ranking:
@@ -186,7 +185,7 @@ Section 2(h) - Score achievement
 To score the achievement with message (msg - text):
 	choose row with message of msg in the Table of Achievements;
 	if the used entry is 0:
-		change the used entry to the turn count;
+		now the used entry is the turn count;
 		increase the score by the points entry.
 
 
@@ -196,7 +195,7 @@ To score found objects:
 	repeat through the Table of Scored Objects:
 		if the used entry is 0:
 			if the player encloses the object entry:
-				change the used entry to the turn count;
+				now the used entry is the turn count;
 				increase the score by the points entry.
 
 
@@ -206,7 +205,7 @@ To score visited rooms:
 	repeat through the Table of Scored Places:
 		if the used entry is 0:
 			if the location is the loci entry:
-				change the used entry to the turn count;
+				now the used entry is the turn count;
 				increase the score by the points entry.
 
 
@@ -215,26 +214,26 @@ Section 2(k) - Initialization
 To perform initialization:
 	let the total be 0;
 	repeat through the Table of Scored Places:
-		change the used entry to 0;
+		now the used entry is 0;
 		increase the total by the points entry;
 		if the loci entry is the location:
-			change the used entry to -1;
+			now the used entry is -1;
 			increase the score by the points entry;
 	repeat through the Table of Scored Objects:
-		change the used entry to 0;
+		now the used entry is 0;
 		increase the total by the points entry;
 		if the object entry is enclosed by the player:
-			change the used entry to -1;
+			now the used entry is -1;
 			increase the score by the points entry;
 	repeat through the Table of Achievements:
 		increase the total by the points entry;
-		change the used entry to 0;
-	change the achievement maximum score to the total.
+		now the used entry is 0;
+	now the achievement maximum score is the total.
 
 Before printing the name of a room:
 	if Achievement-Init is 0:
 		perform initialization;
-		change Achievement-Init to 1.
+		now Achievement-Init is 1.
 
 
 Section 2(l) - Every turn
@@ -283,6 +282,12 @@ Chapter: Introduction
 The Achievements extension allows for ease of scoring in a game. It allows for different achievements to be scored, as well as finding certain items and rooms. All the achievements, items, and rooms for scoring are managed through tables; the Table of Achievements, the Table of Scored Objects, and the Table of Scored Places respectively.
 
 The extension replaces the score and the full score handling of Inform 7, including the final score displaying, to manage the listing of scores from the tables, and, as of version 4, does not contain any Inform 6 code anymore, thanks to the new end of game handling in Inform 7 5T18.
+
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Chapter: Definitions
 
@@ -448,12 +453,12 @@ And the tables:
 Initialize status line:
 
 	When play begins:
-		change the right hand status line to "[score] out of [achievement maximum score]".
+		now the right hand status line is "[score] out of [achievement maximum score]".
 
 Ending the game:
 
 	Every turn:
-		if the score is the achievement maximum score, end the game in victory.
+		if the score is the achievement maximum score, end the story finally saying "You have won."
 
 And finally the testing command:
 

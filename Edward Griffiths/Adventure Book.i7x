@@ -1,4 +1,4 @@
-Version 1/110101 of Adventure Book by Edward Griffiths begins here.
+Version 1/140513 of Adventure Book by Edward Griffiths begins here.
 
 "A system for creating Choose Your Own Adventure style programs, with advanced features."
 
@@ -209,7 +209,7 @@ To rebuild the list of choices:
 	repeat with possibility running through choices offered by the current page:
 		if the possibility is valid and the possibility is not a use:
 			choose a blank row in the Table of Options;
-			change option entry to the possibility;
+			now option entry is the possibility;
 
 To decide if (possibility - a choice) is valid:
 	repeat with x running through flags required by possibility:
@@ -421,6 +421,12 @@ This documentation assumes some familiarity with Inform 7, but it's written with
 Special thanks to Jon Ingold for his feedback in the development of this extension.  Comments are welcome at cpface@execpc.com.
 
 Section: Version History
+
+Version 1/140513
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Version 1/091203
 

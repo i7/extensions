@@ -1,4 +1,4 @@
-Version 1 of Basic Help by David Cornelson begins here.
+Version 1/140513 of Basic Help by David Cornelson begins here.
 
 Helping is an action out of world applying to one visible thing.
 DefaultHelping is an action out of world.
@@ -6,6 +6,7 @@ Understand "help [any help command]" as helping.
 Understand "help" as defaulthelping.
 
 A help command is a kind of thing.
+It is always privately-named.
 
 Help Switch is a truth state that varies.
 Help Count is a number that varies.
@@ -157,4 +158,11 @@ The author can add common commands by using the list 'add' feature and this will
 After the help has stopped reminding the player, the author can set the Help Switch to true and for another 4 turns, the help reminder will be displayed.
 
 If the author simply wants to remind the player directly, they can 'Print the Help Notice' at any time.
+
+
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 

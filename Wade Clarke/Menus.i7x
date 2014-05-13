@@ -1,4 +1,4 @@
-Version 2/131208 of Menus by Wade Clarke begins here.
+Version 2/140513 of Menus by Wade Clarke begins here.
 
 "Lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code project. This is an upgrade of Emily Short's Menus extension featuring user-friendly single keypress controls and a more sophisticated UI. It also has configurable options, a book mode with automatic pagination, isolated message content to make translation to other languages easier and a Screen Reader mode. Old Menus format tables can be upgraded for use with this extension with a little work."
 
@@ -675,7 +675,7 @@ To mn_clear hint flags:
 To show menu contents:
 	if mn_action is 2: [IE if player re-enters menu system having exited from localmode..]
 		now mn_action is 0;
-		consider the menuprint rule;
+		follow the menuprint rule;
 		if mn_action is 2: [IE player wants to exit menus immediately]
 			rule succeeds;
 		otherwise:
@@ -722,7 +722,7 @@ To show menu contents:
 				now __x is the chosen letter;
 			if globaljump is false:
 				if __x is a number listed in the Table of Menu Commands: [If the drill down set the value of current menu selection, __x will still be 0.]
-					consider the effect entry;
+					follow the effect entry;
 					if mn_menupresent is false:
 						now __index is 1;
 				otherwise:
@@ -755,7 +755,7 @@ To show menu contents:
 				now mn_phase is 2;
 			if mn_phase is 2:
 				now mn_localmode is true;
-				consider the menuprint rule;
+				follow the menuprint rule;
 				if mn_action is 2: [IE player wants to exit menus immediately]
 					now __index is 1;
 				otherwise:
@@ -833,7 +833,7 @@ This is the menuprint rule:
 		let __x be the chosen letter;
 		if __x is a number listed in the Table of Menu Commands:
 			choose a row with a number of __x in the Table of Menu Commands;
-			consider the effect entry;
+			follow the effect entry;
 			if mn_action is 1: [If the action demands we return to the topic list level-]
 				now mn_action is 0;
 				now the mn_endnode_flag is false;
@@ -918,14 +918,14 @@ This is the menuabort rule:
 	if mn_localmode is true:
 		now mn_action is 2.
 
-This is the menutop rule: [menutop is a rule which is 'considered', meaning failure/success is irrelevant. So no 'rule succeeds' are needed around here.]
+This is the menutop rule: [menutop is a rule which is 'followed', meaning failure/success is irrelevant. So no 'rule succeeds' are needed around here.]
 	if mn_bookmode is true: [In book mode, choosing 'top menu' takes you to page 1]
 		if mn_currentbookpage is 1: [Ignore 'leap' keypress if we're already on page 1]
 			now mn_refresh is false;
 			stop the action;
 		now mn_currentlocalpage is 1;
 		now mn_currentbookpage is 2;
-		consider the menuretreat rule;
+		follow the menuretreat rule;
 	otherwise:
 		if mn_stackpointer is 1: [If we're at the top level, we cannot leap]
 			now mn_refresh is false;
@@ -1829,6 +1829,14 @@ Now, here is a complete new Menus version of the same material:
 Again, note how I was able to entirely dispense with the toggle column from the old table because after the translation to the new format, no standalone toggle entries remained that would need to go into it.
 
 Chapter: Change log, credits and contact info [Chapter 12]
+
+Version 2/140513
+
+6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Version 2
 

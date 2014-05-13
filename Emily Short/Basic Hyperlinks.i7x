@@ -1,4 +1,4 @@
-Version 3 of Basic Hyperlinks (for Glulx only) by Emily Short begins here.
+Version 3/140513 of Basic Hyperlinks (for Glulx only) by Emily Short begins here.
 
 "Allows the author to set hyperlinks in the main window and give instructions about what is to result from performing them."
 
@@ -56,8 +56,8 @@ A clicking hyperlink rule (this is the default command replacement by hyperlinks
 
 
 Table of Hyperlink Glulx Replacement Commands
-linknum	replacement
-a number	some text
+linknum (a number)	replacement (some text)
+--
 
 Basic Hyperlinks ends here.
 

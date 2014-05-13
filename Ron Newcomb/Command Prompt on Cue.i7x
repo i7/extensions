@@ -1,4 +1,4 @@
-Version 3 of Command Prompt on Cue by Ron Newcomb begins here.
+Version 3/140513 of Command Prompt on Cue by Ron Newcomb begins here.
 
 "Creates a situation without a command prompt where the player may simply press space or enter to WAIT.  But if the player instead begins to type a command, the command prompt will then appear."
 
@@ -17,13 +17,12 @@ Section 1 - main
 To decide if the player is pressing SPACE: (- Interrupt_test() -).
 
 Unobtrusive player variable translates into I6 as "unobtrusive_player".
-The saved optional command prompt is some text that varies.  The saved optional command prompt variable translates into I6 as "saved_optional_prompt".  The saved optional command prompt is usually "".
-Interrupting key is a number that varies.  Interrupting key variable translates into I6 as "interrupting_key".  Interrupting key is usually 90. [ a capital Z, for the WAIT command.  Needed so "the player's command" isn't invalid on the first turn ]
+The saved optional command prompt is some text that varies.  The saved optional command prompt initially is "".
+Interrupting key is a number that varies.  Interrupting key variable translates into I6 as "interrupting_key".  
 
 Include (-
-Global interrupting_key;
+Global interrupting_key = 90;		! a capital Z, for the WAIT command.  Needed so "the player's command" isn't invalid on the first turn
 Global unobtrusive_player;
-Global saved_optional_prompt;
 
 [ Interrupt_test ch;
 	while (1) {
@@ -36,7 +35,7 @@ Global saved_optional_prompt;
 			rtrue;
 		} else if (interrupting_key >= ' ') {
 			unobtrusive_player = false;  ! then player will take action
-			print (string) saved_optional_prompt;
+			print (TEXT_TY_Say) (+ saved optional command prompt +);
 #IFDEF TARGET_GLULX;
 			style bold;
 #ENDIF;
@@ -137,6 +136,11 @@ Section : Caveats
 
 Due to technical reasons, the extension does not deal well with single-letter commands.  When our player tries to interrupt with a L (for LOOK) or i (for INVENTORY), a spurious "I beg your pardon" error will result.  The player may then proceed normally.  Secondly, the player cannot delete the first typed letter.  Finally, fast typists may lose the second letter -- understanding "ak" and "tll" may be called for.
 
+Section : 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Example: * It Must Be the Argument Clinic - John and Marsha need some time away from each other.
 

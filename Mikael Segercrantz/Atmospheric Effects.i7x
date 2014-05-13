@@ -1,4 +1,4 @@
-Version 6/080508 of Atmospheric Effects by Mikael Segercrantz begins here.
+Version 6/140513 of Atmospheric Effects by Mikael Segercrantz begins here.
 
 "A table-based way to add atmospheric effects to rooms, regions, things and scenes."
 
@@ -68,27 +68,26 @@ Chapter 1(c) - Global tables
 Section 1(c)1 - Table of Default Atmospherics
 
 Table of Default Atmospherics
-during		initch		latch		aftcnt		curcnt		sctype		runtype		frtype		igtype		subtable
-a scene		a number	a number	a number	a number	a scenic type	a running type	a further type	an ignoring type	a table-name
+during (a scene)		initch (a number)		latch (a number)		aftcnt (a number)		curcnt (a number)		sctype (a scenic type)		runtype (a running type)		frtype (a further type)		igtype (an ignoring type)		subtable (a table name)
+--
 
 Section 1(c)2 - Table of Atmospheric Definition
 
 Table of Atmospheric Definition
-loci		ignoring			subtable
-an object	an ignoring type		a table-name
+loci (an object)		ignoring (an ignoring type)			subtable (a table name)
+--
 
 Section 1(c)3 - Table of Default Messages
 
 Table of Default Messages
-used		message
-a number	text
+used (a number)		message (text)
+--
 
 Section 1(c)4 - Table of Messages to Show
 
 Table of Messages to Show
-message
-text
-with 19 blank rows
+message (text)
+with 20 blank rows
 
 
 Chapter 1(d) - Other globals
@@ -118,11 +117,11 @@ To correct synonyms of (r - an object):
 	if r is a room or r is a region or r is a thing:
 		repeat through the scenic table of r:
 			if the scenic table of r is the Table of Default Atmospherics:
-				change the runtype entry to run forever;
-			if the subtable entry is the Table of Default Messages, change the runtype entry to run forever;
-			if the sctype entry is full random, change the sctype entry to fully random;
-			if the runtype entry is once, change the runtype entry to run once;
-			if the runtype entry is forever, change the runtype entry to run forever.
+				now the runtype entry is run forever;
+			if the subtable entry is the Table of Default Messages, now the runtype entry is run forever;
+			if the sctype entry is full random, now the sctype entry is fully random;
+			if the runtype entry is once, now the runtype entry is run once;
+			if the runtype entry is forever, now the runtype entry is run forever.
 	
 
 Chapter 2(b) - Initialization
@@ -132,8 +131,8 @@ Section 2(b)1 - Initializing from Table of Atmospheric Definition
 To initialize from table:
 	repeat through the Table of Atmospheric Definition:
 		if the loci entry is a room or the loci entry is a region or the loci entry is a thing:
-			change the scenic table of the loci entry to the subtable entry;
-			change the ignoring of the loci entry to the ignoring entry.
+			now the scenic table of the loci entry is the subtable entry;
+			now the ignoring of the loci entry is the ignoring entry.
 
 Section 2(b)2 - Initializing the locations
 
@@ -156,38 +155,38 @@ To initialize the location (r - an object):
 				if there is an initch entry:
 					do nothing;
 				otherwise:
-					change the initch entry to 100;
+					now the initch entry is 100;
 				if there is a latch entry:
 					do nothing;
 				otherwise:
-					change the latch entry to the initch entry;
+					now the latch entry is the initch entry;
 				if there is an aftcnt entry:
 					do nothing;
 				otherwise:
-					change the aftcnt entry to 0;
-				if the aftcnt entry is less than 0, change the aftcnt entry to 0;
-				change the curcnt entry to 0;
+					now the aftcnt entry is 0;
+				if the aftcnt entry is less than 0, now the aftcnt entry is 0;
+				now the curcnt entry  is 0;
 				if there is an sctype entry:
 					do nothing;
 				otherwise:
-					change the sctype entry to random;
+					now the sctype entry  is random;
 				if there is a runtype entry:
 					do nothing;
 				otherwise:
-					change the runtype entry to run forever;
+					now the runtype entry  is run forever;
 				if there is an frtype entry:
 					do nothing;
 				otherwise:
-					change the frtype entry to stopping;
+					now the frtype entry  is stopping;
 				if there is an igtype entry:
 					do nothing;
 				otherwise:
-					change the igtype entry to do not ignore;
+					now the igtype entry is do not ignore;
 				if the subtable entry is the Table of Default Messages:
-					change the frtype entry to stopping;
-					change the runtype entry to run forever;
+					now the frtype entry  is stopping;
+					now the runtype entry is run forever;
 				repeat through the subtable entry:
-					change the used entry to 0.
+					now the used entry  is 0.
 
 Section 2(b)4 - When play begins
 
@@ -228,7 +227,7 @@ To decide what number is the largest number in (tbl - a table-name):
 	let current be 0;
 	repeat through tbl:
 		if there is a used entry:
-			if the used entry is greater than current, change current to the used entry;
+			if the used entry is greater than current, now current is the used entry;
 	decide on current.
 
 
@@ -266,16 +265,16 @@ To display row (row number - a number) in (tbl - a table-name) running (runtype 
 				increase current row by 1;
 				let txt be the message entry;
 				choose a blank row in the Table of Messages to Show;
-				change the message entry to txt;
+				now the message entry  is txt;
 				choose row i in tbl;
-				change the used entry to the turn count;
+				now the used entry is the turn count;
 				if runtype is run once, blank out the whole row.
 
 Section 4(a)2 - Clean all messages
 
 To clean all messages in (tbl - a table-name):
 	repeat through tbl:
-		change the used entry to 0.
+		now the used entry is 0.
 
 
 Chapter 4(b) - Rules for fully random messages
@@ -307,13 +306,13 @@ To say a random scenic message of (tbl - a table-name) running (runtype - a runn
 	display row row number in tbl running runtype;
 	if the original count is 0 and the number of filled rows in tbl is greater than 0 and maximum is greater than 0:
 		choose row with used of maximum in tbl;
-		change the used entry to 0.
+		now the used entry is 0.
 
 Section 4(c)2 - Clean messages
 
 To clean messages of (tbl - a table-name) with (maximum - a number):
 	repeat through tbl:
-		if the used entry is less than maximum, change the used entry to 0.
+		if the used entry is less than maximum, now the used entry is 0.
 
 Section 4(c)3 - Clean last message
 
@@ -336,7 +335,7 @@ To say an ordered scenic message of (tbl - a table-name) running (runtype - a ru
 	display row 1 in tbl running runtype;
 	if the original count is 0 and the number of filled rows in tbl is greater than 0 and maximum is greater than 0:
 		choose row with used of maximum in tbl;
-		change the used entry to 0.
+		now the used entry is 0.
 
 
 Part 5 - Common phrases for rooms, regions and things
@@ -353,20 +352,20 @@ To display messages of (r - an object):
 			choose row n in tbl;
 			let doshow be 0;
 			if there is a during entry:
-				if the during entry is happening, change doshow to 1;
+				if the during entry is happening, now doshow is 1;
 			otherwise:
-				change doshow to 1;
+				now doshow is 1;
 			if there is a subtable entry:
 				do nothing;
 			otherwise:
-				change doshow to 0;
-			if ign is 1, change doshow to 0;
+				now doshow is 0;
+			if ign is 1, now doshow is 0;
 			if doshow is 1:
 				if a scenic with initch initch entry latch latch entry aftcnt aftcnt entry curcnt curcnt entry is shown:
 					let cc be the curcnt entry;
 					increase cc by 1;
-					if cc is greater than the number of filled rows in tbl, change cc to the number of filled rows in tbl;
-					change the curcnt entry to cc;
+					if cc is greater than the number of filled rows in tbl, now cc is the number of filled rows in tbl;
+					now the curcnt entry is cc;
 					let rtype be the runtype entry;
 					let stbl be the subtable entry;
 					let scenic be the sctype entry;
@@ -374,11 +373,11 @@ To display messages of (r - an object):
 					if scenic is random, say a random scenic message of the stbl running rtype;
 					if scenic is ordered, say an ordered scenic message of stbl running rtype;
 					choose row n in tbl;
-					if the igtype entry is ignore, change ign to 1;
+					if the igtype entry is ignore, now ign is 1;
 					if the number of filled rows in the subtable entry is 0 and the frtype entry is default:
-						change the subtable entry to the Table of Default Messages;
-						change the frtype entry to stopping;
-						change the runtype entry to run forever.
+						now the subtable entry is the Table of Default Messages;
+						now the frtype entry is stopping;
+						now the runtype entry is run forever.
 
 Section 5(a)2 - Display all messages
 
@@ -402,7 +401,7 @@ To check room messages:
 	repeat through the Table of Atmospheric Definition:
 		if the ignoring entry is ignore:
 			if the loci entry is a thing:
-				if the player can see the loci entry, change shw to 0;
+				if the player can see the loci entry, now shw is 0;
 	if shw is 1, display messages of location.
 
 
@@ -417,10 +416,10 @@ To check region messages:
 	repeat through the Table of Atmospheric Definition:
 		if the ignoring entry is ignore:
 			if the loci entry is a thing:
-				if the player can see the loci entry, change shw to 0;
+				if the player can see the loci entry, now shw  is 0;
 			otherwise:
 				if the loci entry is a room:
-					if in the loci entry, change shw to 0;
+					if the loci entry is the location, now shw is 0;
 	if shw is 1:
 		clean regions;
 		let count be the number of located regions;
@@ -428,23 +427,23 @@ To check region messages:
 			let the final region be the smallest unshown region;
 			if the final region is not the empty region:
 				display messages of the final region;
-				change isshown of the final region to already shown;
+				now isshown of the final region is already shown;
 			otherwise:
-				change n to count.
+				now n is count.
 
 Section 7(a)2 - Clean regions
 
 To clean regions:
 	repeat with r running through regions:
-		change isshown of r to unshown;
-	change isshown of the empty region to already shown.
+		now isshown of r is unshown;
+	now isshown of the empty region is already shown.
 
 Section 7(a)3 - The number of located regions
 
 To decide what number is the number of located regions:
 	let count be 0;
 	repeat with r running through regions:
-		if in r and isshown of r is unshown, increase count by 1;
+		if the player is regionally in r and isshown of r is unshown, increase count by 1;
 	decide on count.
 
 Section 7(a)4 - The smallest unshown region
@@ -453,14 +452,14 @@ To decide which region is the smallest unshown region:
 	let final region be the empty region;
 	repeat with r running through regions:
 		if final region is the empty region:
-			if in r:
+			if the player is regionally in r:
 				if isshown of r is unshown:
 					let final region be r;
 				repeat through the Table of Atmospheric Definition:
 					if the loci entry is r and the ignoring entry is ignore:
 						let final region be r;
 	repeat with r running through regions:
-		if in r:
+		if the player is regionally in r:
 			if r is in the final region:
 				if isshown of r is unshown:
 					let final region be r;
@@ -511,6 +510,12 @@ Chapter: Version Note
 This version of the extension breaks compatibility with any previous version earlier than version 4. It is highly recommended to upgrade all code using any previous version of Atmospheric Effects to use this version.
 
 Version 4 of Atmospheric Effects was a complete rewrite, containing almost all the features available in previous releases. This version is improved to work better, and to separate the displaying of scenic messages from the generation of them in a greater degree. (In the last version, where the messages were generated just before the prompt, the scene changing mechanism had run between the result of the action and the generation of messages; now, the messages are generated just after getting the result of the action, and the messages are displayed only just before prompting for the next command, which seems to fix the problem of messages dependent on scenes.)
+
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Chapter: The Kinds Provided
 
@@ -954,13 +959,13 @@ Example: **** The City-Plane of Union - Showing how to use the Atmospheric Effec
 						otherwise say ",".
 
 	To say optional comma:
-		if using the serial comma option, say ",".
+		if the serial comma option is active, say ",".
 
 	Chapter 4(b) - Status line
 
 	When play begins:
-		change the left hand status line to "[map region of the location]";
-		change the right hand status line to "[number of visited rooms]/[number of rooms]".
+		now the left hand status line is "[map region of the location]";
+		now the right hand status line is "[number of visited rooms]/[number of rooms]".
 
 	Part 5 - Starting and ending the game
 
@@ -987,9 +992,9 @@ Example: **** The City-Plane of Union - Showing how to use the Atmospheric Effec
 						if the sctype entry is ordered or the sctype entry is random:
 							let c be the curcnt entry;
 							let d be the number of filled rows in the subtable entry;
-							let e be d minus c;
-							if e is less than 0, change e to 0;
-							increase total by e;
+							let f be d minus c;
+							if f is less than 0, now f is 0;
+							increase total by f;
 						otherwise:
 							let lbt be the subtable entry;
 							repeat with p running from 1 to the number of rows in lbt:
@@ -997,4 +1002,4 @@ Example: **** The City-Plane of Union - Showing how to use the Atmospheric Effec
 									if the used entry is 0, increase total by 1;
 		increase total by the number of rooms;
 		decrease total by the number of visited rooms;
-		if total is 0, end the game saying "You have visited all rooms and seen all messages".
+		if total is 0, end the story saying "You have visited all rooms and seen all messages".

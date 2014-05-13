@@ -1,4 +1,4 @@
-Version 3/080503 of Basic Plans by Nate Cull begins here.
+Version 3/140513 of Basic Plans by Nate Cull begins here.
 
 "A library of basic relations, actions and plans for Planner."
 
@@ -335,9 +335,9 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 
 	Broth is a thing.
 
-	Procedural rule when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible:
-		ignore the basic putting things in containers rule;
-
+	The basic putting things in containers rule does nothing when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible:
+		
+		
 	Planning when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible:
 		plan 1;
 		suggest being-in with the onion and the crucible;
@@ -356,7 +356,7 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 	Every turn when soup is brewing:
 		if the crucible is visible, say "The crucible simmers; the contents meld into a rich pungent vegetable broth.";
 		repeat with item running through things in the crucible begin;
-			remove item from play;
+			now item is nowhere;
 		end repeat;
 	now broth is in the crucible;
 
@@ -374,8 +374,7 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 
 	The description of Bob is "Bob is carrying [if bob carries anything][list of things carried by bob][otherwise]nothing[end if]."
 
-	Procedural rule when the desired relation is being-in and the desired param1 is a person:
-		ignore the basic dropping objects in rooms rule;
+	The basic dropping objects in rooms rule does nothing when the desired relation is being-in and the desired param1 is a person.
 
 	Every turn:
 		have Bob plan an action for being-in with broth and the crucible;
@@ -400,8 +399,7 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 		suggest doing-asking-for with the owner and the desired param1;
 
 
-	Procedural rule when the second noun is Bob:
-		ignore the block giving rule;
+	The block giving rule does nothing when the second noun is Bob.
 
 
 	Section - Custom Messages
@@ -410,13 +408,13 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 
 	Instead of Bob trying asking the player for something:
 		say "'I say, old chap,' mutters Bob. 'Do be a sport and give me [the second noun].'";	
-		change the action success flag to 1;
+		now the action success flag is 1;
 
 	Planning-failure:
 		say "Bob scratches his beard and looks perplexed.";
 
 	Planning-success:
-		end the game saying "You have witnessed the Making of Soup";	
+		end the story finally saying "You have witnessed the Making of Soup";	
 
 	Planning-acting-failure:
 		say "'Arr, that didn't work,' says Bob. 'Reality be getting a mite thin.'";
@@ -430,7 +428,7 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 	The previous take holder is an object that varies.
 
 	Before Bob trying taking something:
-		change the previous take holder to the holder of the noun;
+		now the previous take holder is the holder of the noun;
 
 	Report Bob trying taking something:
 		if the previous take holder is not a room begin;
@@ -438,3 +436,8 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 			stop the action;
 		end if;
 
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.

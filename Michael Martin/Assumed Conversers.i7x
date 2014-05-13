@@ -1,4 +1,4 @@
-Version 2 of Assumed Conversers by Michael Martin begins here.
+Version 2/140513 of Assumed Conversers by Michael Martin begins here.
 
 "A minimal extension that makes the NPC optional in ASK NPC ABOUT TOPIC and TELL NPC ABOUT TOPIC commands."
 
@@ -11,22 +11,23 @@ Asking generically is an action applying to one topic. Understand "ask about [te
 Telling generically is an action with past participle told, applying to one topic. Understand "tell about [text]" and "t [text]" as telling generically. 
 
 Check asking generically (This is the check for only one sensible converser rule):
-  change the default converser to the player;
-  if the number of persons enclosed by the location is two begin;
-    repeat with candidate running through the persons enclosed by the location begin;
-      if the candidate is not the player, change the default converser to the candidate;
-    end repeat;
-  end if.
+	now the default converser is the player;
+	if the number of persons enclosed by the location is two begin;
+		repeat with candidate running through the persons enclosed by the location begin;
+			if the candidate is not the player, now the default converser is the candidate;
+		end repeat;
+	end if.
 
 Check asking generically (This is the check for sensible converser rule):
   if the default converser is player, say "[bracket]I can't figure out who you want to talk to.[close bracket][paragraph break]" instead;
-  if the default converser is not visible, say "[The default converser] isn't here anymore." instead.
+  if the default converser is not visible, say "[The default converser] [aren't] [here] anymore." instead.
 
 Check asking generically (This is the convert to asking it about rule):
 	try asking the default converser about instead.
 
 The check for only one sensible converser rule is listed in the check telling generically rules.
 The check for sensible converser rule is listed in the check telling generically rules.
+
 Check telling generically (this is the convert to telling it about rule):
 	try telling the default converser about instead.
 
@@ -34,7 +35,8 @@ The convert to asking it about rule is listed last in the check asking generical
 The convert to telling it about rule is listed last in the check telling generically rules.
 
 Before asking or telling or answering (this is the log latest converser rule):
-  change the default converser to the noun.
+	say "(talking to [the noun])";
+	now the default converser is the noun.
 
 Assumed Conversers ends here.
 
@@ -45,3 +47,9 @@ This extension enables the player to use the commands ASK ABOUT TOPIC or TELL AB
 The extremely short forms A TOPIC and T TOPIC are also provided.
 
 No special support in the main source text is needed; just include Assumed Conversers.
+
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.

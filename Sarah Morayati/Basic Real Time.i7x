@@ -1,4 +1,4 @@
-Version 2 of Basic Real Time (for Glulx only) by Sarah Morayati begins here. 
+Version 2/140513 of Basic Real Time (for Glulx only) by Sarah Morayati begins here. 
 
 "Allows the author to incorporate Glulx real time events into an 
 Inform 7 project." 
@@ -37,23 +37,21 @@ Include (-
 	if (gg_savestr == 0) jump SFailed;
 	@save gg_savestr res;
 	if (res == -1) {
-		! The player actually just typed "restore". We're going to print
-		!  GL__M(##Restore,2); the Z-Code Inform library does this correctly
-		! now. But first, we have to recover all the Glk objects; the values
-		! in our global variables are all wrong.
+		! The player actually just typed "restore". We first have to recover
+		! all the Glk objects; the values in our global variables are all wrong.
 		GGRecoverObjects();
 		glk_stream_close(gg_savestr, 0); ! stream_close
 		gg_savestr = 0;
 		StartTimer(time_total - time_elapsed);
-		return GL__M(##Restore, 2);
+		RESTORE_THE_GAME_RM('B'); new_line;
+		rtrue;
 	}
 	glk_stream_close(gg_savestr, 0); ! stream_close
 	gg_savestr = 0;
-	if (res == 0) return GL__M(##Save, 2);
+	if (res == 0) { SAVE_THE_GAME_RM('B'); new_line; rtrue; }
 	.SFailed;
-	GL__M(##Save, 1);
+	SAVE_THE_GAME_RM('A'); new_line;
 ];
-
 
 -) instead of "Save The Game Rule" in "Glulx.i6t".
 
@@ -101,7 +99,7 @@ Include (-
 [ TimedAction ; 
 switch (timer_finished) { 
 0: if (time_elapsed >= time_total) timer_finished = 1; time_elapsed++; 
-1: glk_request_timer_events(0); SetTimedEvent( (+ the action fires +), 1, 0);
+1: glk_request_timer_events(0); SetTimedEvent( (+ the next real-time action fires +), 1, 0);
 } ]; -) 
 
 Include (-
@@ -141,7 +139,11 @@ To stop the/-- timer: (- glk_request_timer_events(0); time_elapsed = 0;  -)
 
 To perform the next real-time action: (- TimedAction(); -) 
 
-At the time when the action fires: try the next real-time action; 
+[Add a phrase referencing 'the next real-time action fires' from i7 to placate the compiler]
+To immediately fire the next real-time action:
+	The next real-time action fires in 0 turns from now.
+
+At the time when the next real-time action fires: try the next real-time action; 
 
 To say seconds remaining: (- PrintSecondsRemaining(); -)
 
@@ -154,13 +156,11 @@ Basic Real Time is a wrapper for Glulx's real time functions. The
 extension requires Glulx Entry Points by Emily Short. It also
 requires you, of course, to compile to Glulx (not .z5 or .z8).
 
-Basic Real Time was developed with I7 build 5U92 and incorporates I6 
-code. It may not work as expected in previous or later versions of I7. 
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
 
-If this is the case, email the author:
-morayati (at) email (dot) unc (dot) edu
-and she'll curl up in the fetal position and weep. Then she'll see 
-what she can do. 
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+
+The original author can be contacted at: morayati (at) email (dot) unc (dot) edu
 
 Normally, Inform 7 games are turn-based: that is, events happen, and 
 time passes, only when the player inputs a command. 
@@ -244,11 +244,11 @@ Example:	* "Green Button" - Starting, stopping, and altering the timer.
 	Control Room is a room. "It's your first day on the job at Technologies and they've already got you in charge of all the controls. Your boss didn't tell you what all these buttons and switches were for. All she said was to press the green button, and that there would be severe consequences if you pressed the red button. (The exact word she used was 'fired.')"
 
 	When play begins:
-		now the next action is the action of releasing the terrors;
+		now the next real-time action is the action of releasing the terrors;
 
 	The gadgets are scenery in Control Room. They are plural-named. Instead of doing something to the gadgets, say "There are too many of them and they're too intimidatingly gray. You don't even know where to begin." Understand "buttons" and "button" and "switches" and "switch" and "control" and "controls" as the gadgets.
 
-	The green button is scenery in Control Room. It can be pressed or unpressed. It is unpressed. The description of the green button is "It's an enticing pale green and has 'YES' splayed across it in white lettering."
+	The green button is scenery in Control Room. The green button can be pressed or unpressed. It is unpressed. The description of the green button is "It's an enticing pale green and has 'YES' splayed across it in white lettering."
 
 	Instead of pushing the green button for the first time:
 		now the green button is pressed;
@@ -268,9 +268,9 @@ Example:	* "Green Button" - Starting, stopping, and altering the timer.
 		otherwise:
 			stop timer;
 			say "You debate the relative merits of remaining employed versus dealing with world-rending terrors, figure you'd rather lose your job than your life, and press the red button. The voice, no longer so pleasant, whines 'No world-rending terrors will be released. I hope you're happy.' Huh. Guess that was the world-rending-terror-ending button. You wait for your boss to walk in, a trapdoor to appear below you, or a big boot to kick you out the window, but apparently it isn't a day for cartoon tropes. Huh. Maybe you'll be OK after all.";
-			end the game saying "You have saved the world";
+			end the story finally saying "You have saved the world";
 
 	Releasing the terrors is an action applying to nothing.
 	Carry out releasing the terrors:
 		say "You're no good at keeping time, so you're a bit startled when that voice intones: 'Releasing world-rending terrors now. Have a nice day.' What conspires next is too terrible for words. Good thing, really, because you no longer have a way to speak them.";
-		end the game in death;
+		end the story saying "You have died";

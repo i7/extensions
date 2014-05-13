@@ -1,10 +1,9 @@
-Version 1 of Basic Characters by ShadowChaser begins here.
+Version 1/140513 of Basic Characters by ShadowChaser begins here.
 
 "This adds the properties health, magic and sanity to a person or animal. It allows these values to be progarmatically manipulated and includes a process that replenishes health and magic over time. It also provides commands and functions for obtaining a descriptive status of the condition of these three properties for any given person or animal."
 
 Section 1 - Includes
 
-Include Plurality by Emily Short.
 Include Useful Functions by ShadowChaser.
 
 Section 2 - Global Variable Place Holders
@@ -31,7 +30,7 @@ To say health_of (item - a thing):
 	now BC_maxval is the max_health of the item;
 	if the health of the item is 0 begin;
 		 say "dead";
-	otherwise if the health of the item is the max_health of the item;
+	otherwise if the health of the item >= the max_health of the item;
 		say "healthy";
 	otherwise;
 		say "[EqualRankOf BC_val out_of BC_maxval from_table Table of Health_Level]";
@@ -62,11 +61,11 @@ To decrease_health_of (person_to_heal - a thing) by (hp - a number):
 	end if.
 
 To say report_healing:
-	say "You feel a little healthier[if the health of the player >= the max_health of the player]; In fact you are fully healed[end if].";
+	say "[We] [feel] a little healthier[if the health of the player >= the max_health of the player]; In fact [we] [are] fully healed[end if].";
 
 Requesting the health of the player is an action out of world.
 
-Report requesting the health of the player: say "You are [health_of the player].".
+Report requesting the health of the player: say "[We] [are] [health_of the player].".
 
 Understand "health" as requesting the health of the player.
 
@@ -88,7 +87,7 @@ To say magic_of (item - a thing):
 	now BC_maxval is the max_magic of the item;
 	if the magic_level of the item is 0 begin;
 		 say "completely drained";
-	otherwise if the magic_level of the item is the max_magic of the item;
+	otherwise if the magic_level of the item >= the max_magic of the item;
 		say "fully charged";
 	otherwise;
 		say "[EqualRankOf BC_val out_of BC_maxval from_table Table of Magic_Rank]";
@@ -119,15 +118,15 @@ To decrease_magic_of (itemobj - a thing) by (mp - a number):
 	end if.
 
 To say report_magic_healing :
-	say "You feel a little more psychically charged[if the magic_level of the player >= the max_magic of the player]; In fact, you are fully charged[end if].".
+	say "[We] [feel] a little more psychically charged[if the magic_level of the player >= the max_magic of the player]; In fact, [we] [are] fully charged[end if].".
 
 Requesting the magic level of the player is an action out of world.
 
 Report requesting the magic level of the player: 
-	if using the no magic reporting option begin;
-		say "You are no magician.";
+	if the no magic reporting option is active begin;
+		say "[We] [are] no magician.";
 	else;
-		say "You are [magic_of the player].";
+		say "[We] [are] [magic_of the player].";
 	end if.
 
 Understand "magic" as requesting the magic level of the player.
@@ -193,7 +192,7 @@ To say sanity_of (item - a thing):
 	now BC_val is the sanity of the item;
 	if the sanity of the item is 0 begin;
 		say "completely insane";
-	otherwise if the sanity of the item is 99;
+	otherwise if the sanity of the item >= 99;
 		say "completely sane";
 	otherwise;
 		say "[EqualRankOf BC_val out_of 100 from_table Table of Sanity_Level]";
@@ -221,7 +220,7 @@ To decrease_sanity_of (person_to_heal - a thing) by (san - a number):
 
 Requesting the sanity of the player is an action out of world.
 
-Report requesting the sanity of the player: say "You are [sanity_of the player].".
+Report requesting the sanity of the player: say "[We] [are] [sanity_of the player].".
 
 Understand "sanity" as requesting the sanity of the player.
 
@@ -233,18 +232,18 @@ Section 8 - Status Of The Player
 Requesting the status of the player is an action out of world.
 
 Report requesting the status of the player:
-		if using  the no scoring option begin;
-			say "You are ";
+		if the no scoring option is active begin;
+			say "[We] [are] ";
  			say "[health_of the player]";
-			if not using the no magic reporting option begin;
+			if the no magic reporting option is not active begin;
 				say ", [magic_of the player]";
 			end if;
 			say " and [sanity_of the player].";
 		else;
 			try requesting the score;
-			say "You are ";
+			say "[We] [are] ";
  			say "[health_of the player]";
-			if not using the no magic reporting option begin;
+			if the no magic reporting option is not active begin;
 				say ", [magic_of the player]";
 			end if;
 			say " and [sanity_of the player].";
@@ -267,6 +266,12 @@ The following extensions are used and loaded by this one:
 Plurality by Emily Short.
 
 Useful Functions by ShadowChaser.
+
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Section: Health
 
@@ -296,7 +301,7 @@ To increase or decrease a person or animal's health:
 
 If a person or animal loses all of their health they become "dead". This is a convenient way of indicating 0 health, e.g.:
 	
-	if the player is dead, end the game in death.
+	if the player is dead, end the story saying "You have died."
 
 Section: Magic
 
@@ -436,7 +441,7 @@ Example: ** The Hideous Rabbit of Thoth - This demonstrates most of the function
 			decrease_health_of the player by 2;
 			if the player is dead begin;
 				Say "You die from your wounds...";
-				end the game in death;
+				end the story;
 			end if;
 		end if.
 

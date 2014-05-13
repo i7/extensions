@@ -1,4 +1,4 @@
-Version 4 of Automap by Mark Tilford begins here.
+Version 4/140513 of Automap by Mark Tilford begins here.
 
 "An extension to automatically draw a map."
 
@@ -1075,6 +1075,13 @@ Thanks to Aaron Reed for feedback and a minimal example.
 Lots and lots of thanks to Peter Pears for heavy testing and feedback.
 Erik Temple prepared version 4 for submission to the extensions library.
 
+Section: 6L02 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+
+
 Example: * "The Test" by Aaron Reed - A minimal test. Note that, as of late October 2010, this example will crash in some interpreters (such as Zoom and the IDE interpreter on Mac OS X) under Glulx. Include the "automap static allocation" use option to prevent this kind of crash.
 
 	*: "Test" by Aaron.
@@ -1088,10 +1095,10 @@ Example: ** The Demonstration - A simple demonstration.
 	*: "The demonstration" by Mark Tilford.
 
 	Include Automap by Mark Tilford.
-	Use automap hide paths through closed doors;
-	Use automap reserved area of at least 400;
-	Include Basic Hyperlinks by Emily Short;
-	Use automap hyperlinks;
+	Use automap hide paths through closed doors.
+	Use automap reserved area of at least 400.
+	Include Basic Hyperlinks by Emily Short.
+	Use automap hyperlinks.
 
 	When play begins:  now current zoom is map zoomed in.
 	
