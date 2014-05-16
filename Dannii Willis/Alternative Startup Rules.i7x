@@ -1,4 +1,4 @@
-Version 1/140511 of Alternative Startup Rules (for Glulx only) by Dannii Willis begins here.
+Version 1/140516 of Alternative Startup Rules (for Glulx only) by Dannii Willis begins here.
 
 "Refactors the Startup Rules so that it can be more easily altered"
 
@@ -8,7 +8,7 @@ We refactor the starting the virtual machine activity so that it can be more eff
 
 The before starting the virtual machine rulebook should be used only for safe code that does not use any IO stuff - not even to print an error. Be careful!
 The for starting the virtual machine rulebook should be used to set up IO systems.
-The after starting the virtual machine rulebook is a good place for extensions to put their own code, so that the When Play begins rulebook can be left empty for authors to use without worrying about whether their extensions' rules have been run yet. ]
+The after starting the virtual machine rulebook is a good place for extensions to put their own code, so that the when play begins rulebook can be left empty for authors to use without worrying about whether their extensions' rules have been run yet. ]
 
 Use authorial modesty.
 
@@ -34,11 +34,11 @@ The enable Glulx acceleration rule is not listed in the for starting the virtual
 The enable Glulx acceleration rule is listed in the before starting the virtual machine rules.
 
 The seed random number generator rule is not listed in the startup rules.
-The alternative seed random number generator rule is listed first in the for starting the virtual machine rules.
+The alternative seed random number generator rule is listed in the before starting the virtual machine rules.
 The alternative seed random number generator rule translates into I6 as "SEED_RANDOM_NUMBER_GENERATOR_R".
 
 First after starting the virtual machine rule (this is the initial whitespace rule):
-	say "[line break][line break][line break]123".
+	say "[line break][line break][line break]".
 
 The update chronological records rule is not listed in the startup rules.
 The alternative update chronological records rule is listed in the after starting the virtual machine rules.
@@ -53,9 +53,9 @@ After starting the virtual machine (this is the alternative start in the correct
 Chapter - Dividing up VM_Initialise
 
 The check for Glk rule is listed in the before starting the virtual machine rules.
-The check for Glk rule translates into I6 as "CheckForGlk".
+The check for Glk rule translates into I6 as "ASR_CheckForGlk".
 Include (-
-[ CheckForGlk res;
+[ ASR_CheckForGlk res;
 	@gestalt 4 2 res;
 	if (res == 0) quit;
 	rfalse;
@@ -63,12 +63,19 @@ Include (-
 -).
 
 The recover objects rule is listed in the before starting the virtual machine rules. 
-The recover objects rule translates into I6 as "GGRecoverObjects".
-
-The sound channel initialisation rule is listed first in the for starting the virtual machine rules.
-The sound channel initialisation rule translates into I6 as "SoundChannelInitialisation".
+The recover objects rule translates into I6 as "ASR_GGRecoverObjects".
 Include (-
-[ SoundChannelInitialisation;
+[ ASR_GGRecoverObjects;
+	! We must call GGRecoverObjects() indirectly like this because it returns true which will abort the before rules
+	GGRecoverObjects();
+	rfalse;
+];
+-).
+
+The sound channel initialisation rule is listed in the for starting the virtual machine rules.
+The sound channel initialisation rule translates into I6 as "ASR_SoundChannelInitialisation".
+Include (-
+[ ASR_SoundChannelInitialisation;
 	if (glk_gestalt(gestalt_Sound, 0)) {
 		if (gg_foregroundchan == 0)
 			gg_foregroundchan = glk_schannel_create(GG_FOREGROUNDCHAN_ROCK);
@@ -94,16 +101,10 @@ Include (-
 ];
 -) instead of "Seed Random Number Generator Rule" in "OrderOfPlay.i6t".
 
-
-
-Chapter - Opening the built-in windows
-
-[(for use without Flexible Windows by Jon Ingold)]
-
 The open built-in windows rule is listed in the for starting the virtual machine rules.
-The open built-in windows rule translates into I6 as "OpenBuiltInWindows".
+The open built-in windows rule translates into I6 as "ASR_OpenBuiltInWindows".
 Include (-
-[ OpenBuiltInWindows res sty;
+[ ASR_OpenBuiltInWindows res sty;
 	res = InitGlkWindow(0);
 	if (res ~= 0) return;
 
@@ -146,55 +147,6 @@ Include (-
 	rfalse;
 ];
 -).
-
-
-
-[Section - Opening the standard windows (for use with Flexible Windows by Jon Ingold)
-
-The initial hyperlink request rule is not listed in the when play begins rules.
-
-The allocate rocks rule is not listed in the when play begins rules.
-The allocate rocks rule is listed in the before starting the virtual machine rules.
-
-Rule for starting the virtual machine (this is the open standard windows using Flexible windows rule):
-	if the ref-number of main-window is 0:
-		now the main-window is g-unpresent;
-		now the main-window is g-unrequired;
-	otherwise:
-		clear the screen;
-	if the ref-number of status-window is 0:
-		now the status-window is g-unpresent;
-		now the status-window is g-unrequired;
-	open up the main-window;
-	unless the no status line option is active:
-		[ I'm not sure why, but this doesn't actually work :( We have to run it a second time ]
-		open up the status-window;
-	continue the activity;
-
-Last after starting the virtual machine rule (this is the open the status window rule):
-	unless the no status line option is active:
-		open up the status-window;
-
-Before constructing the main-window (this is the set text styles for the main window rule):
-	set text styles for the main window.
-To set text styles for the main window:
-(-
-	! Left-justify the header style
-	glk_stylehint_set( wintype_TextBuffer, style_Header, stylehint_Justification, 0 );
-	! Try to make emphasized type in italics and not boldface
-	glk_stylehint_set( wintype_TextBuffer, style_Emphasized, stylehint_Weight, 0 );
-	glk_stylehint_set( wintype_TextBuffer, style_Emphasized, stylehint_Oblique, 1 );
--).
-
-Before constructing the status-window (this is the set text styles for the status window rule):
-	let temp be 0;
-	set text styles for the status window.
-To set text styles for the status window:
-(-
-	statuswin_cursize = statuswin_size;
-	for ( t_0=0 : t_0 < style_NUMSTYLES : t_0++ )
-	glk_stylehint_set( wintype_TextGrid, t_0, stylehint_ReverseColor, 1 );
--).]
 
 
 

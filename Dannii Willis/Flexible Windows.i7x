@@ -1,12 +1,12 @@
-Version 1/140511 of Flexible Windows (for Glulx only) by Dannii Willis begins here.
+Version 1/140512 of Flexible Windows (for Glulx only) by Dannii Willis begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
+[ Flexible Windows was originally by Jon Ingold, with many contributions by Erik Temple. This version has been rewritten from scratch for 6L02. ]
+
 Use authorial modesty.
 
-[ Flexible Windows was original by Jon Ingold, with many contributions by Erik Temple. This version has been rewritten from scratch for 6L02. ]
-
-Include Alternative Startup Rules by Dannii Willis.
+Include version 1/140512 of Alternative Startup Rules by Dannii Willis.
 Include version 10/140425 of Glulx Entry Points by Emily Short.
 
 
@@ -47,44 +47,35 @@ The measurement of a g-window is usually 40.
 A g-window has a number called minimum size.
 
 A g-window has a number called the rock.
-The rock property translates into I6 as "rock_value".
 
 A g-window has a number called ref number.
-The ref number property translates into I6 as "ref_number".
 
 A g-window can be g-required or g-unrequired.
 A g-window is usually g-unrequired.
 
-Include (-
-Attribute g_present;
--) after "Properties" in "Output.i6t".
-
 A g-window can be g-present or g-unpresent.
-The g-present property translates into I6 as "g_present".
 A g-window is usually g-unpresent.
 
 
 
-Chapter - The spawning relation - unindexed
+Chapter - The spawning relation
 
-[ The most efficient relations use the object tree. Inform will only use the object tree for a few built in relations however, so we pigging back on to the containment relation. ]
+[ The most efficient relations use the object tree. Inform will only use the object tree for a few built in relations however, so we piggy back on to the containment relation. ]
 The verb to spawn implies the containment relation.
 
 The verb to be ancestral to implies the enclosure relation.
 The verb to be descended from implies the reversed enclosure relation.
 
-To decide which g-window is the parent of (win - a g-window):
+[To decide which g-window is the parent of (win - a g-window):
 	if the holder of win is a g-window:
-		decide on the holder of win;
-
-Definition: a g-window is paternal rather than childless if it spawns a g-present g-window.
+		decide on the holder of win;]
 
 
 
-Chapter - The built in windows
+Chapter - The built-in windows
 
 The main window is a text buffer g-window.
-The rock of the main window is -100.
+[The rock of the main window is -100.]
 
 The status window is a text grid g-window.
 The position of the status window is g-placeabove.
@@ -103,30 +94,28 @@ Constant USE_NO_STATUS_LINE 0;
 
 Chapter - Starting up - unindexed
 
-To decide if g-window rocks are unset: 
+The main window rock is a number variable.
+The main window rock variable translates into I6 as "GG_MAINWIN_ROCK".
+The status window rock is a number variable.
+The status window rock variable translates into I6 as "GG_STATUSWIN_ROCK".
+
+[To decide if g-window rocks are unset: 
 	if the rock of the main window is -100:
 		yes;
-	no;
+	no;]
 
 Before starting the virtual machine (this is the set g-window rocks rule):
-	let cnt be 200;
+	now the rock of the main window is the main window rock;
+	now the rock of the status window is the status window rock;
+	let cnt be 1000;
 	repeat with win running through g-windows:
 		if the rock of win is 0:
 			now the rock of win is cnt;
 			increase cnt by 10;
-	set built in window rocks;
-
-To set built in window rocks:
-	(- SetBuiltInWindowRocks(); -).
-
-Include (-
-[ SetBuiltInWindowRocks;
-	(+ main window +).rock_value = GG_MAINWIN_ROCK;
-	(+ status window +).rock_value = GG_STATUSWIN_ROCK; 
-];
- -).
 
 
+
+Part - The Flexible Windows API
 
 Chapter - Opening and closing windows
 
@@ -146,6 +135,8 @@ To shut down (win - a g-window):
 
 Section - Calibrating windows - unindexed
 
+Definition: a g-window is paternal rather than childless if it spawns a g-present g-window.
+
 Definition: a g-window is a next-step if it is the main window or it is spawned by something g-present.
 
 To calibrate windows:
@@ -157,77 +148,55 @@ To calibrate windows:
 
 
 
-Section - Constructing a window - unindexed
+Section - Constructing a window
 
 Constructing something is an activity on g-windows.
 
-For constructing a g-window (called win) (this is the basic constructing a window rule):
-	let parent be the ref number of the parent of win;	
-	let method be the pos-val of the position of win + method-val of the scale method of win;
-	let size be a number;
-	if the scale method of win is g-using-minimum:
-		now size is the minimum size of win;
-	otherwise:
-		now size is the measurement of win;
-	let type be the type-val of the type of win;
-	let rock be the rock of the main window;
-	now the ref number of win is the reference of the g-window created from parent with method and size and type and rock;
-	now win is g-present;
-
-For constructing the main window (this is the construct the main window rule):
-	let type be the type-val of the type of the main window;
-	let rock be the rock of the main window;
-	now the ref number of the main window is the reference of the g-window created from 0 with 0 and 0 and type and rock;
-	now the main window is g-present;
-
-To decide which number is the reference of the g-window created from (parent - a number) with (method - a number) and (size - a number) and (type - a number) and (rock - a number):
-	(- ( glk_window_open( {parent}, {method}, {size}, {type}, {rock} ) ) -).
-
-To decide which number is the type-val of (N - a g-window type): (- ( GetWindowType( {N} ) ) -).
-To decide which number is the method-val of (N - a g-window scale method): (- ( GetScaleMethod( {N} ) ) -).
-To decide which number is the pos-val of (N - a g-window position): (-  ( GetWindowPos( {N} ) ) -).
-
+The construct a g-window rule is listed in the for constructing rules.
+The construct a g-window rule translates into I6 as "ConstructGWindow".
 Include (-
-
-[ GetWindowType type;
-	switch (type)
+[ ConstructGWindow win parentwin method size type rock;
+	win = parameter_value;
+	! Fill in parentwin, method and size only if the window is not the main window
+	if ( win ~= (+ main window +) )
 	{
-		(+ g-text-buffer +): return wintype_textbuffer;
-		(+ g-text-grid +): return wintype_textgrid;
-		(+ g-graphics +): return wintype_graphics;
+		parentwin = parent( win ).(+ ref number +);
+		if ( win.(+ scale method +) == (+ g-proportional +) )
+		{
+			method = winmethod_Proportional;
+		}
+		else
+		{
+			method = winmethod_Fixed;
+		}
+		method = method + win.(+ position +) - 2;
+		if ( win.(+ scale method +) == (+ g-using-minimum +) )
+		{
+			size = win.(+ minimum size +);
+		}
+		else
+		{
+			size = win.(+ measurement +);
+		}
 	}
+	type = win.(+ type +) + 2;
+	rock = win.(+ rock +);
+	win.(+ ref number +) = glk_window_open( parentwin, method, size, type, rock );
 ];
-
-[ GetScaleMethod method;
-	switch (method)
-	{	
-		(+ g-proportional +): return winmethod_Proportional;
-		default: return winmethod_Fixed;	
-	}
-];
-
-[ GetWindowPos pos;
-	switch (pos)
-	{
-		(+ g-placeabove +): return winmethod_Above;
-		(+ g-placebelow +): return winmethod_Below;
-		(+ g-placeleft +): return winmethod_Left;
-		(+ g-placeright +): return winmethod_Right;
-	} 
-];
-
 -).
 
-First after constructing a g-window (called win) (this is the window could not be created rule):
+First after constructing a g-window (called win) (this is the check if the window was created rule):
 	if the ref number of win is zero:
-		now win is g-unpresent;
+		now win is g-unrequired;
 		rule fails;
+	otherwise:
+		now win is g-present;
 
 
 
-Part - Focus and changing the main window
+Chapter - Focus and changing the main window
 
-To set/move/shift the/-- focus to (win - a g-window), clearing the window:
+To set/move/shift the/-- focus to (win - a g-window):
 	if win is g-present:
 		[now the current g-window is win;]
 		set cursor to ref number of win;
@@ -239,11 +208,11 @@ To set/move/shift the/-- focus to (win - a g-window), clearing the window:
 Section - I6 to change focus etc - unindexed
 
 To set cursor to the/-- (N - a number):
-	(- glk_set_window( {n} ); -).
+	(- glk_set_window( {N} ); -).
 
 
 
-Section - Keeping the built in windows up to date - unindexed
+Section - Keeping the built-in windows up to date - unindexed
 
 gg_mainwin is a number variable.
 The gg_mainwin variable translates into I6 as "gg_mainwin".
@@ -255,15 +224,16 @@ After constructing a g-window (called win) (this is the focus the main window ru
 		set focus to the main window;
 	[ Account for changed main windows ]
 
-After constructing a g-window (called win) (this is the update built in windows rule):
+After constructing a g-window (called win) (this is the update built-in windows rule):
 	if win is the main window:
 		now gg_mainwin is the ref number of main window;
 	if win is the status window:
 		now gg_statuswin is the ref number of status window;
+		[ statuswin_cursize/statuswin_size? ]
 
 
 
-Part - Opening the built in windows
+Part - Opening the built-in windows
 
 The open the built-in windows using Flexible Windows rule is listed instead of the open built-in windows rule in the for starting the virtual machine rulebook.
 This is the open the built-in windows using Flexible Windows rule:
@@ -271,7 +241,9 @@ This is the open the built-in windows using Flexible Windows rule:
 		open the main window;
 	[otherwise:
 		clear the main window;]
-	unless the no status line option is active:
+	if the no status line option is active:
+		shut down the status window;
+	otherwise:
 		open the status window;
 	continue the activity;
 
