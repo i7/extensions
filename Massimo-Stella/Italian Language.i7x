@@ -1844,6 +1844,7 @@ conp	"con il"	"con lo"	"con la"	"con i"	"con gli"	"con le"	"con l[']"
 sup	"sul"	"sullo"	"sulla"	"sui"	"sugli"	"sulle"	"sull[']"
 perp	"per il"	"per lo"	"per la"	"per i"	"per gli"	"per le"	"per l[']"
 trap	"tra il"	"tra lo"	"tra la"	"tra i"	"tra gli"	"tra le"	"tra l[']"
+frap	"fra il"	"fra lo"	"fra la"	"fra i"	"fra gli"	"fra le"	"fra l[']"
 
 To say (p - an articulated preposition) the (obj - a thing):
 	if obj is female:
@@ -1872,6 +1873,7 @@ In Italian mangiare is a verb.
 In Italian dovere is a verb.
 In Italian potere is a verb.
 In Italian possedere is a verb. [LEO]
+In Italian provare is a verb. [LEO]
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
 In Italian salire is a verb.
@@ -1948,6 +1950,8 @@ In Italian contenente is an adjective. [LEO]
 In Italian stesso is an adjective. [LEO]
 In Italian bloccabile is an adjective. [LEO]
 In Italian sbloccabile is an adjective. [LEO]
+In Italian grande is an adjective. [LEO]
+In Italian messo is an adjective. [LEO]
 ]
 
 [LEO Workaround for adjectives]
@@ -1991,6 +1995,8 @@ To say interessato: say "interessat[o-agg]".
 To say capace: say "capac[e-agg]".
 To say contenente: say "contenent[e-agg]". [LEO]
 To say stesso: say "stess[o-agg]". [LEO]
+To say grande: say "grand[e-agg]". [LEO]
+To say messo: say "mess[o-agg]". [LEO]
 [LEO]
 
 To say Ora:
@@ -2884,4 +2890,142 @@ Italian Language ends here.
 
 ---- DOCUMENTATION ----
 
-To be written.
+(The documentation of this extension is written in italian)
+
+Chapter: Indirizzi utili
+
+L'estensione è stata scritta da Massimo Stella, con il contributo di Tristano Ajmone.
+Leonardo Boselli sta curando la manutenzione dell'estensione e la traduzione delle estensioni più utili già disponibili.
+
+Per qualsiasi domanda è possibile contattare l'autore all'indirizzo email:
+
+	leonardo.boselli@istruzione.it
+
+L'estensione "Italian Language" e i suoi futuri aggiornamenti sono disponibili all'indirizzo:
+
+	https://github.com/i7/extensions/tree/master/Massimo-Stella
+
+Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono reperibili all'indirizzo:
+
+	https://github.com/i7/extensions/tree/master/Leonardo-Boselli 
+
+Chapter: Introduzione
+
+L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione non tratterà di quest'ultimo aspetto, visto che, almeno in questa fase, è secondario.
+
+Chapter: Installare l'estensione
+
+Per installare l'estensione nel programma Inform 7 installato sul proprio computer è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti. 
+
+Per includere l'estensione e utilizzarla nelle proprie avventure occorre scrivere nella finestra dell'editor la seguente linea, magari subito dopo la linea col titolo dell'avventura e l'autore, facendola poi seguire dall'inclusione di altre eventuali estensioni tradotte:
+
+	Include Italian Language by Massimo Stella.
+
+A questo punto è possibile proseguire la scrittura del programma utilizzando tutte le funzionalità che supportano la lingua italiana.
+
+Chapter: I comandi
+
+Qual è il primo effetto dell'inclusione? Tutti i comandi più comuni che un giocatore può voler utilizzare in un'avventura testuale possono essere impartiti in lingua italiana. Per esempio, si può utilizzare "prendi" invece di "take" e così via. In ogni caso, i comandi in inglese e le normali abbreviazioni sono comunque disponibili. Per esempio, si può usare "x", invece di "esamina", per ottenere l'elenco degli oggetti in possesso del giocatore, o "l" invece di "look" (ma anche "g" invece di "guarda"), per visualizzare la descrizione della stanza in cui si trova il giocatore e così via.
+
+I comandi che implicano l'uso di uno o più oggetti, come "apri la gabbia con la chiave", possono essere abbreviati, "apri gabbia con chiave", perdendo gli articoli (ciò deve avvenire per tutti gli articoli presenti, altrimenti il comando non viene compreso). Le preposizioni articolate sono correttamente riconosciute, quindi è corretto scrivere "metti la penna sul tavolo", ma viene accettato anche "metti penna su tavolo".
+
+Chapter: Le risposte
+
+Qual è il secondo effetto dell'inclusione? Anche le risposte (automatiche) ai comandi più comuni risultano tradotte in italiano.
+
+Chapter: Creare testi
+
+Naturalmente un'avventura che si limiti ai comportamenti di base è davvero poco interessante. Un autore deve scrivere molti messaggi in risposta alle varie azioni del giocatore. La release 6L02 (e successive) prevede gli "adaptive text", cioè testi che, scritti in un modo particolare, si adattano a varie situazioni, come diversi punti di vista o differenti tempi verbali.
+
+Section: Articoli e preposizioni articolate
+
+L'estensione definisce gli articoli italiani e le preposizioni articolate. Per ottenerli è sufficiente descrivere un oggetto in questo modo:
+
+	The gabbie is a plural-named feminine gender container.
+	The sedia is a feminine gender supporter.
+			
+"Plural-named" serve per specificare che il nome è plurale (il default è singolare) e "feminine gender" specifica il femminile (il default è il maschile). A questo punto, i seguenti testi generano i risultati riportati a fianco:
+
+	"vedo [the sedia] e [the gabbie]" (vedo la sedia e le gabbie)
+	"vedo [a sedia] e [some gabbie]" (vedo una sedia e delle gabbie)
+	"le sbarre [dip the gabbie]" (le sbarre delle gabbie)
+	"[ap the gabbie]" (alle gabbie)
+	"uscire [dap the gabbie]" (uscire dalle gabbie)
+	"mettere [inp the gabbie]" (mettere nelle gabbie)
+	"[conp the gabbie]" (con le gabbie)
+	"[sup the gabbie]" (sulle gabbie)
+	"[perp the gabbie]" (per le gabbie)
+	"[trap the gabbie]" (tra le gabbie)
+	"[frap the gabbie]" (fra le gabbie)
+											
+Questi non sono esempi molto significativi, perché un autore avrebbe potuto scrivere direttamente il testo corrispondente, ma spesso non si conosce in anticipo il nome dell'oggetto sul quale il comando è applicato, come in questo caso:
+
+	Instead of entering a container (called contenitore):
+		say "Non puoi entrare [inp the contenitore] perché è proibito."
+		
+Quando il giocatore ordinerà "entra nelle gabbie", la risposta sarà "Non puoi entrare nelle gabbie perché è proibito", ma la risposta a "entra in acqua" (se "acqua" fosse definita come un oggetto contenitore di genere femminile) sarà "Non puoi entrare nell'aqua perché è proibito". In questo consiste la potenza degli "adaptive texts". 
+
+Section: Il punto di vista e i tempi verbali
+
+Normalmente un'avventura testuale risponde ai comandi riferendosi al giocatore (o meglio, al suo personaggio) con la seconda persona singolare e declinando i verbi al tempo presente, come è stato fatto negli esempi precedenti. Ora questo comportamento può essere cambiato. Nel proprio programma si può scrivere:
+
+	When play begins: 
+		now the story viewpoint is second person plural;
+		now the story tense is past tense.
+		
+Quel "second person plural" significa che il programma non darà del "tu" al giocatore, ma del "voi". Ci sono situazioni in cui questa possibilità, per quanto insolita, potrebbe tornare utile. Ovviamente si potrebbe specificare una qualunque delle tre persone singolari o delle tre plurali, e ciò può essere anche cambiato nel corso del gioco. Inoltre, quel "past tense" significa che i tempi verbali verranno declinati al passato e non al presente, ma si potrebbe specificare anche una terza possibilità, e cioè il "future tense". 
+
+Come può un autore sfruttare questa funzionalità? È sufficiente che, quando ci si riferisce al giocatore, nei testi tra virgolette si utilizzino dei costrutti particolari, sempre riferiti (per quanto riguarda l'italiano) alla seconda persona singolare.
+
+Riproponendo l'esempio precedente:
+
+	Instead of entering a container (called contenitore):
+		say "[Tu] non [puoi] entrare [inp the contenitore] perché [regarding the contenitore][sei] [infetto]."
+
+Cosa verrebbe risposto al comando "entra nelle gabbie" con il tempo al futuro e la seconda persona plurale?
+
+	Voi non potrete entrare nelle gabbie perché sono infette.
+	
+Invece cosa verrebbe risposto al comando "entra in acqua" con il tempo al passato e la prima persona singolare?
+
+	Io non potevo entrare nell'acqua perché era infetta.
+	
+Prima di analizzare l'esempio nel dettaglio, bisogna specificare che gli esempi non funzionerebbero con l'estensione "Italian Language" così come sono, perché l'aggettivo "infetto" è ignoto al sistema.
+Ci sono molti verbi e aggettivi predefiniti (vedi sezione 3.1.1 -- si tratta di verbi e aggettivi utili per le risposte standard), ma "infetto" non è uno di questi. Per aggiungerlo alla lista, basta inserire nel proprio programma le linee:
+
+	To say infetto:
+		say "infett[o-agg]".
+
+Se l'aggettivo terminasse con "e", come "mangiabile", si dovrebbe usare "e-agg". In questo modo l'aggettivo si adatta al genere e al numero del nome (noun) specificato nel comando.
+
+Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
+
+"Tu": si adatta con lo "story viewpoint" specificato (nell'esempio diventa perciò "Voi" e "Io" a seconda dei casi). Altre particelle disponibili sono "tu" (per il minuscolo), "te", "ti" ecc.
+"puoi": si adatta con lo "story viewpoint" (poiché segue il "Tu") e con lo "story tense". Può essere utilizzato perché il verbo "potere" (così come tanti altri -- vedi sezione 3.1.1) è definito nell'estensione.
+"sei": si comporta come "puoi", ma dato che non deve seguire il numero del "Tu", ma quello del contenitore, prima dev'essere specificato "regarding the contenitore" che fa comprendere al sistema qual è il soggetto. Tutto ciò che segue in "regarding" si accorda col numero e il genere dell'oggetto specificato.
+
+Ovviamente quel soggetto (Tu) a inizio frase suona piuttosto innaturale. Per toglierlo si può procedere in questo modo:
+ 
+	Instead of entering a container (called contenitore):
+		say "Non [regarding the player][puoi] entrare [inp the contenitore] perché [regarding the contenitore][sei] [infetto]."
+		
+Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player".
+
+Inoltre, se la prima parola del testo non fosse "Non" (già maiuscolo), ma direttamente il verbo "puoi", non funzionerebbe scrivere:
+
+	say "[regarding the player][Puoi] entrare...".
+	
+perché il "puoi" verrebbe comunque stampato minuscolo. Perché? L'unica spiegazione che mi sono dato per una mancanza simile è che in inglese un verbo è sempre preceduto dal soggetto, e quindi, probabilmente, il programmatore di Inform 7 non ha pensato che per le altre lingue sarebbe stato utile prevedere un diverso comportamento, che tenesse conto della maiuscola.
+Cosa possiamo fare? Purtroppo l'unico modo è ricorrere all'estensione "Text Capture", che viene inclusa automaticamente. Serve per leggere un testo prima che venga stampato per elaborarlo e, solo alla fine, mostrarlo sullo schermo. Per l'autore di avventure, non comporta grandi disagi. È sufficiente ricordarsi di scrivere il testo in questo modo:
+
+	say "[regarding the player][maiuscolo][puoi][maiuscolo] entrare...".
+	
+La frase che deve essere scritta con l'iniziale maiuscola va contornata da due "maiuscolo".
+
+Chapter: Conclusione
+			
+Queste sono solo alcune note utili per comprendere il funzionamento dell'estensione e dei nuovi meccanismi che riguardano gli "adaptive texts". Per approfondire, è utile leggere il sorgente dell'estensione che mostra in se stesso numerosi esempi di come possa essere utilizzata.
+
+Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
+
+	leonardo.boselli@istruzione.it
