@@ -1,4 +1,4 @@
-Version 2/140527 of Italian Language by Massimo Stella begins here.
+Version 2/140528 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play.
 
@@ -1915,11 +1915,17 @@ In Italian ascoltare is a verb.
 
 To say enter-verb:
 	if the player's command includes "sali":
-		say "[regarding the player][sali]";
+		say "[sali]";
 	otherwise if the player's command includes "siedi":
-		say "[regarding the player][siedi]";
+		say "[siedi]";
 	otherwise:
-		say "[regarding the player][entri]";		
+		say "[entri]";		
+
+To say exit-verb:
+	if the player's command includes "scendi":
+		say "[scendi]";
+	otherwise:
+		say "[esci]";		
 
 [LEO Something goes wrong with adjectives]
 [In Italian ingombrante is an adjective.
@@ -1945,6 +1951,10 @@ In Italian sbloccabile is an adjective. [LEO]
 ]
 
 [LEO Workaround for adjectives]
+To say the noun is the (O - a thing):
+	now the noun is the O;
+	say "[regarding the noun]";
+					
 To say o-agg:
 	if the noun is singular-named:
 		if the noun is feminine gender:
@@ -1956,7 +1966,7 @@ To say o-agg:
 			say "e";
 		otherwise:
 			say "i";
-					
+
 To say e-agg:
 	if the noun is plural-named:
 		say "i";
@@ -2132,19 +2142,19 @@ Implicitly pass through other barriers rule response (C) is "([regarding the pla
 Implicitly pass through other barriers rule response (D) is "([regarding the player][entri] [inp the target])[command clarification break]".
 Implicitly pass through other barriers rule response (E) is "([regarding the player][entri] [inp the target])[command clarification break]".
 Standard report entering rule response (A) is "[regarding the player][maiuscolo][enter-verb][maiuscolo] [sup the noun]."
-Standard report entering rule response (B) is "[regarding the player][maiuscolo][entri][maiuscolo] [inp the noun]."
-Standard report entering rule response (C) is "[The actor] [entri] [inp the noun]."
-Standard report entering rule response (D) is "[The actor] [sali] [sup the noun]."
+Standard report entering rule response (B) is "[regarding the player][maiuscolo][enter-verb][maiuscolo] [inp the noun]."
+Standard report entering rule response (C) is "[The actor] [enter-verb] [inp the noun]."
+Standard report entering rule response (D) is "[The actor] [enter-verb] [sup the noun]."
 
 [ Exiting ]
-Can't exit when not inside anything rule response (A) is "[Ora] non [regarding the player][sei] dentro [the noun]."
-Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage]."
-Standard report exiting rule response (A) is "[regarding the player][maiuscolo][esci][maiuscolo] [dap the container exited from]."
-Standard report exiting rule response (B) is "[regarding the player][maiuscolo][esci][maiuscolo] [dap the container exited from]."
-Standard report exiting rule response (C) is "[The actor] [esci] [dap the container exited from]."
+Can't exit when not inside anything rule response (A) is "[Ora] non [regarding the player][sei] dentro [if the noun is nothing]a nulla[otherwise][ap the noun][end if]."
+Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] [the noun is the cage]perché [sei] [chiuso]."
+Standard report exiting rule response (A) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
+Standard report exiting rule response (B) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
+Standard report exiting rule response (C) is "[The actor] [exit-verb] [dap the container exited from]."
 [ Getting off ]
 Can't get off things rule response (A) is "[Ora] non [regarding the player][sei] [sup the noun]."
-Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][scendi][maiuscolo][otherwise][The actor] [scendi][end if] [dap the noun]."
+Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][exit-verb][maiuscolo][otherwise][The actor] [exit-verb][end if] [dap the noun]."
 
 Section 3.1.1.3 - Standard actions concerning the actor's vision
 
@@ -2519,7 +2529,7 @@ Parser error internal rule response (J) is "Chiedi qualcosa che non è possibile
 Parser error internal rule response (K) is "Quella azione è possibile solo con oggetti animati."
 Parser error internal rule response (L) is "Non è un verbo che conosco."
 Parser error internal rule response (M) is "Non è qualcosa di cui hai bisogno in questa storia."
-Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [the noun]." [LEO verbo sbagliato produce questo]
+Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [if the noun is nothing]nulla di simile[otherwise][the noun][end if]."
 Parser error internal rule response (O) is "Non ho capito la fine della frase."
 Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] disponibil[e-agg]."
 Parser error internal rule response (Q) is "Nulla da fare."
@@ -2871,3 +2881,7 @@ Constant RESTORE__WD    = 'restore';
 -) instead of "Vocabulary" in "Language.i6t".
 
 Italian Language ends here.
+
+---- DOCUMENTATION ----
+
+To be written.
