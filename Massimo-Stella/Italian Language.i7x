@@ -1,4 +1,4 @@
-Version 2/140528 of Italian Language by Massimo Stella begins here.
+Version 2/140529 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play.
 
@@ -772,9 +772,7 @@ for now, we'll just translate kinds of objects. This ensures that if we write:
 
 then (a) Inform will recognise these as instances of the kind "man", and (b)
 it will give them each the printed name "homme" (not "man").
-
-I'm not sure I've chosen the best equivalents here. Should a room be "chamber",
-or "pièce"?]
+]
 
 A room translates into Italian as una stanza.
 A thing translates into Italian as una cosa.
@@ -1919,7 +1917,9 @@ To say enter-verb:
 	if the player's command includes "sali":
 		say "[sali]";
 	otherwise if the player's command includes "siedi":
-		say "[siedi]";
+		say "[ti] [siedi]";
+	otherwise if the player's command includes "siediti":
+		say "[ti] [siedi]";
 	otherwise:
 		say "[entri]";		
 
@@ -1929,50 +1929,57 @@ To say exit-verb:
 	otherwise:
 		say "[esci]";		
 
+To say ci sei:
+	let be-verb be "[sei]";
+	let be-char be character number 1 in be-verb; 
+	if be-char is "e":
+		say "c['][be-verb]";
+	otherwise:
+		say "ci [be-verb]";
+		
 [LEO Something goes wrong with adjectives]
-[In Italian ingombrante is an adjective.
+[
+In Italian aperto is an adjective.
+In Italian chiuso is an adjective.
+In Italian vuoto is an adjective.
+In Italian acceso is an adjective.
+In Italian spento is an adjective.
+In Italian ingombrante is an adjective.
 In Italian fissato is an adjective.
 In Italian preso is an adjective.
 In Italian rimasto is an adjective.
 In Italian lasciato is an adjective.
 In Italian commestibile is an adjective.
-In Italian chiuso is an adjective.
-In Italian aperto is an adjective.
-In Italian vuoto is an adjective.
-In Italian acceso is an adjective.
-In Italian spento is an adjective.
 In Italian indossato is an adjective.
 In Italian bloccato is an adjective.
 In Italian adatto is an adjective.
 In Italian interessato is an adjective.
 In Italian capace is an adjective.
 In Italian contenente is an adjective. [LEO]
+In Italian sveglio is an adjective. [LEO]
 In Italian stesso is an adjective. [LEO]
-In Italian bloccabile is an adjective. [LEO]
-In Italian sbloccabile is an adjective. [LEO]
-In Italian grande is an adjective. [LEO]
-In Italian messo is an adjective. [LEO]
 ]
 
 [LEO Workaround for adjectives]
-To say the noun is the (O - a thing):
-	now the noun is the O;
-	say "[regarding the noun]";
-					
+
 To say o-agg:
-	if the noun is singular-named:
-		if the noun is feminine gender:
+	if the prior named object is nothing:
+		now the prior named object is the noun;
+	if the prior named object is singular-named:
+		if the prior named object is feminine gender:
 			say "a";
 		otherwise:
 			say "o";
 	otherwise:
-		if the noun is feminine gender:
+		if the prior named object is feminine gender:
 			say "e";
 		otherwise:
 			say "i";
 
 To say e-agg:
-	if the noun is plural-named:
+	if the prior named object is nothing:
+		now the prior named object is the noun;
+	if the prior named object is plural-named:
 		say "i";
 	otherwise:
 		say "e";
@@ -1994,9 +2001,9 @@ To say adatto: say "adatt[o-agg]".
 To say interessato: say "interessat[o-agg]".
 To say capace: say "capac[e-agg]".
 To say contenente: say "contenent[e-agg]". [LEO]
+To say sveglio: say "svegli[e-agg]". [LEO]
+To say messo: say "mess[e-agg]". [LEO]
 To say stesso: say "stess[o-agg]". [LEO]
-To say grande: say "grand[e-agg]". [LEO]
-To say messo: say "mess[o-agg]". [LEO]
 [LEO]
 
 To say Ora:
@@ -2154,7 +2161,7 @@ Standard report entering rule response (D) is "[The actor] [enter-verb] [sup the
 
 [ Exiting ]
 Can't exit when not inside anything rule response (A) is "[Ora] non [regarding the player][sei] dentro [if the noun is nothing]a nulla[otherwise][ap the noun][end if]."
-Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] [the noun is the cage]perché [sei] [chiuso]."
+Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] [regarding the cage]perché [sei] [chiuso]."
 Standard report exiting rule response (A) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
 Standard report exiting rule response (B) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
 Standard report exiting rule response (C) is "[The actor] [exit-verb] [dap the container exited from]."
@@ -2194,7 +2201,6 @@ Report other people searching rule response (A) is "[The actor] [ispezioni] [the
 [ Consulting it about ]
 Block consulting rule response (A) is "[regarding the player]Non [scopri] nulla di interessante [sup the noun]."
 Block consulting rule response (B) is "[The actor] [guardi] verso [the noun]."
-
 
 
 Section 3.1.1.4 - Standard actions which change the state of things
@@ -2319,10 +2325,10 @@ Can't turn people rule response (A) is "Non [regarding the player][puoi] ruotare
 Report turning rule response (A) is "Nessuna reazione."
 Report turning rule response (B) is "[The actor] [ruoti] [the noun]."
 [ Pushing it to ]
-Can't push unpushable things rule response (A) is "[The noun] non [sei] spostabil[e-agg]."
+Can't push unpushable things rule response (A) is "[The noun] non si [puoi] spostare."
 Can't push to non-directions rule response (A) is "[regarding the noun]Non [sei] una direzione."
-Can't push vertically rule response (A) is "[The noun] non [sei] sollevabil[e-agg]."
-Block pushing in directions rule response (A) is "[The noun] non [sei] spostabil[e-agg]."
+Can't push vertically rule response (A) is "[The noun] non si [puoi] sollevare."
+Block pushing in directions rule response (A) is "[The noun] non si [puoi] spostare."
 [ Squeezing ]
 Innuendo about squeezing people rule response (A) is "Non [regarding the player][puoi] strizzare [the noun]."
 Report squeezing rule response (A) is "[regarding the player]Non [ottieni] nulla."
@@ -2339,7 +2345,7 @@ Block saying no rule response (A) is "Era una domanda retorica."
 [ Burning ]
 Block burning rule response (A) is "A che scopo?"
 [ Waking up ]
-Block waking up rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] già svegli[o-agg]."
+Block waking up rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] già [sveglio]."
 [ Thinking ]
 Block thinking rule response (A) is "Buona idea."
 [ Smelling ]
@@ -2537,7 +2543,7 @@ Parser error internal rule response (L) is "Non è un verbo che conosco."
 Parser error internal rule response (M) is "Non è qualcosa di cui hai bisogno in questa storia."
 Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [if the noun is nothing]nulla di simile[otherwise][the noun][end if]."
 Parser error internal rule response (O) is "Non ho capito la fine della frase."
-Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] disponibil[e-agg]."
+Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] a disposizione."
 Parser error internal rule response (Q) is "Nulla da fare."
 Parser error internal rule response (R) is "Nulla di ciò che hai chiesto è a disposizione."
 Parser error internal rule response (S) is "Il nome non ha alcun senso in questo contesto."
@@ -2707,6 +2713,7 @@ Understand "guarda dentro [something]" or "guarda dentro il/la/lo/i/le/gli/l/que
 Understand "esamina [something]" or "esamina il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
 Understand "guarda" or "g" as looking.
 Understand "guarda sotto il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell/al/alla/allo/all/ai/alle/agli [something]" as looking under.
+Understand "guarda sotto [something]" as looking under.
 Understand "descrivi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
 
 [Interazione Fisica]
@@ -2763,6 +2770,7 @@ Understand "esci" as exiting.
 Understand "sali su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
 Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
 Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
+Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "o" as west.
 Understand "ovest" as west.
 Understand "sud" as south.
@@ -3029,3 +3037,4 @@ Queste sono solo alcune note utili per comprendere il funzionamento dell'estensi
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
 
 	leonardo.boselli@istruzione.it
+	
