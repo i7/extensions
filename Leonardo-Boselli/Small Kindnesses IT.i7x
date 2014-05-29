@@ -1,10 +1,8 @@
-Version 13/140528 of Small Kindnesses IT by Leonardo Boselli begins here.
+Version 13/140529 of Small Kindnesses IT by Leonardo Boselli begins here.
 
 "Translation in italian of version 13/140501 of Small Kindnesses by Aaron Reed.
 
-Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve.
-
-Requires 'Small Kindnesses' by Aaron Reed."
+Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve."
 
 Include Small Kindnesses by Aaron Reed.
 
