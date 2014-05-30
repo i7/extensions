@@ -8,4 +8,5 @@ Translations available:
 * "Small Kindnesses" by Aaron Reed
 * 
 * "Bulk Limiter" by Eric Eve
+* "Hiding Under" by Eric Eve
 * "Underside" by Eric Eve
