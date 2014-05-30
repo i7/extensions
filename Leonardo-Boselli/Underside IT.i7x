@@ -1,4 +1,4 @@
-Version 6/140529 of Underside IT by Leonardo Boselli begins here.
+Version 6/140530 of Underside IT by Leonardo Boselli begins here.
    
 "Translation in italian of version 6 of Underside by Eric Eve.
 
@@ -17,17 +17,16 @@ Understand "metti il/lo/la/i/gli/le/l [things preferably held] sotto il/lo/la/i/
 Chapter - Responses
 
 clever looking under rule response (A) is "Sotto [ap the noun] [is-are a list of things in the underpart].".
-take before placing under rule response (A) is "[The noun] [are] già sotto [ap the second noun].".
+take before placing under rule response (A) is "[The noun] [sei] già sotto [ap the second noun].".
 take before placing under rule response (B) is "(prima [regarding the player][if number of characters in actdesc is 6][prendi][otherwise][provi] a prendere[end if] [the noun])[command clarification break]".
 can't put anything under itself rule response (A) is "Nulla [regarding nothing][puoi] essere messo sotto a se stesso.".
 can't put under any old thing rule response (A) is "Non [regarding the player][puoi] mettere nulla sotto [ap the second noun].".
-test bulk underneath rule response (A) is "[The noun] [are] toppo [ingombrante] per essere [messo] sotto [ap the second noun].".
+test bulk underneath rule response (A) is "[The noun] [sei] toppo [ingombrante] per stare sotto [ap the second noun].".
 test bulk underneath rule response (B) is "[regarding nothing]Non [ci sei] abbastanza spazio sotto [ap the second noun] per [the noun].".
-standard report place under rule response (A) is "[regarding the player][maiuscolo][hai][maiuscolo] messo [the noun] sotto [ap the second noun]."
+standard report place under rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] messo [the noun] sotto [ap the second noun]."
 
 Underside IT ends here.
 
 ---- DOCUMENTATION ----
 
 Read the original documentation of Version 6 of Underside by Eric Eve.
-
