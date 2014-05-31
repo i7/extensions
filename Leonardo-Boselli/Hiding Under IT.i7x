@@ -1,4 +1,4 @@
-Version 4/140529 of Hiding Under IT by Leonardo Boselli begins here.
+Version 4/140530 of Hiding Under IT by Leonardo Boselli begins here.
 
 "Translation in italian of Version 4 of Hiding Under by Eric Eve.
 
@@ -23,7 +23,7 @@ standard can't put under rule response (A) is "Non [regarding the player][puoi] 
 Part 5 - Common Grammar
 
 Understand "nascondi [things preferably held] sotto [something]" as placing it under.
-Understand "nascondi il/lo/la/i/gli/le/l [things preferably held] sotto sotto il/lo/la/i/gli/le/l/al/allo/alla/ai/agli/alle/all [something]" as placing it under.
+Understand "nascondi il/lo/la/i/gli/le/l [things preferably held] sotto il/lo/la/i/gli/le/l/al/allo/alla/ai/agli/alle/all [something]" as placing it under.
 
 
 Part 6 - Taking something that hides something underneath
@@ -45,7 +45,7 @@ To say previously-hidden-under (obj - a thing):
 		say "nascost[if hidden-gender is 0]i[otherwise]e[end if] sotto";
 
 To say reveal-hidden-under (obj - a thing):
-	say "[regarding the player][maiuscolo][prendi][maiuscolo] [the noun] scoprendo [a list of things hidden under the noun] [previously-hidden-under the noun].";
+	say "[regarding the player][maiuscolo][Hai][maiuscolo] preso [the noun] scoprendo [a list of things hidden under the noun] [previously-hidden-under the noun].";
 
 
 Hiding Under IT ends here.
@@ -53,4 +53,3 @@ Hiding Under IT ends here.
 ---- DOCUMENTATION ----
 
 Read the original documentation of Version 4 of Hiding Under by Eric Eve.
-

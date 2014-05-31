@@ -57,7 +57,7 @@ Understand "usa il/lo/la/i/gli/le/l [an enterable not occupied container]" as en
 
 Chapter - Responses
 
-Small Kindnesses report on no exits rule response (A) is "Infatti [regarding the player] non [puoi] vedere alcuna uscita.".
+Small Kindnesses report on no exits rule response (A) is "Infatti [regarding the player]non [puoi] vedere alcuna uscita.".
 Small Kindnesses report on one exit rule response (A) is "Da [qui] [regarding the player][puoi] andare solo verso [list of viable directions].".
 Small Kindnesses report on exits rule response (A) is "Da [qui] [regarding the player][puoi] andare verso [list of viable directions].".
 Small Kindnesses carry out using rule response (A) is "Tenta con un[']azione meno generica di 'usa'.".

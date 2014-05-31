@@ -1796,7 +1796,7 @@ In Italian essere di traverso is a verb meaning to be through.
 Volume 3 - Responses
 
 When play begins:
-	now the description of yourself is "[regarding the player][maiuscolo][sei][maiuscolo] sempre [lo] [stesso]."
+	now the description of yourself is "[regarding the player][maiuscolo][Sei][maiuscolo] sempre [lo] [stesso]."
 
 Part 3.1 - Responses
 
@@ -1851,7 +1851,7 @@ To say (p - an articulated preposition) the (obj - a thing):
 		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
 	otherwise:
 		say "[if obj is plural-named][5Gli of p] [otherwise if artflag of obj is 0][7L of p][otherwise if artflag of obj is 1][2Lo of p] [end if]";
-	say "[obj]".
+	say "[regarding the obj][obj]".
 
 Chapter 3.1.1 - Responses in the Standard Rules
 
@@ -1872,6 +1872,7 @@ In Italian dovere is a verb.
 In Italian potere is a verb.
 In Italian possedere is a verb. [LEO]
 In Italian provare is a verb. [LEO]
+In Italian parlare is a verb. [LEO]
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
 In Italian salire is a verb.
@@ -1913,22 +1914,6 @@ In Italian daare is a verb.
 In Italian agitare is a verb.
 In Italian ascoltare is a verb.
 
-To say enter-verb:
-	if the player's command includes "sali":
-		say "[sali]";
-	otherwise if the player's command includes "siedi":
-		say "[ti] [siedi]";
-	otherwise if the player's command includes "siediti":
-		say "[ti] [siedi]";
-	otherwise:
-		say "[entri]";		
-
-To say exit-verb:
-	if the player's command includes "scendi":
-		say "[scendi]";
-	otherwise:
-		say "[esci]";		
-
 To say ci sei:
 	let be-verb be "[sei]";
 	let be-char be character number 1 in be-verb; 
@@ -1955,9 +1940,6 @@ In Italian bloccato is an adjective.
 In Italian adatto is an adjective.
 In Italian interessato is an adjective.
 In Italian capace is an adjective.
-In Italian contenente is an adjective. [LEO]
-In Italian sveglio is an adjective. [LEO]
-In Italian stesso is an adjective. [LEO]
 ]
 
 [LEO Workaround for adjectives]
@@ -2002,9 +1984,30 @@ To say interessato: say "interessat[o-agg]".
 To say capace: say "capac[e-agg]".
 To say contenente: say "contenent[e-agg]". [LEO]
 To say sveglio: say "svegli[e-agg]". [LEO]
-To say messo: say "mess[e-agg]". [LEO]
 To say stesso: say "stess[o-agg]". [LEO]
+To say salito: say "salit[o-agg]". [LEO]
+To say seduto: say "sedut[o-agg]". [LEO]
+To say entrato: say "entrat[o-agg]". [LEO]
+To say sceso: say "sces[o-agg]". [LEO]
+To say uscito: say "uscit[o-agg]". [LEO]
+To say tolto: say "tolt[o-agg]". [LEO]
 [LEO]
+
+To say enter-pp:
+	if the player's command includes "sali":
+		say "[salito]";
+	otherwise if the player's command includes "siedi":
+		say "[seduto]";
+	otherwise if the player's command includes "siediti":
+		say "[seduto]";
+	otherwise:
+		say "[entrato]";		
+
+To say exit-pp:
+	if the player's command includes "scendi":
+		say "[sceso]";
+	otherwise:
+		say "[uscito]";		
 
 To say Ora:
 	let t be "[ora]";
@@ -2058,16 +2061,16 @@ Report other people taking inventory rule response (A) is "[The actor] [guardi] 
 Can't take yourself rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] sempre con [te]."
 Can't take other people rule response (A) is "[regarding the player]Non [puoi] prendere [the noun]."
 Can't take component parts rule response (A) is "[The noun] [fai] parte [dip the whole]."
-Can't take people's possessions rule response (A) is "[regarding the noun][maiuscolo][sembri][maiuscolo] appartenere [ap the owner]."
-Can't take items out of play rule response (A) is "[regarding the noun]Non [sei] a [tua] disposizione."
+Can't take people's possessions rule response (A) is "[The noun] [sembri] appartenere [ap the owner]."
+Can't take items out of play rule response (A) is "[The noun] non [sei] a [tua] disposizione."
 Can't take what you're inside rule response (A) is "Prima dovresti [if noun is a supporter]scendere[otherwise]uscire[end if] [dap the noun]."
-Can't take what's already taken rule response (A) is "[regarding the noun][maiuscolo][sei][maiuscolo] già in [tuo] possesso."
-Can't take scenery rule response (A) is "[regarding the noun][maiuscolo][sei] troppo [ingombrante] da trasportare."
+Can't take what's already taken rule response (A) is "[The noun] [sei] già in [regarding the player][tuo] possesso."
+Can't take scenery rule response (A) is "[The noun] [sei] troppo [ingombrante] da trasportare."
 Can only take things rule response (A) is "[The noun] [sei] fuori dalla [tua] portata."
-Can't take what's fixed in place rule response (A) is "[regarding the noun][maiuscolo][sei][maiuscolo] [fissato] al [tuo] posto."
+Can't take what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Use player's holdall to avoid exceeding carrying capacity rule response (A) is "(prima [regarding the player][metti] qualcosa [inp the current working sack] per fare spazio)[command clarification break]".
 Can't exceed carrying capacity rule response (A) is "[regarding the player]Non [puoi] portare altro."
-Standard report taking rule response (A) is "[regarding the noun][maiuscolo][preso][maiuscolo]."
+Standard report taking rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] preso [the noun]."
 Standard report taking rule response (B) is "[The actor] [prendi] [the noun]."
 [ Removing it from ]
 Can't remove what's not inside rule response (A) is "[regarding the noun]Non ne [sei] [rimasto] più."
@@ -2078,33 +2081,33 @@ Can't drop body parts rule response (A) is "[regarding the player]Non [puoi] las
 Can't drop what's already dropped rule response (A) is "[The noun] [sei] già [qui]."
 Can't drop what's not held rule response (A) is "[regarding the player]Non [possiedi] [the noun]."
 Can't drop clothes being worn rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
-Can't drop if this exceeds carrying capacity rule response (A) is "Non c['][sei] più spazio [sup the receptacle]."
-Can't drop if this exceeds carrying capacity rule response (B) is "Non c['][sei] più spazio [inp the receptacle]."
-Standard report dropping rule response (A) is "[regarding the noun][maiuscolo][lasciato][maiuscolo]."
-Standard report dropping rule response (B) is "[The actor] [lasci] [the noun]."
+Can't drop if this exceeds carrying capacity rule response (A) is "Non [regarding nothing][ci sei] più spazio [sup the receptacle]."
+Can't drop if this exceeds carrying capacity rule response (B) is "Non [regarding nothing][ci sei] più spazio [inp the receptacle]."
+Standard report dropping rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] lasciato [the noun]."
+Standard report dropping rule response (B) is "[The actor] [hai] lasciato [the noun]."
 
 [ Putting it on ]
 [Can't put what's not held rule response (A) is "Prima di poter mettere [the noun] sopra a qualcos'altro sarebbe il caso di aver[lo] nell'inventario."][DEPRECATED]
 Can't put something on itself rule response (A) is "[regarding the player]Non [puoi] mettere [the noun] sopra se [stesso]."
 Can't put onto what's not a supporter rule response (A) is "[regarding the player]Non [puoi] mettere [the noun] [sup the second noun]."
 Can't put clothes being worn rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
-Can't put if this exceeds carrying capacity rule response (A) is "Non c['][sei] più spazio [sup the second noun]."
-Concise report putting rule response (A) is "Fatto."
-Standard report putting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][metti][maiuscolo][otherwise][The actor] [metti][end if] [the noun] [su-in the second noun]."
+Can't put if this exceeds carrying capacity rule response (A) is "Non [regarding nothing][ci sei] più spazio [sup the second noun]."
+Concise report putting rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] messo [the noun] [su-in the second noun]."
+Standard report putting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] messo [the noun] [su-in the second noun]."
 [ Inserting it into ]
-Can't insert something into itself rule response (A) is "Non [regarding the player][puoi] mettere qualcosa dentro se stessa."
-Can't insert into closed containers rule response (A) is "[The second noun] [sei] [chiuso]."
-Can't insert into what's not a container rule response (A) is "[regarding the second noun]Non [sei] in grado di contenere oggetti."
+Can't insert something into itself rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro se [stesso]."
+Can't insert into closed containers rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro [ap the second noun] perché [regarding the second noun][sei] [chiuso]."
+Can't insert into what's not a container rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro [ap the second noun] perché non [regarding the second noun][puoi] contenere oggetti."
 Can't insert clothes being worn rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
-Can't insert if this exceeds carrying capacity rule response (A) is "Non c['][sei] più spazio [inp the second noun]."
+Can't insert if this exceeds carrying capacity rule response (A) is "[regarding nothing]Non [ci sei] più spazio [inp the second noun]."
 Concise report inserting rule response (A) is "Fatto."
-Standard report inserting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][metti][maiuscolo][otherwise][The actor] [metti][end if] [the noun] [su-in the second noun]."
+Standard report inserting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] messo [the noun] [su-in the second noun]."
 [ Eating ]
-Can't eat unless edible rule response (A) is "[The noun] non [sei] [commestibile]."
+Can't eat unless edible rule response (A) is "Non [regarding the player][puoi] mangiare [the noun] perché non [regarding the noun][sei] [commestibile]."
 Can't eat clothing without removing it first rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
 Can't eat other people's food rule response (A) is "Non [regarding the player][puoi] mangiare [the noun] [dip the owner]."
-Standard report eating rule response (A) is "[regarding the player][maiuscolo][mangi][maiuscolo] [the noun]."
-Standard report eating rule response (B) is "[if the actor is the player][regarding the player][maiuscolo][mangi][maiuscolo][otherwise][The actor] [mangi][end if] [the noun]."
+Standard report eating rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] mangiato [the noun]."
+Standard report eating rule response (B) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] mangiato [the noun]."
 
 
 Section 3.1.1.2 - Standard actions which move the actor
@@ -2119,30 +2122,30 @@ Can't go through undescribed doors rule response (A) is "Non [regarding the play
 Can't go through closed doors rule response (A) is "(prima [regarding the player][apri] [the door gone through])[command clarification break]".
 Can't go that way rule response (A) is "Non [regarding the player][puoi] andare da quella parte."
 Can't go that way rule response (B) is "Non [regarding the player][puoi] andare da quella parte, visto che [the door gone through] [sei] un vicolo cieco."
-Describe room gone into rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][vai][maiuscolo][otherwise][The actor] [vai][end if] su."
-Describe room gone into rule response (B) is "[if the actor is the player][regarding the player][maiuscolo][vai][maiuscolo][otherwise][The actor] [vai][end if] giù."
-Describe room gone into rule response (C) is "[if the actor is the player][regarding the player][maiuscolo][vai][maiuscolo][otherwise][The actor] [vai][end if] verso [the noun]."
-Describe room gone into rule response (D) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dall'alto."
-Describe room gone into rule response (E) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dal basso."
-[Describe room gone into rule response (F) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the back way]".]
-Describe room gone into rule response (G) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] ."
-Describe room gone into rule response (H) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
-Describe room gone into rule response (I) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
-[Describe room gone into rule response (J) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] [dap the back way]."]
-Describe room gone into rule response (K) is "[if the actor is the player][regarding the player][maiuscolo][vai][maiuscolo][otherwise][The actor] [vai][end if] attraverso [the noun]".
-Describe room gone into rule response (L) is "[if the actor is the player][regarding the player][maiuscolo][arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the noun]".
+Describe room gone into rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] su."
+Describe room gone into rule response (B) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] giù."
+Describe room gone into rule response (C) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] verso [the noun]."
+Describe room gone into rule response (D) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dall'alto."
+Describe room gone into rule response (E) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dal basso."
+Describe room gone into rule response (F) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the back way]".
+Describe room gone into rule response (G) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] ."
+Describe room gone into rule response (H) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
+Describe room gone into rule response (I) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
+Describe room gone into rule response (J) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] [dap the back way]."
+Describe room gone into rule response (K) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] attraverso [the noun]".
+Describe room gone into rule response (L) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the noun]".
 Describe room gone into rule response (M) is "[sup the vehicle gone by]".
 Describe room gone into rule response (N) is "[inp the vehicle gone by]".
-Describe room gone into rule response (O) is ", spingendo [the thing gone with], e anche [te]".
+Describe room gone into rule response (O) is ", spingendo [the thing gone with], e anche [te] [stesso]".
 Describe room gone into rule response (P) is ", spingendo [the thing gone with]".
 Describe room gone into rule response (Q) is ", spingendo [the thing gone with] via".
 Describe room gone into rule response (R) is ", spingendo [the thing gone with] dentro".
-Describe room gone into rule response (S) is ", portando anche [te] appresso".
+Describe room gone into rule response (S) is ", portando[ti] appresso".
 
 [ Entering ]
 
-Can't enter what's already entered rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] già [sup the noun]."
-Can't enter what's already entered rule response (B) is "[regarding the player][maiuscolo][sei][maiuscolo] già [inp the noun]."
+Can't enter what's already entered rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [sup the noun]."
+Can't enter what's already entered rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the noun]."
 Can't enter what's not enterable rule response (A) is "Non [regarding the player]ci [puoi] salire."
 Can't enter what's not enterable rule response (B) is "Non [regarding the player][ti] ci [puoi] sedere."
 Can't enter what's not enterable rule response (C) is "Non [regarding the player][ti] ci [puoi] sdraiare."
@@ -2154,20 +2157,20 @@ Implicitly pass through other barriers rule response (B) is "([regarding the pla
 Implicitly pass through other barriers rule response (C) is "([regarding the player][sali] [sup the target])[command clarification break]".
 Implicitly pass through other barriers rule response (D) is "([regarding the player][entri] [inp the target])[command clarification break]".
 Implicitly pass through other barriers rule response (E) is "([regarding the player][entri] [inp the target])[command clarification break]".
-Standard report entering rule response (A) is "[regarding the player][maiuscolo][enter-verb][maiuscolo] [sup the noun]."
-Standard report entering rule response (B) is "[regarding the player][maiuscolo][enter-verb][maiuscolo] [inp the noun]."
-Standard report entering rule response (C) is "[The actor] [enter-verb] [inp the noun]."
-Standard report entering rule response (D) is "[The actor] [enter-verb] [sup the noun]."
+Standard report entering rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] [enter-pp] [sup the noun]."
+Standard report entering rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] [enter-pp] [inp the noun]."
+Standard report entering rule response (C) is "[The actor] [sei] [enter-pp] [inp the noun]."
+Standard report entering rule response (D) is "[The actor] [sei] [enter-pp] [sup the noun]."
 
 [ Exiting ]
 Can't exit when not inside anything rule response (A) is "[Ora] non [regarding the player][sei] dentro [if the noun is nothing]a nulla[otherwise][ap the noun][end if]."
-Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] [regarding the cage]perché [sei] [chiuso]."
-Standard report exiting rule response (A) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
-Standard report exiting rule response (B) is "[regarding the player][maiuscolo][exit-verb][maiuscolo] [dap the container exited from]."
-Standard report exiting rule response (C) is "[The actor] [exit-verb] [dap the container exited from]."
+Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] perché [sei] [chiuso]."
+Standard report exiting rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] [exit-pp] [dap the container exited from]."
+Standard report exiting rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] [exit-pp] [dap the container exited from]."
+Standard report exiting rule response (C) is "[The actor] [sei] [exit-pp] [dap the container exited from]."
 [ Getting off ]
 Can't get off things rule response (A) is "[Ora] non [regarding the player][sei] [sup the noun]."
-Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][exit-verb][maiuscolo][otherwise][The actor] [exit-verb][end if] [dap the noun]."
+Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Sei][maiuscolo][otherwise][The actor] [sei][end if] [exit-pp] [dap the noun]."
 
 Section 3.1.1.3 - Standard actions concerning the actor's vision
 
@@ -2177,7 +2180,7 @@ Section 3.1.1.3 - Standard actions concerning the actor's vision
 Room description heading rule response (A) is "Buio completo".
 Room description heading rule response (B) is " (sopra [the intermediate level])".
 Room description heading rule response (C) is " (dentro [the intermediate level])".
-Room description body text rule response (A) is "L'oscurità avvolge tutto e non [regarding the player][puoi] vedere nulla."
+Room description body text rule response (A) is "L'oscurità avvolge tutto. Non [regarding the player][puoi] vedere nulla."
 Other people looking rule response (A) is "[The actor] si [guardi] attorno."
 [ Examining ]
 Examine directions rule response (A) is "[regarding the player]Non [vedi] nulla di speciale in quella direzione."
@@ -2192,11 +2195,11 @@ Standard looking under rule response (A) is "[regarding the player]Non [trovi] n
 Report other people looking under rule response (A) is "[The actor] [guardi] sotto [ap the noun]."
 [ Searching ]
 Can't search unless container or supporter rule response (A) is "[regarding the player]Non [trovi] nulla di interessante."
-Can't search closed opaque containers rule response (A) is "Non [regarding the player][puoi] vederne l'interno, visto che [the noun] [sei] [chiuso]."
+Can't search closed opaque containers rule response (A) is "Non [regarding the player][puoi] vederne l'interno visto che [the noun] [sei] [chiuso]."
 Standard search containers rule response (A) is "Dentro [ap the noun] ".
 Standard search containers rule response (B) is "[The noun] [sei] [vuoto]."
 Standard search supporters rule response (A) is "Sopra [the noun] ".
-Standard search supporters rule response (B) is "Non c['][sei] nulla [sup the noun]."
+Standard search supporters rule response (B) is "Non [regarding nothing][ci sei] nulla [sup the noun]."
 Report other people searching rule response (A) is "[The actor] [ispezioni] [the noun]."
 [ Consulting it about ]
 Block consulting rule response (A) is "[regarding the player]Non [scopri] nulla di interessante [sup the noun]."
@@ -2212,46 +2215,46 @@ Can't lock without a lock rule response (A) is "[The noun] non si [puoi] bloccar
 Can't lock what's already locked rule response (A) is "[Ora] [the noun] [sembri] già [chiuso]."
 Can't lock what's open rule response (A) is "Prima [regarding the player][devi] chiudere [the noun]."
 Can't lock without the correct key rule response (A) is "[regarding the second noun]Non [sembri] [adatto] per bloccare [the noun]."
-Standard report locking rule response (A) is "[regarding the player][maiuscolo][blocchi][maiuscolo] [the noun]."
-Standard report locking rule response (B) is "[The actor] [blocchi] [the noun]."
+Standard report locking rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] bloccato [the noun]."
+Standard report locking rule response (B) is "[The actor] [hai] bloccato [the noun]."
 [ Unlocking it with ]
 Can't unlock without a lock rule response (A) is "[The noun] non si [puoi] sbloccare."
 Can't unlock what's already unlocked rule response (A) is "[Ora] [the noun] [sei] [aperto]."
 Can't unlock without the correct key rule response (A) is "[The second noun] non [sembri] [adatto] per sbloccare [the noun]."
-Standard report unlocking rule response (A) is "[regarding the player][maiuscolo][sblocchi][maiuscolo] [the noun]."
-Standard report unlocking rule response (B) is "[The actor] [sblocchi] [the noun]."
+Standard report unlocking rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] sbloccato [the noun]."
+Standard report unlocking rule response (B) is "[The actor] [hai] sbloccato [the noun]."
 [ Switching on ]
 Can't switch on unless switchable rule response (A) is "[The noun] non si [puoi] accendere."
 Can't switch on what's already on rule response (A) is "[The noun] [sei] già [acceso]."
-Standard report switching on rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][accendi][maiuscolo][otherwise][The actor] [accendi][end if] [the noun]."
+Standard report switching on rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] acceso [the noun]."
 [ Switching off ]
 Can't switch off unless switchable rule response (A) is "[The noun] non si [puoi] spegnere."
 Can't switch off what's already off rule response (A) is "[The noun] [sei] già [spento]."
-Standard report switching off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][spegni][maiuscolo][otherwise][The actor] [spegni][end if] [the noun]."
+Standard report switching off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] spento [the noun]."
 [ Opening ]
 Can't open unless openable rule response (A) is "[The noun] non si [puoi] aprire."
 Can't open what's locked rule response (A) is "[The noun] [sembri] [bloccato]."
 Can't open what's already open rule response (A) is "[The noun] [sei] già [aperto]."
-Reveal any newly visible interior rule response (A) is "[regarding the player][maiuscolo][apri][maiuscolo] [the noun] e [regarding the player][trovi] ".
-Standard report opening rule response (A) is "[regarding the player][maiuscolo][apri][maiuscolo] [the noun]."
-Standard report opening rule response (B) is "[The actor] [apri] [the noun]."
-Standard report opening rule response (C) is "[The noun] [apri]."
+Reveal any newly visible interior rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] aperto [the noun] trovando ".
+Standard report opening rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] aperto [the noun]."
+Standard report opening rule response (B) is "[The actor] [hai] aperto[the noun]."
+Standard report opening rule response (C) is "[The noun] si [sei] [aperto]."
 [ Closing ]
 Can't close unless openable rule response (A) is "[The noun] non si [puoi] chiudere."
 Can't close what's already closed rule response (A) is "[The noun] [sei] già [chiuso]."
-Standard report closing rule response (A) is "[regarding the player][maiuscolo][chiudi][maiuscolo] [the noun]."
-Standard report closing rule response (B) is "[The actor] [chiudi] [the noun]."
-Standard report closing rule response (C) is "[The noun] [chiudi]."
+Standard report closing rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] chiuso [the noun]."
+Standard report closing rule response (B) is "[The actor] [hai] chiuso [the noun]."
+Standard report closing rule response (C) is "[The noun] si [sei] [chiuso]."
 [ Wearing ]
 Can't wear what's not clothing rule response (A) is "[regarding the player]Non [puoi] indossare [the noun]."
 Can't wear what's not held rule response (A) is "[regarding the player]Non [puoi] indossare ciò che non [possiedi]."
-Can't wear what's already worn rule response (A) is "[regarding the player][maiuscolo][indossi][maiuscolo] già [the noun]."
-Standard report wearing rule response (A) is "[regarding the player][maiuscolo][indossi][maiuscolo] [the noun]."
-Standard report wearing rule response (B) is "[The actor] [indossi] [the noun]."
+Can't wear what's already worn rule response (A) is "[regarding the player][maiuscolo][Indossi][maiuscolo] già [the noun]."
+Standard report wearing rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] indossato [the noun]."
+Standard report wearing rule response (B) is "[The actor] [hai] indossato [the noun]."
 [ Taking off ]
 Can't take off what's not worn rule response (A) is "[regarding the player]Non [puoi] togliere ciò che non [indossi]."
-Standard report taking off rule response (A) is "[Ti] [togli] [the noun] di dosso."
-Standard report taking off rule response (B) is "[The actor] [ti] [togli] [the noun] di dosso."
+Standard report taking off rule response (A) is "[regarding the player][Ti] [sei] [tolto] [the noun] di dosso."
+Standard report taking off rule response (B) is "[The actor] [ti] [sei] [tolto] [the noun] di dosso."
 
 
 Section 3.1.1.5 - Standard actions concerning other people
@@ -2260,20 +2263,20 @@ Section 3.1.1.5 - Standard actions concerning other people
 
 [ Giving it to ]
 Can't give what you haven't got rule response (A) is "[regarding the player]Non [puoi] dare ciò che non [possiedi]."
-Can't give to yourself rule response (A) is "Già [regarding the player][possiedi] [the noun]."
+Can't give to yourself rule response (A) is "[regarding the player][maiuscolo][possiedi][maiuscolo] già [the noun]."
 Can't give to a non-person rule response (A) is "[The second noun] non [puoi] ricevere [the noun]."
-Can't give clothes being worn rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
+Can't give clothes being worn rule response (A) is "(prima [regarding the player][ti] [togli] [the noun])[command clarification break]".
 Block giving rule response (A) is "[The second noun] non [sembri] [interessato]."
-Standard report giving rule response (A) is "[regarding the player][maiuscolo][dai][maiuscolo] [the noun] [ap the second noun]."
-Standard report giving rule response (B) is "[The actor] [dai] [the noun] a [te]."
-Standard report giving rule response (C) is "[The actor] [dai] [the noun] [ap the second noun]."
+Standard report giving rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] dato [the noun] [ap the second noun]."
+Standard report giving rule response (B) is "[The actor] [regarding the player][ti] [regarding the actor][hai] dato [the noun]."
+Standard report giving rule response (C) is "[The actor] [hai] dato [the noun] [ap the second noun]."
 [ Showing it to ]
-Can't show what you haven't got rule response (A) is "[regarding the player]Non [possiedi] [dip the noun]."
+Can't show what you haven't got rule response (A) is "[regarding the player]Non [possiedi] [the noun]."
 Block showing rule response (A) is "[The second noun] non [sei] [interessato]."
 [ Waking ]
 Block waking rule response (A) is "[regarding the player]Non [puoi] farlo."
 [ Throwing it at ]
-Implicitly remove thrown clothing rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
+Implicitly remove thrown clothing rule response (A) is "(prima [regarding the player][ti] [togli] [the noun])[command clarification break]".
 Futile to throw things at inanimate objects rule response (A) is "Inutile."
 Block throwing at rule response (A) is "[regarding the player]Non [puoi] farlo."
 [ Attacking ]
@@ -2284,7 +2287,7 @@ Block kissing rule response (A) is "Non [regarding the player][puoi] baciare [th
 [ Answering it that ]
 Block answering rule response (A) is "Nessuna risposta."
 [ Telling it about ]
-Telling yourself rule response (A) is "Parli da solo?"
+Telling yourself rule response (A) is "[regarding the player][maiuscolo][Parli][maiuscolo] da solo?"
 Block telling rule response (A) is "Nessuna reazione."
 [ Asking it about ]
 Block asking rule response (A) is "Nessuna risposta."
@@ -2292,38 +2295,38 @@ Block asking rule response (A) is "Nessuna risposta."
 Section 3.1.1.6 - Standard actions which are checked but then do nothing unless rules intervene
 
 [ Waiting ]
-Standard report waiting rule response (A) is "Il tempo [passi]."
+Standard report waiting rule response (A) is "Il tempo [regarding nothing][passi]."
 Standard report waiting rule response (B) is "[The actor] [aspetti]."
 [ Touching ]
-Report touching yourself rule response (A) is "Non [regarding the player][ottieni] nulla."
-Report touching yourself rule response (B) is "[The actor] [tocchi] se [stesso]."
+Report touching yourself rule response (A) is "Non [regarding the player][hai] ottenuto nulla."
+Report touching yourself rule response (B) is "[The actor] [hai] toccato se [stesso]."
 Report touching other people rule response (A) is "Non [regarding the player][puoi] toccare [the noun]."
-Report touching other people rule response (B) is "[The actor] [ti] [tocchi]."
-Report touching other people rule response (C) is "[The actor] [tocchi] [the noun]."
-Report touching things rule response (A) is "[regarding the player]Non [senti] nulla di strano."
-Report touching things rule response (B) is "[The actor] [tocchi] [the noun]."
+Report touching other people rule response (B) is "[The actor] [regarding the player][ti] [regarding the actor][hai] toccato."
+Report touching other people rule response (C) is "[The actor] [hai] toccato [the noun]."
+Report touching things rule response (A) is "[regarding the player]Non [hai] sentito nulla di strano."
+Report touching things rule response (B) is "[The actor] [hai] toccato [the noun]."
 [ Waving ]
 Can't wave what's not held rule response (A) is "[regarding the player]Non [puoi] sbandierare [the noun]."
-Report waving things rule response (A) is "[regarding the player][maiuscolo][agiti][maiuscolo] [the noun]."
-Report waving things rule response (B) is "[The actor] [agiti] [the noun]."
+Report waving things rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] agitato [the noun]."
+Report waving things rule response (B) is "[The actor] [hai] agitato [the noun]."
 [ Pulling ]
 Can't pull what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Can't pull scenery rule response (A) is "Non [regarding the player][puoi]."
 Can't pull people rule response (A) is "Non [regarding the player][puoi] tirare [the noun]."
 Report pulling rule response (A) is "Nessuna reazione."
-Report pulling rule response (B) is "[The actor] [tiri] [the noun]."
+Report pulling rule response (B) is "[The actor] [hai] tirato [the noun]."
 [ Pushing ]
 Can't push what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Can't push scenery rule response (A) is "Non [regarding the player][puoi]."
 Can't push people rule response (A) is "Non [regarding the player][puoi] spingere [the noun]."
 Report pushing rule response (A) is "Nessun effetto."
-Report pushing rule response (B) is "[The actor] [spingi] [the noun]."
+Report pushing rule response (B) is "[The actor] [hai] spinto [the noun]."
 [ Turning ]
 Can't turn what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Can't turn scenery rule response (A) is "Non [regarding the player][puoi]."
-Can't turn people rule response (A) is "Non [regarding the player][puoi] ruotare [the noun]."
+Can't turn people rule response (A) is "Non [regarding the player][puoi] girare [the noun]."
 Report turning rule response (A) is "Nessuna reazione."
-Report turning rule response (B) is "[The actor] [ruoti] [the noun]."
+Report turning rule response (B) is "[The actor] [hai] girato [the noun]."
 [ Pushing it to ]
 Can't push unpushable things rule response (A) is "[The noun] non si [puoi] spostare."
 Can't push to non-directions rule response (A) is "[regarding the noun]Non [sei] una direzione."
@@ -2331,60 +2334,60 @@ Can't push vertically rule response (A) is "[The noun] non si [puoi] sollevare."
 Block pushing in directions rule response (A) is "[The noun] non si [puoi] spostare."
 [ Squeezing ]
 Innuendo about squeezing people rule response (A) is "Non [regarding the player][puoi] strizzare [the noun]."
-Report squeezing rule response (A) is "[regarding the player]Non [ottieni] nulla."
-Report squeezing rule response (B) is "[The actor] [strizzi] [the noun]."
+Report squeezing rule response (A) is "[regarding the player]Non [hai] ottenuto nulla."
+Report squeezing rule response (B) is "[The actor] [hai] strizzato [the noun]."
 
 Section 3.1.1.7 - Standard actions which always do nothing unless rules intervene
 
 [Saying yes , Saying no , Burning , Waking up , Thinking , Smelling , Listening to , Tasting , Cutting , Jumping , Tying it to , Drinking , Saying sorry , Swinging , Rubbing , Setting it to , Waving hands , Buying , Climbing , Sleeping]
 
 [ Saying yes ]
-Block saying yes rule response (A) is "Era una domanda retorica."
+Block saying yes rule response (A) is "[regarding nothing][maiuscolo][Sei][maiuscolo] una domanda retorica."
 [ Saying no ]
-Block saying no rule response (A) is "Era una domanda retorica."
+Block saying no rule response (A) is "[regarding nothing][maiuscolo][Sei][maiuscolo] una domanda retorica."
 [ Burning ]
 Block burning rule response (A) is "A che scopo?"
 [ Waking up ]
-Block waking up rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] già [sveglio]."
+Block waking up rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [sveglio]."
 [ Thinking ]
 Block thinking rule response (A) is "Buona idea."
 [ Smelling ]
-Report smelling rule response (A) is "[regarding the player]Non [senti] nessun odore insolito."
-Report smelling rule response (B) is "[The actor] [annusi] con attezione."
+Report smelling rule response (A) is "[regarding the player]Non [hai] sentito nessun odore insolito."
+Report smelling rule response (B) is "[The actor] [hai] annusato con attezione."
 [ Listening to ]
-Report listening rule response (A) is "[regarding the player]Non [senti] nessun suono strano."
-Report listening rule response (B) is "[The actor] [ascolti] con attenzione."
+Report listening rule response (A) is "[regarding the player]Non [hai] sentito nessun suono strano."
+Report listening rule response (B) is "[The actor] [hai] ascoltato con attenzione."
 [ Tasting ]
-Report tasting rule response (A) is "[regarding the player]Non [senti] nessun sapore particolare."
-Report tasting rule response (B) is "[The actor] [assaggii] [the noun]."
+Report tasting rule response (A) is "[regarding the player]Non [hai] sentito nessun sapore particolare."
+Report tasting rule response (B) is "[The actor] [hai] assaggiato [the noun]."
 [ Cutting ]
 Block cutting rule response (A) is "[regarding the player]Non [puoi] tagliare [the noun]."
 [ Jumping ]
-Report jumping rule response (A) is "[regarding the player][maiuscolo][fai][maiuscolo] un salto."
-Report jumping rule response (B) is "[The actor] [fai] un salto."
+Report jumping rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] spiccato un salto."
+Report jumping rule response (B) is "[The actor] [hai] spiccato un salto."
 [ Tying it to ]
 Block tying rule response (A) is "[regarding the player]Non [puoi] legare [the noun]."
 [ Drinking ]
-Block drinking rule response (A) is "Non c['][sei] nulla da bere [qui]."
+Block drinking rule response (A) is "Non [regarding nothing][ci sei] nulla da bere [qui]."
 [ Saying sorry ]
 Block saying sorry rule response (A) is "Nessuna scusa."
 [ Swinging ]
-Block swinging rule response (A) is "Non c['][sei] nulla da far ondeggiare [qui]."
+Block swinging rule response (A) is "Non [regarding nothing][ci sei] nulla da far ondeggiare [qui]."
 [ Rubbing ]
 Can't rub another person rule response (A) is "Non [regarding the player][puoi] strofinare [the noun]."
-Report rubbing rule response (A) is "[regarding the player][maiuscolo][dai][maiuscolo] una strofinata [ap the noun]."
-Report rubbing rule response (B) is "[The actor] [dai] una strofintata [ap the noun]."
+Report rubbing rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] strofinato [the noun]."
+Report rubbing rule response (B) is "[The actor] [hai] strofinato [the noun]."
 [ Setting it to ]
 Block setting it to rule response (A) is "Niente da fare."
 [ Waving hands ]
-Report waving hands rule response (A) is "[regarding the player][maiuscolo][agiti][maiuscolo] le mani."
-Report waving hands rule response (B) is "[The actor] [agiti] le mani."
+Report waving hands rule response (A) is "[regarding the player][maiuscolo][Hai][maiuscolo] agitato le mani."
+Report waving hands rule response (B) is "[The actor] [hai] agitato le mani."
 [ Buying ]
 Block buying rule response (A) is "Nulla da comprare."
 [ Climbing ]
 Block climbing rule response (A) is "[regarding the player]Non [puoi] farlo."
 [ Sleeping ]
-Block sleeping rule response (A) is "Non [sei] il momento."
+Block sleeping rule response (A) is "Non [regarding nothing][sei] il momento."
 
 Section 3.1.1.8 - Standard actions which happen out of world
 
@@ -2403,7 +2406,7 @@ Restart the game rule response (A) is "Sei sicuro di voler ricominciare? ".
 Restart the game rule response (B) is "Fallito."
 [ Verifying the story file ]
 Verify the story file rule response (A) is "La storia è stata controllata ed è integra."
-Verify the story file rule response (B) is "La storia è stata controllata ma potrebbe essere corrotta."
+Verify the story file rule response (B) is "La storia è stata controllata, ma potrebbe essere corrotta."
 [ Switching the story transcript on ]
 Switch the story transcript on rule response (A) is "La trascrizione è già attiva."
 Switch the story transcript on rule response (B) is "Inizio della trascrizione per".
@@ -2429,9 +2432,9 @@ Standard report switching score notification on rule response (A) is "Notifica d
 [ Switching score notification off ]
 Standard report switching score notification off rule response (A) is "Notifica del punteggio disattiva."
 [ Requesting the pronoun meanings ]
-Announce the pronoun meanings rule response (A) is "[Ora] ".
+Announce the pronoun meanings rule response (A) is "Ora ".
 Announce the pronoun meanings rule response (B) is "significa ".
-Announce the pronoun meanings rule response (C) is "è non fissato".
+Announce the pronoun meanings rule response (C) is "non è fissato".
 Announce the pronoun meanings rule response (D) is "nessun pronome è noto al gioco.".
 
 Section  3.1.1.9 - Rule supplying a missing noun
@@ -2545,7 +2548,7 @@ Parser error internal rule response (N) is "[regarding the player][Ora] non [puo
 Parser error internal rule response (O) is "Non ho capito la fine della frase."
 Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] a disposizione."
 Parser error internal rule response (Q) is "Nulla da fare."
-Parser error internal rule response (R) is "Nulla di ciò che hai chiesto è a disposizione."
+Parser error internal rule response (R) is "Nulla di ciò che hai chiesto [regarding nothing][sei] a disposizione."
 Parser error internal rule response (S) is "Il nome non ha alcun senso in questo contesto."
 Parser error internal rule response (T) is "[regarding the noun]Forse [puoi] appartenere [ap the noun]."
 Parser error internal rule response (U) is "[The noun] non [puoi] contenere nulla."
@@ -2595,7 +2598,7 @@ Print protagonist internal rule response (C) is "[tuo] persona".
 Section  3.1.1.26 - Standard implicit taking rule
 
 Standard implicit taking rule response (A) is "(prima [regarding the player][prendi] [the noun])[command clarification break]".
-Standard implicit taking rule response (B) is "([the second noun] [afferri] [the noun])[command clarification break]".
+Standard implicit taking rule response (B) is "([the second noun] [prendi] [the noun])[command clarification break]".
 
 Section  3.1.1.27 - Player's obituary
 
@@ -2617,16 +2620,16 @@ Chapter 3.1.2 - Rideable Vehicles (for use with Rideable Vehicles by Graham Nels
 Understand "monta su/sul/sullo/sui/sugli/sulla/sulle/sull [something]" as mounting.
 Understand "smonta da/dal/dallo/dai/dagli/dalla/dalle/dall [something]" as dismounting.
 
-can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][stai][maiuscolo] già montando [the steed].".
-can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][stai][maiuscolo] già montando [the conveyance].".
+can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the steed].".
+can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the conveyance].".
 can't mount something unrideable rule response (A) is "[The noun] non [puoi] essere montato.".
-standard report mounting rule response (A) is "[regarding the player][maiuscolo][monti][maiuscolo] [the noun].".
+standard report mounting rule response (A) is "[regarding the player][maiuscolo][Monti][maiuscolo] [the noun].".
 standard report mounting rule response (B) is "[The actor] [monti] [the noun].".
 mounting excuses rule response (A) is "[The person asked] [stai] già montando [the steed].".
 mounting excuses rule response (B) is "[The person asked] [stai] già montando [the conveyance].".
 mounting excuses rule response (C) is "[The noun] non [puoi] essere montato.".
 can't dismount when not mounted rule response (A) is "Non [regarding the player][stai] montando nulla.".
-standard report dismounting rule response (A) is "[refarding the player][maiuscolo][smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
+standard report dismounting rule response (A) is "[refarding the player][maiuscolo][Smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
 standard report dismounting rule response (B) is "[The actor] [smonti] [dap the noun].".
 dismounting excuses rule response (A) is "[The person asked] non [stai] montando nulla.".
 
@@ -3015,9 +3018,9 @@ Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
 Ovviamente quel soggetto (Tu) a inizio frase suona piuttosto innaturale. Per toglierlo si può procedere in questo modo:
  
 	Instead of entering a container (called contenitore):
-		say "Non [regarding the player][puoi] entrare [inp the contenitore] perché [regarding the contenitore][sei] [infetto]."
+		say "Non [regarding the player][puoi] entrare [inp the contenitore] perché [sei] [infetto]."
 		
-Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player".
+Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player", mentre il "[sei] [infetto]" si riferisce al contenitore.
 
 Inoltre, se la prima parola del testo non fosse "Non" (già maiuscolo), ma direttamente il verbo "puoi", non funzionerebbe scrivere:
 
@@ -3037,4 +3040,5 @@ Queste sono solo alcune note utili per comprendere il funzionamento dell'estensi
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
 
 	leonardo.boselli@istruzione.it
+	
 	
