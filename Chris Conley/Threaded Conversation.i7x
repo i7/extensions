@@ -1,4 +1,4 @@
-Version 4/140528 of Threaded Conversation v4 by Chris Conley begins here.
+Version 4/140531 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -88,9 +88,7 @@ The grandparent quip is a quip that varies.
 generic-quip is a quip. Availability rule for generic-quip: it is off-limits. [A starter quip, so that TC will compile even before any conversation has been defined.] 
 
 
-Definition: a quip is viable:
-	if it is in the quip-repository, yes;
-	no.
+Definition: a quip is viable if it is in the quip-repository.
 
 
 Part Three - Defining Facts
@@ -108,7 +106,7 @@ Book II - Quip Relations
 
 Part One - Quip Relations to Things
 
-Mentioning relates various quips to various things. The verb to mention (it mentions, they mention, he mentioned, it is mentioned) implies the mentioning relation. 
+Mentioning relates various quips to various things. The verb to mention implies the mentioning relation. 
 
 Understand "[something related by mentioning]" as a quip. 
 [	This apparently humble line means that we can define a quip with the line "It mentions the queen." and then the player can use any vocabulary that pertains to the queen to raise this quip;	]
@@ -121,7 +119,7 @@ Quip-supplying relates various quips to various people. The verb to quip-supply 
 
 Definition: a quip is character-tailored rather than universally-applicable if it quip-supplies someone.
 
-Quip-awareness relates various people to various quips. The verb to recollect (he recollects, they recollect, he recollected, it is recollected) implies the quip-awareness relation. 
+Quip-awareness relates various people to various quips. The verb to recollect implies the quip-awareness relation. 
 [This will be set when the characters learn things.]
 
 
@@ -129,7 +127,7 @@ Part Three - Quip Relations to Other Quips
 
 [	Directly-following and indirectly-following are two standard ways of expressing how quips depend on one another. 	]
 [	A quip that directly follows another can only occur as an immediate answer to it: this is suitable for identifying what replies are allowed only to certain questions.	]
-[	A quip that indirectly follows another can be used any time after the first quip has been spoken.	]
+[	A quip that indirectly follows another can be used at any time after the first quip has been spoken.	]
 
 Directly-following-on relates various quips to various quips. 
 The verb to directly-follow (it directly-follows, they directly-follow, it directly-followed, it is directly-followed) implies the directly-following-on relation.
@@ -142,10 +140,8 @@ When play begins (this is the indirect-following initializing rule):
 		now every quip which is directly-followed by the item is indirectly-followed by the item.
 	
 To decide whether immediately: 
-[This convenient check allows us to vary quip text depending on whether we're following up earlier conversation right away or belatedly.]
-	if the current quip indirectly-follows the previous quip:
-		yes;
-	no.
+[This convenient check allows us to vary quip text depending on whether we're following up on earlier conversation right away or belatedly.]
+	decide on whether or not the current quip indirectly-follows the previous quip.
 
 
 Part Four - Quip Relations to Scenes
@@ -163,7 +159,7 @@ Book III - Fact Relations
 
 Part One - Learning Facts
 
-Fact-awareness relates various people to various facts. The verb to know (he knows, they know, he knew, it is known) implies the fact-awareness relation.
+Fact-awareness relates various people to various facts. The verb to know implies the fact-awareness relation.
 
 Before printing the name of a fact (called target) while an actor discussing something (this is the broadcast spoken facts rule):
 	repeat with listener running through people who can see the person asked:
@@ -182,7 +178,7 @@ To say forget (target - a fact):
 
 Part Two - Thinking and Review of Known Facts
 
-[This rule is provided here as an unused stub, which could be hooked up to the THINK action if appropriate.]
+[This rule is provided here as an unused stub, which could be hooked up to the THINK action if needed.]
 
 To know is a verb.
 
@@ -199,7 +195,10 @@ Book IV - Caching Dead Ends And Shallow Burials
 
 Part One - Labeling Quips
 
-[Now that we've created a tree of relationships between quips, we're going to tag important features of each quip, indicating how it fits into the tree topology.]
+[	Now that we've created a tree of relationships between quips, we're going to tag important features of each quip, indicating how it fits into the tree topology.	]
+[	This requires some calculations at the start of play, but prevents many costly traversals through all quips from needing to be performed during play.	]
+[	If this proves too time-consuming at start up, as in a very large game, then it might be worth disabling this rule and instead hard-coding the relation.	]
+[	We used not to cache these things, which allowed greater flexibility, but in practice the flexibility was rarely needed, while the speed costs were considerable.	] 
 
 A quip can be dead-ended or continuing. A quip is usually continuing.
 A quip can be shallowly-buried or mid-thread. A quip is usually mid-thread.
@@ -211,12 +210,9 @@ When play begins (this is the caching thread position information rule):
 			now the item is upwardly-restrictive;
 		if the number of quips which indirectly-follow the item is 0:
 			now the item is dead-ended;
-		if the number of quips which are indirectly-followed by the item is 0:
+		unless the item indirectly-follows something:
 			now the item is shallowly-buried.
-[	This is so that we can do thread-context searches through the indirect following tree, without having to explicitly define every direct following also to be an indirect following.	]
-[	If this proves too time-consuming at start up, as in a very large game, then it might be worth disabling this rule and instead hard-coding the relation.	]
-[		]
-[	We used not to cache these things, which allowed greater flexibility, but in practice the flexibility was rarely needed, while the speed costs were considerable.	] 
+			[This is so that we can do thread-context searches through the indirect following tree, without having to explicitly define every direct following also to be an indirect following.]
 
 
 Part Two - Cache-building
@@ -243,14 +239,11 @@ Last when play begins (this is the cache reporting rule):
 		repeat with new running through quips which are directly-followed by item:
 			say "[true-name of item] indirectly-follows [true-name of new]." (C); 
 
-Definition: a quip is cachable:
-	if it is upwardly-restrictive:
-		yes;
-	if it is dead-ended:
-		yes;
-	if it is shallowly-buried:
-		yes;
-	no.
+Definition: a quip is cachable
+	if it is upwardly-restrictive
+	or it is dead-ended
+	or it is shallowly-buried.
+
 	
 	
 
@@ -267,25 +260,27 @@ The plausibility rules have outcomes it is plausible (success), it is dubious (s
 [	In the case of a branching-menu conversation, it might be used to mark which menu branches are currently available to be selected; for ASK/TELL, it might mark especially relevant speech acts.	]
 
 A plausibility rule for a quip (called target) (this is the implausible to repeat yourself rule):
+[	say "A [target]; ";]
 	if the current interlocutor recollects the target, it is implausible.
 
 A plausibility rule for a quip (called target) (this is the mid-thread plausibility rule): 
-	if the target is shallowly-buried, make no decision;
-	if the target is quippishly-relevant, make no decision;
-	it is implausible.
+[	say "B; ";]
+	unless the target is shallowly-buried or the target is quippishly-relevant, it is implausible.
 
 A plausibility rule for a quip (called target) (this is the avoid topic-change where possible rule):
+[	say "C ; ";]
 	if the current quip is a dead-ended quip, make no decision;
 	if the current quip is mid-thread and the target is shallowly-buried, it is dubious;
-	[In other words: we should not suggest to jump from the middle of one thread to the top of another thread, if we can avoid it.]
+	[In other words: we should not suggest to jump from the middle of one thread to the top of another thread, if we have other options.]
 
 The last plausibility rule (this is the generic plausibility rule):
+[	say "D";]
 	it is plausible.
 
 Definition: a quip (called target) is quippishly-relevant:
 	[say "checking quip-relevance of [the target][line break]";] 
 	if the target indirectly-follows the current quip or the target indirectly-follows the previous quip: 
-	[We could also use 'directly-follows', but we've set things up so that indirectly-follows includes all directly-follows cases as well.]
+	[We could also use 'directly-follows', but we've set things up so that indirectly-follows also includes all directly-follows cases.]
 		now the target is marked-relevant;
 		yes; 
 	otherwise if the target indirectly-follows the grandparent quip and the previous quip indirectly-follows the grandparent quip and the current quip indirectly-follows the grandparent quip: 
@@ -296,11 +291,10 @@ Definition: a quip (called target) is quippishly-relevant:
 		now the target is unmarked-relevant;
 		no.
 
-Definition: a quip is recent:
-	if it is the current quip, yes;
-	if it is the previous quip, yes;
-	if it is the grandparent quip, yes;
-	no.
+Definition: a quip is recent
+	if it is the current quip
+	or it is the previous quip
+	or it is the grandparent quip.
 
 Definition: a quip is plausible:
 	if the current interlocutor is not a person, no;
@@ -318,8 +312,7 @@ Availability rules are an object-based rulebook. The availability rules have out
 
 Definition: a quip is available:
 	follow the availability rules for it;
-	if the outcome of the rulebook is the it is available outcome, yes;
-	no. 
+	if the outcome of the rulebook is the it is available outcome, yes.
 
 The first availability rule (this is the don't talk to no one rule):
 	if the current interlocutor is not a person:
@@ -327,17 +320,17 @@ The first availability rule (this is the don't talk to no one rule):
 
 A person can be currently listening. A person is usually not currently listening.
 
-Addressing everyone is a truth state that varies. Addressing everyone is false.
+Addressing everyone is initially false.
 
 A first availability rule when addressing everyone is true (this is the only local people are listening rule):
 	now everyone is not currently listening;
 	now every other person enclosed by the location is currently listening; 
 
-Definition: a quip is scene-restricted unless the proper scene of it is Entire Game.
+Definition: a quip is scene-restricted unless the proper scene of it is the Entire Game.
 
 An availability rule for a scene-restricted quip (called the target) (this is the restriction of quips to scenes rule): 
 	if the proper scene of the target is happening, make no decision;
-	it is off-limits.
+	otherwise it is off-limits.
 
 An availability rule for a quip (called the target) (this is the prevention of off-topic answers for restrictive quips rule): 
 	let the chosen quip be a quip;
@@ -351,7 +344,7 @@ An availability rule for a quip (called the target) (this is the prevention of o
 
 An availability rule for a quip (called the target) (this is the restriction of quips to special people rule):  
 	if addressing everyone is true:
-		unless the target is universally-applicable or someone quip-supplied by the target is currently listening:
+		unless the target is universally-applicable or someone quip-supplied by the target is currently listening,
 			it is off-limits;
 	otherwise if the target is character-tailored and the current interlocutor is not quip-supplied by the target:
 		it is off-limits;
@@ -366,10 +359,8 @@ An availability rule for a quip (called the target) (this is the restriction of 
 	make no decision;
 
 An availability rule for a upwardly-restrictive quip (called the target) (this is the restriction of quips to appropriate previous quips rule):  
-	if the target directly-follows the current quip:
-		make no decision;
-	otherwise:
-		it is off-limits.
+	if the target directly-follows the current quip, make no decision;
+	otherwise it is off-limits.
 
 An availability rule for a mid-thread quip (called the target) (this is the restriction by indirect-following rule): 
 	if addressing everyone is true and the target indirectly-follows something which is recollected by the player:
@@ -389,16 +380,13 @@ The last availability rule (this is the generic availability rule):
 Book III - Peripheral Quips
 
 Definition: a quip (called the target quip) is peripheral:
-	if the target quip is not flagged-ready:
-		no;
-	unless addressing everyone is true:
-		if the current interlocutor is a person and the current interlocutor recollects the target quip:
-			no;
+	if the target quip is not flagged-ready, no;
+	if addressing everyone is false and the current interlocutor is a person and the current interlocutor recollects the target quip, no;
 	[if it is shallowly-buried, yes;]
 	follow the plausibility rules for the target quip;
 	if the outcome of the rulebook is the it is dubious outcome:
 		yes;
-	if the outcome of the rulebook is the it is plausible outcome and the target quip is shallowly-buried:
+	otherwise if the outcome of the rulebook is the it is plausible outcome and the target quip is shallowly-buried:
 		yes;
 	no.
 
@@ -446,10 +434,10 @@ Rule for listing plausible quips (this is the standard quip plausibility rule):
 			say "[quip-suggestion-phrase][the prepared list delimited in disjunctive style]." (A);
 
 Before printing the name of a questioning quip while listing plausible quips or listing peripheral quips (this is the prefix-ask rule):
-	say "ask ".
+	say "ask " (A).
 
 Before printing the name of an informative quip while listing plausible quips or listing peripheral quips (this is the prefix-say rule):
-	say "say ".
+	say "say " (A).
 
 
 Part Two - Customizing Listing Plausible Quips
@@ -476,14 +464,14 @@ To decide what number is the number of remaining quips:
 	decide on the number of filled rows in the Table of Scored Listing.
 
 After printing the name of a quip (called target) while quip-introducing (this is the remove hinted quips from the listing table rule):
-	strip the target from table.
+	strip the target from the table.
 
 To strip (chosen quip - a quip) from the/-- table:
 	if the chosen quip is an output listed in the Table of Scored Listing:
 		choose row with output of chosen quip in the Table of Scored Listing;
 		blank out the whole row.
-	[	We use a table rather than a property of the objects to be listed in order to minimize time-consuming loops over the entire set of quips in the world.	]
-	[	We use a table rather than a list because this extension was started before lists existed in their current form (but this may be lower-overhead anyway).	]
+[	We use a table rather than a property of the objects to be listed in order to minimize time-consuming loops over the entire set of quips in the world.	]
+[	We use a table rather than a list because this extension was started before lists existed in their current form (but this may be lower-overhead anyway).	]
 
 
 Part Three - Offer Hint Quips Rule
@@ -498,16 +486,15 @@ This is the offer hint quips rule:
 
 The offer hint quips rule is listed after the adjust light rule in the turn sequence rules.
 
-This is the relabel available quips rule: 
 [	This rule is very important: it tags quips available before running a new turn. 	]
 [	Thus, the game doesn't have to reassess availability on the fly, during plausibility tests or during parsing.	] 
 [	On the other hand, it means that we should not test availability or plausibility on our own without first calling this rule.	]
+This is the relabel available quips rule: 
 	now every quip is flagged-unready; 
 	repeat with item running through viable quips: 
-		if item is available:
-			now item is flagged-ready. 
-		[	Thus, we can also remove quips from the quip-repository in order to skip considering them;	]
-		[	if for instance we only want to consider quips which are relevant to the current scene, or to the current interlocutor.	]
+		if item is available, now item is flagged-ready. 
+[	Thus, we can also remove quips from the quip-repository in order to skip considering them;	]
+[	if for instance we only want to consider quips which are relevant to the current scene, or to the current interlocutor.	]
 
 A quip can be flagged-ready or flagged-unready.
 
@@ -544,8 +531,6 @@ Part Two - Identifying Matched Quips
 
 [Bland as these may seem, they're the result of a lot of testing about what produces the most sensible defaults. Modify with caution.]
 
-[Definition: a direction is parse-matched if it fits the parse list.
-Definition: a room is parse-matched if it fits the parse list.]
 Definition: a thing is parse-matched if it fits the parse list.
 
 To decide whether (N - an object) fits the parse list:
@@ -563,50 +548,13 @@ Include (-
 ];
 -) 
 
-To decide whether everything matched is a quip:
-	(- CheckParseList() -)
+Disambiguating quips is initially false.
 
-Include (-
-[ CheckParseList obj i k marker;
-	marker = 0;
-	for (i=1 : i<=number_of_classes : i++) {
-	while (((match_classes-->marker) ~= i) && ((match_classes-->marker) ~= -i)) marker++;
-	k = match_list-->marker;
-	if (~~(k ofclass (+ quip +) ) ) rfalse;
-	}
-	rtrue;
-];
-
-[ Matchlist obj i k  j stored_obj stored_wn marker;
-	marker = 0;
-	for (i=1 : i<=number_of_classes : i++) {
-		while (((match_classes-->marker) ~= i) && ((match_classes-->marker) ~= -i)) marker++;
-		k = match_list-->marker; 
-		j = k.parse_name();
-		if (j > stored_wn)
-		{
-			stored_wn = j;
-			stored_obj = k;
-		}
-		if (i == number_of_classes)
-		{	print "";
-		} 
-	}
-	if (stored_wn > 0)
-	{	return stored_obj;
-	}
-];
--)
-
-Disambiguating quips is a truth state that varies. Disambiguating quips is false.
-
-Rule for asking which do you mean when everything matched is a quip: 
+Rule for asking which do you mean when everything parse-matched is a quip: 
+	if the current interlocutor is not a person,
+		say "[text of cannot talk without an interlocutor rule response (A)][line break]" instead; ['You're not talking to anyone right now']
 	now disambiguating quips is true;
-	say "All matched are quips!";
 	carry out the listing matched quips activity.
-
-To decide what object is the pre-matched quip:
-	(- Matchlist() -)
 
 
 Part Three - Listing Matched Quips to the Player
@@ -626,24 +574,21 @@ Rule for listing matched quips (this is the standard quip disambiguation rule):
 Part Four - Preferring Quips Among Multiple Matches
 
 Does the player mean discussing something that indirectly-follows the current quip (this is the obvious clarification rule):
-	if thrashing-hopelessly is true:
-		make no decision;
-	it is very likely.
+	if thrashing-hopelessly is true, make no decision;
+	otherwise it is very likely.
 
 Does the player mean discussing something marked-relevant (this is the keep in thread where possible rule): 
-	if thrashing-hopelessly is true:
-		make no decision;
-	it is likely. 
+	if thrashing-hopelessly is true, make no decision;
+	otherwise it is likely. 
 	[We can rely on the marked-relevance here, because we will have reset it just before reading the command which we're now trying to interpret: so the game-state will not have changed.]
 
 Definition: a quip is content-relevant rather than content-irrelevant if it mentions something which is mentioned by the current quip.
 
 Does the player mean discussing something content-irrelevant (this is the make most natural transitions rule):
-	if thrashing-hopelessly is true:
-		make no decision;
-	it is unlikely. 
-	[	If we raise a new subject and there is a quip there which is about the new subject but also about one of our current subjects,	]
-	[	that should make it a better follow-on than one of the quips that is relevant *only* to the new subject.	]
+	if thrashing-hopelessly is true, make no decision;
+	otherwise it is unlikely. 
+[	If we raise a new subject and there is a quip there which is about the new subject but also about one of our current subjects,	]
+[	that should make it a better follow-on than one of the quips that is relevant *only* to the new subject.	]
 	
 Does the player mean discussing a subject (this is the subjects should not be parsed rule):
 	it is very unlikely. [Subjects exist only to refer to quips.]
@@ -1260,7 +1205,7 @@ Check non-speaking: try discussing the noun instead.
 
 [Book 4  (in place of Book 4 - Limiting what can be spoken about in Conversation Framework by Eric Eve)]
  
-Threaded Conversation v4 ends here.
+Threaded Conversation ends here.
 
 ---- Documentation ----
 
@@ -2064,16 +2009,12 @@ In this example, quips mention both things in the real world (the barmaid) and c
 		The reply is "'If by these parts you mean between the black hills and the river, no,' she says. 'I was born just at the far side of the ford. But I came over here to work.'".
 	
 	whether she's heard the stories is a questioning quip. 
-		It mentions barmaid, immortality, rumors.
+		It mentions immortality, rumors.
 		The comment is "'Have you heard any stories of long-living men?' you press her.".
 		The reply is "She purses her lips and scrubs at a circle-shaped stain on the table before her. 'If you're a fool come looking for a spring of life or a vein of immortal gold buried in the black hills, you'd do better to go back home where you come from.'".
 		It indirectly-follows whether the rumors tell truly.
-		
-	Test me with "talk to the barmaid / ask the barmaid about rumors / ask her about herself / whether she's heard the stories".
 
-	Test again with "talk to barmaid / ask the barmaid about herself / ask the barmaid about stories / g".
-
-Now, two test cases. Notice that if we ask about the rumors first, then ask about the barmaid, we're asked about either of the two quips that pertain to the barmaid. But if we ask about her first, the game assumes we mean to ask "where the barmaid comes from" -- because "whether she's heard the stories" cannot happen until we've already asked "whether the rumors tell truly".
+	Test me with "talk to barmaid / ask the barmaid about herself / ask the barmaid about stories / g".
 
 Example: * Slightly Less Simple - The same inn as the previous example, but introducing a second character to talk to.
 
@@ -2127,7 +2068,7 @@ Now we add a second character, a wanderer who has stopped at the inn for the eve
 		It quip-supplies the barmaid.
 	
 	whether she's heard the stories is a questioning quip. 
-		It mentions barmaid, immortality, rumors.
+		It mentions immortality, rumors.
 		The comment is "'Have you heard any stories of long-living men?' you press her.".
 		The reply is "She pinches her lips and scrubs at a circle-shaped stain on the table before her. 'If you're a fool come looking for a spring of life or a vein of immortal gold buried in the black hills, you'd do better to go back home where you come from.'".
 		It indirectly-follows whether the rumors tell truly.
@@ -2327,7 +2268,7 @@ Character conversation queueuing and intentional conversation is also displayed,
 	Chief's Office is a room. "Morning sunlight through the windows cuts yellow daggers across the Chief's desk. A single ceiling fan spins lazily, useless in the already mounting heat. Across from the door, a dart board is surrounded by newspaper clippings, and a clock ticks loudly from the wall behind you."
 	
 	Chief is a man in the Office. "The Chief [one of]nods as you enter[or]is seated behind his desk[stopping]."
-		The description is "Worn down and worn out. Two decades in the city have not been kind to his appearance."
+		The description is "Worn down and worn out. Two decades in the city have not been kind to him."
 		
 	For beat-producing when the current interlocutor is Chief:
 		say "[one of][The Chief] leans back in his chair[or][The Chief] rubs his chin[or][The Chief] stands, then thinks better of it and sits back down[or][The Chief] squints at you[or][The Chief] glances at some papers on his desk[at random].[run paragraph on]".
