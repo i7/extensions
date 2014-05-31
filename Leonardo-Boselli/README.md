@@ -6,6 +6,7 @@ Here you can find some Inform 7 extensions, mainly translations in italian of ex
 Translations available:
 
 * "Small Kindnesses" by Aaron Reed
+* "Remembering" by Aaron Reed
 * 
 * "Bulk Limiter" by Eric Eve
 * "Hiding Under" by Eric Eve
