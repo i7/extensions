@@ -37,8 +37,11 @@ Understand
 Chapter - Responses
 
 Remembering generic report remembering rule response (A) is "[as the parser]Non [regarding the player][puoi] più vedere [the noun].[as normal][line break]".
-Remembering don't disambiguate while remembering rule response (A) is "[as the parser][The noun] non [sei] qualcosa che si può vedere.[as normal][line break]".
-Remembering specific report remembering rule response (A) is "[as the parser]L[']ultima volta che [regarding the player][hai] visto [the noun], [if the noun is plural-named]erano[otherwise]era[end if] [at the remembered location of noun].[as normal][line break]".
+Remembering don't disambiguate while remembering rule response (A) is "[as the parser][if the noun is nothing]Non si [regarding nothing][vedi] nulla del genere[otherwise]Non si [vedi] alcun [noun][end if].[as normal][line break]".
+
+Chapter - Responses II (for Glulx only)
+
+Remembering specific report remembering rule response (A) is "[as the parser]L[']ultima volta che [regarding the player][hai] visto [the noun], [sei] stato [at the remembered location of noun].[as normal][line break]".
 Remembering saying room name rule response (A) is "ne '[the place]'".
 Remembering saying current location name rule response (A) is "proprio [qui]".
 Remembering saying person name rule response (A) is "in possesso [dip the subject]".
