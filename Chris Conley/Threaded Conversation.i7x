@@ -1,4 +1,4 @@
-Version 4/140531 of Threaded Conversation by Chris Conley begins here.
+Version 5/140601 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -7,7 +7,7 @@ Version 4/140531 of Threaded Conversation by Chris Conley begins here.
 [Include Plurality by Emily Short. ]
 Include Basic Screen Effects by Emily Short. 
 Include Complex Listing by Emily Short.
-Include Conversation Framework by Eric Eve.
+Include version 11 of Conversation Framework by Eric Eve.
 
 Definition: a person is other if he is not the player.
 
@@ -251,8 +251,6 @@ VOLUME TWO - RECOMMENDING QUIPS TO THE PLAYER
 
 Book I - Plausibility
 
-A quip can be marked-relevant or unmarked-relevant. [This has a crunchy name because it's a completely internal way of stashing information.]
-
 The plausibility rules are an object-based rulebook. 
 The plausibility rules have outcomes it is plausible (success), it is dubious (success), and it is implausible (failure).
 [	Plausibility determines whether a given quip is something we should recommend at the moment.	]
@@ -260,27 +258,27 @@ The plausibility rules have outcomes it is plausible (success), it is dubious (s
 [	In the case of a branching-menu conversation, it might be used to mark which menu branches are currently available to be selected; for ASK/TELL, it might mark especially relevant speech acts.	]
 
 A plausibility rule for a quip (called target) (this is the implausible to repeat yourself rule):
-[	say "A [target]; ";]
 	if the current interlocutor recollects the target, it is implausible.
 
 A plausibility rule for a quip (called target) (this is the mid-thread plausibility rule): 
-[	say "B; ";]
 	unless the target is shallowly-buried or the target is quippishly-relevant, it is implausible.
 
 A plausibility rule for a quip (called target) (this is the avoid topic-change where possible rule):
-[	say "C ; ";]
 	if the current quip is a dead-ended quip, make no decision;
 	if the current quip is mid-thread and the target is shallowly-buried, it is dubious;
 	[In other words: we should not suggest to jump from the middle of one thread to the top of another thread, if we have other options.]
 
 The last plausibility rule (this is the generic plausibility rule):
-[	say "D";]
 	it is plausible.
+	
+Chapter 1 - Quippish relevance
+
+A quip can be marked-relevant or unmarked-relevant. [This has a crunchy name because it's a completely internal way of stashing information.]
 
 Definition: a quip (called target) is quippishly-relevant:
 	[say "checking quip-relevance of [the target][line break]";] 
 	if the target indirectly-follows the current quip or the target indirectly-follows the previous quip: 
-	[We could also use 'directly-follows', but we've set things up so that indirectly-follows also includes all directly-follows cases.]
+	[We don't need to test 'directly-follows', because we've set things up so that indirectly-follows also includes all directly-following cases.]
 		now the target is marked-relevant;
 		yes; 
 	otherwise if the target indirectly-follows the grandparent quip and the previous quip indirectly-follows the grandparent quip and the current quip indirectly-follows the grandparent quip: 
@@ -290,6 +288,8 @@ Definition: a quip (called target) is quippishly-relevant:
 	otherwise:
 		now the target is unmarked-relevant;
 		no.
+		
+Chapter 2 - 
 
 Definition: a quip is recent
 	if it is the current quip
@@ -307,7 +307,7 @@ Definition: a quip is plausible:
 Book II - Availability
 
 Availability rules are an object-based rulebook. The availability rules have outcomes it is available (success) and it is off-limits (failure).
-[	This determines whether a given quip is even allowed for use. Available quips are a superset of plausibile quips, which are those quips that are currently relevant,	]
+[	Availability determines whether a given quip is even allowed to be used. Available quips are a superset of plausible quips, which are limited to those quips that are contextually relevant,	]
 [	but (depending on the system) might not include everything that the player could reasonably choose to talk about at the moment.	]
 
 Definition: a quip is available:
@@ -629,8 +629,8 @@ Understand the commands "ask", "tell", "say",  "discuss", "answer", "a", "t" as 
 	
 To say regarding it: now the prior named object is nothing. [A useful shorthand.]
 	
-Check saying hello to the player (this is the can't greet yourself rule):
-	say "Talking to [yourself] [regarding it][are] unrewarding." (A) instead;
+[Check saying hello to the player (this is the can't greet yourself rule):
+	say "Talking to [yourself] [regarding it][are] unrewarding." (A) instead;]
 
 Definition: a quip is typable if it is listed-plausible or it is flagged-ready.
 
@@ -669,9 +669,9 @@ Rule for supplying a missing noun when discussing something with and the player'
 Check discussing something with a talk-ineligible person (this is the implicitly greet a named potential conversant rule):
 	implicitly greet the second noun;
 	if the second noun is the current interlocutor:
-		follow the relabel available quips rule; [We need to ready the quips applicable to this new interlocutor.]
+		follow the relabel available quips rule; [We need to ready the set of quips supplying this new interlocutor.]
 	otherwise:
-		say "You're not currently talking with [the second noun]." (A) instead.
+		say "[We] [aren't] talking to [the second noun]." (A) instead.
 	
 Carry out discussing it with:
 	try discussing the noun.
@@ -695,7 +695,7 @@ Understand
 Understand the command "a" as "ask". 
 Understand the command "t" as "tell".
 
-Understand "[a typable quip]" as discussing. [Originally read "a typable perfomative quip"; let's see if this greater permissiveness breaks anything...]
+Understand "[a typable quip]" as discussing. [This originally read "a typable perfomative quip"; let's see if this greater permissiveness breaks anything...]
 
 
 Chapter 2 - Setting discussing variables
@@ -718,12 +718,12 @@ Instead of doing something with a quip (this is the quips are not tangible rule)
 	unless we are verbalizing, say "I didn't understand that sentence." (A) instead;
 	continue the action.
 
-Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the quips are not visible rule):
+Rule for printing a parser error when the latest parser error is the can't see any such thing error or the latest parser error is the noun did not make sense in that context error (this is the quips are not visible rule):
 	if the player's command includes "say/ask/answer/discuss/tell/a/t" or the player's command includes "[a quip]":
 		if the current interlocutor is a person and tc reparse flag is false:
 			say "That doesn't seem to be a topic of conversation at the moment." (A) instead;
-		[otherwise:
-			say "You aren't talking to anyone at the moment." instead;]
+		otherwise:
+			say "[text of implicit-conversing needs current interlocutor rule response (D)][line break]" instead; ['You aren't talking to anyone.']
 	otherwise:
 		make no decision.	
 		
@@ -1201,7 +1201,9 @@ Understand
 	
 Understand "[any quip]" as non-speaking.
 
-Check non-speaking: try discussing the noun instead.
+Non-speaking is implicit-conversing.
+
+Instead of non-speaking: try discussing the noun.
 
 [Book 4  (in place of Book 4 - Limiting what can be spoken about in Conversation Framework by Eric Eve)]
  
@@ -1910,7 +1912,7 @@ Section: Version 4 preliminary
 	
 	Compatibility with I7 6L02
 	Responses made adaptive
-	Cleaned up extensions
+	Cleaned up extensions, main code
 
 Section: Version 3/140107
 
@@ -2275,7 +2277,10 @@ Character conversation queueuing and intentional conversation is also displayed,
 	For beat-producing when the current interlocutor is nothing and Chief is in the location:
 		say "[one of][The Chief] clears his throat[or][The Chief] raises an eyebrow[at random].[run paragraph on]".
 		
+	For printing the name of the Chief while saying hello to: say "the Chief".
+		
 	Name printed is a truth state that varies. Every turn: now name printed is false.
+	
 	For printing the name of the Chief while an actor discussing, beat-producing:
 		if a random chance of 1 in 2 succeeds and name printed is false:
 			say "The Chief";
@@ -2296,7 +2301,7 @@ Character conversation queueuing and intentional conversation is also displayed,
 	Section 2 - Quips
 		
 	first spiel is an NPC-directed beat-opened quip.
-		the reply is "The Chief [if the door is open]shuts the door and [end if]sits down. 'Look, McGorsky. You're a good cop but you got a bad break. I'm moving you to North Division until things calm down in Chinatown.'"
+		the reply is "The Chief [unless we have closed the office door]shuts the door and [end if]sits down. 'Look, McGorsky. You're a good cop but you got a bad break. I'm moving you to North Division until things calm down in Chinatown.'"
 		
 	After Chief discussing first spiel:
 		now the office door is closed;
@@ -2334,7 +2339,7 @@ Character conversation queueuing and intentional conversation is also displayed,
 		Understand "I" or "I understand" as you understand.
 
 	second spiel is an npc-directed quip.
-		The reply is "'Now, McGorsky. I want you to meet your new partner.' He picks up the phone, says 'You can send her in.'"
+		The reply is "'Now, McGorsky. I want you to meet your new partner.' [The Chief] picks up the phone, says 'You can send her in.'"
 
 	Section 3 - Plot
 
