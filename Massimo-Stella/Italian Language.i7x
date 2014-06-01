@@ -1,4 +1,4 @@
-Version 2/140529 of Italian Language by Massimo Stella begins here.
+Version 2/140531 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play.
 
@@ -7,6 +7,10 @@ Heavily based on code written by Massimo Stella. Now maintained by Leonardo Bose
 Requires 'Text Capture' by Eric Eve."
 
 Include Text Capture by Eric Eve.
+
+Include Punctuation Removal by Emily Short.
+After reading a command:
+     remove apostrophes;
 
 Volume 1 - Settings
 
@@ -1917,10 +1921,18 @@ In Italian ascoltare is a verb.
 To say ci sei:
 	let be-verb be "[sei]";
 	let be-char be character number 1 in be-verb; 
-	if be-char is "e":
+	if be-char is "e" or be-char is "è":
 		say "c['][be-verb]";
 	otherwise:
 		say "ci [be-verb]";
+		
+To say ci sono:
+	if story tense is present tense:
+		say "ci sono";
+	otherwise if story tense is past tense:
+		say "c[']erano";
+	otherwise:
+		say "ci saranno";
 		
 [LEO Something goes wrong with adjectives]
 [
@@ -2532,19 +2544,19 @@ Action processing internal rule response (J) is "(Visto che è accaduto qualcosa
 Section  3.1.1.20 - Parser error internal rule
 
 Parser error internal rule response (A) is "Non ho capito la frase."
-Parser error internal rule response (B) is "Ho capito solo che vuoi ".
+Parser error internal rule response (B) is "Ho capito solo: ".
 Parser error internal rule response (C) is "Non ho compreso il numero."
 Parser error internal rule response (D) is "Non riesci a vedere nulla del genere."
 Parser error internal rule response (E) is "Hai detto troppo poco."
 Parser error internal rule response (F) is "[Ora] non lo [possiedi]."
 Parser error internal rule response (G) is "Non puoi usare più di un oggetto con quel verbo."
-Parser error internal rule response (H) is "Puoi usare più di un oggetto con un verbo solo una volta per linea."
+Parser error internal rule response (H) is "Con un verbo, puoi usare più di un oggetto solo una volta per ogni linea."
 Parser error internal rule response (I) is "Non capisco a cosa si riferisca [the noun]."
 Parser error internal rule response (J) is "Chiedi qualcosa che non è possibile."
 Parser error internal rule response (K) is "Quella azione è possibile solo con oggetti animati."
 Parser error internal rule response (L) is "Non è un verbo che conosco."
 Parser error internal rule response (M) is "Non è qualcosa di cui hai bisogno in questa storia."
-Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [if the noun is nothing]nulla di simile[otherwise][the noun][end if]."
+Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [if the noun is nothing]nulla del genere[otherwise][the noun][end if]."
 Parser error internal rule response (O) is "Non ho capito la fine della frase."
 Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] a disposizione."
 Parser error internal rule response (Q) is "Nulla da fare."
@@ -2571,7 +2583,7 @@ Parser command internal rule response (E) is "Meglio se non lo ripeti."
 Parser command internal rule response (F) is "Non puoi iniziare con una virgola."
 Parser command internal rule response (G) is "Pare che tu voglia parlare a qualcuno ma non riesco a capire chi."
 Parser command internal rule response (H) is "Non puoi parlare [ap the noun]."
-Parser command internal rule response (I) is "Per parlare ad un tizio prova 'tizio, cio' o qualcosa di simile."
+Parser command internal rule response (I) is "Per parlare ad un tizio prova 'tizio, ciao' o qualcosa di simile."
 ][DEPRECATED?]
 
 Section  3.1.1.23 - Parser clarification internal rule
@@ -3040,5 +3052,3 @@ Queste sono solo alcune note utili per comprendere il funzionamento dell'estensi
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
 
 	leonardo.boselli@istruzione.it
-	
-	

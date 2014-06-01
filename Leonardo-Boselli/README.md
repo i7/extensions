@@ -7,6 +7,8 @@ Translations available:
 
 * "Small Kindnesses" by Aaron Reed
 * "Remembering" by Aaron Reed
+* "Keyword Interface" by Aaron Reed
+* "Numbered Disambiguation Choices IT" by Aaron Reed
 * 
 * "Bulk Limiter" by Eric Eve
 * "Hiding Under" by Eric Eve
