@@ -4,7 +4,6 @@ Version 5/140601 of Threaded Conversation by Chris Conley begins here.
 
 "modified from Threaded Conversation by Emily Short and based on Alabaster by Emily Short, et. al."
 
-[Include Plurality by Emily Short. ]
 Include Basic Screen Effects by Emily Short. 
 Include Complex Listing by Emily Short.
 Include version 11 of Conversation Framework by Eric Eve.
