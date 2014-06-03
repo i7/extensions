@@ -276,7 +276,7 @@ Carry out checking agendas:
 
 Checking agendas for is an action out of world applying to one thing. Understand "agendas for/-- [someone]" or "agenda for/-- [someone]" as checking agendas for.
 Carry out checking agendas for:
-	say the agenda for the noun indenting zero times.
+	say agenda for the noun indenting zero times.
 
 Section - not for release - unindexed
 
@@ -709,7 +709,7 @@ But to whom is the player speaking?  And if the player enters DAPHNE, WHY DID YO
 	
 Finally, the money shot. The leftover command is parsed as taking the potato, but this Instead rule uses the truth states to determine that a question needs answering rather than a potato needing taking. We feed the current action to a phrase which searches the person's entire agenda for a match. If it finds taking the potato in Bob's past, present, or future, it then gives it to one of the phrases that gets the motive (why) or the method (how) for it. Note that we don't spend much time here dealing with differences in tense, endless WHYs or HOWs, creating attempt based rulebooks for a character, etc. which we would do in a real work. 
 	
-	*: Instead of doing anything when asking why is true or asking how is true:
+	*: Instead of an actor doing anything when asking why is true or asking how is true:
 		let the act in question be the current action from the agenda of the current interlocutor;
 		if the act in question is nothing, say "'I don't know what you're talking about.'" instead;
 		if asking why is true, now the act in question is why the current interlocutor is doing the act in question; 
