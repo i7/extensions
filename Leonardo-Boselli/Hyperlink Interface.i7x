@@ -1,4 +1,4 @@
-Version 9/140604 of Hyperlink Interface (for Glulx only) by Leonardo Boselli begins here.
+Version 9/140601 of Hyperlink Interface (for Glulx only) by Leonardo Boselli begins here.
 
 "This extension emulates Blue Lacuna's emphasized hyperlink system for simplifying common IF input (by Aaron Reed) substituting emphasis with hyperlinks. Nouns, directions, and topics can be clicked directly to examine, go, or discuss.
 
