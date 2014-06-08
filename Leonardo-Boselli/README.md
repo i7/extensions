@@ -22,6 +22,7 @@ Translations available:
 * "Conversation Nodes" by Eric Eve
 * "Conversation Package" by Eric Eve
 * "Conversation Responses" by Eric Eve
+* "Conversation Rules" by Eric Eve
 * "Conversation Suggestions" by Eric Eve
 * "Conversational Defaults" by Eric Eve
 *  
