@@ -1,4 +1,4 @@
-Version 2/140531 of Italian Language by Massimo Stella begins here.
+Version 2/140608 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play.
 
@@ -1877,6 +1877,8 @@ In Italian potere is a verb.
 In Italian possedere is a verb. [LEO]
 In Italian provare is a verb. [LEO]
 In Italian parlare is a verb. [LEO]
+In Italian rispondere is a verb. [LEO]
+In Italian salutare is a verb. [LEO]
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
 In Italian salire is a verb.
@@ -1998,6 +2000,7 @@ To say contenente: say "contenent[e-agg]". [LEO]
 To say sveglio: say "svegli[e-agg]". [LEO]
 To say stesso: say "stess[o-agg]". [LEO]
 To say salito: say "salit[o-agg]". [LEO]
+To say saltato: say "saltat[o-agg]". [LEO]
 To say seduto: say "sedut[o-agg]". [LEO]
 To say entrato: say "entrat[o-agg]". [LEO]
 To say sceso: say "sces[o-agg]". [LEO]
@@ -2008,6 +2011,8 @@ To say tolto: say "tolt[o-agg]". [LEO]
 To say enter-pp:
 	if the player's command includes "sali":
 		say "[salito]";
+	otherwise if the player's command includes "salta":
+		say "[saltato]";
 	otherwise if the player's command includes "siedi":
 		say "[seduto]";
 	otherwise if the player's command includes "siediti":
@@ -2783,6 +2788,7 @@ Understand "scendi dalla/dal/da/dai/dalle/dagli/dall [something]" as getting off
 Understand "scendi" as exiting.
 Understand "esci" as exiting.
 Understand "sali su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
+Understand "salta su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
 Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
 Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
@@ -2820,6 +2826,11 @@ The printed name of down is "giù".
 The printed name of  inside is "dentro". 
 The printed name of  outside is "fuori".  
 
+[Sì/no]
+Understand "sì" or "si" as saying yes.
+
+Understand the command "no" as something new.
+Understand "no" as saying no.
 
 Part 4.3 - Command parser internals
 
@@ -2908,6 +2919,66 @@ Constant QUIT2__WD      = 'quit';
 Constant RESTART__WD    = 'restart';
 Constant RESTORE__WD    = 'restore';
 -) instead of "Vocabulary" in "Language.i6t".
+
+
+Part - Other Extension Fixes
+
+Chapter - Glulx Entry Points (for use with Glulx Entry Points by Emily Short)
+
+Section - Debounce arrange events - unindexed (in place of Section - Debounce arrange events - unindexed in Glulx Entry Points by Emily Short)
+
+[ Gargoyle sends an arrange event while the user is dragging the window borders, but we really only want one event at the end. Debounce the arrange event to ignore the earlier ones. ]
+
+Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
+
+First glulx input handling rule for an arrange-event while arranging now in GEP is false (this is the debounce arrange event rule):
+	let ii be 0; [ for the I6 polling code to use ] [FIXED variable 'i' changed to 'ii' to avoid conflict with italian article 'i']
+	let final return value be a number;
+	let arrange again be true;
+	[ Poll for further arrange events ]
+	while 1 is 1:
+		poll for events in GEP;
+		if the current event number in GEP is 0:
+			break;
+		otherwise if the current glk event is an arrange-event:
+			next;
+		[ We have a different event ]
+		otherwise:
+			[ Run the arrange rules ]
+			let temp event type be the current glk event;
+			set the current glk event in GEP to an arrange-event;
+			now final return value is the glulx input handling rules for an arrange event;
+			set the current glk event in GEP to temp event type;
+			now arrange again is false;
+			now final return value is the value returned by glk event handling;
+			break;
+	[ Run the arrange rules if we didn't get another event type ]
+	if arrange again is true:
+		now final return value is the glulx input handling rules for an arrange event;
+	[ Return values ]
+	if final return value is input replacement:
+		replace player input;
+	if final return value is input continuation:
+		require input to continue;
+	rule fails;
+
+To decide what number is the glulx input handling rules for an arrange event:
+	let final return value be a number;
+	now arranging now in GEP is true;
+	now final return value is the value returned by glk event handling;
+	now arranging now in GEP is false;
+	decide on final return value;
+
+To poll for events in GEP:
+	(- glk_select_poll( gg_event ); for ( tmp_0 = 0 : tmp_0 < 3 : tmp_0++) { evGlobal-->tmp_0 = gg_event-->tmp_0; } -).
+
+To decide what number is the current event number in GEP:
+	(- evGlobal-->0 -).
+
+To set the current glk event in GEP to (ev - a g-event):
+	(- evGlobal-->0 = {ev}; -).
+
+
 
 Italian Language ends here.
 
@@ -3052,3 +3123,4 @@ Queste sono solo alcune note utili per comprendere il funzionamento dell'estensi
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
 
 	leonardo.boselli@istruzione.it
+	
