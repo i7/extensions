@@ -2,7 +2,7 @@ Version 2/140602 of Conversation Builder (for glulx only) by Chris Conley begins
 
 "An interactive question-and-answer system for building conversations."
 
-"an expansion of the original extension by Emily Short to use indexed text, with some cleanup"
+"an expansion of the original extension by Emily Short to use indexed text, now 6L02-compatible"
 
 [TODO: get filter to work so that it's easy to add automatic understanding features to quips as we design them.]
 
@@ -40,8 +40,7 @@ Array content_buffer -> STRING_BUFFER_SIZE;
 	str = glk_stream_open_file(fref, mode, 0); 
 	glk_stream_set_current(str);
 	maxlen = STRING_BUFFER_SIZE;
-	for  (i=0:i<string_temp_buffer-->0 && i<maxlen:i++ )
-	{ 
+	for  (i=0:i<string_temp_buffer-->0 && i<maxlen:i++ ) { 
 		print " ";
 	}
 	glk_set_window(gg_mainwin);
@@ -54,8 +53,7 @@ Array content_buffer -> STRING_BUFFER_SIZE;
 	str = glk_stream_open_file(fref, mode, 0); 
 	glk_stream_set_current(str);
 	maxlen = STRING_BUFFER_SIZE;
-	for  (i=0:i<array_name-->0 && i<maxlen:i++ )
-	{ 
+	for  (i=0:i<array_name-->0 && i<maxlen:i++ ) { 
 		print (char) array_name->(i+WORDSIZE);
 	}
 	glk_set_window(gg_mainwin);
@@ -67,7 +65,7 @@ Array content_buffer -> STRING_BUFFER_SIZE;
 	if (append_flag) mode = filemode_WriteAppend; else mode = filemode_Write;
 	str = glk_stream_open_file(fref, mode, 0); 
 	glk_stream_set_current(str);
-	print (string) new_str;
+	TEXT_TY_Say(new_str);
 	glk_set_window(gg_mainwin);
 	glk_stream_close(str, 0);
 ];
@@ -206,7 +204,7 @@ Array big_big_buffer -> LARGE_BUFFER_LENGTH;
 Array big_content_buffer -> LARGE_BUFFER_LENGTH;
 
 [ StuffBuffer a_buffer done ix i;
- if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+    if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
          ! get_line_stream
          done = glk($0091, gg_commandstr, a_buffer+WORDSIZE, LARGE_BUFFER_LENGTH-WORDSIZE);
          if (done == 0) {
@@ -227,6 +225,7 @@ Array big_content_buffer -> LARGE_BUFFER_LENGTH;
              jump KPContinue;
          }
      }
+!     print "reading input..."
      done = false;
      glk($00D0, gg_mainwin, a_buffer+WORDSIZE, LARGE_BUFFER_LENGTH-WORDSIZE, 0); ! request_line_event
      while (~~done) {
@@ -235,7 +234,7 @@ Array big_content_buffer -> LARGE_BUFFER_LENGTH;
            5: ! evtype_Arrange
              DrawStatusLine();
            3: ! evtype_LineInput
-             if (gg_event-->1 == gg_mainwin) {
+             if (gg_event-->1 == gg_mainwin) { 
                  a_buffer-->0 = gg_event-->2;
                  done = true;
              }
@@ -244,19 +243,32 @@ Array big_content_buffer -> LARGE_BUFFER_LENGTH;
          if (ix == 2) done = true;
          else if (ix == -1) done = false;
      }
+     DisplayLine(a_buffer);
      if (gg_commandstr ~= 0 && gg_command_reading == false) {
          ! put_buffer_stream
          glk($0085, gg_commandstr, a_buffer+WORDSIZE, a_buffer-->0);
          glk($0081, gg_commandstr, 10); ! put_char_stream (newline)
      } 
 	.KPContinue; 
-	for (i = WORDSIZE : i <= (a_buffer-->0)+(WORDSIZE-1) : i++)
-	{ 
-		if ((a_buffer->i) == '"') 
-		{	a_buffer->i = 39;  
+	for (i = WORDSIZE : i <= (a_buffer-->0)+(WORDSIZE-1) : i++) { 
+		if ((a_buffer->i) == '"') {
+			a_buffer->i = 39; ! replace quote mark with apostrophe
 		}
 	}
 	WriteArrayToFile("NewConversation", a_buffer, 1);
+];
+
+[ DisplayLine a_buffer  ix ch;
+	for (ix=WORDSIZE : ix<a_buffer-->0+WORDSIZE : ix++) {
+		ch = a_buffer->ix;
+		if (ch == $20)
+			print " ";
+		else if (ch >= $0 && ch < $100)
+			glk($0080, ch); ! put_char
+		else
+			glk($0128, ch); ! put_char_uni
+	}
+	new_line;
 ];
 
 -)
@@ -270,43 +282,43 @@ To say big buffer:
 To create new/-- file by name:
 	(- CreateFileByName(); -)
 
-To create new/-- file called (S - some text):
-	(- CreateFileCalled({S}); -)
+To create new/-- file: [called (S - some text):]
+	(- CreateFileCalled("NewConversation"); -)
 
 To create new/-- file by name as rock (rock - a number):
 	(- RockFileByName({rock}); -)
 	
-To purge file called (S - some text):
-	(- PurgeFileCalled({S}); -)
+To purge file: [called (S - some text):]
+	(- PurgeFileCalled("NewConversation"); -)
 	
 To write temporary buffer over file (N - a number):
 	(- WriteArrayToRockFile({N}, string_temp_buffer); -)
 	
-To write temporary buffer over file (S - some text):
-	(- WriteArrayToFile({S}, string_temp_buffer); -)
+To write temporary buffer over file: [(S - some text):]
+	(- WriteArrayToFile("NewConversation", string_temp_buffer); -)
 	
-To write temporary buffer after file (S - some text):
-	(- WriteArrayToFile({S}, string_temp_buffer, 1); -)
+To write temporary buffer after file: [(S - some text):]
+	(- WriteArrayToFile("NewConversation", string_temp_buffer, 1); -)
 
-To decide what number is the reference after opening file (S - some text) for writing:
-	(- OpenFile({S},0,1) -)
+To decide what number is the reference resulting from opening file [(S - some text)] for writing:
+	(- OpenFile("NewConversation",0,1) -)
 
 Currently open reference is a number that varies.
 
-To close file (S - some text) for writing:
-	(- CloseFile({S}); -)
+To close file [(S - some text)] for writing:
+	(- CloseFile("NewConversation"); -)
 
-To write (NS - some text) after file (S - some text):
-	(- WriteTextToFile({S}, {NS}, 1); -)
+To write (NS - some text) after file: [(S - some text):]
+	(- WriteTextToFile("NewConversation", {NS}, 1); -)
 
-To write quotemark after file (S - some text):
-	(- WriteQuotemarkToFile({S}, 0, 1); -)
+To write quotemark after file: [(S - some text):]
+	(- WriteQuotemarkToFile("NewConversation", 0, 1); -)
 	
-To draw temporary buffer from line (N - a number) of file (S - some text):
-	(- AcquireArrayFromFile({S}, string_temp_buffer, {n}); -)
+To draw temporary buffer from line (N - a number) of file: [(S - some text):]
+	(- AcquireArrayFromFile("NewConversation", string_temp_buffer, {n}); -)
 	
-To draw big buffer from line (N - a number) of file (S - some text):
-	(- AcquireArrayFromFile({S}, big_big_buffer, {n}); -)
+To draw big buffer from line (N - a number) of file: [(S - some text):]
+	(- AcquireArrayFromFile("NewConversation", big_big_buffer, {n}); -)
 
 To draw temporary buffer from line (N - a number) of named file:
 	(- OpenFileByName(0, string_temp_buffer, {n}); -)
@@ -314,8 +326,8 @@ To draw temporary buffer from line (N - a number) of named file:
 To draw temporary buffer from line (N - a number) of file (rock - a number):
 	(- OpenFileByRock({rock}, string_temp_buffer, {n}); -)
 	
-To add a/-- line break to file (S - some text):
-	(- LineBreakFile({S}, string_temp_buffer, 0); -)
+To add a/-- line break to file: [(S - some text):]
+	(- LineBreakFile("NewConversation", string_temp_buffer, 0); -)
 
 To stuff buffer: 
 	(- StuffBuffer(big_big_buffer); -)
@@ -324,12 +336,12 @@ Book III - Quip Building
 
 Part One - The Sample Quip
 
-Sample-quip is a indexed text which varies. 
-Nominal-sample-quip is an indexed text that varies.
+Sample-quip is a text which varies. 
+Nominal-sample-quip is a text that varies.
 We need to escape trouble words is a truth state that varies.
 
-The last-designed-quip is an indexed text that varies.
-The last-prettified-quip is an indexed text that varies.
+The last-designed-quip is a text that varies.
+The last-prettified-quip is a text that varies.
 
 The file of New Conversation is called "NewConversation".
 
@@ -337,10 +349,10 @@ When play begins (this is the new conversation creation rule):
 	if the file of New Conversation exists:
 		do nothing;
 	otherwise:
-		create new file called "NewConversation";
+		create new file; [called "NewConversation";]
 
 When play begins (this is the clean conversation creation rule):
-	purge file called "NewConversation".
+	purge file; [called "NewConversation".]
 	
 Asking about is an action applying to one topic.
 Telling about is an action applying to one topic.
@@ -402,10 +414,10 @@ First for printing a parser error when the current interlocutor is a person (thi
 	store base quip text;
 	say "That speech act is not implemented. Draft a new one? >" (A);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "[sample-quip]" (B);
-		close file "NewConversation" for writing; 
-		write " is a performative quip." (C) after file "NewConversation";
+		close file ["NewConversation"] for writing; 
+		write " is a performative quip." (C) after file ["NewConversation"];
 		if we need to escape trouble words is true, escape troubled quip-names;
 		carry out the filling in standard quip activity;
 	otherwise:
@@ -416,21 +428,21 @@ To escape troubled quip-names:
 	move quip line forward;
 	[write "	Understand " after file "NewConversation";
 	enquote "[sample-quip]";
-	change the currently open reference to the reference after opening file "NewConversation" for writing;
+	change the currently open reference to the reference resulting from opening file "NewConversation" for writing;
 	say " as [sample-quip]. The printed name is ";
 	close file "NewConversation" for writing; ]
-	write "	The printed name is " after file "NewConversation";
+	write "	The printed name is " after file ["NewConversation"];
 	enquote "[nominal-sample-quip]";
-	write ". The true-name is " after file "NewConversation"; 
+	write ". The true-name is " after file ["NewConversation"]; 
 	enquote "[sample-quip]";
-	write ". " after file "NewConversation".
+	write ". " after file ["NewConversation"].
 
 To enquote (N - some text):
-	write quotemark after file "NewConversation";
-	now the currently open reference is the reference after opening file "NewConversation" for writing;
+	write quotemark after file ["NewConversation"];
+	now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 	say N;
-	close file "NewConversation" for writing;
-	write quotemark after file "NewConversation";
+	close file ["NewConversation"] for writing;
+	write quotemark after file ["NewConversation"];
 
 Part Three - Vague Asking/Telling/Answering Rules
 
@@ -446,9 +458,9 @@ Instead of asking about (this is the vague asking rule):
 	store base quip text;
 	say "That question is not implemented. Draft a new one? >" (B);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "[sample-quip] is a questioning quip. " (C); 
-		close file "NewConversation" for writing; 
+		close file ["NewConversation"] for writing; 
 		if we need to escape trouble words is true, escape troubled quip-names;
 		carry out the filling in standard quip activity.
 
@@ -462,9 +474,9 @@ Instead of telling about  (this is the vague telling rule):
 	store base quip text;
 	say "That remark is not implemented. Draft a new one? >" (B);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "[sample-quip] is an informative quip. " (C);
-		close file "NewConversation" for writing; 
+		close file ["NewConversation"] for writing; 
 		if we need to escape trouble words is true, escape troubled quip-names;
 		carry out the filling in standard quip activity.
 
@@ -477,7 +489,7 @@ To initialize new quip:
 [	treat the topic understood as quoted text;	]
 [	copy the quoted text to the sample-quip;	]
 	now the sample-quip is the topic understood;
-	write temporary buffer after file "NewConversation";
+	write temporary buffer after file ["NewConversation"];
 
 Filling in standard quip is an activity.
 
@@ -486,17 +498,17 @@ Rule for filling in standard quip (this is the basic quip construction rule):
 	follow the quip-building rules.
 
 To end new quip line:
-	write "." after file "NewConversation";
+	write "." after file ["NewConversation"];
 	move quip line forward;
 
 To move quip line forward:
 	increase file line count by 1;  
-	add line break to file "NewConversation";
+	add line break to file ["NewConversation"];
 
 To get text for a quoted field:
-	write quotemark after file "NewConversation";
+	write quotemark after file ["NewConversation"];
 	stuff buffer;
-	write quotemark after file "NewConversation";
+	write quotemark after file ["NewConversation"];
 
 The auto-quip-understanding rules are a rulebook.
 
@@ -504,15 +516,15 @@ An auto-quip-understanding rule (this is the add understanding individual verbs 
 	repeat through the Table of Quip-Name Conversions:
 		if used entry is true:
 			move quip line forward;
-			write "	Understand " (A) after file "NewConversation";
-			write quotemark after file "NewConversation";
-			now the currently open reference is the reference after opening file "NewConversation" for writing;
+			write "	Understand " (A) after file ["NewConversation"];
+			write quotemark after file ["NewConversation"];
+			now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 			say "[understanding entry]" (B);
-			close file "NewConversation" for writing;
-			write quotemark after file "NewConversation";
-			now the currently open reference is the reference after opening file "NewConversation" for writing;
+			close file ["NewConversation"] for writing;
+			write quotemark after file ["NewConversation"];
+			now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 			say " as [sample-quip]. " (C);
-			close file "NewConversation" for writing;
+			close file ["NewConversation"] for writing;
 		now used entry is false.
 
 Table of Quip-Name Understandings
@@ -531,19 +543,19 @@ An auto-quip-understanding rule (this is the add understanding special names rul
 		if variable snippet includes the topic entry:
 			if N is 0:
 				move quip line forward;
-				write "	Understand " (A) after file "NewConversation";
-				write quotemark after file "NewConversation";
-				now the currently open reference is the reference after opening file "NewConversation" for writing;
+				write "	Understand " (A) after file ["NewConversation"];
+				write quotemark after file ["NewConversation"];
+				now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 				increment N;
 			otherwise:
 				say " or " (B);
 			say "[understanding entry]";
 	if N is positive:
-		close file "NewConversation" for writing;
-		write quotemark after file "NewConversation";
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
+		write quotemark after file ["NewConversation"];
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say " as [sample-quip]. " (C);
-		close file "NewConversation" for writing.
+		close file ["NewConversation"] for writing.
 
 
 The quip-building rules are a rulebook. 
@@ -560,7 +572,7 @@ The first quip-building rule (this is the establish quip-settings rule):
 
 A quip-building rule (this is the getting a main comment rule):
 	say "What would you like the player to say at this point?[paragraph break]" (A);
-	write "	The comment is " after file "NewConversation";
+	write "	The comment is " after file ["NewConversation"];
 	get text for a quoted field;
 	end new quip line.
 
@@ -568,15 +580,15 @@ A quip-building rule (this is the setting mentions rule):
 	move quip line forward;
 	say "[line break]Based on what you just wrote, what subjects does this remark refer to? " (A);
 	if the suppressed subject list option is active, do nothing;
-	otherwise say "[if the number of subjects is 0]There are no conversation subjects yet defined[otherwise]Current conversation subjects include [italic type][list of subjects][roman type][end if][one of], though quips may also refer to objects in the game[or][stopping]. " (B);
-	say "[first time](Provide your answer as a list separated by commas. It is not necessary to list synonyms for the same subject or game-object, as they will be included in parsing automatically.)[only][line break]" (C);
-	write "	It mentions " (D) after file "NewConversation";
+	otherwise say "[if the number of subjects is 0]There are no conversation subjects yet defined[otherwise]Current conversation subjects include [italic type][list of subjects][roman type][end if][one of], but quips may also refer to objects in the game[or][stopping]. " (B);
+	say "[first time](Provide your answer as a list separated by commas. It is not necessary to list any synonyms for any subject or game-object, as they will be parsed automatically.)[only][line break]" (C);
+	write "	It mentions " (D) after file ["NewConversation"];
 	stuff buffer;
 	end new quip line.
 
 A quip-building rule (this is the getting a reply rule):
 	say "[line break]And what would you like [the current interlocutor] to say in reply? [paragraph break]" (A); 
-	write "	The reply is " (B) after file "NewConversation";
+	write "	The reply is " (B) after file ["NewConversation"];
 	get text for a quoted field;
 	end new quip line.
 
@@ -584,25 +596,25 @@ A quip-building rule (this is the making interlocutor specific rule):
 	say "[line break]Is this something that the player can say only to [the current interlocutor]? >" (A);
 	if the player consents:
 		now single character setting is q-set-yes;
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It quip-supplies [the current interlocutor]" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line.
 
 A quip-building rule (this is the marking repeatable quips rule):
 	say "May the player say this more than once[if the single character setting is q-set-no] to the same character[end if]? >" (A);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It is repeatable" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line.
 
 A quip-building rule (this is the marking restrictive quips rule):
-	say "Is the player going to be restricted to a small choice of replies to this? >" (A);
+	say "Will the player be restricted to a small set of responses to this? >" (A);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It is restrictive" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line.
 
 A quip-building rule (this is the making remark follow the last quip rule):
@@ -610,9 +622,9 @@ A quip-building rule (this is the making remark follow the last quip rule):
 	say "Does this remark have to follow immediately after [the current quip]? [if the current quip is restrictive](Because the current quip restricts the player to a limited set of answers, you should choose YES if you want the player to be able to use this message as an answer to the foregoing remark.)[end if] >" (A);
 	if the player consents:
 		now immediacy setting is q-set-yes;
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It directly-follows [the true-name of the current quip]" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line.
 
 A quip-building rule (this is the making remark distantly follow the last quip rule):
@@ -621,9 +633,9 @@ A quip-building rule (this is the making remark distantly follow the last quip r
 	say "Does this remark have to come [italic type]some time[roman type] (but maybe not immediately) after [the current quip]? >" (A);
 	if the player consents:
 		now the indirection setting is q-set-yes;
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It indirectly-follows [the true-name of the current quip]" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line;.
 
 A quip-building rule (this is the making remark follow the previously defined quip rule):
@@ -633,9 +645,9 @@ A quip-building rule (this is the making remark follow the previously defined qu
 	say "Does this remark have to come immediately after the quip you just added, namely [the last-prettified-quip]? >" (A);
 	if the player consents:
 		now immediacy setting is q-set-yes;
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It directly-follows [the last-designed-quip]" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line;.
 
 A quip-building rule (this is the making remark distantly follow the previously defined quip rule):
@@ -644,16 +656,16 @@ A quip-building rule (this is the making remark distantly follow the previously 
 	if indirection setting is q-set-yes, make no decision;
 	say "Does this remark have to come [italic type]some time[roman type] (but maybe not immediately) after the quip you just added, namely [the last-prettified-quip]? >" (A);
 	if the player consents:
-		now the currently open reference is the reference after opening file "NewConversation" for writing;
+		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It indirectly-follows [the last-designed-quip]" (B);
-		close file "NewConversation" for writing;
+		close file ["NewConversation"] for writing;
 		end new quip line.
 
 The last quip-building rule (this is the finalize quip rule):
 	increase the file line count by 1;
 	now the last-designed-quip is the sample-quip;
 	now the last-prettified-quip is the nominal-sample-quip;
-	add line break to file "NewConversation";
+	add line break to file ["NewConversation"];
 	reject the player's command.
 
 file line count is a number that varies;
@@ -666,8 +678,8 @@ Looking at new source is an action out of world. Understand "show source" and "s
 Carry out looking at new source (this is the source examination rule):
 	say "You review your new code: [paragraph break]" (A); 
 	repeat with N running from 1 to file line count:
-		say "L[N]: ";
-		draw big buffer from line N of file "NewConversation";
+[		say "L[N]: ";]
+		draw big buffer from line N of file ["NewConversation"];
 		say big buffer;
 		say line break.
 
@@ -770,11 +782,11 @@ Section: output
 
 CB will then write appropriate code out to a file called "NewConversation". 
 
-At the end of play, before quitting, CB will print to screen all the source code it has written over the course of the editing session. This source code also remains stored in the file "NewConversation". In builds of an Inform project, "NewConversation" will be inside the project file; if we are running the game on an independent interpreter, "NewConversation" will appear in the same directory with the game file. We may also invoke this source mid-play by typing
+At the end of play, before quitting, CB will print to screen all the source code it has written over the course of the editing session. This source code also remains stored in the file "NewConversation". In builds of an Inform project, "NewConversation" will be inside the top-level Inform/Projects folder; if we are running the game on an independent interpreter, "NewConversation" will appear in the same directory with the game file. We may also bring up this code mid-play by typing
 	
 	SHOW SOURCE
 
-To compile this code into the next session, we simply cut and paste it over to the appropriate place in the source window. This tends to work most effectively on a relatively short play-build-play cycle: we play the game for a bit, add five or ten new quips at points in the conversation, then play again.
+To compile this code into the next session, we simply cut and paste it over to the appropriate place in the source window. This tends to work most effectively on a relatively short play-build-play cycle: we play the game for a bit, add five or ten new quips at various points in the conversation, then play again.
 
 Conversation Builder assumes a certain amount of astuteness from the user. It is conceivable that if we have given a question a name that clashes with an existing quip, compilation will fail and we will have to modify the source somewhat; but under many circumstances the results will simply compile and play. It is also up to the user to make sure that, for instance, the subjects mentioned by any given quip correspond to the source code as desired; Inform will create new subjects if a quip mentions something that isn't listed elsewhere in the code, but this also means that typos and misremembered names will generate spurious subjects rather than conforming to existing ones.
 
@@ -796,15 +808,15 @@ Where these words occur, they will be replaced according to the Table of Quip-Na
 	"are"	"seem"	"are"	0
 	"with"	"alongside"	"with"	0
 
-(The actual table is some lines longer, and dictated by experience with problematic quip names.) If we find that we are very frequently running into compilation problems with other words, we may continue this table with our own replacements.
-
-Another table, the Table of Quip-Name Understandings, does not alter the name of the quip as we have typed it, but it does add additional understand rules to a quip; this guarantees that, for instance, any instance of "himself" or "herself" will also match the name of the current interlocutor; or that quips containing "you are..." will also recognize "I am...". 
+(The actual table is some lines longer, drawn from experience with problematic quip names.) If we find that we are very frequently running into compilation problems with other words, we may continue this table with our own replacements.
 
 The escaping is done by the quip-name-management rulebook; currently it contains only one rule, 
 
 	the get rid of dangerous verbs rule
 
 but if we want to, we may add further quip-name-management rules as well. For most purposes, adding to the Table of Quip-Name Conversions will be adequate, but if not, we can write our own free-form code.
+
+Another table, the Table of Quip-Name Understandings, does not alter the name of the quip as we have typed it, but it does add additional understand rules to a quip; this guarantees that, for instance, any instance of "himself" or "herself" will also match the name of the current interlocutor; or that quips containing "you are..." will also recognize "I am...". 
 
 CB then generates Understand... and printed name... instructions so that the quip will be printed and understood exactly as the player/author typed it. A rule called
 
@@ -814,27 +826,27 @@ uses the "understanding" column of the table of quip-name conversions to add add
 
 CB also stores the source name of the quip in the "true-name" property; this allows future use of Conversation Builder to build code that correctly refers back to this quip. 
 
-If we want to mingle code built by CB with code written by hand, we should make sure to include a "true-name" property for any hand-written quips whose printed names differ from their source names.
+If we want to mingle code built by CB with code written by hand, we must remember to always define a "true-name" for every hand-written quip whose printed name differs from its source name.
 
 Section: Adding special features to the conversation
 
-Conversation Builder does not attempt to handle very complicated situations: there are many cases where we will want to write our own custom plausibility and availability rules, for instance. For any of the following tasks, we should consult the documentation for Threaded Conversation:
+Conversation Builder does not attempt to handle very complicated situations: there are many cases for which we will want to write our own custom plausibility and availability rules, for instance. For any of the following tasks, we should consult the documentation for Threaded Conversation:
 
 	(1) restricting some quips to occur only during specific scenes; starting and ending scenes based on quip status
-	(2) building other, arbitrarily complex rules about which quips may be displayed under which circumstances
+	(2) building other, arbitrarily complex rules regarding which quips may be displayed under which circumstances
 	(3) changing the output format so that the game presents the player with a menu rather than conversation choices
 	(4) turning off or modifying the printing of cues such as "You could ask about the peace treaty."
 	(5) making characters provide atypical replies to a whole set of quips under special circumstances (e.g., having a character who gets angry and responds rudely everything the player says) 
 
-and in general if there are things that Conversation Builder does not explain, we should probably turn to the documentation for Threaded Conversation, and to the examples accompanying it.
+and, in general, if there are things that Conversation Builder does not explain, we should probably turn to the documentation for Threaded Conversation, and to its accompanying examples.
 
 Chapter: Customizing Conversation Builder
 
 Section: Customizing CB for our own use
 
-When constructing quip code, Conversation Builder follows a rulebook called the quip-building rules. If we wish to construct our quips differently, we may add, replace, or remove rules in this rulebook. The existing quip-building rules may serve as a guide for constructing additions.
+When constructing quip code, Conversation Builder follows a rulebook called the quip-building rules. If we wish to construct our quips differently, we may add to, replace, or remove rules from this rulebook. The existing quip-building rules can serve as a guide for constructing additions.
 
-We may also stop Conversation Builder being quite so enthusiastic in interpreting any input as a performative quip by turning off
+We may also stop Conversation Builder from being quite so enthusiastic in interpreting any input as a performative quip by turning off
 	
 	the read all performative quips rule
 
