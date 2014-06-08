@@ -13,18 +13,18 @@ Translations available:
 * "Remembering" by Aaron Reed
 * "Keyword Interface" by Aaron Reed
 * "Numbered Disambiguation Choices IT" by Aaron Reed
-
+*
 * "Bulk Limiter" by Eric Eve
 * "Hiding Under" by Eric Eve
 * "Underside" by Eric Eve
-
+*
 * "Conversation Framework" by Eric Eve
 * "Conversation Nodes" by Eric Eve
 * "Conversation Package" by Eric Eve
 * "Conversation Responses" by Eric Eve
 * "Conversation Suggestions" by Eric Eve
 * "Conversational Defaults" by Eric Eve
-
+*
 * "Threaded Conversation" by Chris Conley
-
+*
 * "Hyperlink Interface" by Leonardo Boselli
