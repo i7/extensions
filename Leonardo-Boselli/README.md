@@ -14,6 +14,9 @@ Translations available:
 * "Keyword Interface" by Aaron Reed
 * "Numbered Disambiguation Choices IT" by Aaron Reed
 *  
+* "Measured Liquid" by Emily Short
+* "Dishes" by Emily Short
+* 
 * "Bulk Limiter" by Eric Eve
 * "Hiding Under" by Eric Eve
 * "Underside" by Eric Eve
