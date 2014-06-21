@@ -1135,17 +1135,18 @@ Include (-
 [ YesOrNo i j;
 	for (::) {
 	RunParagraphOn();
-		ProcessRulebook( (+ yes-no prompting rules +) );
+		FollowRulebook( (+ yes-no prompting rules +) );
 
-	KeyboardPrimitive(buffer, parse);
+		if (location ~= nothing && parent(player) ~= nothing) DrawStatusLine();
+		KeyboardPrimitive(buffer, parse);
 		j = parse-->0;
-		
+
 		if (j) { ! at least one word entered
 			i = parse-->1;
 			if (i == YES1__WD or YES2__WD or YES3__WD) rtrue;
 			if (i == NO1__WD or NO2__WD or NO3__WD) rfalse;
 		}
-		L__M(##Quit, 1); 
+		YES_OR_NO_QUESTION_INTERNAL_RM('A');
 	}
 ];
 
