@@ -155,11 +155,11 @@ First before displaying rule (this is the fix the Table of Menu history rule):
 	now menu depth is the number of filled rows in Table of Menu history;
 
 Before displaying (this is the run the entering a menu rules rule):
-	consider the entering a menu rules for the submenu in row 1 of the Table of Menu history;
+	follow the entering a menu rules for the submenu in row 1 of the Table of Menu history;
 
 Rule for displaying (this is the display a menu rule):
 	while menu depth > 0:
-		consider the displaying a menu rules;
+		follow the displaying a menu rules;
 
 [ Authors may use this phrase to show a single page, so we need to take care of the before/after displaying rules manually ]
 To show menu page (page - a text) with title (t - a text):
@@ -183,7 +183,7 @@ To show menu page (page - a text) with title (t - a text):
 		end the displaying activity;
 
 After displaying (this is the run the exiting a menu rules rule):
-	consider the exiting a menu rules for the submenu in row 1 of the Table of Menu history;
+	follow the exiting a menu rules for the submenu in row 1 of the Table of Menu history;
 
 
 
@@ -254,10 +254,10 @@ To decide whether processing menu option (x - a number) is valid:
 		if there is a text entry or there is a description entry or there is a submenu entry or there is a subtable entry or there is a rule entry or there is a toggle entry:
 			if count is x:
 				if there is a rule entry:
-					consider the rule entry;
+					follow the rule entry;
 					decide yes;
 				if there is a toggle entry:
-					consider the toggle entry;
+					follow the toggle entry;
 					decide yes;
 				if there is a submenu entry:
 					show submenu submenu entry with title title entry;
@@ -279,7 +279,7 @@ To show submenu (m - a table-name) with title (t - a text):
 	choose row menu depth in Table of Menu history;
 	now the title entry is t;
 	now the submenu entry is m;
-	consider the entering a menu rules for m;
+	follow the entering a menu rules for m;
 
 Displaying a menu rule (this is the process a menu command rule):
 	while 1 is 1:
@@ -295,7 +295,7 @@ Displaying a menu rule (this is the process a menu command rule):
 			stop;
 
 To leave the current menu:
-	consider the exiting a menu rules for the submenu in row menu depth of Table of Menu history;
+	follow the exiting a menu rules for the submenu in row menu depth of Table of Menu history;
 	choose row menu depth in Table of Menu history;
 	blank out the whole row;
 	decrement menu depth;
