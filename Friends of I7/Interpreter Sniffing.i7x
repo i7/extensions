@@ -55,7 +55,7 @@ Book "Framework for Detecting Interpreters"
 Chapter "Workarounds" (unindexed)
 
 [For Inform bug 759.]
-To consider (R - a nothing based rule): (- ProcessRulebook({R}); -).
+To consider (R - a nothing based rule): (- FollowRulebook({R}); -).
 To decide what K is the (name of kind K) produced by (R - a nothing based rule producing a value of kind K): (- ResultOfRule({R}, 0, true, {-strong-kind:K}) -).
 
 Chapter "Responding to Restores" (unindexed)
@@ -108,13 +108,14 @@ Include (-
 			GGRecoverObjects();
 			glk_stream_close(gg_savestr, 0); ! stream_close
 			gg_savestr = 0;
-			return GL__M(##Restore, 2);
+			RESTORE_THE_GAME_RM('B'); new_line;
+			rtrue;
 		}
 		glk_stream_close(gg_savestr, 0); ! stream_close
 		gg_savestr = 0;
-		if (res == 0) return GL__M(##Save, 2);
+		if (res == 0) { SAVE_THE_GAME_RM('B'); new_line; rtrue; }
 		.SFailed;
-		GL__M(##Save, 1);
+		SAVE_THE_GAME_RM('A'); new_line;
 	];
 -) instead of "Save The Game Rule" in "Glulx.i6t".
 
