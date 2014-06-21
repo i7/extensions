@@ -1075,7 +1075,7 @@ Include (-
 
 [ SWITCH_TRANSCRIPT_ON_R;
 	if (actor ~= player) rfalse;
-	if (gg_scriptstr ~= 0) return GL__M(##ScriptOn, 1);
+	if (gg_scriptstr ~= 0) { SWITCH_TRANSCRIPT_ON_RM('A'); new_line; rtrue; }
 	if (gg_scriptfref == 0) {
 		gg_scriptfref = glk_fileref_create_by_prompt($102, $05, GG_SCRIPTFREF_ROCK);
 		if (gg_scriptfref == 0) jump S1Failed;
@@ -1091,7 +1091,7 @@ Include (-
 	EndActivity( (+activating the transcript+) );
 	return;
 	.S1Failed;
-	GL__M(##ScriptOn, 3);
+	SWITCH_TRANSCRIPT_ON_RM('C'); new_line;
 ];
 
 -) instead of "Switch Transcript On Rule" in "Glulx.i6t"
