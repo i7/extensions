@@ -1394,7 +1394,7 @@ For activating the transcript (this is the transcript activation rule):
 	echo the stream of the current text output window to the transcript;
 	echo the stream of the current text input window to the transcript;
 	say "Start of a transcript of[line break]";
-	consider the announce the story file version rule.
+	follow the announce the story file version rule.
 
 
 
