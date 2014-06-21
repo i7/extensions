@@ -122,7 +122,7 @@ Chapter "Detecting Glulx Implementations"
 
 Section "Cached Glulx Implementation Detection" (unindexed)
 
-Glulx implementation already detected is a truth state that varies; Glulx implementation already detected is false.
+Glulx implementation already detected is a truth state that varies. Glulx implementation already detected is false.
 The cached result of Glulx implementation detection is a Glulx implementation that varies.
 
 Chapter "Rulebook and Phrase for Detecting Glulx Implementations"
@@ -152,7 +152,7 @@ Chapter "Detecting IO Implementations"
 
 Section "Cached IO Implementation Detection" (unindexed)
 
-IO implementation already detected is a truth state that varies; IO implementation already detected is false.
+IO implementation already detected is a truth state that varies. IO implementation already detected is false.
 The cached result of IO implementation detection is an IO implementation that varies.
 
 Section "Glk Test" (unindexed)
@@ -270,7 +270,7 @@ CocoaGlk is an IO implementation.
 
 Section "CocoaGlk Test" (unindexed)
 
-The CocoaGlk detection flag is a truth state that varies; the CocoaGlk detection flag is false.
+The CocoaGlk detection flag is a truth state that varies. the CocoaGlk detection flag is false.
 
 Include (-
 	Array is_cocoaMethodCheck --> 1;
