@@ -39,7 +39,7 @@ A g-window is a kind of container. [ So be careful iterating through all contain
 
 Include (-
 Attribute g_present;
--) after "Definitions.i6t". 
+-) after "Properties" in "Output.i6t". 
 
 A g-window can be g-present or g-unpresent. A g-window can be g-required or g-unrequired.
 
