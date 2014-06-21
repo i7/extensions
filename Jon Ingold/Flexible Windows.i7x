@@ -1150,6 +1150,8 @@ Include (-
 	}
 ];
 
+[ YES_OR_NO_QUESTION_INTERNAL_R; ];
+
 -) instead of "Yes/No Questions" in "Parser.i6t"
 
 
