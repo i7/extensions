@@ -1,4 +1,4 @@
-Version 2/140608 of Italian Language by Massimo Stella begins here.
+Version 2/140625 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play.
 
@@ -2716,7 +2716,7 @@ Understand "compra [something]" or "compra il/la/lo/i/le/gli/l/quei/quella/quell
 Understand "dormi" as sleeping.
 Understand "salta" as jumping.
 Understand "svegliati" as waking up.
-Understand "taglia [something]" or "taglia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as burning.
+Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as burning.
 Understand "agita le mani" as waving hands.
 Understand "colpisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" or "colpisci [something]" as swinging.
 Understand "spremi [someone]" or "spremi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as squeezing.
@@ -2751,10 +2751,10 @@ Understand "metti [something] su/sopra [something]" or "metti il/la/lo/i/le/gli/
 Understand "inserisci [something] dentro [something]" or "inserisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
 Understand "metti [something] in/dentro [something]" or "metti il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
 Understand "cerca il/la/i/le/lo/l/gli/nel/nello/nell/nella/nelle/negli/nei/dentro/sul/sullo/sull/sulla/sugli/sulle/sui [something]" or "perquisisci  il/la/lo/i/le/gli/l [something]" as searching.
-Understand "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
-Understand "taglia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as cutting.
-Understand "pulisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
-Understand "strofina il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
+Understand "lega [something]  a/al/alla/alle/agli/ai/allo/all [something]" or "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
+Understand "taglia [something]" or "taglia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as cutting.
+Understand "pulisci [something]" or "pulisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
+Understand "strofina [something]" or "strofina il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
 
 [Dialoghi]
 Talking to is an action applying to one visible thing.
@@ -3124,3 +3124,4 @@ Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattar
 
 	leonardo.boselli@istruzione.it
 	
+
