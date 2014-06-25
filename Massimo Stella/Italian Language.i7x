@@ -1857,6 +1857,15 @@ To say (p - an articulated preposition) the (obj - a thing):
 		say "[if obj is plural-named][5Gli of p] [otherwise if artflag of obj is 0][7L of p][otherwise if artflag of obj is 1][2Lo of p] [end if]";
 	say "[regarding the obj][obj]".
 
+To say (p - an articulated preposition) the (obj - a room):
+	if obj is female:
+		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
+	otherwise if artflag of obj is 2:
+		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
+	otherwise:
+		say "[if obj is plural-named][5Gli of p] [otherwise if artflag of obj is 0][7L of p][otherwise if artflag of obj is 1][2Lo of p] [end if]";
+	say "[regarding the obj][obj]".
+
 Chapter 3.1.1 - Responses in the Standard Rules
 
 [Many thanks to Sarganar for the Collection of Responses]
