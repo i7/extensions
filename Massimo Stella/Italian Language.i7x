@@ -2606,7 +2606,7 @@ Parser clarification internal rule response (A) is "Chi intendi, ".
 Parser clarification internal rule response (B) is "Quale intendi, ".
 Parser clarification internal rule response (C) is "Scusami, puoi specificare un solo nome. Quale esattamente?".
 Parser clarification internal rule response (D) is "A chi vorresti [if the noun is not the player]che [the noun] applicasse[otherwise]applicare[end if] l'azione '[parser command so far]'?".
-Parser clarification internal rule response (E) is "Cosa [if the noun is not the player]vorresti che [the noun] facesse[otherwise]intendi fare[end if] con '[parser command so far]'?".
+Parser clarification internal rule response (E) is "[if the noun is not the player]Cosa vorresti che [the noun] facesse con '[parser command so far]'?[otherwise]OK, ma `[parser command so far]` è troppo generico.[end if] Specifica qualcosa.".
 Parser clarification internal rule response (F) is "quelle cose".
 Parser clarification internal rule response (G) is "quello".
 Parser clarification internal rule response (H) is " o ".
