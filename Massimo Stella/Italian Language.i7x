@@ -2002,7 +2002,7 @@ To say adatto: say "adatt[o-agg]".
 To say interessato: say "interessat[o-agg]".
 To say capace: say "capac[e-agg]".
 To say contenente: say "contenent[e-agg]". [LEO]
-To say sveglio: say "svegli[e-agg]". [LEO]
+To say sveglio: say "svegli[o-agg]". [LEO]
 To say stesso: say "stess[o-agg]". [LEO]
 To say salito: say "salit[o-agg]". [LEO]
 To say saltato: say "saltat[o-agg]". [LEO]
