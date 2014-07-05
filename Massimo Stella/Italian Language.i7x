@@ -1,10 +1,6 @@
-Version 2/140625 of Italian Language by Massimo Stella begins here.
+Version 2/140705 of Italian Language by Massimo Stella begins here.
 
-"To make Italian the language of play.
-
-Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli.
-
-Requires 'Text Capture' by Eric Eve."
+"To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
 Include Text Capture by Eric Eve.
 
@@ -2559,28 +2555,28 @@ Section  3.1.1.20 - Parser error internal rule
 
 Parser error internal rule response (A) is "Non ho capito la frase."
 Parser error internal rule response (B) is "Ho capito solo: ".
-Parser error internal rule response (C) is "Non ho compreso il numero."
-Parser error internal rule response (D) is "Non riesci a vedere nulla del genere."
-Parser error internal rule response (E) is "Hai detto troppo poco."
-Parser error internal rule response (F) is "[Ora] non lo [possiedi]."
-Parser error internal rule response (G) is "Non puoi usare più di un oggetto con quel verbo."
-Parser error internal rule response (H) is "Con un verbo, puoi usare più di un oggetto solo una volta per ogni linea."
-Parser error internal rule response (I) is "Non capisco a cosa si riferisca [the noun]."
-Parser error internal rule response (J) is "Chiedi qualcosa che non è possibile."
-Parser error internal rule response (K) is "Quella azione è possibile solo con oggetti animati."
-Parser error internal rule response (L) is "Non è un verbo che conosco."
-Parser error internal rule response (M) is "Non è qualcosa di cui hai bisogno in questa storia."
-Parser error internal rule response (N) is "[regarding the player][Ora] non [puoi] vedere [if the noun is nothing]nulla del genere[otherwise][the noun][end if]."
-Parser error internal rule response (O) is "Non ho capito la fine della frase."
-Parser error internal rule response (P) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] a disposizione."
-Parser error internal rule response (Q) is "Nulla da fare."
-Parser error internal rule response (R) is "Nulla di ciò che hai chiesto [regarding nothing][sei] a disposizione."
-Parser error internal rule response (S) is "Il nome non ha alcun senso in questo contesto."
-Parser error internal rule response (T) is "[regarding the noun]Forse [puoi] appartenere [ap the noun]."
-Parser error internal rule response (U) is "[The noun] non [puoi] contenere nulla."
-Parser error internal rule response (V) is "[The noun] non [sei] [aperto]."
-Parser error internal rule response (W) is "Come? Ripeti per favore."
-Parser error internal rule response (X) is "[The noun] [sei] [vuoto]."
+Parser error internal rule response (C) is "Ho capito solo: ".
+Parser error internal rule response (D) is "Non ho compreso il numero."
+Parser error internal rule response (E) is "Non [regarding the player][puoi] vedere nulla del genere."
+Parser error internal rule response (F) is "Hai detto troppo poco."
+Parser error internal rule response (G) is "[Ora] non lo [possiedi]."
+Parser error internal rule response (H) is "Non puoi usare più di un oggetto con quel verbo."
+Parser error internal rule response (I) is "Puoi usare più di un oggetto per verbo solo una volta per ogni linea."
+Parser error internal rule response (J) is "Non capisco a cosa si riferisca [the noun]."
+Parser error internal rule response (K) is "[Ora] Non [regarding the player][puoi] vedere [the noun]."
+Parser error internal rule response (L) is "[regarding the player][maiuscolo][Hai][maiuscolo] chiesto qualcosa di impossibile."
+Parser error internal rule response (M) is "Questa azione è possibile solo con oggetti animati."
+Parser error internal rule response (N) is "Non è un verbo che conosco."
+Parser error internal rule response (O) is "Non è qualcosa di cui c[']è bisogno in questa storia."
+Parser error internal rule response (P) is "Non ho capito la fine della frase."
+Parser error internal rule response (Q) is "[if number understood is 0]Nessun[otherwise]Solo [number understood][end if] di questi [sei] a disposizione."
+Parser error internal rule response (R) is "Tale nome non ha alcun senso in questo contesto."
+Parser error internal rule response (S) is "Per ripetere un comando come 'rana, salta', occorre scrivere 'ancora', non 'rana, ancora'."
+Parser error internal rule response (T) is "Non si può iniziare con una virgola."
+Parser error internal rule response (U) is "Sembra che si voglia parlare a qualcuno, ma non capisco a chi."
+Parser error internal rule response (V) is "Non [regarding the player][puoi] parlare [ap the noun]."
+Parser error internal rule response (W) is "Per parlare a qualcuno, usare 'qualcuno, salve' o formule simili."
+Parser error internal rule response (X) is "Come? Ripeti per favore."
 
 Section  3.1.1.21 - Darkness name internal rule
 
@@ -3004,13 +3000,13 @@ Per qualsiasi domanda è possibile contattare l'autore all'indirizzo email:
 
 	leonardo.boselli@istruzione.it
 
-L'estensione "Italian Language" e i suoi futuri aggiornamenti sono disponibili all'indirizzo:
+L'estensione "Italian Language" e i suoi futuri aggiornamenti sono disponibili all'indirizzo (attenzione allo spazio tra nome e cognome):
 
-	https://github.com/i7/extensions/tree/master/Massimo-Stella
+	https://github.com/i7/extensions/tree/master/Massimo Stella
 
-Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono reperibili all'indirizzo:
+Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono reperibili all'indirizzo (anche qui attenzione allo spazio):
 
-	https://github.com/i7/extensions/tree/master/Leonardo-Boselli 
+	https://github.com/i7/extensions/tree/master/Leonardo Boselli 
 
 Chapter: Introduzione
 
@@ -3133,4 +3129,3 @@ Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattar
 
 	leonardo.boselli@istruzione.it
 	
-
