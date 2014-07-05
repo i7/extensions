@@ -30,5 +30,7 @@ Translations available:
 * "Conversational Defaults" by Eric Eve
 *  
 * "Threaded Conversation" by Chris Conley
+* 
+* "Trinity Inventory" by Mikael Segercrantz
 *  
 * "Hyperlink Interface" by Leonardo Boselli
