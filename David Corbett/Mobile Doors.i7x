@@ -1,4 +1,4 @@
-Mobile Doors by David Corbett begins here.
+Version 1 of Mobile Doors by David Corbett begins here.
 
 Chapter 1 - New properties
 
@@ -16,12 +16,6 @@ with mobile_door_to [ loc; loc = location;
 -) when defining a door.
 
 Chapter 2 - Mobility
-
-Section 2.1 - Definition
-
-Definition: a door is mobile rather than immobile if I6 routine "MobilizeDoor" makes it so (it has been moved or its mobile properties have been queried).
-
-Section 2.2 - I6 implementation
 
 Include (-
 [ MobilizeDoor d set;
@@ -88,6 +82,7 @@ Include (-
 	if (F ofclass (+ door +)) {
 		MobilizeDoor(F, true);
 		SignalMapChange();
+		! The door will keep the values in mobile_door after removal, but SearchDoor relies on this.
 		if (preserve) {
 			if ((F.&mobile_door)-->0 ~= nothing && (F.&mobile_door)-->2)
 				AssertMapConnection((F.&mobile_door)-->0, (F.&mobile_door)-->2, (F.&mobile_door)-->1);
@@ -99,8 +94,8 @@ Include (-
 			if ((F.&mobile_door)-->1 ~= nothing && (F.&mobile_door)-->3)
 				AssertMapConnection((F.&mobile_door)-->1, (F.&mobile_door)-->3, nothing);
 		}
-		! The door will keep the values in mobile_door after removal, but UpdateDoor relies on this.
 	}
+	if (IndirectlyContains(F, player)) return RunTimeProblem(RTP_CANTBEOFFSTAGE);
 	give F ~worn; DetachPart(F);
 	if (F ofclass K7_backdrop) give F absent;
 	remove F;
@@ -114,13 +109,14 @@ Replace MoveFloatingObjects;
 -) before "WorldModel.i6t".
 
 Include (-
-[ MoveFloatingObjects i k l m address flag;
-	if (real_location == nothing) return;
+[ MoveFloatingObjects toroom i k l m address flag;
+	if (toroom == nothing) toroom = real_location;
+	if (toroom == nothing) return;
 	objectloop (i) {
 		if (i provides mobile && i.mobile) {
-			if (real_location == (i.&mobile_door)-->0 && (i.&mobile_door)-->2 ~= nothing ||
-				real_location == (i.&mobile_door)-->1 && (i.&mobile_door)-->3 ~= nothing) {
-				if (i notin real_location) move i to real_location;
+			if ((toroom == (i.&mobile_door)-->0 && (i.&mobile_door)-->2 ~= nothing) ||
+				(toroom == (i.&mobile_door)-->1 && (i.&mobile_door)-->3 ~= nothing)) {
+				if (i notin toroom) move i to toroom;
 			}
 		} else {
 			address = i.&found_in;
@@ -128,19 +124,22 @@ Include (-
 				if (ZRegion(address-->0) == 2) {
 					m = address-->0;
 					.TestPropositionally;
-					if (m.call(real_location) ~= 0) move i to real_location;
-					else remove i;
+					if (m.call(toroom) ~= 0) move i to toroom;
+					else { if (i in toroom) remove i; }
 				} else {
 					k = i.#found_in;
 					for (l=0 : l<k/WORDSIZE : l++) {
 						m = address-->l;
 						if (ZRegion(m) == 2) jump TestPropositionally;
-						if (m == real_location || m in real_location) {
-							if (i notin real_location) move i to real_location;
+						if (m == toroom || m in toroom) {
+							if (i notin toroom) move i to toroom;
 							flag = true;
 						}
 					}
-					if (flag == false) { if (parent(i)) remove i; }
+					if (flag == false) { if (i in toroom) remove i; }
+				}
+				if ((i ofclass K4_door) && (parent(i) == nothing)) {
+					move i to ((i.door_to).call());
 				}
 			}
 		}
@@ -192,10 +191,9 @@ Include (-
 		else 
 			return (d.&mobile_door)-->j;
 	}
-	if ((d.&mobile_door)-->0 ~= nothing && (d.&mobile_door)-->2 ~= nothing)
-		AssertMapConnection((d.&mobile_door)-->0, (d.&mobile_door)-->2, d);
-	if ((d.&mobile_door)-->1 ~= nothing && (d.&mobile_door)-->3 ~= nothing)
-		AssertMapConnection((d.&mobile_door)-->1, (d.&mobile_door)-->3, d);
+	for (i = 0 : i < 2 : i++)
+		if ((d.&mobile_door)-->i ~= nothing && (d.&mobile_door)-->(i + 2) ~= nothing)
+			AssertMapConnection((d.&mobile_door)-->i, (d.&mobile_door)-->(i + 2), d);
 	MoveFloatingObjects();
 	rfalse;
 ];
@@ -284,20 +282,13 @@ If we don't care what the value is, provided it is not nothing, we can use:
 
 Section: Removing a door
 
-Removing a door works just like removing anything else:
+There are two ways to remove a door from play:
 
+	now the trapdoor is nowhere;
 	remove the trapdoor from play;
 
-The "preserving routes" option works:
+The second way can take the "preserving routes" option:
 
 	Instead of attacking the rotten door:
-		remove the rotten door, preserving routes;
-		say "[The rotten door] falls to pieces." instead.
-
-Section: Mobile vs. immobile
-
-This extension also provides the adjectives "mobile" and "immobile", but we almost never need them. The only use they have is for testing whether any of this extension's phrases have been called on a particular door.
-
-In particular, we never need to say "now D is mobile". The door will become mobile when it needs to.
-
-Also, "now D is immobile" is literally useless. It has no effect whatsoever.
+		remove the rotten door from play, preserving routes;
+		say "[The rotten door] falls to pieces."
