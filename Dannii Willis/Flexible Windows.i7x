@@ -1,4 +1,4 @@
-Version 1/140512 of Flexible Windows (for Glulx only) by Dannii Willis begins here.
+Version 1/140710 of Flexible Windows (for Glulx only) by Dannii Willis begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -8,6 +8,7 @@ Use authorial modesty.
 
 Include version 1/140512 of Alternative Startup Rules by Dannii Willis.
 Include version 10/140425 of Glulx Entry Points by Emily Short.
+Include version 5/140516 of Glulx Text Effects by Emily Short.
 
 
 
@@ -69,6 +70,17 @@ The verb to be descended from implies the reversed enclosure relation.
 [To decide which g-window is the parent of (win - a g-window):
 	if the holder of win is a g-window:
 		decide on the holder of win;]
+
+
+
+Chapter - Windows for the styles table
+
+[ These things *must* be defined first in order for sorting to work. ]
+
+The row for marking window specific styles is a g-window.
+All-windows is a g-window.
+All-buffer-windows is a g-window.
+All-grid-windows is a g-window.
 
 
 
@@ -153,9 +165,9 @@ Section - Constructing a window
 Constructing something is an activity on g-windows.
 
 The construct a g-window rule is listed in the for constructing rules.
-The construct a g-window rule translates into I6 as "ConstructGWindow".
+The construct a g-window rule translates into I6 as "FW_ConstructGWindow".
 Include (-
-[ ConstructGWindow win parentwin method size type rock;
+[ FW_ConstructGWindow win parentwin method size type rock;
 	win = parameter_value;
 	! Fill in parentwin, method and size only if the window is not the main window
 	if ( win ~= (+ main window +) )
@@ -182,6 +194,7 @@ Include (-
 	type = win.(+ type +) + 2;
 	rock = win.(+ rock +);
 	win.(+ ref number +) = glk_window_open( parentwin, method, size, type, rock );
+	rfalse;
 ];
 -).
 
@@ -233,7 +246,163 @@ After constructing a g-window (called win) (this is the update built-in windows 
 
 
 
+Part - Window styles
+
+[ We extend Glulx Text Effects to allow you to specify styles for specific windows ]
+
+Chapter - Extending Glulx Text Effects
+
+Section - The Extended Table of User Styles definition (in place of Section - The Table of User Styles definition in Glulx Text Effects by Emily Short)
+
+Table of User Styles
+window (a g-window)	style name (a glulx text style)	background color (a text)	color (a text)	first line indentation (a number)	fixed width (a truth state)	font weight (a font weight)	indentation (a number)	italic (a truth state)	justification (a text justification)	relative size (a number)	reversed (a truth state)
+the row for marking window specific styles
+
+
+
+Section - Sorting the Table of User Styles
+
+[ Sort the table of User Styles taking into account both the style name and the window ]
+
+The Flexible Windows sort the Table of User Styles rule is listed instead of the sort the Table of User Styles rule in the before starting the virtual machine rules.
+Before starting the virtual machine (this is the Flexible Windows sort the Table of User Styles rule):
+	[ First fix the empty columns we require ]
+	repeat through the Table of User Styles:
+		[ rows without specified windows will be applied to all buffer windows ]
+		if there is no window entry:
+			now the window entry is all-buffer-windows;
+		if there is no style name entry:
+			now the style name entry is all-styles;
+	sort the Table of User Styles in style name order;
+	sort the Table of User Styles in window order;
+	let row1 be 1;
+	let row2 be 2;
+	[ Overwrite the first row of each style with the specifications of subsequent rows of the style ]
+	while row2 <= the number of rows in the Table of User Styles:
+		choose row row2 in the Table of User Styles;
+		if there is a style name entry:
+			if (the window in row row1 of the Table of User Styles) is the window entry and (the style name in row row1 of the Table of User Styles) is the style name entry:
+				if there is a background color entry:
+					now the background color in row row1 of the Table of User Styles is the background color entry;
+				if there is a color entry:
+					now the color in row row1 of the Table of User Styles is the color entry;
+				if there is a first line indentation entry:
+					now the first line indentation in row row1 of the Table of User Styles is the first line indentation entry;
+				if there is a fixed width entry:
+					now the fixed width in row row1 of the Table of User Styles is the fixed width entry;
+				if there is a font weight entry:
+					now the font weight in row row1 of the Table of User Styles is the font weight entry;
+				if there is a indentation entry:
+					now the indentation in row row1 of the Table of User Styles is the indentation entry;
+				if there is a italic entry:
+					now the italic in row row1 of the Table of User Styles is the italic entry;
+				if there is a justification entry:
+					now the justification in row row1 of the Table of User Styles is the justification entry;
+				if there is a relative size entry:
+					now the relative size in row row1 of the Table of User Styles is the relative size entry;
+				if there is a reversed entry:
+					now the reversed in row row1 of the Table of User Styles is the reversed entry;
+				blank out the whole row;
+			otherwise:
+				now row1 is row2;
+		increment row2;
+	[ Sort once more to put the blank rows at the bottom ]
+	sort the Table of User Styles in window order;
+
+
+
+Section - Enhanced phrases for applying styles to specific window types - unindexed
+
+To set the background color of wintype (W - a number) for (style - a glulx text style) to (N - a text):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_BackColor, GTE_ConvertColour( {N} ) ); -).
+
+To set the color of wintype (W - a number) for (style - a glulx text style) to (N - a text):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_TextColor, GTE_ConvertColour( {N} ) ); -).
+
+To set the first line indentation of wintype (W - a number) for (style - a glulx text style) to (N - a number):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_ParaIndentation, {N} ); -).
+
+To set fixed width of wintype (W - a number) for (style - a glulx text style) to (N - truth state):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Proportional, ( {N} + 1 ) % 2 ); -).
+
+To set the font weight of wintype (W - a number) for (style - a glulx text style) to (N - a font weight):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Weight, {N} - 2 ); -).
+
+To set the indentation of wintype (W - a number) for (style - a glulx text style) to (N - a number):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Indentation, {N} ); -).
+
+To set italic of wintype (W - a number) for (style - a glulx text style) to (N - a truth state):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Oblique, {N} ); -).
+
+To set the justification of wintype (W - a number) for (style - a glulx text style) to (N - a text justification):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Justification, {N} - 1 ); -).
+
+To set the relative size of wintype (W - a number) for (style - a glulx text style) to (N - a number):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_Size, {N} ); -).
+
+To set reversed of wintype (W - a number) for (style - a glulx text style) to (N - a truth state):
+	(- GTE_SetStylehint( {W}, {style}, stylehint_ReverseColor, {N} ); -).
+
+
+
+Section - Applying the generic styles
+
+[ At this stage only apply the generic (non window specific) styles. ]
+
+The set generic text styles rule is listed instead of the set text styles rule in the before starting the virtual machine rules.
+Last before starting the virtual machine (this is the set generic text styles rule):
+	let W be a number;
+	repeat through the Table of User Styles:
+		if the window entry is:
+			-- the row for marking window specific styles:
+				next;
+			-- All-windows:
+				now W is 0;
+			-- All-buffer-windows:
+				now W is 3;
+			-- All-grid-windows:
+				now W is 4;
+			-- otherwise:
+				break;
+		if there is a background color entry:
+			set the background color of wintype W for the style name entry to the background color entry;
+		if there is a color entry:
+			set the color of wintype W for the style name entry to the color entry;
+		if there is a first line indentation entry:
+			set the first line indentation of wintype W for the style name entry to the first line indentation entry;
+		if there is a fixed width entry:
+			set fixed width of wintype W for the style name entry to the fixed width entry;
+		if there is a font weight entry:
+			set the font weight of wintype W for the style name entry to the font weight entry;
+		if there is a indentation entry:
+			set the indentation of wintype W for the style name entry to the indentation entry;
+		if there is a italic entry:
+			set italic of wintype W for the style name entry to the italic entry;
+		if there is a justification entry:
+			set the justification of wintype W for the style name entry to the justification entry;
+		if there is a relative size entry:
+			set the relative size of wintype W for the style name entry to the relative size entry;
+		if there is a reversed entry:
+			set reversed of wintype W for the style name entry to the reversed entry;
+
+
+
 Part - Opening the built-in windows
+
+Chapter - Style the built-in windows
+
+[ These are the original styles set by Inform in VM_Initialise(). ]
+
+Table of User Styles (continued)
+window	style name	reversed	justification	font weight	italic
+all-buffer-windows	italic-style	--	--	regular-weight	true
+all-buffer-windows	header-style	--	left-justified
+all-grid-windows	all-styles	true
+
+
+
+
+Chapter - Make it happen!
 
 The open the built-in windows using Flexible Windows rule is listed instead of the open built-in windows rule in the for starting the virtual machine rulebook.
 This is the open the built-in windows using Flexible Windows rule:
