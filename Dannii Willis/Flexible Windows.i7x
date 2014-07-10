@@ -77,7 +77,6 @@ Chapter - Windows for the styles table
 
 [ These things *must* be defined first in order for sorting to work. ]
 
-The row for marking window specific styles is a g-window.
 All-windows is a g-window.
 All-buffer-windows is a g-window.
 All-grid-windows is a g-window.
@@ -256,7 +255,7 @@ Section - The Extended Table of User Styles definition (in place of Section - Th
 
 Table of User Styles
 window (a g-window)	style name (a glulx text style)	background color (a text)	color (a text)	first line indentation (a number)	fixed width (a truth state)	font weight (a font weight)	indentation (a number)	italic (a truth state)	justification (a text justification)	relative size (a number)	reversed (a truth state)
-the row for marking window specific styles
+--
 
 
 
@@ -343,6 +342,54 @@ To set the relative size of wintype (W - a number) for (style - a glulx text sty
 To set reversed of wintype (W - a number) for (style - a glulx text style) to (N - a truth state):
 	(- GTE_SetStylehint( {W}, {style}, stylehint_ReverseColor, {N} ); -).
 
+[ And some phrases to clear them again. ]
+
+To clear the background color of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_BackColor, ); -).
+
+To clear the color of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_TextColor ); -).
+
+To clear the first line indentation of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_ParaIndentation ); -).
+
+To clear fixed width of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Proportional ); -).
+
+To clear the font weight of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Weight ); -).
+
+To clear the indentation of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Indentation ); -).
+
+To clear italic of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Oblique ); -).
+
+To clear the justification of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Justification ); -).
+
+To clear the relative size of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_Size ); -).
+
+To clear reversed of wintype (W - a number) for (style - a glulx text style):
+	(- FW_ClearStylehint( {W}, {style}, stylehint_ReverseColor ); -).
+
+Include (-
+[ FW_ClearStylehint wintype style hint i;
+	if ( style == (+ all-styles +) )
+	{
+		for ( i = 0: i < style_NUMSTYLES : i++ )
+		{
+			glk_stylehint_clear( wintype, i, hint );
+		}
+	}
+	else
+	{
+		glk_stylehint_clear( wintype, style - 2, hint );
+	}
+];
+-).
+
 
 
 Section - Applying the generic styles
@@ -354,8 +401,6 @@ Last before starting the virtual machine (this is the set generic text styles ru
 	let W be a number;
 	repeat through the Table of User Styles:
 		if the window entry is:
-			-- the row for marking window specific styles:
-				next;
 			-- All-windows:
 				now W is 0;
 			-- All-buffer-windows:
@@ -384,6 +429,89 @@ Last before starting the virtual machine (this is the set generic text styles ru
 			set the relative size of wintype W for the style name entry to the relative size entry;
 		if there is a reversed entry:
 			set reversed of wintype W for the style name entry to the reversed entry;
+
+
+
+Section - Applying window specific styles
+
+[ Apply styles before constructing a window and then clear them afterwards. This is tricky because we must reinstate the generic styles. ]
+
+Before constructing a g-window (called win) (this is the set the window's styles rule):
+	let W be a number;
+	let found the window be a truth state;
+	if the type of win is:
+		-- g-text-buffer:
+			now W is 3;
+		-- g-text-grid:
+			now W is 4;
+		-- g-graphics:
+			stop;
+	repeat through the Table of User Styles:
+		unless the window entry is win:
+			if found the window is true:
+				stop;
+			next;
+		now found the window is true;
+		if there is a background color entry:
+			set the background color of wintype W for the style name entry to the background color entry;
+		if there is a color entry:
+			set the color of wintype W for the style name entry to the color entry;
+		if there is a first line indentation entry:
+			set the first line indentation of wintype W for the style name entry to the first line indentation entry;
+		if there is a fixed width entry:
+			set fixed width of wintype W for the style name entry to the fixed width entry;
+		if there is a font weight entry:
+			set the font weight of wintype W for the style name entry to the font weight entry;
+		if there is a indentation entry:
+			set the indentation of wintype W for the style name entry to the indentation entry;
+		if there is a italic entry:
+			set italic of wintype W for the style name entry to the italic entry;
+		if there is a justification entry:
+			set the justification of wintype W for the style name entry to the justification entry;
+		if there is a relative size entry:
+			set the relative size of wintype W for the style name entry to the relative size entry;
+		if there is a reversed entry:
+			set reversed of wintype W for the style name entry to the reversed entry;
+
+A first after constructing a g-window (called win) (this is the reset the generic styles rule):
+	let W be a number;
+	let resetting required be a truth state;
+	if the type of win is:
+		-- g-text-buffer:
+			now W is 3;
+		-- g-text-grid:
+			now W is 4;
+		-- g-graphics:
+			stop;
+	repeat through the Table of User Styles:
+		unless the window entry is win:
+			if resetting required is true:
+				break;
+			next;
+		now resetting required is true;
+		if there is a background color entry:
+			clear the background color of wintype W for the style name entry;
+		if there is a color entry:
+			clear the color of wintype W for the style name entry;
+		if there is a first line indentation entry:
+			clear the first line indentation of wintype W for the style name entry;
+		if there is a fixed width entry:
+			clear fixed width of wintype W for the style name entry;
+		if there is a font weight entry:
+			clear the font weight of wintype W for the style name entry;
+		if there is a indentation entry:
+			clear the indentation of wintype W for the style name entry;
+		if there is a italic entry:
+			clear italic of wintype W for the style name entry;
+		if there is a justification entry:
+			clear the justification of wintype W for the style name entry;
+		if there is a relative size entry:
+			clear the relative size of wintype W for the style name entry;
+		if there is a reversed entry:
+			clear reversed of wintype W for the style name entry;
+	[ I'm not sure if this will be too much of a performance hit, but it's the simplest solution ]
+	if resetting required is true:
+		follow the set generic text styles rule;
 
 
 
