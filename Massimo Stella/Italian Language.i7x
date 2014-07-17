@@ -1,4 +1,4 @@
-Version 2/140717 of Italian Language by Massimo Stella begins here.
+Version 2/140718 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -51,6 +51,38 @@ Volume 2 - Language
 Part 2.1 - Determiners
 
 Chapter 2.1.1 - Articles
+
+To say il (O - object): say "[the O]".
+To say lo (O - object): say "[the O]".
+To say la (O - object): say "[the O]".
+To say i (O - object): say "[the O]".
+To say gli (O - object): say "[the O]".
+To say le (O - object): say "[the O]".
+
+To say Il (O - object): say "[The O]".
+To say Lo (O - object): say "[The O]".
+To say La (O - object): say "[The O]".
+To say I (O - object): say "[The O]".
+To say Gli (O - object): say "[The O]".
+To say Le (O - object): say "[The O]".
+
+To say un (O - object): say "[a O]".
+To say uno (O - object): say "[a O]".
+To say una (O - object): say "[a O]".
+To say dei (O - object): say "[a O]".
+To say degli (O - object): say "[a O]".
+To say delle (O - object): say "[a O]".
+To say alcuni (O - object): say "[a O]".
+To say alcune (O - object): say "[a O]".
+
+To say Un (O - object): say "[A O]".
+To say Uno (O - object): say "[A O]".
+To say Una (O - object): say "[A O]".
+To say Dei (O - object): say "[A O]".
+To say Degli (O - object): say "[A O]".
+To say Delle (O - object): say "[A O]".
+To say Alcuni (O - object): say "[A O]".
+To say Alcune (O - object): say "[A O]".
 
 Include (-
 language Italian
@@ -1062,11 +1094,17 @@ i modi e i tempi irregolari.]
 	mangiare	<it-mangiare-conjugation> |
 	dovere		<it-dovere-conjugation> |
 	potere		<it-potere-conjugation> |
-	possedere	<it-possedere-conjugation> |   [LEO]
-	tenere	<it-tenere-conjugation> |   [LEO]
-	togliere	<it-togliere-conjugation> |   [LEO]
-	lasciare	<it-lasciare-conjugation> |   [LEO]
+	possedere	<it-possedere-conjugation> | 
+	tenere	<it-tenere-conjugation> | 
+	togliere	<it-togliere-conjugation> | 
+	lasciare	<it-lasciare-conjugation> | 
 	fare			<it-fare-conjugation> |
+	sedere			<it-sedere-conjugation> |
+	uscire			<it-uscire-conjugation> |
+	toccare			<it-toccare-conjugation> |
+	ottenere			<it-ottenere-conjugation> |
+	assaggiare			<it-assaggiare-conjugation> |
+	dare			<it-dare-conjugation> |
 	bloccare		<it-bloccare-conjugation> |
 	sbloccare	<it-sbloccare-conjugation> |
 	capire			<it-incoativi-terza-conjugation> |
@@ -1359,7 +1397,6 @@ English, where the asterisks are never used. ]
 	5+ei | 5+esti | 5+ette | 5+emmo | 5+este | 5+ettero
 
 
-[LEO]
 [
 ---> Italian : "POSSEDERE" verb. <----
 ]
@@ -1392,7 +1429,6 @@ English, where the asterisks are never used. ]
 <it-possedere-past-historic> ::=
 	5+ei | 5+esti | 5+ette | 5+emmo | 5+este | 5+ettero
 
-[LEO]
 [
 ---> Italian : "TENERE" verb. <----
 ]
@@ -1425,7 +1461,6 @@ English, where the asterisks are never used. ]
 <it-tenere-past-historic> ::=
 	tenni | 5+esti | 5+ette | 5+emmo | 5+este | tenerono
 	
-[LEO]
 [
 ---> Italian : "TOGLIERE" verb. <----
 ]
@@ -1458,7 +1493,6 @@ English, where the asterisks are never used. ]
 <it-togliere-past-historic> ::=
 	tolsi | 5+esti | tolse | 5+emmo | 5+este | tolsero
 
-[LEO]
 [
 ---> Italian : "LASCIARE" verb. <----
 ]
@@ -1522,6 +1556,198 @@ English, where the asterisks are never used. ]
 
 <it-fare-future> ::=
 	5+arò | 5+arai | 5+arà | 5+aremo | 5+arete | 5+aranno
+
+[
+---> Italian : "SEDERE" verb. <----
+]
+
+<it-sedere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		tolto |
+	<it-sedere-tabulation>
+
+<it-sedere-tabulation> ::=
+	a1		<it-sedere-present> |
+	a2		<it-sedere-past> |
+	a3		( t1 essere ) 3 |
+	a4		( t2 essere ) 3 |
+	a5		<it-sedere-future> |
+	a6		<it-sedere-past-historic> |
+	a7		<it-essere-future> 3 |
+	p*		3+*
+
+<it-sedere-present> ::=
+	seggo | siedi | siede | 5+iamo | 5+ete | seggono
+
+<it-sedere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-sedere-future> ::=
+	5+erò | 5+erai | 5+erete | 5+eremo | 5+erete | 5+eranno
+
+<it-sedere-past-historic> ::=
+	sedetti | 5+esti | 5+ette | 5+emmo | 5+este | 5+ettero
+
+[
+---> Italian : "USCIRE" verb. <----
+]
+
+<it-uscire-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		5+ito |
+	<it-uscire-tabulation>
+
+<it-uscire-tabulation> ::=
+	a1		<it-uscire-present> |
+	a2		<it-uscire-past> |
+	a3		( t1 essere ) 3 |
+	a4		( t2 essere ) 3 |
+	a5		<it-uscire-future> |
+	a6		<it-uscire-past-historic> |
+	a7		<it-essere-future> 3 |
+	p*		3+*
+
+<it-uscire-present> ::=
+	esco | esci | esce | 5+iamo | 5+ite | escono
+
+<it-uscire-past> ::=
+	5+ivo | 5+ivi | 5+iva | 5+ivamo | 5+ivate | 5+ivano
+
+<it-uscire-future> ::=
+	5+irò | 5+irai | 5+irete | 5+iremo | 5+irete | 5+iranno
+
+<it-uscire-past-historic> ::=
+	5+ii | 5+isti | 5+ì | 5+immo | 5+iste | 5+irono
+
+[
+---> Italian : "TOCCARE" verb. <----
+]
+
+<it-toccare-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+ando |
+	3		5+ato |
+	<it-toccare-tabulation>
+
+<it-toccare-tabulation> ::=
+	a1		<it-toccare-present> |
+	a2		<it-toccare-past> |
+	a3		( t1 avere ) 3 |
+	a4		( t2 avere ) 3 |
+	a5		<it-toccare-future> |
+	a6		<it-toccare-past-historic> |
+	a7		<it-avere-future> 3 |
+	p*		3+*
+
+<it-toccare-present> ::=
+	5+o | tocchi | 5+a | tocchiamo | 5+ate | 5+ano
+
+<it-toccare-past> ::=
+	5+avo | 5+avi | 5+ava | 5+avamo | 5+avate | 5+avano
+
+<it-toccare-future> ::=
+	toccherò | toccherai | toccherete | toccheremo | toccherete | toccheranno
+
+<it-toccare-past-historic> ::=
+	5+ai | 5+asti | 5+ò | 5+ammo | 5+aste | 5+arono
+
+[
+---> Italian : "OTTENERE" verb. <----
+]
+
+<it-ottenere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		5+uto |
+	<it-ottenere-tabulation>
+
+<it-ottenere-tabulation> ::=
+	a1		<it-ottenere-present> |
+	a2		<it-ottenere-past> |
+	a3		( t1 avere ) 3 |
+	a4		( t2 avere ) 3 |
+	a5		<it-ottenere-future> |
+	a6		<it-ottenere-past-historic> |
+	a7		<it-essere-future> 3 |
+	p*		3+*
+
+<it-ottenere-present> ::=
+	ottengo | ottieni | ottiene | 5+iamo | 5+ete | ottengono
+
+<it-ottenere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-ottenere-future> ::=
+	otterrò | otterrai | otterrete | otterremo | otterrete | otterranno
+
+<it-ottenere-past-historic> ::=
+	ottenni | 5+esti | ottenne | 5+emmo | 5+este | ottennero
+
+[
+---> Italian : "ASSAGGIARE" verb. <----
+]
+
+<it-assaggiare-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+ando |
+	3		5+ato |
+	<it-assaggiare-tabulation>
+
+<it-assaggiare-tabulation> ::=
+	a1		<it-assaggiare-present> |
+	a2		<it-assaggiare-past> |
+	a3		( t1 avere ) 3 |
+	a4		( t2 avere ) 3 |
+	a5		<it-assaggiare-future> |
+	a6		<it-assaggiare-past-historic> |
+	a7		<it-avere-future> 3 |
+	p*		3+*
+
+<it-assaggiare-present> ::=
+	5+o | assaggi | 5+a | assaggiamo | 5+ate | 5+ano
+
+<it-assaggiare-past> ::=
+	5+avo | 5+avi | 5+ava | 5+avamo | 5+avate | 5+avano
+
+<it-assaggiare-future> ::=
+	assaggerò | assaggerai | assaggerete | assaggeremo | assaggerete | assaggeranno
+
+<it-assaggiare-past-historic> ::=
+	5+ai | 5+asti | 5+ò | 5+ammo | 5+aste | 5+arono
+
+[
+---> Italian : "DARE" verb. <----
+]
+
+<it-dare-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+ando |
+	3		5+ato |
+	<it-dare-tabulation>
+
+<it-dare-tabulation> ::=
+	a1		<it-dare-present> |
+	a2		<it-dare-past> |
+	a3		( t1 avere ) 3 |
+	a4		( t2 avere ) 3 |
+	a5		<it-dare-future> |
+	a6		<it-dare-past-historic> |
+	a7		<it-avere-future> 3 |
+	p*		3+*
+
+<it-dare-present> ::=
+	5+o | dai | dà | 5+iamo | 5+ate | 5+anno
+
+<it-dare-past> ::=
+	5+avo | 5+avi | 5+ava | 5+avamo | 5+avate | 5+avano
+
+<it-dare-future> ::=
+	darò | darai | darà | daremo | darete | daranno
+
+<it-dare-past-historic> ::=
+	diedi | desti | diede | demmo | deste | diedero
 
 [
 --------> Italian : "BLOCCARE e SBLOCCARE" verb. <-------
@@ -1800,7 +2026,7 @@ When play begins:
 
 Part 3.1 - Responses
 
-Chapter 3.1.0 - Articulated Prepopositions
+Chapter 3.1.0 - Articulated Prepositions
 
 To decide which number is the artflag of (sostan - a thing):
 	let c1 be character number 1 in the printed name of sostan;
@@ -1879,19 +2105,17 @@ In Italian posizionare is a verb.
 In Italian mangiare is a verb.
 In Italian dovere is a verb.
 In Italian potere is a verb.
-In Italian possedere is a verb. [LEO]
-In Italian provare is a verb. [LEO]
-In Italian parlare is a verb. [LEO]
-In Italian rispondere is a verb. [LEO]
-In Italian salutare is a verb. [LEO]
+In Italian possedere is a verb.
+In Italian provare is a verb.
+In Italian parlare is a verb.
+In Italian rispondere is a verb.
+In Italian salutare is a verb.
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
 In Italian salire is a verb.
-[Trucchetto]
-In Italian siedere is a verb. [LEO]
+In Italian sedere is a verb.
 In Italian scendere is a verb.
-[Quello per l'uscita è solo un trucchetto, uscire verrà presto implementato completamente]
-In Italian escire is a verb.
+In Italian uscire is a verb.
 In Italian vedere is a verb.
 In Italian trovare is a verb.
 In Italian ispezionare is a verb.
@@ -1904,11 +2128,9 @@ In Italian sfilare is a verb.
 In Italian porgere is a verb.
 In Italian passare is a verb.
 In Italian aspettare is a verb.
-[Trucchetto]
-In Italian tocchare is a verb.
-[Trucchetto]
-In Italian ottienere is a verb.
-In Italian tenere is a verb. [LEO]
+In Italian toccare is a verb.
+In Italian ottenere is a verb.
+In Italian tenere is a verb.
 In Italian sentire is a verb.
 In Italian agitare is a verb.
 In Italian tirare is a verb.
@@ -1916,22 +2138,20 @@ In Italian spingere is a verb.
 In Italian ruotare is a verb.
 In Italian strizzare is a verb.
 In Italian odorare is a verb.
-In Italian annusare is a verb. [LEO]
-In Italian afferrare is a verb. [LEO]
-[Rivedere]
+In Italian annusare is a verb.
+In Italian afferrare is a verb.
 In Italian assaggiare is a verb.
-[Trucchetto]
-In Italian daare is a verb.
+In Italian dare is a verb.
 In Italian agitare is a verb.
 In Italian ascoltare is a verb.
 
 To say ci sei:
-	let be-verb be "[sei]";
-	let be-char be character number 1 in be-verb; 
-	if be-char is "e" or be-char is "è":
-		say "c['][be-verb]";
+	if story tense is present tense:
+		say "c[']è";
+	otherwise if story tense is past tense:
+		say "c[']era";
 	otherwise:
-		say "ci [be-verb]";
+		say "ci sarà";
 		
 To say ci sono:
 	if story tense is present tense:
@@ -2768,7 +2988,6 @@ Understand "giù" or "giu" as down.
 Understand "punti" or "punteggio" as requesting the score.
 Understand "sipunti" or "sipunteggio" or "notifica" as switching score notification on.
 Understand "nopunti" or "nopunteggio" or "notifica off" as switching score notification off.
-[Understand "esci" as quitting the game.] [LEO meglio usare 'esci' per uscire dai contenitori]
 Understand "salva" as saving the game.
 Understand "carica" as restoring the game.
 
@@ -2965,7 +3184,7 @@ Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono re
 
 Chapter: Introduzione
 
-L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione non tratterà di quest'ultimo aspetto, visto che, almeno in questa fase, è secondario.
+L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione non tratterà di quest'ultima possibilità, se non in parte, visto che, almeno in questa fase, è secondaria.
 
 Chapter: Installare l'estensione
 
@@ -2975,7 +3194,7 @@ Per includere l'estensione e utilizzarla nelle proprie avventure NON occorre scr
 
 	Include Italian Language by Massimo Stella.
 
-Questa inclusione causa un crash del programma dovuto, non si sa bene come, alla definizione degli aggettivi. Invece, occorre specificare, dopo titolo e autore, che l'avventura è in italiano.
+Questa inclusione causa un crash del programma dovuto, non si sa bene perché, alla definizione degli aggettivi. Invece, occorre specificare, dopo titolo e autore, che l'avventura è in italiano.
 Per esempio:
 
 	"Aladino e le Perle di Saggezza" by Leonardo Boselli (in Italian)
@@ -2994,7 +3213,7 @@ Qual è il secondo effetto dell'inclusione? Anche le risposte (automatiche) ai c
 
 Chapter: Creare testi
 
-Naturalmente un'avventura che si limiti ai comportamenti di base è davvero poco interessante. Un autore deve scrivere molti messaggi in risposta alle varie azioni del giocatore. La release 6L02 (e successive) prevede gli "adaptive text", cioè testi che, scritti in un modo particolare, si adattano a varie situazioni, come diversi punti di vista o differenti tempi verbali.
+Naturalmente un'avventura che si limiti ai comportamenti di base è davvero poco interessante. Un autore deve scrivere molti messaggi in risposta alle varie azioni del giocatore. La release 6L02 (e presumibilmente anche le successive) prevede gli "adaptive text", cioè testi che, scritti in un modo particolare, si adattano a varie situazioni, come diversi punti di vista o differenti tempi verbali.
 
 Section: Articoli e preposizioni articolate
 
@@ -3002,8 +3221,17 @@ L'estensione definisce gli articoli italiani e le preposizioni articolate. Per o
 
 	The gabbie is a plural-named feminine gender container.
 	The sedia is a feminine gender supporter.
-			
-"Plural-named" serve per specificare che il nome è plurale (il default è singolare) e "feminine gender" specifica il femminile (il default è il maschile). A questo punto, i seguenti testi generano i risultati riportati a fianco:
+
+Ma anche (sfruttando alcune caratteristiche avanzate già implementate):
+
+	The gabbie (f) are a plural-named container.
+	The sedia (f) is a supporter.
+
+o addirittura:
+
+	La sedia is a supporter.
+
+"Plural-named" serve per specificare che il nome è plurale (il default è singolare) e "feminine gender" specifica il femminile (il default è il maschile). Quest'ultima locuzione può essere abbreviata con una "f" tra parentesi subito dopo il nome a cui si riferisce. A questo punto, i seguenti testi generano i risultati riportati a fianco:
 
 	"vedo [the sedia] e [the gabbie]" (vedo la sedia e le gabbie)
 	"vedo [a sedia] e [some gabbie]" (vedo una sedia e delle gabbie)
@@ -3034,7 +3262,7 @@ Normalmente un'avventura testuale risponde ai comandi riferendosi al giocatore (
 		
 Quel "second person plural" significa che il programma non darà del "tu" al giocatore, ma del "voi". Ci sono situazioni in cui questa possibilità, per quanto insolita, potrebbe tornare utile. Ovviamente si potrebbe specificare una qualunque delle tre persone singolari o delle tre plurali, e ciò può essere anche cambiato nel corso del gioco. Inoltre, quel "past tense" significa che i tempi verbali verranno declinati al passato e non al presente, ma si potrebbe specificare anche una terza possibilità, e cioè il "future tense". 
 
-Come può un autore sfruttare questa funzionalità? È sufficiente che, quando ci si riferisce al giocatore, nei testi tra virgolette si utilizzino dei costrutti particolari, sempre riferiti (per quanto riguarda l'italiano) alla seconda persona singolare.
+Come si può sfruttare questa funzionalità? È sufficiente che nei testi tra virgolette si utilizzino dei costrutti particolari quando ci si riferisce al giocatore, sempre utilizzando (per quanto riguarda l'italiano) la seconda persona singolare.
 
 Riproponendo l'esempio precedente:
 
@@ -3049,7 +3277,7 @@ Invece cosa verrebbe risposto al comando "entra in acqua" con il tempo al passat
 
 	Io non potevo entrare nell'acqua perché era infetta.
 	
-Prima di analizzare l'esempio nel dettaglio, bisogna specificare che gli esempi non funzionerebbero con l'estensione "Italian Language" così come sono, perché l'aggettivo "infetto" è ignoto al sistema.
+Prima di analizzare l'esempio nel dettaglio, bisogna specificare che gli esempi non funzionerebbero così come sono con l'estensione "Italian Language", perché l'aggettivo "infetto" è ignoto al sistema.
 Ci sono molti verbi e aggettivi predefiniti (vedi sezione 3.1.1 -- si tratta di verbi e aggettivi utili per le risposte standard), ma "infetto" non è uno di questi. Per aggiungerlo alla lista, basta inserire nel proprio programma le linee:
 
 	In italian infetto is an adjective.
@@ -3058,7 +3286,7 @@ Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
 
 "Tu": si adatta con lo "story viewpoint" specificato (nell'esempio diventa perciò "Voi" e "Io" a seconda dei casi). Altre particelle disponibili sono "tu" (per il minuscolo), "te", "ti" ecc.
 "puoi": si adatta con lo "story viewpoint" (poiché segue il "Tu") e con lo "story tense". Può essere utilizzato perché il verbo "potere" (così come tanti altri -- vedi sezione 3.1.1) è definito nell'estensione.
-"sei": si comporta come "puoi", ma dato che non deve seguire il numero del "Tu", ma quello del contenitore, prima dev'essere specificato "regarding the contenitore" che fa comprendere al sistema qual è il soggetto. Tutto ciò che segue in "regarding" si accorda col numero e il genere dell'oggetto specificato.
+"sei": si comporta come "puoi", ma dato che non deve seguire il numero del "Tu", ma quello del contenitore, prima dev'essere specificato "regarding the contenitore" che fa comprendere al sistema qual è il soggetto. Tutto ciò che segue il "regarding" si accorda col numero e il genere dell'oggetto specificato.
 
 Ovviamente quel soggetto (Tu) a inizio frase suona piuttosto innaturale. Per toglierlo si può procedere in questo modo:
  
@@ -3071,8 +3299,8 @@ Inoltre, se la prima parola del testo non fosse "Non" (già maiuscolo), ma diret
 
 	say "[regarding the player][Puoi] entrare...".
 	
-perché il "puoi" verrebbe comunque stampato minuscolo. Perché? L'unica spiegazione che mi sono dato per una mancanza simile è che in inglese un verbo è sempre preceduto dal soggetto, e quindi, probabilmente, il programmatore di Inform 7 non ha pensato che per le altre lingue sarebbe stato utile prevedere un diverso comportamento, che tenesse conto della maiuscola.
-Cosa possiamo fare? Purtroppo l'unico modo è ricorrere all'estensione "Text Capture", che viene inclusa automaticamente. Serve per leggere un testo prima che venga stampato per elaborarlo e, solo alla fine, mostrarlo sullo schermo. Per l'autore di avventure, non comporta grandi disagi. È sufficiente ricordarsi di scrivere il testo in questo modo:
+perché il "puoi" verrebbe comunque stampato minuscolo. Perché? L'unica spiegazione che mi sono dato per una mancanza simile è che in inglese un verbo è sempre preceduto dal soggetto, e quindi, probabilmente, il programmatore di Inform 7 non ha pensato che per le altre lingue sarebbe stato utile prevedere un diverso comportamento che tenesse conto della maiuscola.
+Cosa possiamo fare? Purtroppo l'unico modo è ricorrere all'estensione "Text Capture", che viene inclusa automaticamente. Serve per leggere un testo prima che venga stampato per elaborarlo e, solo alla fine, mostrarlo sullo schermo. Per l'autore di avventure, ciò non comporta grandi disagi. È sufficiente ricordarsi di scrivere il testo in questo modo:
 
 	say "[regarding the player][maiuscolo][puoi][maiuscolo] entrare...".
 	
@@ -3085,4 +3313,3 @@ Queste sono solo alcune note utili per comprendere il funzionamento dell'estensi
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
 
 	leonardo.boselli@istruzione.it
-	
