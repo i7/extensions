@@ -1,4 +1,4 @@
-Version 2/140705 of Italian Language by Massimo Stella begins here.
+Version 2/140717 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -1941,8 +1941,6 @@ To say ci sono:
 	otherwise:
 		say "ci saranno";
 		
-[LEO Something goes wrong with adjectives]
-[
 In Italian aperto is an adjective.
 In Italian chiuso is an adjective.
 In Italian vuoto is an adjective.
@@ -1959,59 +1957,16 @@ In Italian bloccato is an adjective.
 In Italian adatto is an adjective.
 In Italian interessato is an adjective.
 In Italian capace is an adjective.
-]
-
-[LEO Workaround for adjectives]
-
-To say o-agg:
-	if the prior named object is nothing:
-		now the prior named object is the noun;
-	if the prior named object is singular-named:
-		if the prior named object is feminine gender:
-			say "a";
-		otherwise:
-			say "o";
-	otherwise:
-		if the prior named object is feminine gender:
-			say "e";
-		otherwise:
-			say "i";
-
-To say e-agg:
-	if the prior named object is nothing:
-		now the prior named object is the noun;
-	if the prior named object is plural-named:
-		say "i";
-	otherwise:
-		say "e";
-					
-To say ingombrante: say "ingombrant[e-agg]".
-To say fissato: say "fissat[o-agg]".
-To say preso: say "pres[o-agg]".
-To say rimasto: say "rimast[o-agg]".
-To say lasciato: say "lasciat[o-agg]".
-To say commestibile: say "commestibil[e-agg]".
-To say chiuso: say "chius[o-agg]".
-To say aperto: say "apert[o-agg]".
-To say vuoto: say "vuot[o-agg]".
-To say acceso: say "acces[o-agg]".
-To say spento: say "spent[o-agg]".
-To say indossato: say "indossat[o-agg]".
-To say bloccato: say "bloccat[o-agg]".
-To say adatto: say "adatt[o-agg]".
-To say interessato: say "interessat[o-agg]".
-To say capace: say "capac[e-agg]".
-To say contenente: say "contenent[e-agg]". [LEO]
-To say sveglio: say "svegli[o-agg]". [LEO]
-To say stesso: say "stess[o-agg]". [LEO]
-To say salito: say "salit[o-agg]". [LEO]
-To say saltato: say "saltat[o-agg]". [LEO]
-To say seduto: say "sedut[o-agg]". [LEO]
-To say entrato: say "entrat[o-agg]". [LEO]
-To say sceso: say "sces[o-agg]". [LEO]
-To say uscito: say "uscit[o-agg]". [LEO]
-To say tolto: say "tolt[o-agg]". [LEO]
-[LEO]
+In Italian contenente is an adjective.
+In Italian sveglio is an adjective.
+In Italian stesso is an adjective.
+In Italian salito is an adjective.
+In Italian saltato is an adjective.
+In Italian seduto is an adjective.
+In Italian entrato is an adjective.
+In Italian sceso is an adjective.
+In Italian uscito is an adjective.
+In Italian tolto is an adjective.
 
 To say enter-pp:
 	if the player's command includes "sali":
@@ -2515,20 +2470,20 @@ Section  3.1.1.18 - List writer internal rule
 List writer internal rule response (A) is " (".
 List writer internal rule response (B) is ")".
 List writer internal rule response (C) is " e ".
-List writer internal rule response (D) is "[acceso]".
-List writer internal rule response (E) is "[chiuso]".
-List writer internal rule response (F) is "[vuoto]".
-List writer internal rule response (G) is "[chiuso] e [vuoto]".
-List writer internal rule response (H) is "[chiuso] e [acceso]".
-List writer internal rule response (I) is "[vuoto] e [acceso]".
-List writer internal rule response (J) is "[chiuso], [vuoto][if serial comma option is active],[end if] e [acceso]".
-List writer internal rule response (K) is "[acceso] e [indossato]".
-List writer internal rule response (L) is "[indossato]".
-List writer internal rule response (M) is "[aperto]".
-List writer internal rule response (N) is "[aperto] ma [vuoto]".
-List writer internal rule response (O) is "[chiuso]".
-List writer internal rule response (P) is "[chiuso] e [bloccato]".
-List writer internal rule response (Q) is "[contenente]".
+List writer internal rule response (D) is "[regarding the noun][acceso]".
+List writer internal rule response (E) is "[regarding the noun][chiuso]".
+List writer internal rule response (F) is "[regarding the noun][vuoto]".
+List writer internal rule response (G) is "[regarding the noun][chiuso] e [vuoto]".
+List writer internal rule response (H) is "[regarding the noun][chiuso] e [acceso]".
+List writer internal rule response (I) is "[regarding the noun][vuoto] e [acceso]".
+List writer internal rule response (J) is "[regarding the noun][chiuso], [vuoto][if serial comma option is active],[end if] e [acceso]".
+List writer internal rule response (K) is "[regarding the noun][acceso] e [indossato]".
+List writer internal rule response (L) is "[regarding the noun][indossato]".
+List writer internal rule response (M) is "[regarding the noun][aperto]".
+List writer internal rule response (N) is "[regarding the noun][aperto] ma [vuoto]".
+List writer internal rule response (O) is "[regarding the noun][chiuso]".
+List writer internal rule response (P) is "[regarding the noun][chiuso] e [bloccato]".
+List writer internal rule response (Q) is "[regarding the noun][contenente]".
 List writer internal rule response (R) is " (sopra cui ".
 List writer internal rule response (S) is ", sopra cui ".
 List writer internal rule response (T) is " (dentro cui ".
@@ -3016,9 +2971,14 @@ Chapter: Installare l'estensione
 
 Per installare l'estensione nel programma Inform 7 installato sul proprio computer è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti. 
 
-Per includere l'estensione e utilizzarla nelle proprie avventure occorre scrivere nella finestra dell'editor la seguente linea, magari subito dopo la linea col titolo dell'avventura e l'autore, facendola poi seguire dall'inclusione di altre eventuali estensioni tradotte:
+Per includere l'estensione e utilizzarla nelle proprie avventure NON occorre scrivere nel sorgente la seguente linea:
 
 	Include Italian Language by Massimo Stella.
+
+Questa inclusione causa un crash del programma dovuto, non si sa bene come, alla definizione degli aggettivi. Invece, occorre specificare, dopo titolo e autore, che l'avventura è in italiano.
+Per esempio:
+
+	"Aladino e le Perle di Saggezza" by Leonardo Boselli (in Italian)
 
 A questo punto è possibile proseguire la scrittura del programma utilizzando tutte le funzionalità che supportano la lingua italiana.
 
@@ -3092,10 +3052,7 @@ Invece cosa verrebbe risposto al comando "entra in acqua" con il tempo al passat
 Prima di analizzare l'esempio nel dettaglio, bisogna specificare che gli esempi non funzionerebbero con l'estensione "Italian Language" così come sono, perché l'aggettivo "infetto" è ignoto al sistema.
 Ci sono molti verbi e aggettivi predefiniti (vedi sezione 3.1.1 -- si tratta di verbi e aggettivi utili per le risposte standard), ma "infetto" non è uno di questi. Per aggiungerlo alla lista, basta inserire nel proprio programma le linee:
 
-	To say infetto:
-		say "infett[o-agg]".
-
-Se l'aggettivo terminasse con "e", come "mangiabile", si dovrebbe usare "e-agg". In questo modo l'aggettivo si adatta al genere e al numero del nome (noun) specificato nel comando.
+	In italian infetto is an adjective.
 
 Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
 
