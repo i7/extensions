@@ -1568,14 +1568,15 @@ English, where the asterisks are never used. ]
 <it-sedere-conjugation> ::=
 	5 		<it-first-stem-general>	|
 	2		5+endo |
-	3		tolto |
+	3		5+uto |
+	4		5+uti |
 	<it-sedere-tabulation>
 
 <it-sedere-tabulation> ::=
 	a1		<it-sedere-present> |
 	a2		<it-sedere-past> |
-	a3		( t1 essere ) 3 |
-	a4		( t2 essere ) 3 |
+	a3		<it-sedere-perfect> |
+	a4		<it-sedere-pluperfect> |
 	a5		<it-sedere-future> |
 	a6		<it-sedere-past-historic> |
 	a7		<it-essere-future> 3 |
@@ -1586,6 +1587,12 @@ English, where the asterisks are never used. ]
 
 <it-sedere-past> ::=
 	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-sedere-perfect> ::=
+	sono 3 | sei  3 | è 3 | siamo 4 | siete 4 | sono 4
+
+<it-sedere-pluperfect> ::=
+	ero 3 | eri  3 | era 3 | eravamo 4 | eravate 4 | erano 4
 
 <it-sedere-future> ::=
 	5+erò | 5+erai | 5+erete | 5+eremo | 5+erete | 5+eranno
@@ -1601,13 +1608,14 @@ English, where the asterisks are never used. ]
 	5 		<it-first-stem-general>	|
 	2		5+endo |
 	3		5+ito |
+	3		5+iti |
 	<it-uscire-tabulation>
 
 <it-uscire-tabulation> ::=
 	a1		<it-uscire-present> |
 	a2		<it-uscire-past> |
-	a3		( t1 essere ) 3 |
-	a4		( t2 essere ) 3 |
+	a3		<it-uscire-perfect> |
+	a4		<it-uscire-pluperfect> |
 	a5		<it-uscire-future> |
 	a6		<it-uscire-past-historic> |
 	a7		<it-essere-future> 3 |
@@ -1618,6 +1626,12 @@ English, where the asterisks are never used. ]
 
 <it-uscire-past> ::=
 	5+ivo | 5+ivi | 5+iva | 5+ivamo | 5+ivate | 5+ivano
+
+<it-uscire-perfect> ::=
+	sono 3 | sei  3 | è 3 | siamo 4 | siete 4 | sono 4
+
+<it-uscire-pluperfect> ::=
+	ero 3 | eri  3 | era 3 | eravamo 4 | eravate 4 | erano 4
 
 <it-uscire-future> ::=
 	5+irò | 5+irai | 5+irete | 5+iremo | 5+irete | 5+iranno
@@ -1790,28 +1804,6 @@ English, where the asterisks are never used. ]
 	2		5+ando |
 	3		5+ato |
 	<it-bloccare-tabulation>
-
-<it-sbloccare-conjugation> ::=
-	5 		<it-first-stem-general>	|
-	2		5+ando |
-	3		5+ato |
-	<it-bloccare-tabulation>
-
-<it-sbloccare-tabulation> ::=
-	a1		<it-sbloccare-present> |
-	a2		<it-prima-past> |
-	a3		<it-avere-perfect> |
-	a4		<it-avere-pluperfect> |
-	a5		<it-sbloccare-future> |
-	a6		<it-prima-past-historic> |
-	a7		<it-avere-future> 3 |
-	p*		3+*
-
-<it-sbloccare-present> ::=
-	5+o | 5+hi | 5+a | 5+hiamo | 5+ate | 5+ano
-
-<it-sbloccare-future> ::=
-	5+herò | 5+herai | 5+herà | 5+heremo | 5+herete | 5+heranno
 
 [
 ---> Italian "first conjugation": regular -ARE verbs. <----
