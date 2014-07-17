@@ -1,4 +1,4 @@
-Version 2/140718 of Italian Language by Massimo Stella begins here.
+Version 2/140719 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -118,16 +118,20 @@ Constant LanguageInanimateGender = male;
 Constant LanguageContractionForms = 3;     ! Italian has three:
 
 [ LanguageContraction text;
-  if (text->0 == 'p' or 'P')
-  	if (text->1 == 's' or 'S') return 1;
-  	else if (text->1 == 'r' or 'R') return 2;
-  if (text->0 == 't' or 'T') return 2;
   if (text->0 == 'a' or 'e' or 'i' or 'o' or 'u' or 'A' or 'E' or 'I' or 'O' or 'U') return 0;
   if (text->0 == 'z' or 'Z' or 'x' or 'X') return 1;
-  if (text->0 ~= 's' or 'S') 
+  if (text->0 == 's' or 'S') {
 	if (text->1 == 'a' or 'e' or 'i' or 'o' or 'u' or 'A' or 'E' or 'I' or 'O' or 'U') return 2;
-	if (text->1 == 'c' or 'C') return 1;   ! "degli scorpioni"
-	else return 1;
+	return 1;
+  }
+  if (text->0 == 'p' or 'P') {
+  	if (text->1 == 's' or 'S') return 1;
+  	else return 2;
+  }
+  if (text->0 == 'g' or 'G') {
+	if (text->1 == 'n' or 'N') return 1;
+  	else return 2;
+  }
   return 2;
 ];
 
@@ -1781,6 +1785,34 @@ English, where the asterisks are never used. ]
 <it-bloccare-future> ::=
 	5+herò | 5+herai | 5+herà | 5+heremo | 5+herete | 5+heranno
 
+<it-bloccare-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+ando |
+	3		5+ato |
+	<it-bloccare-tabulation>
+
+<it-sbloccare-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+ando |
+	3		5+ato |
+	<it-bloccare-tabulation>
+
+<it-sbloccare-tabulation> ::=
+	a1		<it-sbloccare-present> |
+	a2		<it-prima-past> |
+	a3		<it-avere-perfect> |
+	a4		<it-avere-pluperfect> |
+	a5		<it-sbloccare-future> |
+	a6		<it-prima-past-historic> |
+	a7		<it-avere-future> 3 |
+	p*		3+*
+
+<it-sbloccare-present> ::=
+	5+o | 5+hi | 5+a | 5+hiamo | 5+ate | 5+ano
+
+<it-sbloccare-future> ::=
+	5+herò | 5+herai | 5+herà | 5+heremo | 5+herete | 5+heranno
+
 [
 ---> Italian "first conjugation": regular -ARE verbs. <----
 ]
@@ -2038,8 +2070,10 @@ To decide which number is the artflag of (sostan - a thing):
 		decide on 1;
 	if c1 is "p" or c1 is "P":
 		if c2 is "s", decide on 1;
+		decide on 2;
 	if c1 is "g" or c1 is "G":
 		if c2 is "n", decide on 1;
+		decide on 2;
 	decide on 2.
 
 To decide which number is the artflag of (sostan - a room):
@@ -2883,78 +2917,78 @@ Part 4.1 - Pronouns and possessives in commands
 Part 4.2 - Understand grammar
 
 [Generali]
-Understand "attacca [something]" or "attacca il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as attacking.
-Understand "uccidi [something]" or "uccidi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as attacking.
-Understand "prendi [something]" or "prendi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as taking.
-Understand "mangia [something]" or "mangia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as eating.
-Understand "bacia [something]" or "bacia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as kissing.
-Understand "tocca [something]" or "tocca il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as touching.
-Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as burning.
+Understand "attacca [something]" or "attacca il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "uccidi [something]" or "uccidi il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "prendi [something]" or "prendi il/la/lo/i/le/gli/l [something]" as taking.
+Understand "mangia [something]" or "mangia il/la/lo/i/le/gli/l [something]" as eating.
+Understand "bacia [something]" or "bacia il/la/lo/i/le/gli/l [something]" as kissing.
+Understand "tocca [something]" or "tocca il/la/lo/i/le/gli/l [something]" as touching.
+Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
 Understand "annusa" as smelling.
-Understand "bevi [something]" or "bevi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as drinking.
-Understand "compra [something]" or "compra il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as buying.
+Understand "bevi [something]" or "bevi il/la/lo/i/le/gli/l [something]" as drinking.
+Understand "compra [something]" or "compra il/la/lo/i/le/gli/l [something]" as buying.
 Understand "dormi" as sleeping.
 Understand "salta" as jumping.
 Understand "svegliati" as waking up.
-Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as burning.
+Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
 Understand "agita le mani" as waving hands.
-Understand "colpisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" or "colpisci [something]" as swinging.
-Understand "spremi [someone]" or "spremi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as squeezing.
-Understand "strizza [someone]" or "strizza il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as squeezing.
+Understand "colpisci il/la/lo/i/le/gli/l [something]" or "colpisci [something]" as swinging.
+Understand "spremi [someone]" or "spremi il/la/lo/i/le/gli/l [something]" as squeezing.
+Understand "strizza [someone]" or "strizza il/la/lo/i/le/gli/l [something]" as squeezing.
 Understand "ascolta" as listening.
 Understand "verifica" as verifying the story file.
 Understand "pensa" or "ricorda" as thinking.
-Understand "rompi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as attacking.
+Understand "rompi il/la/lo/i/le/gli/l [something]" as attacking.
 
 [Visione]
-Understand "guarda [something]" or "guarda il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
-Understand "leggi [something]" or "leggi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
-Understand "guarda dentro [something]" or "guarda dentro il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" or "guarda in/nel/nello/nella/negli/nelle/nell [something]" as searching.
-Understand "esamina [something]" or "esamina il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
+Understand "guarda [something]" or "guarda il/la/lo/i/le/gli/l [something]" as examining.
+Understand "leggi [something]" or "leggi il/la/lo/i/le/gli/l [something]" as examining.
+Understand "guarda dentro [something]" or "guarda dentro il/la/lo/i/le/gli/l [something]" or "guarda in/nel/nello/nella/negli/nelle/nell [something]" as searching.
+Understand "esamina [something]" or "esamina il/la/lo/i/le/gli/l [something]" as examining.
 Understand "guarda" or "g" as looking.
-Understand "guarda sotto il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell/al/alla/allo/all/ai/alle/agli [something]" as looking under.
+Understand "guarda sotto il/la/lo/i/le/gli/l/al/alla/allo/all/ai/alle/agli [something]" as looking under.
 Understand "guarda sotto [something]" as looking under.
-Understand "descrivi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as examining.
+Understand "descrivi il/la/lo/i/le/gli/l [something]" as examining.
 
 [Interazione Fisica]
-Understand "calcia [something]" or "calcia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as attacking.
-Understand "accendi [something]" or "accendi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as switching on.
-Understand "spegni [something]" or "spegni il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as switching off.
-Understand "spingi [something]" or "spingi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as pushing.
-Understand "indossa [something]" or "indossa il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as wearing.
-Understand "togliti il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as taking off.
-Understand "togli [something]" or "togli il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as taking off.
-Understand "lascia [something]" or "lascia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as dropping.
-Understand "mostra [something] a [something]" or "mostra il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] al/alla/allo/all/ai/agli/alle/a [something]" as showing it to.
-Understand "poggia [something] su/sopra [something]" or "poggia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "metti [something] su/sopra [something]" or "metti il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "inserisci [something] dentro [something]" or "inserisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
-Understand "metti [something] in/dentro [something]" or "metti il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
+Understand "calcia [something]" or "calcia il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "accendi [something]" or "accendi il/la/lo/i/le/gli/l [something]" as switching on.
+Understand "spegni [something]" or "spegni il/la/lo/i/le/gli/l [something]" as switching off.
+Understand "spingi [something]" or "spingi il/la/lo/i/le/gli/l [something]" as pushing.
+Understand "indossa [something]" or "indossa il/la/lo/i/le/gli/l [something]" as wearing.
+Understand "togliti il/la/lo/i/le/gli/l [something]" as taking off.
+Understand "togli [something]" or "togli il/la/lo/i/le/gli/l [something]" as taking off.
+Understand "lascia [something]" or "lascia il/la/lo/i/le/gli/l [something]" as dropping.
+Understand "mostra [something] a [something]" or "mostra il/la/lo/i/le/gli/l [something] al/alla/allo/all/ai/agli/alle/a [something]" as showing it to.
+Understand "poggia [something] su/sopra [something]" or "poggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "metti [something] su/sopra [something]" or "metti il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "inserisci [something] dentro [something]" or "inserisci il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
+Understand "metti [something] in/dentro [something]" or "metti il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
 Understand "cerca il/la/i/le/lo/l/gli/nel/nello/nell/nella/nelle/negli/nei/dentro/sul/sullo/sull/sulla/sugli/sulle/sui [something]" or "perquisisci  il/la/lo/i/le/gli/l [something]" as searching.
 Understand "lega [something]  a/al/alla/alle/agli/ai/allo/all [something]" or "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
-Understand "taglia [something]" or "taglia il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as cutting.
-Understand "pulisci [something]" or "pulisci il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
-Understand "strofina [something]" or "strofina il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as rubbing.
+Understand "taglia [something]" or "taglia il/la/lo/i/le/gli/l [something]" as cutting.
+Understand "pulisci [something]" or "pulisci il/la/lo/i/le/gli/l [something]" as rubbing.
+Understand "strofina [something]" or "strofina il/la/lo/i/le/gli/l [something]" as rubbing.
 
 [Dialoghi]
 Talking to is an action applying to one visible thing.
-Understand "parla [something]" or "parla col/colla/colle/con/coll [something]" or "parla al/alla/allo/all/agli/ai/a/alle/all [something]" or "parla con il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as talking to.
+Understand "parla [something]" or "parla col/colla/colle/con/coll [something]" or "parla al/alla/allo/all/agli/ai/a/alle/all [something]" or "parla con il/la/lo/i/le/gli/l [something]" as talking to.
 Understand "chiedi a [something] di [text]" or "chiedi al/alla/allo/all/a/ai/alle/agli [something] di/del/dei/dello/della/degli/dell/delle/dei/riguardo/circa [text]" as asking it about.
 Understand "parla a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dello/delle/degli/dell [text]" as telling it about.
 Understand "interroga il/la/i/le/lo/gli/l [something] riguardo il/la/i/le/lo/gli/l [text]" as telling it about.
 Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dello/delle/degli/dell [text]" as telling it about.
-Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] il/la/i/le/l/gli/quei/quella/quello/quelle [something]" as asking it for.
+Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] il/la/i/le/l/gli [something]" as asking it for.
 Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dell/dello/delle/degli [text]" as asking it about.
 Understand "rispondi a/al/alla/alle/agli/ai/allo/agli/all [someone] riguardo/di/del/della/dell/dello/delle/degli [text]" as answering it that.
 
 [Chiavi]
-Understand "apri [something]" or "apri il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as opening.
-Understand "chiudi [something]" or "chiudi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as closing.
-Understand "sblocca [something] con [something]" or "sblocca il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] con il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as unlocking it with.
-Understand "apri [something] con [something]" or "apri il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] con  il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as unlocking it with.
-Understand "blocca [something] con [something]" or "blocca il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] con  il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as locking it with.
-Understand "chiudi [something] con [something]" or "chiudi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] con  il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something]" as locking it with.
-Understand "rimuovi [something] da [something]" or "rimuovi il/la/lo/i/le/gli/l/quei/quella/quello/quelle/quegli/quei/quell [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "apri [something]" or "apri il/la/lo/i/le/gli/l [something]" as opening.
+Understand "chiudi [something]" or "chiudi il/la/lo/i/le/gli/l [something]" as closing.
+Understand "sblocca [something] con [something]" or "sblocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
+Understand "apri [something] con [something]" or "apri il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
+Understand "blocca [something] con [something]" or "blocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
+Understand "chiudi [something] con [something]" or "chiudi il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
+Understand "rimuovi [something] da [something]" or "rimuovi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
 
 [Descrizioni]
 Understand "brevi" as preferring sometimes abbreviated room descriptions.
