@@ -1990,8 +1990,7 @@ Chapter 2.4.2 - Meaningful verbs
 
 Section 2.4.2.1 - In the Standard Rules
 
-[We declare Italian equivalents of all meaningful verbs built into the
-Standard Rules.]
+[We declare Italian equivalents of all meaningful verbs built into the Standard Rules.]
 
 In Italian essere is a verb meaning to be.
 In Italian avere is a verb meaning to have.
@@ -3210,13 +3209,13 @@ Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono re
 
 Chapter: Introduzione
 
-L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione non tratterà di quest'ultima possibilità, se non in parte, visto che, almeno in questa fase, è secondaria.
+L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione tratterà parzialmente di quest'ultima possibilità, visto che, almeno in questa fase, è secondaria. Inoltre, è ancora incompleta e presenta problemi rilevanti.
 
 Chapter: Installare l'estensione
 
-Per installare l'estensione nel programma Inform 7 installato sul proprio computer è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti. 
+Per installare l'estensione in Inform 7 è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti. 
 
-Per includere l'estensione e utilizzarla nelle proprie avventure NON occorre scrivere nel sorgente la seguente linea:
+Per includere l'estensione e utilizzarla nelle proprie avventure NON bisogna scrivere nel sorgente la seguente linea (come invece si usa per le altre estensioni):
 
 	Include Italian Language by Massimo Stella.
 
@@ -3293,11 +3292,11 @@ Come si può sfruttare questa funzionalità? È sufficiente che nei testi tra vi
 Riproponendo l'esempio precedente:
 
 	Instead of entering a container (called contenitore):
-		say "[Tu] non [puoi] entrare [inp the contenitore] perché [regarding the contenitore][sei] [infetto]."
+		say "[Tu] non [puoi] entrare [inp the contenitore] perché [sei] [infetto]."
 
 Cosa verrebbe risposto al comando "entra nelle gabbie" con il tempo al futuro e la seconda persona plurale?
 
-	Voi non potrete entrare nelle gabbie perché sono infette.
+	Voi non potrete entrare nelle gabbie perché saranno infette.
 	
 Invece cosa verrebbe risposto al comando "entra in acqua" con il tempo al passato e la prima persona singolare?
 
@@ -3312,14 +3311,14 @@ Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
 
 "Tu": si adatta con lo "story viewpoint" specificato (nell'esempio diventa perciò "Voi" e "Io" a seconda dei casi). Altre particelle disponibili sono "tu" (per il minuscolo), "te", "ti" ecc.
 "puoi": si adatta con lo "story viewpoint" (poiché segue il "Tu") e con lo "story tense". Può essere utilizzato perché il verbo "potere" (così come tanti altri -- vedi sezione 3.1.1) è definito nell'estensione.
-"sei": si comporta come "puoi", ma dato che non deve seguire il numero del "Tu", ma quello del contenitore, prima dev'essere specificato "regarding the contenitore" che fa comprendere al sistema qual è il soggetto. Tutto ciò che segue il "regarding" si accorda col numero e il genere dell'oggetto specificato.
+"sei": si comporta come "puoi", ma non segue il numero del "Tu", ma quello del contenitore, perchè la locuzione "[inp the contenitore]" lo precede. Se non fosse stato così, si sarebbe potuto specificare prima del verbo "[regarding the contenitore]", che di per sé non stampa nulla sullo schermo, ma fa comprendere al sistema qual è il soggetto implicito. Nel caso il soggetto fosse stato il giocatore, sarebbe bastato scrivere "[regarding the player]". Tutto ciò che segue il "regarding" si accorda col numero e il genere dell'oggetto specificato, finché non si specifica un nuovo "regarding" oppure un nuovo nome, sempre tra parentesi quadre.
 
 Ovviamente quel soggetto (Tu) a inizio frase suona piuttosto innaturale. Per toglierlo si può procedere in questo modo:
  
 	Instead of entering a container (called contenitore):
 		say "Non [regarding the player][puoi] entrare [inp the contenitore] perché [sei] [infetto]."
 		
-Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player", mentre il "[sei] [infetto]" si riferisce al contenitore.
+Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player", mentre il "[sei] [infetto]" si riferisce sempre al contenitore.
 
 Inoltre, se la prima parola del testo non fosse "Non" (già maiuscolo), ma direttamente il verbo "puoi", non funzionerebbe scrivere:
 
@@ -3331,6 +3330,24 @@ Cosa possiamo fare? Purtroppo l'unico modo è ricorrere all'estensione "Text Cap
 	say "[regarding the player][maiuscolo][puoi][maiuscolo] entrare...".
 	
 La frase che deve essere scritta con l'iniziale maiuscola va contornata da due "maiuscolo".
+
+Chapter: Scrittura del codice sorgente in italiano
+
+Questa estensione consente anche di scrivere una parte del codice sorgente in italiano, con una grave limitazione dovuta a un bug nel codice proprietario di Inform 7 che rende la possibilità praticamente inutilizzabile. Si spera che venga corretto al più presto.
+
+Più sopra si è già mostrato l'uso degli articoli italiani per specificare genere e numero di un nome. Si può fare di più.
+Per esempio:
+
+	La cucina sono una stanza. ["è" non viene riconosciuto, purtroppo. Questo e il bug di cui parlavo prima]
+	La credenza sono un contenitore dentro la cucina.
+	Il tavolo sono un supporto dentro la cucina.
+	Il piatto sono una cosa sopra il tavolo.
+	Le tazze (f) sono una cosa sopra il tavolo.
+	L' armadio sono una cosa dentro la cucina.
+
+Purtroppo questa opportunità viene completamente vanificata dal dover utilizzare "sono" al posto di "è", visto che quest'ultimo non viene riconosciuto dal sistema per un bug assurdo che verrà sistemato chissà quando. Un altro bug riguarda gli articoli plurali femminili determinativo e indeterminativo: vengono compresi solo quando vengono accompagnati dalla (f) che specifica il genere femminile. Da notare, inoltre, lo spazio necessario tra l'articolo con l'apostrofo e il nome a cui si rifersisce (armadio): se non ci fosse, "L'armadio" verrebbe considerato come un'unica parola.
+
+Nella sezione 2.2.5.1 è possibile leggere l'elenco completo dei tipi disponibili tradotti dall'inglese in italiano. Mentre l'elenco dei verbi disponibili è nelle sezioni 2.4.3 e 2.4.2.1 del sorgente dell'estensione.
 
 Chapter: Conclusione
 			
