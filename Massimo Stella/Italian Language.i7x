@@ -3209,7 +3209,7 @@ Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono re
 
 Chapter: Introduzione
 
-L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione tratterà parzialmente di quest'ultima possibilità, visto che, almeno in questa fase, è secondaria. Inoltre, è ancora incompleta e presenta problemi rilevanti.
+L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di un'avventura scritta con Inform 7 dall'inglese all'italiano. In realtà, non solo la lingua con cui il giocatore interagirà con il gioco diviene l'italiano, ma anche il linguaggio di programmazione vero e proprio potrebbe diventare, in alcuni aspetti, l'italiano. Per il momento la documentazione tratterà parzialmente di quest'ultima possibilità, visto che, almeno in questa fase, è secondaria.
 
 Chapter: Installare l'estensione
 
@@ -3333,19 +3333,19 @@ La frase che deve essere scritta con l'iniziale maiuscola va contornata da due "
 
 Chapter: Scrittura del codice sorgente in italiano
 
-Questa estensione consente anche di scrivere una parte del codice sorgente in italiano, con una grave limitazione dovuta a un bug nel codice proprietario di Inform 7 che rende la possibilità praticamente inutilizzabile. Si spera che venga corretto al più presto.
+Questa estensione consente anche di scrivere una parte del codice sorgente in italiano.
 
 Più sopra si è già mostrato l'uso degli articoli italiani per specificare genere e numero di un nome. Si può fare di più.
 Per esempio:
 
-	La cucina sono una stanza. ["è" non viene riconosciuto, purtroppo. Questo e il bug di cui parlavo prima]
-	La credenza sono un contenitore dentro la cucina.
-	Il tavolo sono un supporto dentro la cucina.
-	Il piatto sono una cosa sopra il tavolo.
+	La cucina è una stanza.
+	La credenza è un contenitore dentro la cucina.
+	Il tavolo è un supporto dentro la cucina.
+	Il piatto è una cosa sopra il tavolo.
 	Le tazze (f) sono una cosa sopra il tavolo.
-	L' armadio sono una cosa dentro la cucina.
+	L' armadio è una cosa dentro la cucina.
 
-Purtroppo questa opportunità viene completamente vanificata dal dover utilizzare "sono" al posto di "è", visto che quest'ultimo non viene riconosciuto dal sistema per un bug assurdo che verrà sistemato chissà quando. Un altro bug riguarda gli articoli plurali femminili determinativo e indeterminativo: vengono compresi solo quando vengono accompagnati dalla (f) che specifica il genere femminile. Da notare, inoltre, lo spazio necessario tra l'articolo con l'apostrofo e il nome a cui si rifersisce (armadio): se non ci fosse, "L'armadio" verrebbe considerato come un'unica parola.
+Uno strano comportamento riguarda gli articoli plurali femminili determinativo e indeterminativo: vengono compresi solo quando sono accompagnati dalla (f) che specifica il genere femminile. Da notare, inoltre, lo spazio necessario tra l'articolo con l'apostrofo e il nome a cui si rifersisce (armadio): se non ci fosse, "L'armadio" verrebbe considerato come un'unica parola.
 
 Nella sezione 2.2.5.1 è possibile leggere l'elenco completo dei tipi disponibili tradotti dall'inglese in italiano. Mentre l'elenco dei verbi disponibili è nelle sezioni 2.4.3 e 2.4.2.1 del sorgente dell'estensione.
 
