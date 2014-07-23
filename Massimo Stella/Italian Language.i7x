@@ -1,4 +1,4 @@
-Version 2/140719 of Italian Language by Massimo Stella begins here.
+Version 2/140723 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -90,14 +90,14 @@ language Italian
 <indefinite-article> ::=
 	/b/ un/uno |			[singular, masculine]
 	/c/ una/un' |			[singular, feminine]
-	/d/ delle/alcune |		[plural, feminine]
-	/e/ degli/dei/alcuni	[plural, masculine (by default)]
+	/e/ degli/dei/alcuni |	[plural, masculine (by default)]
+	/f/ delle/alcune 		[plural, feminine]
 
 <definite-article> ::=
 	/b/ il/lo/l' |				[singular, masculine]
 	/c/ la/l' |				[singular, feminine]
-	/d/ le |				[plural, feminine]
-	/e/ gli/i				[plural, masculine (by default)]
+	/e/ gli/i |				[plural, masculine (by default)]
+	/f/ le 				[plural, feminine]
 
 <np-relative-phrase-implicit> ::=
 	/a/ indossato |		[replacing "worn" in English]
@@ -2030,7 +2030,6 @@ language Italian
 -) in the Preform grammar.
 
 In Italian essere dentro is a verb meaning to be in.
-In Italian essere nella is a verb meaning to be in.
 In Italian essere sopra is a verb meaning to be on.
 In Italian essere parte di is a verb meaning to be part of.
 In Italian essere superiore a is a verb meaning to be greater than.
@@ -2039,8 +2038,8 @@ In Italian essere almeno is a verb meaning to be at least.
 In Italian essere al più is a verb meaning to be at most.
 In Italian essere accanto is a verb meaning to be adjacent to.
 In Italian essere sopra a is a verb meaning to be above.
-In Italian essere sotto di is a verb meaning to be below.
-In Italian essere di traverso is a verb meaning to be through.
+In Italian essere sotto a is a verb meaning to be below.
+In Italian essere di traverso a is a verb meaning to be through.
 
 Volume 3 - Responses
 
@@ -3342,10 +3341,11 @@ Per esempio:
 	La credenza è un contenitore dentro la cucina.
 	Il tavolo è un supporto dentro la cucina.
 	Il piatto è una cosa sopra il tavolo.
-	Le tazze (f) sono una cosa sopra il tavolo.
+	Le tazze sono una cosa sopra il tavolo.
 	L' armadio è una cosa dentro la cucina.
+	L' arancia (f) è una cosa sopra il tavolo.
 
-Uno strano comportamento riguarda gli articoli plurali femminili determinativo e indeterminativo: vengono compresi solo quando sono accompagnati dalla (f) che specifica il genere femminile. Da notare, inoltre, lo spazio necessario tra l'articolo con l'apostrofo e il nome a cui si rifersisce (armadio): se non ci fosse, "L'armadio" verrebbe considerato come un'unica parola.
+Da notare lo spazio necessario tra l'articolo apostrofato e il nome a cui si riferisce (armadio o arancia): se non ci fosse, "l'armadio" verrebbe considerato come un'unica parola. Inoltre, nel caso secondo caso (arancia), è necessario specificare che si tratta di una cosa di genere femminile mediante la "f" tra parentesi, altrimenti il sistema non avrebbe modo di dedurlo dal solo articolo apostrofato.
 
 Nella sezione 2.2.5.1 è possibile leggere l'elenco completo dei tipi disponibili tradotti dall'inglese in italiano. Mentre l'elenco dei verbi disponibili è nelle sezioni 2.4.3 e 2.4.2.1 del sorgente dell'estensione.
 
