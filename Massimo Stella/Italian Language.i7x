@@ -1,4 +1,4 @@
-Version 2/140723 of Italian Language by Massimo Stella begins here.
+Version 2/140728 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -820,11 +820,32 @@ A supporter translates into Italian as un supporto.
 A backdrop translates into Italian as un fondale.
 A person translates into Italian as una persona.
 A man translates into Italian as un uomo.
-A woman translates into Italian as una femmina.
+A woman translates into Italian as una donna.
 A animal translates into Italian as un animale.
 A device translates into Italian as un dispositivo.
 A direction translates into Italian as una direzione.
 A region translates into Italian as una regione.
+
+A number translates into Italian as un numero.
+A real number translates into Italian as un numero reale.
+A time translates into Italian as un'ora.
+A truth state translates into Italian as un valore logico.
+A text translates into Italian as un testo.
+A unicode character translates into Italian as un carattere unicode.
+A snippet translates into Italian as un frammento.
+A stored action translates into Italian as un'azione memorizzata.
+A scene translates into Italian as una scena.
+A command parser error translates into Italian as un errore del parser dei comandi.
+A use option translates into Italian as un'opzione.
+A response translates into Italian as una risposta.
+A verb translates into Italian as un verbo.
+A table name translates into Italian as un nome di tabella.
+A equation name translates into Italian as un nome d'equazione.
+A rulebook outcome translates into Italian as un risultato di una regola.
+A action name translates into Italian as un nome d'azione.
+A figure name translates into Italian as un nome di figura.
+A sound name translates into Italian as un nome di suono.
+A external file translates into Italian as un nome di file.
 
 Section 2.2.5.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
@@ -968,7 +989,7 @@ language Italian
 <adjective-to-masculine-plural> ::=
 	<it-adjective-to-masculine-plural-exceptions> |
 	...	<it-adjective-to-masculine-plural-by-ending> |
-	... <adjective-to-plural>
+	...	<adjective-to-plural>
 
 <adjective-to-plural> ::=
 	*		1i
@@ -998,7 +1019,7 @@ language Italian
 <adjective-to-feminine-singular> ::=
 	<it-adjective-to-feminine-singular-exceptions> |
 	...	<it-adjective-to-feminine-singular-by-ending> |
-	... <it-adjective-to-feminine-default>
+	...	<it-adjective-to-feminine-default>
 
 <it-adjective-to-feminine-singular-exceptions> ::=
 	rosa		rosa |
@@ -1010,10 +1031,9 @@ language Italian
 	perbene		perbene |
 	dabbene		dabbene |
 
-
 <it-adjective-to-feminine-singular-by-ending> ::=
 	*tore		4trice |
-	*o			1a			
+	*e			1e		
 
 <it-adjective-to-feminine-default> ::=
 	*			1a
@@ -1021,7 +1041,7 @@ language Italian
 <adjective-to-feminine-plural> ::=
 	<it-adjective-unagreeing> |
 	...	<it-adjective-to-feminine-plural-by-ending> |
-	... <it-adjective-to-plural-fem>
+	...	<it-adjective-to-plural-fem>
 
 <it-adjective-unagreeing> ::=
 	rosa		rosa |
@@ -1051,6 +1071,7 @@ language Italian
 	*gio		3ge
 	
 <it-adjective-to-plural-fem> ::=
+	*e	1i |
 	*	1e
 
 -) in the Preform grammar.
@@ -1994,7 +2015,7 @@ Section 2.4.2.1 - In the Standard Rules
 
 In Italian essere is a verb meaning to be.
 In Italian avere is a verb meaning to have.
-In Italian connettere is a verb meaning to relate.
+In Italian relazionare is a verb meaning to relate.
 In Italian fornire is a verb meaning to provide.
 In Italian contenere is a verb meaning to contain.
 In Italian supportare is a verb meaning to support.
