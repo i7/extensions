@@ -1,4 +1,4 @@
-Version 2/140728 of Italian Language by Massimo Stella begins here.
+Version 2/140801 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -2124,6 +2124,12 @@ To say (p - an articulated preposition) the (obj - a thing):
 		say "[if obj is plural-named][5Gli of p] [otherwise if artflag of obj is 0][7L of p][otherwise if artflag of obj is 1][2Lo of p] [end if]";
 	say "[regarding the obj][obj]".
 
+To say (p - an articulated preposition) cui (obj - a thing):
+	if obj is female:
+		say "[if obj is plural-named][6Le of p] [otherwise][3La of P] [end if]";
+	otherwise:
+		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]".
+
 To say (p - an articulated preposition) the (obj - a room):
 	if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
@@ -2205,6 +2211,14 @@ To say ci sono:
 		say "c[']erano";
 	otherwise:
 		say "ci saranno";
+
+To say sono:
+	if story tense is present tense:
+		say "sono";
+	otherwise if story tense is past tense:
+		say "erano";
+	otherwise:
+		say "saranno";
 		
 In Italian aperto is an adjective.
 In Italian chiuso is an adjective.
@@ -2780,7 +2794,7 @@ Parser error internal rule response (D) is "Non ho compreso il numero."
 Parser error internal rule response (E) is "Non [regarding the player][puoi] vedere nulla del genere."
 Parser error internal rule response (F) is "Hai detto troppo poco."
 Parser error internal rule response (G) is "[Ora] non lo [possiedi]."
-Parser error internal rule response (H) is "Non puoi usare più di un oggetto con quel verbo."
+Parser error internal rule response (H) is "Non puoi usare più di un oggetto con questo verbo."
 Parser error internal rule response (I) is "Puoi usare più di un oggetto per verbo solo una volta per ogni linea."
 Parser error internal rule response (J) is "Non capisco a cosa si riferisca [the noun]."
 Parser error internal rule response (K) is "[Ora] Non [regarding the player][puoi] vedere [the noun]."
@@ -2822,7 +2836,7 @@ Parser clarification internal rule response (A) is "Chi intendi, ".
 Parser clarification internal rule response (B) is "Quale intendi, ".
 Parser clarification internal rule response (C) is "Scusami, puoi specificare un solo nome. Quale esattamente?".
 Parser clarification internal rule response (D) is "A chi vorresti [if the noun is not the player]che [the noun] applicasse[otherwise]applicare[end if] l'azione '[parser command so far]'?".
-Parser clarification internal rule response (E) is "[if the noun is not the player]Cosa vorresti che [the noun] facesse con '[parser command so far]'?[otherwise]OK, ma `[parser command so far]` è troppo generico.[end if] Specifica qualcosa.".
+Parser clarification internal rule response (E) is "[if the noun is not the player]Cosa vorresti che [the noun] facesse con '[parser command so far]'?[otherwise]'[maiuscolo][parser command so far][maiuscolo]' è troppo generico.[end if] Specifica qualcosa.".
 Parser clarification internal rule response (F) is "quelle cose".
 Parser clarification internal rule response (G) is "quello".
 Parser clarification internal rule response (H) is " o ".
@@ -2959,6 +2973,7 @@ Understand "esamina [something]" or "esamina il/la/lo/i/le/gli/l [something]" as
 Understand "guarda" or "g" as looking.
 Understand "guarda sotto il/la/lo/i/le/gli/l/al/alla/allo/all/ai/alle/agli [something]" as looking under.
 Understand "guarda sotto [something]" as looking under.
+Understand "guarda su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" as examining.
 Understand "descrivi il/la/lo/i/le/gli/l [something]" as examining.
 
 [Interazione Fisica]
@@ -3035,6 +3050,9 @@ Understand "sipunti" or "sipunteggio" or "notifica" as switching score notificat
 Understand "nopunti" or "nopunteggio" or "notifica off" as switching score notification off.
 Understand "salva" as saving the game.
 Understand "carica" as restoring the game.
+Understand "interrompi" or "smetti" as quitting the game.
+Understand "ricomincia" as restarting the game.
+Understand "versione" as requesting the story file version.
 
 [Direzioni]
 The printed name of north is "nord". 
@@ -3201,7 +3219,6 @@ To decide what number is the current event number in GEP:
 
 To set the current glk event in GEP to (ev - a g-event):
 	(- evGlobal-->0 = {ev}; -).
-
 
 
 Italian Language ends here.
