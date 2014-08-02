@@ -7,7 +7,7 @@ Include Automap by Mark Tilford.
 Section 1 - Global constants, Memory management, Kinds, and verbs
 
 To report dynamic allocation conflict:
-	say "[bracket]Il tuo interprete non supporta l[']allocazione dinamica, quindi l[']estensione 'Automap' non funzionerÃ .[close bracket][line break]";
+	say "[bracket]Il tuo interprete non supporta l[']allocazione dinamica, quindi l[']estensione 'Automap' non funzionerà.[close bracket][line break]";
 	now current zoom is map absent;
 		
 Check zooming in: if there is no dynamic allocation conflict begin; now current zoom is map zoomed in; say "Zoom in!" instead; otherwise; report dynamic allocation conflict; end if.
@@ -21,7 +21,7 @@ Understand "nascondi mappa" as zooming away.  Check zooming away: now current zo
 Section 5 - Hyperlink specific stuff (for use with Basic Hyperlinks by Emily Short)
 
 Check hyperlink moving to room:
-	if the noun is the location, say "[regarding the player][maiuscolo][Sei][maiuscolo] giÃ  [inp the location]." instead.
+	if the noun is the location, say "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the location]." instead.
 	
 Check hyperlink moving to room:
 	while the player is not in the noun:
