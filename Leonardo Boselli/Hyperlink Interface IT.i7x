@@ -44,7 +44,18 @@ Chapter - Responses
     initializing replacement commands list rule response (G) is "x me".
     initializing replacement commands list rule response (H) is "salva".
     initializing replacement commands list rule response (I) is "carica".
-    initializing replacement commands list rule response (J) is "[set link 2]guarda[end link] | [set link 3]inv[end link] | [set link 1]menù[end link]>".
+    initializing replacement commands list rule response (J) is "zoom".
+    initializing replacement commands list rule response (K) is "U".
+    initializing replacement commands list rule response (L) is "N".
+    initializing replacement commands list rule response (M) is "NE".
+    initializing replacement commands list rule response (N) is "E".
+    initializing replacement commands list rule response (O) is "SE".
+    initializing replacement commands list rule response (P) is "S".
+    initializing replacement commands list rule response (Q) is "SW".
+    initializing replacement commands list rule response (R) is "W".
+    initializing replacement commands list rule response (S) is "NW".
+    initializing replacement commands list rule response (T) is "D".
+    initializing replacement commands list rule response (U) is "[set link 2]guarda[end link] | [set link 3]inv[end link] | [set link 1]menù[end link]>".
     setup hyperlink emphasis rule response (A) is "[story title] fa uso di collegamenti ipertestuali evidenziati. È [if hyperlinks required is true]necessario[else]raccomandato[end if] che l'interprete li visualizzi correttamente con qualche forma di evidenziazione. Premi il numero corrispondente per cambiare le opzioni di visualizzazione finché non trovi quella che risulta più chiara sul tuo sistema.".
     setup hyperlink emphasis rule response (B) is "I collegamenti ipertestuali agli [o]oggetti[x] vengono visualizzati [o]così[x].".
     setup hyperlink emphasis rule response (C) is "I collegamenti ipertestuali alle [d]uscite[x] vengono visualizzati [d]così[x].".
@@ -60,7 +71,7 @@ Chapter - Responses
     Hyperlink Interface carry out listing exits rule response (B) is "Da [qui], [regarding the player][puoi] andare verso [a list of viable directions].".
     Hyperlink Interface carry out thing listing rule response (A) is "Nelle vicinanze [regarding the player][if the number of visible other things which are not carried by the player is 0]non [vedi] nulla d[']interessante[otherwise][vedi] [a list of visible other things which are not carried by the player][end if].".
     Hyperlink Interface setup trigger rule response (A) is "Benvenuto a [o][story title][x][if release number > 0], release [release number][end if].[paragraph break]Se nessuna parola risulta colorata o evidenziata, premi K.[paragraph break]Premi [t]N[x] per cominciare dall[']inizio o [t]R[x] per continuare una storia già iniziata.".
-    Hyperlink Interface not a verb I recognise rule response (A) is "[as the parser]Non è un[']azione o un collegamento che possa essere utilizzato adesso.[as normal]".
+    Hyperlink Interface not a verb I recognise rule response (A) is "[as the parser]Non è un[']azione nè una parola chiave che può essere utilizzata adesso[as normal].".
     Hyperlink Interface showing the hyperlink introduction text rule response (A) is "Leggendo [story title], vedrai nel testo un certo numero di collegamenti ipertestuali evidenziati. Clicca sui collegamenti per progredire nella storia. [if object hyperlink highlighting is true]Puoi cliccare un collegamento a un [o]oggetto[x] per esaminarlo. [end if][if direction hyperlink highlighting is true]Una [d]direzione[x] evidenziata indica che quella parola ti sposterà nella direzione specificata . [end if][if topic hyperlink highlighting is true]Un [t]argomento[x] di discussione evidenziato sposterà la conversazione verso quell[']argomento. [end if][paragraph break]Se [if the number of active hyperlink systems > 1]i collegamenti ipertestuali nelle righe qui sopra[otherwise]il collegamento ipertestuale nella riga qui sopra[end if] non spicca tra il testo che lo circonda, scrivi HYPERLINKS per modificarne lo stile.".
 
 Hyperlink Interface IT ends here.
