@@ -64,7 +64,7 @@ Check hailing (this is the alternate check what's being hailed rule):
     say "[regarding the player][maiuscolo][stai][maiuscolo] già parlando con [the current interlocutor]." (A) instead;
   now the noun is a random visible person who is not the player;
   if the noun is a person and the noun is not yourself and the noun is not the player,  
-    say "(rivolgendoti [ap the noun])" (B);
+    do nothing; [say "(rivolgendoti [ap the noun])" (B);]
   otherwise say "Non [regarding nothing][ci sono] nessun altro [qui]." (C) instead.
 
 
