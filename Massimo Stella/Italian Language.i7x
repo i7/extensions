@@ -1,4 +1,4 @@
-Version 2/140801 of Italian Language by Massimo Stella begins here.
+Version 2/140802 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -138,13 +138,13 @@ Constant LanguageContractionForms = 3;     ! Italian has three:
 Array LanguageArticles -->
 !  Contraction form 0:    Contraction form 1:     Contraction form 2:
 !  Cdef   Def    Indef    Cdef   Def    Indef     Cdef   Def    Indef
-   "L'"   "l'"  "un "     "Lo "  "lo "   "uno "    "Il "  "il "  "un "  
+   "L'"   "l'"  "un "     "Lo "  "lo "   "uno "    "Il "  "il "  "un "
    "L'"   "l'"  "un'"     "La "  "la "   "una "    "La "  "la "  "una "
-   "Gli " "gli " "degli " "Gli " "gli "  "degli "  "I "   "i "   "dei "  
+   "Gli " "gli " "degli " "Gli " "gli "  "degli "  "I "   "i "   "dei "
    "Le "  "le " "delle "  "Le "  "le "   "delle "  "Le "  "le "  "delle ";
 				   !             a           i
 				   !             s     p     s     p
-				   !             m f n m f n m f n m f n               
+				   !             m f n m f n m f n m f n
 
 Array LanguageGNAsToArticles --> 0 1 0 2 3 0 0 1 0 2 3 0;
 -) instead of "Articles" in "Language.i6t".
@@ -177,10 +177,10 @@ language Italian
 	diciassette |
 	diciotto |
 	diciannove |
-	venti 
+	venti
 
 <ordinal-number-in-words> ::=
-	zero |			
+	zero |
 	primo |
 	secondo |
 	terzo |
@@ -213,28 +213,28 @@ Array LanguageNumbers table
 	#Iftrue (WORDSIZE == 4);
 	if (n >= 1000000000) {
 		if (f == 1) print ", ";
-		if (n<2000000000) print "un miliardo"; 
-		if (n>=2000000000) print (LanguageNumber) n/1000000000, " miliardi"; 
+		if (n<2000000000) print "un miliardo";
+		if (n>=2000000000) print (LanguageNumber) n/1000000000, " miliardi";
 		n = n%1000000000; f = 1;
 	}
 	if (n >= 1000000) {
 		if (f == 1) print ", ";
-		if (n<2000000) print "un milione"; 
-		if (n>=2000000) print (LanguageNumber) n/1000000, " milioni"; 
+		if (n<2000000) print "un milione";
+		if (n>=2000000) print (LanguageNumber) n/1000000, " milioni";
 		n = n%1000000; f = 1;
 	}
 	#Endif;
 	if (n >= 1000) {
 		if (f == 1) print ", ";
-		if (n<2000) print "mille"; 
-		if (n>=2000) print (LanguageNumber) n/1000, "mila"; 
+		if (n<2000) print "mille";
+		if (n>=2000) print (LanguageNumber) n/1000, "mila";
 		n = n%1000; f = 0;
 	}
-	if (n>=100)  { 
-		if (f==1) print ", "; 
-		if (n<200) print "cento"; 
-		if (n>=200) print (LanguageNumber) n/100, "cento"; 
-		n=n%100; f=1; 
+	if (n>=100)  {
+		if (f==1) print ", ";
+		if (n<200) print "cento";
+		if (n>=200) print (LanguageNumber) n/100, "cento";
+		n=n%100; f=1;
 	}
 
 	if (n==0) rfalse;
@@ -281,7 +281,7 @@ Array LanguageNumbers table
 					if (n%10 == 3) {print "atré"; return; }
 				7:  print "settant";
 					if (n%10 == 1) {print "uno"; return; }
-					if (n%10 == 3) {print "atré"; return; } 
+					if (n%10 == 3) {print "atré"; return; }
 				8:  print "ottant";
 					if (n%10 == 1) {print "uno"; return; }
 					if (n%10 == 3) {print "atré"; return; }
@@ -368,12 +368,12 @@ To say ti:
 [Un'altra forma utile è il suffisso con valore di complemento oggetto -lo]
 To say lo:
 	if the prior named object is male:
-		if the prior named object is singular-named: 
+		if the prior named object is singular-named:
 			say "lo";
 		otherwise:
 			say "li";
 	if the prior named object is female:
-		if the prior named object is singular-named: 
+		if the prior named object is singular-named:
 			say "la";
 		otherwise:
 			say "le".
@@ -689,7 +689,7 @@ To say il suo:
 			say "il suo";
 		otherwise:
 			say "la sua".
-				
+
 [ Here are the capitalized forms. ]
 
 To say Che:
@@ -767,30 +767,18 @@ To say Il Suo:
 
 Chapter 2.2.4 - Directions
 
-North translates into Italian as il nord.
-South translates into Italian as il sud.
-East translates into Italian as l'est.
-West translates into Italian as l'ovest.
-Northeast translates into Italian as il nord-est.
-Southwest translates into Italian as il sud-ovest.
-Southeast translates into Italian as il sud-est.
-Northwest translates into Italian as il nord-ovest.
-Inside translates into Italian as davanti.
-Outside translates into Italian as dietro.
-Up translates into Italian as alto.
-Down translates into Italian as basso.
-
-Understand "sinistra" as west.
-Understand "o" as west.
-Understand "destra" as east.
-Understand "e" as east.
-Understand "sali" as up.
-
-Understand the command "no" as something new.
-Understand "nordest" or "ne" as northeast.
-Understand "nordovest" or "no" as northwest.
-Understand "sudovest" or "so" as southwest.
-Understand "sudest" or "se" as southeast.
+North translates into Italian as nord.
+South translates into Italian as sud.
+East translates into Italian as est.
+West translates into Italian as ovest.
+Northeast translates into Italian as nordest.
+Southwest translates into Italian as sudovest.
+Southeast translates into Italian as sudest.
+Northwest translates into Italian as nordovest.
+Inside translates into Italian as dentro.
+Outside translates into Italian as fuori.
+Up translates into Italian as su.
+Down translates into Italian as giù.
 
 Up is proper-named.
 Down is proper-named.
@@ -857,7 +845,7 @@ Section 2.2.5.3 - In Locksmith (for use with Locksmith by Emily Short)
 A passkey translates into Italian as una chiave universale.
 A keychain translates into Italian as un portachiavi.
 
-Chapter 2.2.6 - Plurals 
+Chapter 2.2.6 - Plurals
 
 [Le cose in italiano sono decisamente più convolute. Questa parte è da rivedere.]
 
@@ -866,7 +854,7 @@ language Italian
 
 <singular-noun-to-its-plural> ::=
 	<it-plural-exceptions> |
-	... <it-plural-by-ending> 
+	... <it-plural-by-ending>
 
 [I nomi in -gia -cia conservano la i al plurale se tali suffissi sono seguiti da vocale.]
 
@@ -938,7 +926,7 @@ Include (-
 		28: say_minutes = "ventotto";
 		29: say_minutes = "ventinove";
 		30: say_minutes = "e mezzo";
-		default: 
+		default:
 			if (quad == 2){
 				print (number) m;
 				if (m%5 ~= 0) {
@@ -1008,14 +996,14 @@ language Italian
 	restio		restii |
 	pio			pii |
 	savio		savi |
-	serio		seri 
+	serio		seri
 
 <it-adjective-to-masculine-plural-by-ending> ::=
 	*logo		2gi |				[teologo -> teologi]
 	*fago		2gi |
 	*go			2ghi |			[largo -> larghi]
 	*co			2chi 			[bianco -> bianchi]
-	
+
 <adjective-to-feminine-singular> ::=
 	<it-adjective-to-feminine-singular-exceptions> |
 	...	<it-adjective-to-feminine-singular-by-ending> |
@@ -1033,7 +1021,7 @@ language Italian
 
 <it-adjective-to-feminine-singular-by-ending> ::=
 	*tore		4trice |
-	*e			1e		
+	*e			1e
 
 <it-adjective-to-feminine-default> ::=
 	*			1a
@@ -1052,7 +1040,7 @@ language Italian
 	antinebbia	antinebbia |
 	perbene		perbene |
 	dabbene		dabbene |
-	
+
 <it-adjective-to-feminine-plural-by-ending> ::=
 	*co	2che |
 	*go	2ghe |
@@ -1069,7 +1057,7 @@ language Italian
 	*ogio	3gie |
 	*ugio	3gie |
 	*gio		3ge
-	
+
 <it-adjective-to-plural-fem> ::=
 	*e	1i |
 	*	1e
@@ -1119,10 +1107,10 @@ i modi e i tempi irregolari.]
 	mangiare	<it-mangiare-conjugation> |
 	dovere		<it-dovere-conjugation> |
 	potere		<it-potere-conjugation> |
-	possedere	<it-possedere-conjugation> | 
-	tenere	<it-tenere-conjugation> | 
-	togliere	<it-togliere-conjugation> | 
-	lasciare	<it-lasciare-conjugation> | 
+	possedere	<it-possedere-conjugation> |
+	tenere	<it-tenere-conjugation> |
+	togliere	<it-togliere-conjugation> |
+	lasciare	<it-lasciare-conjugation> |
 	fare			<it-fare-conjugation> |
 	sedere			<it-sedere-conjugation> |
 	uscire			<it-uscire-conjugation> |
@@ -1135,10 +1123,10 @@ i modi e i tempi irregolari.]
 	capire			<it-incoativi-terza-conjugation> |
 [Regular -ARE verbs]
 	-are 		<it-avere-prima-conjugation> |		[e.g., "donare"]
-[Regular -ERE verbs]	
+[Regular -ERE verbs]
 	-ere 		<it-avere-seconda-conjugation> |	[e.g., "svendere"]
 [Regular -IRE verbs]
-	-ire			<it-avere-terza-conjugation> 
+	-ire			<it-avere-terza-conjugation>
 
 [So here goes with avere, which is not very irregular, but we'll need it as
 an auxiliary later.
@@ -1165,14 +1153,14 @@ English, where the asterisks are never used. ]
 	a5-		non <it-avere-future> |
 	a6+		<it-avere-past-historic> |
 	a6-		non <it-avere-past-historic> |
-	p*		3+*	
+	p*		3+*
 
 <it-avere-present> ::=
 	ho | hai | ha | abbiamo | avete | hanno
 
 <it-avere-past> ::=
 	avevo | avevi | aveva | avevamo | avevate | avevano
-	
+
 <it-avere-perfect> ::=
 	ho 3 | hai 3 | ha 3 | abbiamo 3 | avete 3 | hanno 3
 
@@ -1308,7 +1296,7 @@ English, where the asterisks are never used. ]
 	5+etti | 5+esti | 5+este | 5+emmo | 5+este | 5+ettero
 
 <it-stare-plufuture> ::=
-	sarò 3 |	sarai 3 | sarà 3 | saremo 4 | sarete 4 | saranno 4	
+	sarò 3 |	sarai 3 | sarà 3 | saremo 4 | sarete 4 | saranno 4
 
 [
 --------> Italian : "GUARDARE" verb. <-------
@@ -1485,7 +1473,7 @@ English, where the asterisks are never used. ]
 
 <it-tenere-past-historic> ::=
 	tenni | 5+esti | 5+ette | 5+emmo | 5+este | tenerono
-	
+
 [
 ---> Italian : "TOGLIERE" verb. <----
 ]
@@ -1549,7 +1537,7 @@ English, where the asterisks are never used. ]
 
 <it-lasciare-past-historic> ::=
 	5+ai | 5+asti | 5+ò | 5+ammo | 5+aste | 5+arono
-			
+
 [
 --------> Italian : "FARE" verb. <-------
 ]
@@ -1575,7 +1563,7 @@ English, where the asterisks are never used. ]
 
 <it-fare-past> ::=
 	facevo | facevi | faceva | facevamo | facevate | facevano
-	
+
 <it-fare-past-historic> ::=
 	feci | facesti | fece | facemmo | faceste | fecero
 
@@ -1905,7 +1893,7 @@ English, where the asterisks are never used. ]
 
 <it-seconda-future> ::=
 	5+erò | 5+erai | 5+erà | 5+eremo | 5+erete | 5+eranno
-	
+
 <it-seconda-past-historic> ::=
 	5+ei | 5+esti | 5+é | 5+emmo | 5+este | 5+erono
 
@@ -1915,7 +1903,7 @@ English, where the asterisks are never used. ]
 [
 ---> Italian "third conjugation": regular -IRE verbs. <----
 ]
-<it-terza-stem> ::=		
+<it-terza-stem> ::=
 	*	3					[in all cases drop the last three letters]
 
 <it-avere-terza-conjugation> ::=
@@ -1953,7 +1941,7 @@ English, where the asterisks are never used. ]
 [
 ---> Italian "third conjugation": aprire. <----
 ]
-<it-terza-stem> ::=		
+<it-terza-stem> ::=
 	*	3					[in all cases drop the last three letters]
 
 <it-aprire-conjugation> ::=
@@ -1966,7 +1954,7 @@ English, where the asterisks are never used. ]
 [
 ---> Italian "third conjugation": incoativi. <----
 ]
-<it-terza-stem-inc> ::=		
+<it-terza-stem-inc> ::=
 	*	3					[in all cases drop the last three letters]
 
 <it-incoativi-terza-conjugation> ::=
@@ -2101,7 +2089,7 @@ To decide which number is the artflag of (sostan - a room):
 		if c2 is "n", decide on 1;
 	decide on 2.
 
-Articulated preposition is a kind of value. Some articulated prepositions are defined by the Table of Prepositions. 
+Articulated preposition is a kind of value. Some articulated prepositions are defined by the Table of Prepositions.
 
 Table of Prepositions
 Name	1Il	2Lo	3La	4I	5Gli	6Le	7L
@@ -2203,7 +2191,7 @@ To say ci sei:
 		say "c[']era";
 	otherwise:
 		say "ci sarà";
-		
+
 To say ci sono:
 	if story tense is present tense:
 		say "ci sono";
@@ -2219,7 +2207,7 @@ To say sono:
 		say "erano";
 	otherwise:
 		say "saranno";
-		
+
 In Italian aperto is an adjective.
 In Italian chiuso is an adjective.
 In Italian vuoto is an adjective.
@@ -2257,13 +2245,13 @@ To say enter-pp:
 	otherwise if the player's command includes "siediti":
 		say "[seduto]";
 	otherwise:
-		say "[entrato]";		
+		say "[entrato]";
 
 To say exit-pp:
 	if the player's command includes "scendi":
 		say "[sceso]";
 	otherwise:
-		say "[uscito]";		
+		say "[uscito]";
 
 To say Ora:
 	let t be "[ora]";
@@ -2273,7 +2261,7 @@ To say ora:
 		say "ora";
 	otherwise:
 		say "allora";
-		 
+
 To say Qui:
 	let t be "[qui]";
 	say "[t in sentence case]";
@@ -2286,7 +2274,7 @@ To say qui:
 To say Su-In the (t - a thing):
 	let s be "[su-in the t]";
 	say "[s in sentence case]";
-		
+
 To say su-in the (t - a thing):
 	if t is a container:
 		say "[inp the t]";
@@ -2744,7 +2732,7 @@ Can't reach inside closed containers rule response (A) is "[The noun] non [sei] 
 Can't reach inside rooms rule response (A) is "[regarding the player]Non [puoi] vedere dentro [the noun]."
 Can't reach outside closed containers rule response (A) is "[The noun] non [sei] [aperto]."
 
-Section  3.1.1.18 - List writer internal rule   
+Section  3.1.1.18 - List writer internal rule
 
 List writer internal rule response (A) is " (".
 List writer internal rule response (B) is ")".
@@ -2942,59 +2930,83 @@ Part 4.1 - Pronouns and possessives in commands
 Part 4.2 - Understand grammar
 
 [Generali]
-Understand "attacca [something]" or "attacca il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "uccidi [something]" or "uccidi il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "prendi [something]" or "prendi il/la/lo/i/le/gli/l [something]" as taking.
-Understand "mangia [something]" or "mangia il/la/lo/i/le/gli/l [something]" as eating.
-Understand "bacia [something]" or "bacia il/la/lo/i/le/gli/l [something]" as kissing.
-Understand "tocca [something]" or "tocca il/la/lo/i/le/gli/l [something]" as touching.
-Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
-Understand "annusa" as smelling.
-Understand "bevi [something]" or "bevi il/la/lo/i/le/gli/l [something]" as drinking.
-Understand "compra [something]" or "compra il/la/lo/i/le/gli/l [something]" as buying.
+Understand "attacca [things]" or "attacca il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "uccidi [things]" or "uccidi il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "prendi [things]" or "prendi il/la/lo/i/le/gli/l [something]" as taking.
+Understand "mangia [things]" or "mangia il/la/lo/i/le/gli/l [something]" as eating.
+Understand "bacia [things]" or "bacia il/la/lo/i/le/gli/l [something]" as kissing.
+Understand "tocca [things]" or "tocca il/la/lo/i/le/gli/l [something]" as touching.
+Understand "brucia [things]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
+Understand "annusa" or "annusa [things]" or "annusa il/la/lo/i/le/gli/l [something]" as smelling.
+Understand "bevi [things]" or "bevi il/la/lo/i/le/gli/l [something]" as drinking.
+Understand "compra [things]" or "compra il/la/lo/i/le/gli/l [something]" as buying.
 Understand "dormi" as sleeping.
 Understand "salta" as jumping.
-Understand "svegliati" as waking up.
-Understand "brucia [something]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
+Understand "sveglia" or "svegliati" as waking up.
+Understand "sveglia [someone]" or "sveglia il/lo/la/i/gli/le/l [someone]" as waking.
+Understand "brucia [things]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
 Understand "agita le mani" as waving hands.
-Understand "colpisci il/la/lo/i/le/gli/l [something]" or "colpisci [something]" as swinging.
+Understand "agita [things]" or "agita il/lo/la/i/gli/le/l [something]" as waving.
+Understand "colpisci il/la/lo/i/le/gli/l [something]" or "colpisci [things]" as swinging.
 Understand "spremi [someone]" or "spremi il/la/lo/i/le/gli/l [something]" as squeezing.
 Understand "strizza [someone]" or "strizza il/la/lo/i/le/gli/l [something]" as squeezing.
 Understand "ascolta" as listening.
+Understand "ascolta [things]" or "ascolta il/lo/la/i/gli/le/l [something]" as listening to.
 Understand "verifica" as verifying the story file.
-Understand "pensa" or "ricorda" as thinking.
+Understand "pensa" or "ricorda" or "medita" as thinking.
 Understand "rompi il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "compra [things]" or "compra il/lo/la/i/gli/le/l [something]" as buying.
+Understand "imposta [something] a/al/allo/alla/ai/agli/alle/all [text]" or "imposta il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [text]" as setting it to.
+Understand "regola [something] a/al/allo/alla/ai/agli/alle/all [text]" or "regola il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [text]" as setting it to.
+Understand "scusa" or "scusati" as saying sorry.
+Understand "gusta [things]" or "gusta il/lo/la/i/gli/le/l [something]" as tasting.
+Understand "assaggia [things]" or "assaggia il/lo/la/i/gli/le/l [something]" as tasting.
+Understand "gira [things]" or "gira il/lo/la/i/gli/le/l [something]" as turning.
+Understand "aspetta" as waiting.
+Understand "getta [things preferably held] a/al/allo/alla/ai/agli/alle/all [something]" or "getta il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [something]" as throwing it at.
+Understand "lancia [things preferably held] a/al/allo/alla/ai/agli/alle/all [something]" or "lancia il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [something]" as throwing it at.
+Understand "dai [things preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" or  "dai il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" as giving it to.
+Understand "mostra [things preferably held] a [someone]" or "mostra il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" as showing it to.
+Understand "consulta [things] su/sul/sullo/sulla/sui/sugli/sulle/sull [text]" or "consulta il/lo/la/i/gli/le/l [something] su/sul/sullo/sulla/sui/sugli/sulle/sull [text]" as consulting it about.
+Understand "cerca in/nel/nello/nella/nei/negli/nelle/nell [things] di/del/dello/della/dei/degli/delle/dell [text]" as consulting it about.
+Understand "leggi in/nel/nello/nella/nei/negli/nelle/nell [things] di/del/dello/della/dei/degli/delle/dell [text]" as consulting it about.
 
 [Visione]
-Understand "guarda [something]" or "guarda il/la/lo/i/le/gli/l [something]" as examining.
-Understand "leggi [something]" or "leggi il/la/lo/i/le/gli/l [something]" as examining.
-Understand "guarda dentro [something]" or "guarda dentro il/la/lo/i/le/gli/l [something]" or "guarda in/nel/nello/nella/negli/nelle/nell [something]" as searching.
-Understand "esamina [something]" or "esamina il/la/lo/i/le/gli/l [something]" as examining.
+Understand "guarda [things]" or "guarda il/la/lo/i/le/gli/l [something]" as examining.
+Understand "leggi [things]" or "leggi il/la/lo/i/le/gli/l [something]" as examining.
+Understand "guarda dentro [things]" or "guarda dentro il/la/lo/i/le/gli/l [something]" or "guarda in/nel/nello/nella/negli/nelle/nell [something]" as searching.
+Understand "esamina [things]" or "esamina il/la/lo/i/le/gli/l [something]" as examining.
 Understand "guarda" or "g" as looking.
 Understand "guarda sotto il/la/lo/i/le/gli/l/al/alla/allo/all/ai/alle/agli [something]" as looking under.
-Understand "guarda sotto [something]" as looking under.
+Understand "guarda sotto [things]" as looking under.
 Understand "guarda su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" as examining.
 Understand "descrivi il/la/lo/i/le/gli/l [something]" as examining.
 
 [Interazione Fisica]
-Understand "calcia [something]" or "calcia il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "accendi [something]" or "accendi il/la/lo/i/le/gli/l [something]" as switching on.
-Understand "spegni [something]" or "spegni il/la/lo/i/le/gli/l [something]" as switching off.
-Understand "spingi [something]" or "spingi il/la/lo/i/le/gli/l [something]" as pushing.
-Understand "indossa [something]" or "indossa il/la/lo/i/le/gli/l [something]" as wearing.
+Understand "calcia [things]" or "calcia il/la/lo/i/le/gli/l [something]" as attacking.
+Understand "accendi [things]" or "accendi il/la/lo/i/le/gli/l [something]" as switching on.
+Understand "spegni [things]" or "spegni il/la/lo/i/le/gli/l [something]" as switching off.
+Understand "spingi [things]" or "spingi il/la/lo/i/le/gli/l [something]" as pushing.
+Understand "spingi [things] a/al/allo/alla/ai/agli/alle/all [direction]" or "spingi il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [direction]" as pushing it to.
+Understand "tira [things]" or "tira il/lo/la/i/gli/le/l [something]" as pulling.
+Understand "indossa [things]" or "indossa il/la/lo/i/le/gli/l [something]" as wearing.
+Understand "metti [things]" or "metti il/la/lo/i/le/gli/l [something]" as wearing.
 Understand "togliti il/la/lo/i/le/gli/l [something]" as taking off.
-Understand "togli [something]" or "togli il/la/lo/i/le/gli/l [something]" as taking off.
-Understand "lascia [something]" or "lascia il/la/lo/i/le/gli/l [something]" as dropping.
-Understand "mostra [something] a [something]" or "mostra il/la/lo/i/le/gli/l [something] al/alla/allo/all/ai/agli/alle/a [something]" as showing it to.
-Understand "poggia [something] su/sopra [something]" or "poggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "metti [something] su/sopra [something]" or "metti il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "inserisci [something] dentro [something]" or "inserisci il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
-Understand "metti [something] in/dentro [something]" or "metti il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
+Understand "togli [things]" or "togli il/la/lo/i/le/gli/l [something]" as taking off.
+Understand "lascia [things]" or "lascia il/la/lo/i/le/gli/l [something]" as dropping.
+Understand "mostra [things] a [something]" or "mostra il/la/lo/i/le/gli/l [something] al/alla/allo/all/ai/agli/alle/a [something]" as showing it to.
+Understand "poggia [things] su/sopra [something]" or "poggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "appoggia [things] su/sopra [something]" or "appoggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "lascia [things] su/sopra [something]" or "lascia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "metti [things] su/sopra [something]" or "metti il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "carica [things] su/sopra [something]" or "carica il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
+Understand "inserisci [things] dentro [something]" or "inserisci il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
+Understand "metti [things] in/dentro [something]" or "metti il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
 Understand "cerca il/la/i/le/lo/l/gli/nel/nello/nell/nella/nelle/negli/nei/dentro/sul/sullo/sull/sulla/sugli/sulle/sui [something]" or "perquisisci  il/la/lo/i/le/gli/l [something]" as searching.
-Understand "lega [something]  a/al/alla/alle/agli/ai/allo/all [something]" or "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
-Understand "taglia [something]" or "taglia il/la/lo/i/le/gli/l [something]" as cutting.
-Understand "pulisci [something]" or "pulisci il/la/lo/i/le/gli/l [something]" as rubbing.
-Understand "strofina [something]" or "strofina il/la/lo/i/le/gli/l [something]" as rubbing.
+Understand "lega [things] a/al/alla/alle/agli/ai/allo/all [something]" or "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
+Understand "taglia [things]" or "taglia il/la/lo/i/le/gli/l [something]" as cutting.
+Understand "pulisci [things]" or "pulisci il/la/lo/i/le/gli/l [something]" as rubbing.
+Understand "strofina [things]" or "strofina il/la/lo/i/le/gli/l [something]" as rubbing.
 
 [Dialoghi]
 Talking to is an action applying to one visible thing.
@@ -3008,13 +3020,16 @@ Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/d
 Understand "rispondi a/al/alla/alle/agli/ai/allo/agli/all [someone] riguardo/di/del/della/dell/dello/delle/degli [text]" as answering it that.
 
 [Chiavi]
-Understand "apri [something]" or "apri il/la/lo/i/le/gli/l [something]" as opening.
-Understand "chiudi [something]" or "chiudi il/la/lo/i/le/gli/l [something]" as closing.
-Understand "sblocca [something] con [something]" or "sblocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
-Understand "apri [something] con [something]" or "apri il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
-Understand "blocca [something] con [something]" or "blocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
-Understand "chiudi [something] con [something]" or "chiudi il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
-Understand "rimuovi [something] da [something]" or "rimuovi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "apri [things]" or "apri il/la/lo/i/le/gli/l [something]" as opening.
+Understand "chiudi [things]" or "chiudi il/la/lo/i/le/gli/l [something]" as closing.
+Understand "sblocca [things] con [something]" or "sblocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
+Understand "apri [things] con [something]" or "apri il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
+Understand "blocca [things] con [something]" or "blocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
+Understand "chiudi [things] con [something]" or "chiudi il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
+Understand "rimuovi [things] da [something]" or "rimuovi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "prendi [things] da [something]" or "prendi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "togli [things] da [something]" or "togli il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "scarica [things] da [something]" or "scarica il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
 
 [Descrizioni]
 Understand "brevi" as preferring sometimes abbreviated room descriptions.
@@ -3024,7 +3039,7 @@ Understand "inventario" or "inv" or "i" as taking inventory.
 
 [Movimento]
 Understand "vai [something]" or "vai a [something]" as going.
-Understand "scendi dalla/dal/da/dai/dalle/dagli/dall [something]" as getting off.
+Understand "scendi dalla/dal/da/dai/dalle/dagli/dall [something]" or "alzati dalla/dal/da/dai/dalle/dagli/dall [something]" as getting off.
 Understand "scendi" as exiting.
 Understand "esci" as exiting.
 Understand "sali su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
@@ -3032,17 +3047,19 @@ Understand "salta su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as enteri
 Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
 Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
-Understand "o" as west.
+Understand "sinistra" as west.
 Understand "ovest" as west.
-Understand "sud" as south.
+Understand "destra" as east.
 Understand "est" as east.
-Understand "nord" as north.
+Understand "su" as up.
+Understand "giu" or "giù" as up.
+Understand "nordest" as northeast.
 Understand "nordovest" as northwest.
 Understand "sudovest" as southwest.
 Understand "sudest" as southeast.
-Understand "nordest" as northeast.
-Understand "su" as up.
-Understand "giù" or "giu" as down.
+Understand "sud" as south.
+Understand "nord" as north.
+Understand "scala [something]" or "arrampicati su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" or "scala il/lo/la/i/gli/le/l [something]" as climbing.
 
 [Carica/Salva/Esci]
 Understand "punti" or "punteggio" as requesting the score.
@@ -3055,24 +3072,21 @@ Understand "ricomincia" as restarting the game.
 Understand "versione" as requesting the story file version.
 
 [Direzioni]
-The printed name of north is "nord". 
-The printed name of  northeast is "nordest". 
-The printed name of east is "est". 
-The printed name of southeast is "sudest". 
-The printed name of  south is "sud". 
+The printed name of north is "nord".
+The printed name of  northeast is "nordest".
+The printed name of east is "est".
+The printed name of southeast is "sudest".
+The printed name of  south is "sud".
 The printed name of  southwest is "sudovest".
-The printed name of  west is "ovest". 
-The printed name of  northwest is "nordovest". 
-The printed name of up is "su". 
-The printed name of down is "giù". 
-The printed name of  inside is "dentro". 
-The printed name of  outside is "fuori".  
+The printed name of  west is "ovest".
+The printed name of  northwest is "nordovest".
+The printed name of up is "su".
+The printed name of down is "giù".
+The printed name of  inside is "dentro".
+The printed name of  outside is "fuori".
 
 [Sì/no]
 Understand "sì" or "si" as saying yes.
-
-Understand the command "no" as something new.
-Understand "no" as saying no.
 
 Part 4.3 - Command parser internals
 
@@ -3242,7 +3256,7 @@ L'estensione "Italian Language" e i suoi futuri aggiornamenti sono disponibili a
 
 Le estensioni inglesi tradotte in italiano e i loro futuri aggiornamenti sono reperibili all'indirizzo (anche qui attenzione allo spazio):
 
-	https://github.com/i7/extensions/tree/master/Leonardo Boselli 
+	https://github.com/i7/extensions/tree/master/Leonardo Boselli
 
 Chapter: Introduzione
 
@@ -3250,7 +3264,7 @@ L'estensione "Italian Language" trasforma la lingua dell'interfaccia di gioco di
 
 Chapter: Installare l'estensione
 
-Per installare l'estensione in Inform 7 è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti. 
+Per installare l'estensione in Inform 7 è sufficiente scaricare il file "Italian Language.i7x" dall'indirizzo sopra specificato, eseguire Inform 7 e selezionare la voce di menù  File>Install Extension. Una volta eseguita questa operazione, non è più necessario effettuarla successivamente, a meno di non voler installare degli aggiornamenti.
 
 Per includere l'estensione e utilizzarla nelle proprie avventure NON bisogna scrivere nel sorgente la seguente linea (come invece si usa per le altre estensioni):
 
@@ -3306,23 +3320,23 @@ o addirittura:
 	"[perp the gabbie]" (per le gabbie)
 	"[trap the gabbie]" (tra le gabbie)
 	"[frap the gabbie]" (fra le gabbie)
-											
+
 Questi non sono esempi molto significativi, perché un autore avrebbe potuto scrivere direttamente il testo corrispondente, ma spesso non si conosce in anticipo il nome dell'oggetto sul quale il comando è applicato, come in questo caso:
 
 	Instead of entering a container (called contenitore):
 		say "Non puoi entrare [inp the contenitore] perché è proibito."
-		
-Quando il giocatore ordinerà "entra nelle gabbie", la risposta sarà "Non puoi entrare nelle gabbie perché è proibito", ma la risposta a "entra in acqua" (se "acqua" fosse definita come un oggetto contenitore di genere femminile) sarà "Non puoi entrare nell'aqua perché è proibito". In questo consiste la potenza degli "adaptive texts". 
+
+Quando il giocatore ordinerà "entra nelle gabbie", la risposta sarà "Non puoi entrare nelle gabbie perché è proibito", ma la risposta a "entra in acqua" (se "acqua" fosse definita come un oggetto contenitore di genere femminile) sarà "Non puoi entrare nell'aqua perché è proibito". In questo consiste la potenza degli "adaptive texts".
 
 Section: Il punto di vista e i tempi verbali
 
 Normalmente un'avventura testuale risponde ai comandi riferendosi al giocatore (o meglio, al suo personaggio) con la seconda persona singolare e declinando i verbi al tempo presente, come è stato fatto negli esempi precedenti. Ora questo comportamento può essere cambiato. Nel proprio programma si può scrivere:
 
-	When play begins: 
+	When play begins:
 		now the story viewpoint is second person plural;
 		now the story tense is past tense.
-		
-Quel "second person plural" significa che il programma non darà del "tu" al giocatore, ma del "voi". Ci sono situazioni in cui questa possibilità, per quanto insolita, potrebbe tornare utile. Ovviamente si potrebbe specificare una qualunque delle tre persone singolari o delle tre plurali, e ciò può essere anche cambiato nel corso del gioco. Inoltre, quel "past tense" significa che i tempi verbali verranno declinati al passato e non al presente, ma si potrebbe specificare anche una terza possibilità, e cioè il "future tense". 
+
+Quel "second person plural" significa che il programma non darà del "tu" al giocatore, ma del "voi". Ci sono situazioni in cui questa possibilità, per quanto insolita, potrebbe tornare utile. Ovviamente si potrebbe specificare una qualunque delle tre persone singolari o delle tre plurali, e ciò può essere anche cambiato nel corso del gioco. Inoltre, quel "past tense" significa che i tempi verbali verranno declinati al passato e non al presente, ma si potrebbe specificare anche una terza possibilità, e cioè il "future tense".
 
 Come si può sfruttare questa funzionalità? È sufficiente che nei testi tra virgolette si utilizzino dei costrutti particolari quando ci si riferisce al giocatore, sempre utilizzando (per quanto riguarda l'italiano) la seconda persona singolare.
 
@@ -3334,11 +3348,11 @@ Riproponendo l'esempio precedente:
 Cosa verrebbe risposto al comando "entra nelle gabbie" con il tempo al futuro e la seconda persona plurale?
 
 	Voi non potrete entrare nelle gabbie perché saranno infette.
-	
+
 Invece cosa verrebbe risposto al comando "entra in acqua" con il tempo al passato e la prima persona singolare?
 
 	Io non potevo entrare nell'acqua perché era infetta.
-	
+
 Prima di analizzare l'esempio nel dettaglio, bisogna specificare che gli esempi non funzionerebbero così come sono con l'estensione "Italian Language", perché l'aggettivo "infetto" è ignoto al sistema.
 Ci sono molti verbi e aggettivi predefiniti (vedi sezione 3.1.1 -- si tratta di verbi e aggettivi utili per le risposte standard), ma "infetto" non è uno di questi. Per aggiungerlo alla lista, basta inserire nel proprio programma le linee:
 
@@ -3351,21 +3365,21 @@ Passiamo ora ad analizzare i vari "adaptive texts" presenti nell'esempio.
 "sei": si comporta come "puoi", ma non segue il numero del "Tu", ma quello del contenitore, perchè la locuzione "[inp the contenitore]" lo precede. Se non fosse stato così, si sarebbe potuto specificare prima del verbo "[regarding the contenitore]", che di per sé non stampa nulla sullo schermo, ma fa comprendere al sistema qual è il soggetto implicito. Nel caso il soggetto fosse stato il giocatore, sarebbe bastato scrivere "[regarding the player]". Tutto ciò che segue il "regarding" si accorda col numero e il genere dell'oggetto specificato, finché non si specifica un nuovo "regarding" oppure un nuovo nome, sempre tra parentesi quadre.
 
 Ovviamente quel soggetto (Tu) a inizio frase suona piuttosto innaturale. Per toglierlo si può procedere in questo modo:
- 
+
 	Instead of entering a container (called contenitore):
 		say "Non [regarding the player][puoi] entrare [inp the contenitore] perché [sei] [infetto]."
-		
+
 Dato che il "Tu" è sparito, occorre specificare chi è il soggetto con "regarding the player", mentre il "[sei] [infetto]" si riferisce sempre al contenitore.
 
 Inoltre, se la prima parola del testo non fosse "Non" (già maiuscolo), ma direttamente il verbo "puoi", non funzionerebbe scrivere:
 
 	say "[regarding the player][Puoi] entrare...".
-	
+
 perché il "puoi" verrebbe comunque stampato minuscolo. Perché? L'unica spiegazione che mi sono dato per una mancanza simile è che in inglese un verbo è sempre preceduto dal soggetto, e quindi, probabilmente, il programmatore di Inform 7 non ha pensato che per le altre lingue sarebbe stato utile prevedere un diverso comportamento che tenesse conto della maiuscola.
 Cosa possiamo fare? Purtroppo l'unico modo è ricorrere all'estensione "Text Capture", che viene inclusa automaticamente. Serve per leggere un testo prima che venga stampato per elaborarlo e, solo alla fine, mostrarlo sullo schermo. Per l'autore di avventure, ciò non comporta grandi disagi. È sufficiente ricordarsi di scrivere il testo in questo modo:
 
 	say "[regarding the player][maiuscolo][puoi][maiuscolo] entrare...".
-	
+
 La frase che deve essere scritta con l'iniziale maiuscola va contornata da due "maiuscolo".
 
 Chapter: Scrittura del codice sorgente in italiano
@@ -3388,7 +3402,7 @@ Da notare lo spazio necessario tra l'articolo apostrofato e il nome a cui si rif
 Nella sezione 2.2.5.1 è possibile leggere l'elenco completo dei tipi disponibili tradotti dall'inglese in italiano. Mentre l'elenco dei verbi disponibili è nelle sezioni 2.4.3 e 2.4.2.1 del sorgente dell'estensione.
 
 Chapter: Conclusione
-			
+
 Queste sono solo alcune note utili per comprendere il funzionamento dell'estensione e dei nuovi meccanismi che riguardano gli "adaptive texts". Per approfondire, è utile leggere il sorgente dell'estensione che mostra in se stesso numerosi esempi di come possa essere utilizzata.
 
 Per segnalare bug, porre qualsiasi domanda e avere chiarimenti, potete contattare l'autore all'indirizzo:
