@@ -58,15 +58,8 @@ A thing is either hyperlinked or hyperlinkless. A thing is usually hyperlinked. 
 
 Object hyperlinking something is an activity on objects.
 
-Rule for printing the name of a thing (called item) while looking (this is the Hyperlink Interface highlight objects when looking rule):
+Rule for printing the name of a thing (called item):
 	carry out the object hyperlinking activity with item.
-
-Rule for printing the name of a thing (called item) while taking inventory (this is the Hyperlink Interface highlight objects when taking inventory rule):
-	carry out the object hyperlinking activity with item.
-
-Rule for printing the name of a thing (called item) while opening (this is the Hyperlink Interface highlight objects when opening rule):
-	carry out the object hyperlinking activity with item.
-		
 
 Section - Hyperlinks management
 
@@ -98,9 +91,44 @@ First when play begins (this is the initializing replacement commands list rule)
 	now replacement entry is "save" (H);
 	choose a blank row in Table of Hyperlink Commands;
 	now replacement entry is "restore" (I);
-	now the command prompt is "[set link 2]look[end link] | [set link 3]inv[end link] | [set link 1]menu[end link]>" (J);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "zoom" (J);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "U" (K) ;
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "N" (L);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "NE" (M);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "E" (N);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "SE" (O);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "S" (P);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "SW" (Q);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "W" (R);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "NW" (S);
+	choose a blank row in Table of Hyperlink Commands;
+	now replacement entry is "D" (T);
+	now the command prompt is "[set link 2]look[end link] | [set link 3]inv[end link] | [set link 1]menu[end link]>" (U);
 	now HI-hyperlinks-counter is (the number of filled rows in the Table of Hyperlink Commands);
 	now HI-min-hyperlinks is ( 1 + HI-hyperlinks-counter);
+	set off echo line event;
+
+To set off echo line event:
+	(- glk_set_echo_line_event(gg_mainwin,0); -)
+	
+After reading a command:
+	if hyperlink clicked is false:
+		say "[the player's command]";
+	otherwise:
+		now hyperlink clicked is false;
+
+Before printing a parser error:
+	say "[line break]";
 
 To start HI hyperlink capture:
 	if the active style is not hyperlink-no-style:
@@ -110,15 +138,17 @@ To end HI hyperlink capture:
 	if the active style is not hyperlink-no-style:
 		stop capturing text;
 		let cap-text be "[captured text]";
-		increase HI-hyperlinks-counter by 1;
+		increment HI-hyperlinks-counter;
 		if HI-hyperlinks-counter is greater than HI-max-hyperlinks:
 			now HI-hyperlinks-counter is HI-min-hyperlinks;
 		say "[set link HI-hyperlinks-counter][cap-text][end link]";
 		choose row ( HI-hyperlinks-counter ) in the Table of Hyperlink Commands;
 		now replacement entry is "[cap-text]";
 
+Hyperlink clicked is initially false.
 The default command replacement by hyperlinks rule is not listed in any rulebook.
 A clicking hyperlink rule (this is the alternative command replacement by hyperlinks rule):
+	Now hyperlink clicked is true;
 	if current link number is greater than HI-max-hyperlinks:
 		now glulx replacement command is "";
 		rule succeeds;
@@ -127,12 +157,13 @@ A clicking hyperlink rule (this is the alternative command replacement by hyperl
 
 The HI hyperlink text is an indexed text that varies.
 To print HI hyperlink:
-	increase HI-hyperlinks-counter by 1;
+	increment HI-hyperlinks-counter;
 	if HI-hyperlinks-counter is greater than HI-max-hyperlinks,
 		now HI-hyperlinks-counter is HI-min-hyperlinks;
 	say " [set link HI-hyperlinks-counter][HI hyperlink text][end link][line break]";
 	choose row ( HI-hyperlinks-counter ) in the Table of Hyperlink Commands;
-	now replacement entry is "[HI hyperlink text]".
+	let hi-text be "[HI hyperlink text]";
+	now replacement entry is "[hi-text]".
 
 Section - Rule for object hyperlinking something
 
@@ -220,35 +251,42 @@ A hyperlink type has a hyperlink emphasis called style.
 The active style is a hyperlink emphasis that varies. 
 
 we-are-parser-speaking is initially false.  [It's possible to have, say, an emphasized object hyperlink within a parser error message; this variable keeps track of whether we need to return to the parser style after switching off another hyperlink style.]
-	
+
+Capturing-depth is a number that varies. Capturing-depth is initially 0.
+
 To say o:
-	if object hyperlink highlighting is true:
+	increment capturing-depth;
+	if capturing-depth is 1 and object hyperlink highlighting is true:
 		set the text style for the style of object-word; 
 		now the active style is the style of object-word;
 		start HI hyperlink capture.
 	
 To say t:
-	if topic hyperlink highlighting is true:
+	increment capturing-depth;
+	if capturing-depth is 1 and topic hyperlink highlighting is true:
 		set the text style for the style of topic-word; 
 		now the active style is the style of topic-word;
 		start HI hyperlink capture.
  
 To say d: 
-	if direction hyperlink highlighting is true:
+	increment capturing-depth;
+	if capturing-depth is 1 and direction hyperlink highlighting is true:
 		set the text style for the style of direction-word;
 		now the active style is the style of direction-word;
 		start HI hyperlink capture.
 	 
 To say x:
-	end HI hyperlink capture;
-	reset styles with active style.
+	decrement capturing-depth;
+	if capturing-depth is 0:
+		end HI hyperlink capture;
+		reset styles with active style.
 
 	         
 Section - Glulx Style Definitions
 
 The hyperlink emphases are hyperlink-color1-style, hyperlink-color2-style, hyperlink-bold-style, hyperlink-italics-style, hyperlink-fixedwidth-style, and hyperlink-no-style.
 
-The style of object-word is usually hyperlink-color1-style. The style of direction-word is usually hyperlink-color2-style. The style of topic-word is usually hyperlink-italics-style. The style of parser-word is usually hyperlink-italics-style.
+The style of object-word is usually hyperlink-bold-style. The style of direction-word is usually hyperlink-fixedwidth-style. The style of topic-word is usually hyperlink-italics-style. The style of parser-word is usually hyperlink-italics-style.
 
 Table of User Styles (continued)
 style name	fixed width	boldness	relative size	glulx color
@@ -452,7 +490,7 @@ Chapter - Error Reporting
 
 Section - Not a verb I recognise
 
-Rule for printing a parser error when the latest parser error is the not a verb I recognise error (this is the Hyperlink Interface not a verb I recognise rule) : say "[as the parser]That's neither a verb I [recogniz]e nor a hyperlink you can use right now.[as normal]" (A). [Acknowledge that the player may be trying to type a hyperlink, not just a verb.]
+Rule for printing a parser error when the latest parser error is the not a verb I recognise error (this is the Hyperlink Interface not a verb I recognise rule) : say "[as the parser]That's neither a verb I [recogniz]e nor a hyperlink you can use right now[as normal]." (A). [Acknowledge that the player may be trying to type a hyperlink, not just a verb.]
 
 
 Chapter - Messages
