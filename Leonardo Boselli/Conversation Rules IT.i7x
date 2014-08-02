@@ -30,7 +30,7 @@ Understand "parla di/del/dello/della/dei/degli/delle/dell [any primary known thi
 
 Chapter - Responses
 
-    default no response rule response (A) is "Non [regarding nothing][ci sono] risposte.".
+    default no response rule response (A) is "Non [regarding nothing][ci sono] risposta.".
     can't suggest if no interlocutor rule response (A) is "Non [regarding the player][stai] conversando con nessuno.".
     standard list suggested topics rule response (A) is "[Ora] non [regarding the player][hai] nulla da discutere con [the current interlocutor].".
     standard list suggested topics rule response (B) is "([regarding the player][puoi] ".
