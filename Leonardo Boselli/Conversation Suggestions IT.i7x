@@ -15,6 +15,16 @@ Book 2 - Definitions
 
 Part 2 - The misc-suggestion Kind
 
+Section H (for use with Hyperlink Interface IT by Leonardo Boselli)
+
+When play begins:
+	now the printed name of yes-suggestion is "dire [t]sì[x]";
+	now the printed name of no-suggestion is "dire [t]no[x].";
+	now the printed name of yes-no-suggestion is "dire [t]sì[x] o [t]no[x]";
+	now the printed name of self-suggestion is "[regarding the current interlocutor]se [stesso]".
+
+Section K (for use without Hyperlink Interface IT by Leonardo Boselli)
+
 When play begins:
 	now the printed name of yes-suggestion is "dire sì";
 	now the printed name of no-suggestion is "dire no.";
@@ -34,14 +44,22 @@ To say nothing specific:
 
 Chapter - Responses
 
-    can't suggest topics when not talking to anyone rule response (A) is "[Ora] non [regarding the player][stai] parlando con nessuno.".
-    complex list suggested topics rule response (A) is "[nothing specific]".
-    complex list suggested topics rule response (B) is "[if topic-request is implicit]([end if][regarding the player][puoi] ".
-    complex list suggested topics rule response (C) is "[sugg-rep][if tell-suggs + ask-suggs > 0], o [end if]".
-    complex list suggested topics rule response (D) is "chiedere [ap the current interlocutor] di [sugg-rep][if tell-suggs > 0], o [end if]".
-    complex list suggested topics rule response (E) is "parlare [ap the current interlocutor] di [sugg-rep]".
-    complex list suggested topics rule response (F) is "[if topic-request is implicit])[otherwise].[end if][paragraph break]".
+can't suggest topics when not talking to anyone rule response (A) is "[Ora] non [regarding the player][stai] parlando con nessuno.".
+complex list suggested topics rule response (A) is "[nothing specific]".
+complex list suggested topics rule response (B) is "[if topic-request is implicit]([end if]Argomenti ".
+complex list suggested topics rule response (F) is "[if topic-request is implicit])[otherwise].[end if][paragraph break]".
 
+Section H (for use with Hyperlink Interface IT by Leonardo Boselli)
+
+complex list suggested topics rule response (C) is "[word number 1 in sugg-rep] [t][word number 2 in sugg-rep][x][if tell-suggs + ask-suggs > 0], o [end if]".
+complex list suggested topics rule response (D) is "da chiedere [ap the current interlocutor]: [word number 1 in sugg-rep] [t][word number 2 in sugg-rep][x][if tell-suggs > 0], o [end if]".
+complex list suggested topics rule response (E) is "di cui parlare [ap the current interlocutor]: [word number 1 in sugg-rep] [t][word number 2 in sugg-rep][x]".
+
+Section K (for use without Hyperlink Interface IT by Leonardo Boselli)
+
+complex list suggested topics rule response (C) is "[sugg-rep][if tell-suggs + ask-suggs > 0], o [end if]".
+complex list suggested topics rule response (D) is "da chiedere [ap the current interlocutor]: [sugg-rep][if tell-suggs > 0], o [end if]".
+complex list suggested topics rule response (E) is "di cui parlare [ap the current interlocutor]: [sugg-rep]".
 
 Conversation Suggestions IT ends here.
 
