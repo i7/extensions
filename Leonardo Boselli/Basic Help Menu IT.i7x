@@ -8,10 +8,21 @@ Use authorial modesty.
 
 Include Menus IT by Leonardo Boselli.
 
+Chapter - Announce
+
+When play begins (this is the announce the help availability at startup rule), announce the help availability.
+
+Section H (for use with Hyperlink Interface by Leonardo Boselli)
+
+To announce the help availability:
+	say "[italic type]Chiedi [o]aiuto[x] se non sai come procedere.[roman type][paragraph break]".
+
+Section K (for use without Hyperlink Interface by Leonardo Boselli)
+
 To announce the help availability:
 	say "[italic type]Chiedi [bold type]aiuto[italic type] se non sai come procedere.[roman type][paragraph break]".
 	
-When play begins (this is the announce the help availability at startup rule), announce the help availability.
+Chapter - Help Menus
 
 Table of Basic Help Options
 title	subtable (a table name)	description	toggle (a rule)
