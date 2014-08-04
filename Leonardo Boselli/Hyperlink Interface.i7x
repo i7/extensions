@@ -113,10 +113,13 @@ First when play begins (this is the initializing replacement commands list rule)
 	now replacement entry is "NW" (S);
 	choose a blank row in Table of Hyperlink Commands;
 	now replacement entry is "D" (T);
-	now the command prompt is "[set link 2]look[end link] | [set link 3]inv[end link] | [set link 1]menu[end link]>" (U);
+	follow the set hyperlink command prompt rule;
 	now HI-hyperlinks-counter is (the number of filled rows in the Table of Hyperlink Commands);
 	now HI-min-hyperlinks is ( 1 + HI-hyperlinks-counter);
 	set off echo line event;
+
+This is the set hyperlink command prompt rule:
+	now the command prompt is "[set link 2]look[end link] | [set link 3]inv[end link] | [set link 1]menu[end link]>" (A);
 
 To set off echo line event:
 	(- glk_set_echo_line_event(gg_mainwin,0); -)
