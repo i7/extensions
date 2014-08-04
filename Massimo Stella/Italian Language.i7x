@@ -3047,19 +3047,21 @@ Understand "salta su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as enteri
 Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
 Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
+Understand "scala [something]" or "arrampicati su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" or "scala il/lo/la/i/gli/le/l [something]" as climbing.
+Understand "dentro" as inside.
+Understand "fuori" as outside.
 Understand "sinistra" as west.
-Understand "ovest" as west.
 Understand "destra" as east.
-Understand "est" as east.
 Understand "su" as up.
 Understand "giu" or "giù" as up.
-Understand "nordest" as northeast.
+Understand "nord" or "n" as north.
+Understand "sud" or "s" as south.
+Understand "ovest" or "o" as west.
+Understand "est" or "e" as east.
+Understand "nordest" or "ne" as northeast.
 Understand "nordovest" as northwest.
-Understand "sudovest" as southwest.
-Understand "sudest" as southeast.
-Understand "sud" as south.
-Understand "nord" as north.
-Understand "scala [something]" or "arrampicati su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" or "scala il/lo/la/i/gli/le/l [something]" as climbing.
+Understand "sudovest" or "so" as southwest.
+Understand "sudest" or "se" as southeast.
 
 [Carica/Salva/Esci]
 Understand "punti" or "punteggio" as requesting the score.
