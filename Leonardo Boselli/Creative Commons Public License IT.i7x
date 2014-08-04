@@ -32,7 +32,7 @@ To announce the CCL:
 	say "[italic type]Quest[']opera è fornita SENZA ALCUNA GARANZIA e può[line break]";
 	say "essere ridistribuita rispettando determinate condizioni:[line break]";
 	say "per i dettagli scrivi [bold type]garanzia[roman type][italic type] o [bold type]licenza.[roman type][paragraph break]";
-	say "[bold type]'[story title]' di [story author][roman type][paragraph break]".
+	[say "[bold type]'[story title]' di [story author][roman type][paragraph break]";]
 
 Section H (for use with Hyperlink Interface IT by Leonardo Boselli)
 
@@ -41,7 +41,7 @@ To announce the CCL:
 	say "[italic type]Quest[']opera è fornita SENZA ALCUNA GARANZIA e può[line break]";
 	say "essere ridistribuita rispettando determinate condizioni:[line break]";
 	say "per i dettagli scrivi [o]garanzia[x][italic type] o [o]licenza[x].[paragraph break]";
-	say "[bold type]'[story title]' di [story author][roman type][paragraph break]".
+	[say "[bold type]'[story title]' di [story author][roman type][paragraph break]".]
 
 Section 2 - The recommended warranty text
 
