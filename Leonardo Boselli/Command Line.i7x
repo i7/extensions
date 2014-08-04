@@ -7,7 +7,7 @@ Include Version 7 of Glulx Entry Points by Emily Short.
 
 Section 1 - The Command Line
 
-After going to a room:
+Every turn:
 	follow the command line drawing rule;
 	continue the action.
 
@@ -47,7 +47,6 @@ Section 1a - Drawing Rule (for use with Automap by Mark Tilford)
 
 This is the command line drawing rule:
 	focus the command window;
-	clear the command window;
 	say "[fixed letter spacing][top rose] |[set link 2]look[end link]  |[set link 3]inventory[end link]|[set link 7]x me[end link][line break][middle rose] |" (A);
 	if object hyperlink highlighting is true:
 		say "[set link 5]things[end link]|" (B);
@@ -58,13 +57,13 @@ This is the command line drawing rule:
 	say "[line break][bottom rose] |[set link 8]save[end link]  |[set link 9]restore[end link]  |" (E);
 	say "[set link 10]zoom[end link][variable letter spacing][no line break]" (F);
 	focus the main window;
+	say "[run paragraph on]".
 
 
 Section 1b - Drawing Rule (for use without Automap by Mark Tilford)
 
 This is the command line drawing rule:
 	focus the command window;
-	clear the command window;
 	say "[fixed letter spacing][top rose] |[set link 2]look[end link]  |[set link 3]inventory[end link]|[set link 7]x me[end link][line break][middle rose] |" (A);
 	if object hyperlink highlighting is true:
 		say "[set link 5]things[end link]|" (B);
@@ -72,9 +71,9 @@ This is the command line drawing rule:
 		say "[set link 6]exits[end link]    |" (C);
 	if topic hyperlink highlighting is true:
 		say "[set link 4]topics[end link]" (D);
-	say "[line break][bottom rose] |[set link 8]save[end link]  |[set link 9]restore[end link]  |"(E);
+	say "[line break][bottom rose] |[set link 8]save[end link]  |[set link 9]restore[end link]  |[variable letter spacing][no line break]"(E);
 	if true is false:
-		say "[set link 10]zoom[end link][variable letter spacing][no line break]" (F);
+		say "***" (F);
 	focus the main window;
 
 
@@ -89,30 +88,38 @@ Before starting the virtual machine:
 	do nothing. [Hack that, for complicated reasons, prevents character streams going to the wrong place at game startup under some conditions.]
 
 When play begins (this is the command line construction rule):
-	build the command window;
 	follow the command line drawing rule;
-	now the command prompt is ">";
 
-Carry out restarting the game: 
+Check restarting the game: 
 	destroy the command window;
+	follow the set hyperlink command prompt rule;
+	continue the action;
+
+Check saving the game: 
+	destroy the command window;
+	follow the set hyperlink command prompt rule;
+	continue the action;
+
+Check restoring the game: 
+	destroy the command window;
+	follow the set hyperlink command prompt rule;
 	continue the action;
 
 To destroy the command window:
-	(-
-		glk_window_close(gg_cmdwin,0);
-		gg_cmdwin = 0;
-	-)
-
-To build the command window:
-	(-
-		if (gg_cmdwin == 0) gg_cmdwin = glk_window_open(gg_mainwin, (winmethod_Below+winmethod_Fixed), 3, wintype_TextGrid, GG_CMDWIN_ROCK);
-	-)
+	(- DestroyCommandLine(); -)
 
 To focus the command window:
-	(-  if (gg_cmdwin ~= 0) glk_set_window(gg_cmdwin);  -)
+	if command line build result is 1:
+		now the command prompt is ">";
+	set and clear command window;
 
-To clear the command window:
-	(-  if (gg_cmdwin ~= 0) glk_window_clear(gg_cmdwin);  -)
+To set and clear command window:
+	(-
+		if (gg_cmdwin ~= 0) {
+			glk_set_window(gg_cmdwin);
+			glk_window_clear(gg_cmdwin);
+		}
+	-)
 
 To focus the main window:
 	(- glk_set_window(gg_mainwin); -)
@@ -120,50 +127,59 @@ To focus the main window:
 To clear the main window:
 	(- glk_window_clear(gg_mainwin); -)
 
+To decide which number is command line build result:
+	(- BuildCommandLine() -)
+
+Include (-
+
+[ BuildCommandLine ;
+	if (gg_cmdwin == 0) {
+		gg_cmdwin = glk_window_open(gg_mainwin, (winmethod_Below+winmethod_Fixed), 3, wintype_TextGrid, GG_CMDWIN_ROCK);
+		if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_cmdwin);
+		return 1;
+	}
+	return 0;
+];
+
+[ DestroyCommandLine ;
+	if(gg_cmdwin ~= 0) glk_window_close(gg_cmdwin,0);
+	gg_cmdwin = 0;
+];
+
+-)
 
 Section 3 - Hyperlinks Manager
 
 [Heavily based on Basic Hyperlinks by Emily Short]
 
 When play begins:
-	start looking for command hyperlinks;
 	start looking for status hyperlinks;
 
-To start looking for command hyperlinks:
-	(- SetCommandLink(); -)
-	
 To start looking for status hyperlinks:
-	(- SetStatusLink(); -)
+	(-
+		if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_cmdwin);
+	-)
 	
-A glulx hyperlink rule (this is the default command hyperlink setting rule):
-	perform glulx command hyperlink request.
+A glulx hyperlink rule (this is the default command and status hyperlink setting rule):
+	perform glulx command and status hyperlink request.
 
-A glulx hyperlink rule (this is the default status hyperlink setting rule):
-	perform glulx status hyperlink request.
-
-To perform glulx command hyperlink request:
-	(-  if (glk_gestalt(gestalt_Hyperlinks, 0)) DoCommandLink(); -)
-
-To perform glulx status hyperlink request:
-	(-  if (glk_gestalt(gestalt_Hyperlinks, 0)) DoStatusLink(); -)
+To perform glulx command and status hyperlink request:
+	(-
+		if (glk_gestalt(gestalt_Hyperlinks, 0)) {
+			setlink(); 
+			if(gg_cmdwin ~= 0) playCommandHyperlink(gg_event-->2);
+			playStatusHyperlink(gg_event-->2);
+		}
+	-)
 
 Include (-
- [ DoCommandLink;
-	setlink(); 
-	playCommandHyperlink(gg_event-->2);
- ]; 
-
- [ DoStatusLink;
-	setlink(); 
-	playStatusHyperlink(gg_event-->2);
- ]; 
 
 [ playCommandHyperlink n;
 	(+ current link number +) = n;
 	if (n > 0) { 
 		glk_cancel_hyperlink_event(gg_cmdwin);
 		FollowRulebook( (+ clicking hyperlink rules +) ); 
-		SetCommandLink();
+		if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_cmdwin);
 	};
 ];
 
@@ -172,16 +188,8 @@ Include (-
 	if (n > 0) { 
 		glk_cancel_hyperlink_event(gg_statuswin);
 		FollowRulebook( (+ clicking hyperlink rules +) ); 
-		SetStatusLink();
+		if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_statuswin);
 	};
-];
-
-[ SetCommandLink ;
-	if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_cmdwin);
-];
-
-[ SetStatusLink ;
-	if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_statuswin);
 ];
 
 -)
