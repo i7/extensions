@@ -4,7 +4,6 @@ Part I - Main Settings
 
 Chapter 1 - Includes
 
-Include Title Page IT by Leonardo Boselli.
 Include Basic Help Menu IT by Leonardo Boselli.
 Include Creative Commons Public License IT by Leonardo Boselli.
 Include Hyperlink Interface IT by Leonardo Boselli.
@@ -42,13 +41,6 @@ To say ringrazia-news:
 
 To say ringrazia-gente:
 	say "[line break][bold type]Massimo Stella[roman type] per l[']estensione 'Italian language'[line break][bold type]Graham Nelson[roman type] per lo sviluppo di Inform7[line break][bold type]Mark Tilford[roman type] per varie estensioni[line break][bold type]Aaron Reed[roman type] per varie estensioni[line break][bold type]Emily Short[roman type] per varie estensioni[line break][bold type]Jon Ingold[roman type] per varie estensioni[line break][bold type]Eric Eve[roman type] per varie estensioni"
-
-The intro menu is the Table of Basic Help Options.
-
-Section W (for use with Release for Quixe by Leonardo Boselli)
-
-First when play begins:
-	now TITLEPAGE-DISPLAY-ART is false.
 
 Chapter 4 - Status Line
 
@@ -402,14 +394,9 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 	Chapter 2 - Introduzione
 
 	When play begins:
-		say "Un primo testo introduttivo...";
-		say "[line break]([italic type]Premi un tasto[roman type])[paragraph break]";
-		wait for any key;
-		clear the main window;
-		say "[paragraph break]Un secondo testo introduttivo...";
+		say "Un testo introduttivo...";
 		now status exit table is Table of Exits Status;
 		now current zoom is map absent;
-		now the command prompt is ">";
 
 	Chapter 3 - NPC
 
