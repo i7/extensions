@@ -55,7 +55,7 @@ Chapter - Responses
     initializing replacement commands list rule response (R) is "W".
     initializing replacement commands list rule response (S) is "NW".
     initializing replacement commands list rule response (T) is "D".
-    initializing replacement commands list rule response (U) is "[set link 2]guarda[end link] | [set link 3]inv[end link] | [set link 1]menù[end link]>".
+    set hyperlink command prompt rule response (A) is  "[set link 2]guarda[end link] | [set link 3]inv[end link] | [set link 1]menù[end link]>".
     setup hyperlink emphasis rule response (A) is "[story title] fa uso di collegamenti ipertestuali evidenziati. È [if hyperlinks required is true]necessario[else]raccomandato[end if] che l'interprete li visualizzi correttamente con qualche forma di evidenziazione. Premi il numero corrispondente per cambiare le opzioni di visualizzazione finché non trovi quella che risulta più chiara sul tuo sistema.".
     setup hyperlink emphasis rule response (B) is "I collegamenti ipertestuali agli [o]oggetti[x] vengono visualizzati [o]così[x].".
     setup hyperlink emphasis rule response (C) is "I collegamenti ipertestuali alle [d]uscite[x] vengono visualizzati [d]così[x].".
