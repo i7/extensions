@@ -77,6 +77,11 @@ After examining a thing (called the object):
 			otherwise:
 				now HI hyperlink text is "apri [the object]";
 				print HI hyperlink;
+		otherwise if the object is a supporter:
+			repeat with Obj running through the things carried by the player:
+				if Obj is not the object:
+					now HI hyperlink text is "metti [the Obj] [sup the object]";
+					print HI hyperlink; 
 		if the object is enterable:
 			if the object is a supporter:
 				if the player is on the object:
