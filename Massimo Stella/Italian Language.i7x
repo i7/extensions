@@ -1,4 +1,4 @@
-Version 2/140802 of Italian Language by Massimo Stella begins here.
+Version 2/140806 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -798,42 +798,43 @@ then (a) Inform will recognise these as instances of the kind "man", and (b)
 it will give them each the printed name "homme" (not "man").
 ]
 
-A room translates into Italian as una stanza.
-A thing translates into Italian as una cosa.
-A door translates into Italian as una porta.
-A container translates into Italian as un contenitore.
-A vehicle translates into Italian as un veicolo.
-A player's holdall translates into Italian as un inventario.
-A supporter translates into Italian as un supporto.
-A backdrop translates into Italian as un fondale.
-A person translates into Italian as una persona.
-A man translates into Italian as un uomo.
-A woman translates into Italian as una donna.
-A animal translates into Italian as un animale.
-A device translates into Italian as un dispositivo.
-A direction translates into Italian as una direzione.
-A region translates into Italian as una regione.
+room translates into Italian as stanza.
+thing translates into Italian as cosa.
+door translates into Italian as porta.
+container translates into Italian as contenitore.
+vehicle translates into Italian as veicolo.
+player's holdall translates into Italian as inventario. the plural of inventario is inventari.
+supporter translates into Italian as supporto.
+backdrop translates into Italian as fondale.
+person translates into Italian as persona.
+man translates into Italian as uomo. the plural of uomo is uomini.
+woman translates into Italian as donna.
+animal translates into Italian as animale.
+device translates into Italian as dispositivo.
+direction translates into Italian as direzione.
+region translates into Italian as regione.
 
-A number translates into Italian as un numero.
-A real number translates into Italian as un numero reale.
-A time translates into Italian as un'ora.
-A truth state translates into Italian as un valore logico.
-A text translates into Italian as un testo.
-A unicode character translates into Italian as un carattere unicode.
-A snippet translates into Italian as un frammento.
-A stored action translates into Italian as un'azione memorizzata.
-A scene translates into Italian as una scena.
-A command parser error translates into Italian as un errore del parser dei comandi.
-A use option translates into Italian as un'opzione.
-A response translates into Italian as una risposta.
-A verb translates into Italian as un verbo.
-A table name translates into Italian as un nome di tabella.
-A equation name translates into Italian as un nome d'equazione.
-A rulebook outcome translates into Italian as un risultato di una regola.
-A action name translates into Italian as un nome d'azione.
-A figure name translates into Italian as un nome di figura.
-A sound name translates into Italian as un nome di suono.
-A external file translates into Italian as un nome di file.
+number translates into Italian as numero.
+real number translates into Italian as numero reale. the plural of numero reale is numeri reali.
+time translates into Italian as ora.
+truth state translates into Italian as valore logico. the plural of valore logico is valori logici.
+text translates into Italian as testo.
+unicode character translates into Italian as carattere unicode. the plural of carattere unicode is caratteri unicode.
+snippet translates into Italian as frammento.
+stored action translates into Italian as azione memorizzata. the plural of azione memorizzata is azioni memorizzate.
+scene translates into Italian as scena.
+command parser error translates into Italian as errore del parser dei comandi. the plural of errore del parser dei comandi is errori del parser dei comandi.
+use option translates into Italian as opzione.
+response translates into Italian as risposta.
+verb translates into Italian as verbo.
+table name translates into Italian as nome di tabella. the plural of nome di tabella is nomi di tabella.
+equation name translates into Italian as nome di equazione. the plural of nome di equazione is nomi di equazione.
+rulebook outcome translates into Italian as risultato di una regola. the plural of risultato di una regola is risultati di una regola.
+action name translates into Italian as nome di azione. the plural of nome di azione is nomi di azione.
+figure name translates into Italian as nome di figura. the plural of nome di figura is nomi di figura.
+sound name translates into Italian as nome di suono. the plural of nome di suono is nomi di suono.
+external file translates into Italian as nome di file. the plural of nome di file is nomi di file.
+
 
 Section 2.2.5.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
@@ -863,10 +864,10 @@ language Italian
 	ciliegia			ciliegie
 
 <it-plural-by-ending> ::=
-	*s			0 |				[tas -> tas]
 	*a			1e |			[tassa -> tasse]
 	*o			1i |			[tasso -> tassi]
-	*glio			1		[taglio -> tagli]
+	*e			1i |			[regione -> regioni]
+	*io			1		[inventario -> inventari]
 
 -) in the Preform grammar.
 
@@ -1109,14 +1110,16 @@ i modi e i tempi irregolari.]
 	potere		<it-potere-conjugation> |
 	possedere	<it-possedere-conjugation> |
 	tenere	<it-tenere-conjugation> |
+	sostenere	<it-sostenere-conjugation> |
+	contenere	<it-contenere-conjugation> |
 	togliere	<it-togliere-conjugation> |
 	lasciare	<it-lasciare-conjugation> |
-	fare			<it-fare-conjugation> |
-	sedere			<it-sedere-conjugation> |
-	uscire			<it-uscire-conjugation> |
-	toccare			<it-toccare-conjugation> |
-	ottenere			<it-ottenere-conjugation> |
-	assaggiare			<it-assaggiare-conjugation> |
+	fare		<it-fare-conjugation> |
+	sedere	<it-sedere-conjugation> |
+	uscire	<it-uscire-conjugation> |
+	toccare	<it-toccare-conjugation> |
+	ottenere	<it-ottenere-conjugation> |
+	assaggiare	<it-assaggiare-conjugation> |
 	dare			<it-dare-conjugation> |
 	bloccare		<it-bloccare-conjugation> |
 	sbloccare	<it-sbloccare-conjugation> |
@@ -1124,9 +1127,9 @@ i modi e i tempi irregolari.]
 [Regular -ARE verbs]
 	-are 		<it-avere-prima-conjugation> |		[e.g., "donare"]
 [Regular -ERE verbs]
-	-ere 		<it-avere-seconda-conjugation> |	[e.g., "svendere"]
+	-ere 		<it-avere-seconda-conjugation> |	[e.g., "leggere"]
 [Regular -IRE verbs]
-	-ire			<it-avere-terza-conjugation>
+	-ire			<it-avere-terza-conjugation>	[e.g., "dormire"]
 
 [So here goes with avere, which is not very irregular, but we'll need it as
 an auxiliary later.
@@ -1222,13 +1225,13 @@ English, where the asterisks are never used. ]
 	<it-andare-tabulation>
 
 <it-andare-tabulation> ::=
-	a1		<it-andare-present> |
-	a2		<it-prima-past> |
-	a3		<it-essere-perfect> |
-	a4		<it-essere-pluperfect> |
-	a5		<it-andare-future> |
-	a6		<it-andare-past-historic> |
-	a7		<it-stare-plufuture> |
+	a1+		<it-andare-present> |
+	a2+		<it-prima-past> |
+	a3+		<it-essere-perfect> |
+	a4+		<it-essere-pluperfect> |
+	a5+		<it-andare-future> |
+	a6+		<it-andare-past-historic> |
+	a7+		<it-stare-plufuture> |
 	p*		3+*
 
 <it-andare-present> ::=
@@ -1252,13 +1255,13 @@ English, where the asterisks are never used. ]
 	<it-arrivare-tabulation>
 
 <it-arrivare-tabulation> ::=
-	a1		<it-prima-present> |
-	a2		<it-prima-past> |
-	a3		<it-essere-perfect> |
-	a4		<it-essere-pluperfect> |
-	a5		<it-arrivare-future> |
-	a6		<it-andare-past-historic> |
-	a7		<it-stare-plufuture> |
+	a1+		<it-prima-present> |
+	a2+		<it-prima-past> |
+	a3+		<it-essere-perfect> |
+	a4+		<it-essere-pluperfect> |
+	a5+		<it-arrivare-future> |
+	a6+		<it-andare-past-historic> |
+	a7+		<it-stare-plufuture> |
 	p*		3+*
 
 <it-arrivare-future> ::=
@@ -1277,13 +1280,13 @@ English, where the asterisks are never used. ]
 	<it-stare-tabulation>
 
 <it-stare-tabulation> ::=
-	a1		<it-stare-present> |
-	a2		<it-prima-past> |
-	a3		<it-essere-perfect> |
-	a4		<it-essere-pluperfect> |
-	a5		<it-stare-future> |
-	a6		<it-stare-past-historic> |
-	a7		<it-stare-plufuture> |
+	a1+		<it-stare-present> |
+	a2+		<it-prima-past> |
+	a3+		<it-essere-perfect> |
+	a4+		<it-essere-pluperfect> |
+	a5+		<it-stare-future> |
+	a6+		<it-stare-past-historic> |
+	a7+		<it-stare-plufuture> |
 	p*		3+*
 
 <it-stare-present> ::=
@@ -1309,13 +1312,13 @@ English, where the asterisks are never used. ]
 	<it-guardare-tabulation>
 
 <it-guardare-tabulation> ::=
-	a1		<it-prima-present> |
-	a2		<it-prima-past> |
-	a3		<it-avere-perfect> |
-	a4		<it-avere-pluperfect> |
-	a5		<it-prima-future> |
-	a6		<it-guardare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-prima-present> |
+	a2+		<it-prima-past> |
+	a3+		<it-avere-perfect> |
+	a4+		<it-avere-pluperfect> |
+	a5+		<it-prima-future> |
+	a6+		<it-guardare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-guardare-past-historic> ::=
@@ -1332,13 +1335,13 @@ English, where the asterisks are never used. ]
 	<it-mangiare-tabulation>
 
 <it-mangiare-tabulation> ::=
-	a1		<it-mangiare-present> |
-	a2		<it-prima-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-mangiare-future> |
-	a6		<it-mangiare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-mangiare-present> |
+	a2+		<it-prima-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-mangiare-future> |
+	a6+		<it-mangiare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-mangiare-present> ::=
@@ -1362,13 +1365,13 @@ English, where the asterisks are never used. ]
 	<it-dovere-tabulation>
 
 <it-dovere-tabulation> ::=
-	a1		<it-dovere-present> |
-	a2		<it-potere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-dovere-future> |
-	a6		<it-dovere-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-dovere-present> |
+	a2+		<it-potere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-dovere-future> |
+	a6+		<it-dovere-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-dovere-present> ::=
@@ -1391,13 +1394,13 @@ English, where the asterisks are never used. ]
 	<it-potere-tabulation>
 
 <it-potere-tabulation> ::=
-	a1		<it-potere-present> |
-	a2		<it-potere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-dovere-future> |
-	a6		<it-potere-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-potere-present> |
+	a2+		<it-potere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-dovere-future> |
+	a6+		<it-potere-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-potere-present> ::=
@@ -1421,13 +1424,13 @@ English, where the asterisks are never used. ]
 	<it-possedere-tabulation>
 
 <it-possedere-tabulation> ::=
-	a1		<it-possedere-present> |
-	a2		<it-possedere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-possedere-future> |
-	a6		<it-possedere-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-possedere-present> |
+	a2+		<it-possedere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-possedere-future> |
+	a6+		<it-possedere-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-possedere-present> ::=
@@ -1453,13 +1456,13 @@ English, where the asterisks are never used. ]
 	<it-tenere-tabulation>
 
 <it-tenere-tabulation> ::=
-	a1		<it-tenere-present> |
-	a2		<it-tenere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-tenere-future> |
-	a6		<it-tenere-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-tenere-present> |
+	a2+		<it-tenere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-tenere-future> |
+	a6+		<it-tenere-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-tenere-present> ::=
@@ -1475,6 +1478,70 @@ English, where the asterisks are never used. ]
 	tenni | 5+esti | 5+ette | 5+emmo | 5+este | tenerono
 
 [
+---> Italian : "SOSTENERE" verb. <----
+]
+
+<it-sostenere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		5+uto |
+	<it-sostenere-tabulation>
+
+<it-sostenere-tabulation> ::=
+	a1+		<it-sostenere-present> |
+	a2+		<it-sostenere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-sostenere-future> |
+	a6+		<it-sostenere-past-historic> |
+	a7+		<it-avere-future> 3 |
+	p*		3+*
+
+<it-sostenere-present> ::=
+	sostengo | sostieni | sostiene | 5+iamo | 5+ete | sostengono
+
+<it-sostenere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-sostenere-future> ::=
+	sosterrò | sosterrai | sosterrà | sosterremo | sosterrete | sosterranno
+
+<it-sostenere-past-historic> ::=
+	sostenni | 5+esti | 5+ette | 5+emmo | 5+este | sostenerono
+
+[
+---> Italian : "CONTENERE" verb. <----
+]
+
+<it-contenere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		5+uto |
+	<it-contenere-tabulation>
+
+<it-contenere-tabulation> ::=
+	a1+		<it-contenere-present> |
+	a2+		<it-contenere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-contenere-future> |
+	a6+		<it-contenere-past-historic> |
+	a7+		<it-avere-future> 3 |
+	p*		3+*
+
+<it-contenere-present> ::=
+	contengo | contieni | contiene | 5+iamo | 5+ete | contengono
+
+<it-contenere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-contenere-future> ::=
+	conterrò | conterrai | conterrà | conterremo | conterrete | conterranno
+
+<it-contenere-past-historic> ::=
+	contenni | 5+esti | 5+ette | 5+emmo | 5+este | contenerono
+
+[
 ---> Italian : "TOGLIERE" verb. <----
 ]
 
@@ -1485,13 +1552,13 @@ English, where the asterisks are never used. ]
 	<it-togliere-tabulation>
 
 <it-togliere-tabulation> ::=
-	a1		<it-togliere-present> |
-	a2		<it-togliere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-togliere-future> |
-	a6		<it-togliere-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-togliere-present> |
+	a2+		<it-togliere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-togliere-future> |
+	a6+		<it-togliere-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-togliere-present> ::=
@@ -1517,13 +1584,13 @@ English, where the asterisks are never used. ]
 	<it-lasciare-tabulation>
 
 <it-lasciare-tabulation> ::=
-	a1		<it-lasciare-present> |
-	a2		<it-lasciare-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-lasciare-future> |
-	a6		<it-lasciare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-lasciare-present> |
+	a2+		<it-lasciare-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-lasciare-future> |
+	a6+		<it-lasciare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-lasciare-present> ::=
@@ -1549,13 +1616,13 @@ English, where the asterisks are never used. ]
 	<it-fare-tabulation>
 
 <it-fare-tabulation> ::=
-	a1		<it-fare-present> |
-	a2		<it-fare-past> |
-	a3		<it-avere-perfect> |
-	a4		<it-avere-pluperfect> |
-	a5		<it-fare-future> |
-	a6		<it-fare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-fare-present> |
+	a2+		<it-fare-past> |
+	a3+		<it-avere-perfect> |
+	a4+		<it-avere-pluperfect> |
+	a5+		<it-fare-future> |
+	a6+		<it-fare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-fare-present> ::=
@@ -1582,13 +1649,13 @@ English, where the asterisks are never used. ]
 	<it-sedere-tabulation>
 
 <it-sedere-tabulation> ::=
-	a1		<it-sedere-present> |
-	a2		<it-sedere-past> |
-	a3		<it-sedere-perfect> |
-	a4		<it-sedere-pluperfect> |
-	a5		<it-sedere-future> |
-	a6		<it-sedere-past-historic> |
-	a7		<it-essere-future> 3 |
+	a1+		<it-sedere-present> |
+	a2+		<it-sedere-past> |
+	a3+		<it-sedere-perfect> |
+	a4+		<it-sedere-pluperfect> |
+	a5+		<it-sedere-future> |
+	a6+		<it-sedere-past-historic> |
+	a7+		<it-essere-future> 3 |
 	p*		3+*
 
 <it-sedere-present> ::=
@@ -1621,13 +1688,13 @@ English, where the asterisks are never used. ]
 	<it-uscire-tabulation>
 
 <it-uscire-tabulation> ::=
-	a1		<it-uscire-present> |
-	a2		<it-uscire-past> |
-	a3		<it-uscire-perfect> |
-	a4		<it-uscire-pluperfect> |
-	a5		<it-uscire-future> |
-	a6		<it-uscire-past-historic> |
-	a7		<it-essere-future> 3 |
+	a1+		<it-uscire-present> |
+	a2+		<it-uscire-past> |
+	a3+		<it-uscire-perfect> |
+	a4+		<it-uscire-pluperfect> |
+	a5+		<it-uscire-future> |
+	a6+		<it-uscire-past-historic> |
+	a7+		<it-essere-future> 3 |
 	p*		3+*
 
 <it-uscire-present> ::=
@@ -1659,13 +1726,13 @@ English, where the asterisks are never used. ]
 	<it-toccare-tabulation>
 
 <it-toccare-tabulation> ::=
-	a1		<it-toccare-present> |
-	a2		<it-toccare-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-toccare-future> |
-	a6		<it-toccare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-toccare-present> |
+	a2+		<it-toccare-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-toccare-future> |
+	a6+		<it-toccare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-toccare-present> ::=
@@ -1691,13 +1758,13 @@ English, where the asterisks are never used. ]
 	<it-ottenere-tabulation>
 
 <it-ottenere-tabulation> ::=
-	a1		<it-ottenere-present> |
-	a2		<it-ottenere-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-ottenere-future> |
-	a6		<it-ottenere-past-historic> |
-	a7		<it-essere-future> 3 |
+	a1+		<it-ottenere-present> |
+	a2+		<it-ottenere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-ottenere-future> |
+	a6+		<it-ottenere-past-historic> |
+	a7+		<it-essere-future> 3 |
 	p*		3+*
 
 <it-ottenere-present> ::=
@@ -1723,13 +1790,13 @@ English, where the asterisks are never used. ]
 	<it-assaggiare-tabulation>
 
 <it-assaggiare-tabulation> ::=
-	a1		<it-assaggiare-present> |
-	a2		<it-assaggiare-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-assaggiare-future> |
-	a6		<it-assaggiare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-assaggiare-present> |
+	a2+		<it-assaggiare-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-assaggiare-future> |
+	a6+		<it-assaggiare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-assaggiare-present> ::=
@@ -1755,13 +1822,13 @@ English, where the asterisks are never used. ]
 	<it-dare-tabulation>
 
 <it-dare-tabulation> ::=
-	a1		<it-dare-present> |
-	a2		<it-dare-past> |
-	a3		( t1 avere ) 3 |
-	a4		( t2 avere ) 3 |
-	a5		<it-dare-future> |
-	a6		<it-dare-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-dare-present> |
+	a2+		<it-dare-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-dare-future> |
+	a6+		<it-dare-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-dare-present> ::=
@@ -1793,13 +1860,13 @@ English, where the asterisks are never used. ]
 	<it-bloccare-tabulation>
 
 <it-bloccare-tabulation> ::=
-	a1		<it-bloccare-present> |
-	a2		<it-prima-past> |
-	a3		<it-avere-perfect> |
-	a4		<it-avere-pluperfect> |
-	a5		<it-bloccare-future> |
-	a6		<it-prima-past-historic> |
-	a7		<it-avere-future> 3 |
+	a1+		<it-bloccare-present> |
+	a2+		<it-prima-past> |
+	a3+		<it-avere-perfect> |
+	a4+		<it-avere-pluperfect> |
+	a5+		<it-bloccare-future> |
+	a6+		<it-prima-past-historic> |
+	a7+		<it-avere-future> 3 |
 	p*		3+*
 
 <it-bloccare-present> ::=
@@ -2018,7 +2085,7 @@ In Italian sbloccare is a verb meaning to unlock.
 
 Section 2.4.2.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
-In Italian montar su is a verb meaning to mount.
+In Italian montare su is a verb meaning to mount.
 In Italian scendere is a verb meaning to dismount.
 
 Section 2.4.2.3 - In Locksmith (for use with Locksmith by Emily Short)
@@ -2039,8 +2106,31 @@ language Italian
 -) in the Preform grammar.
 
 In Italian essere dentro is a verb meaning to be in.
+
+In Italian essere nel is a verb meaning to be in.
+In Italian essere nello is a verb meaning to be in.
+In Italian essere nella is a verb meaning to be in.
+In Italian essere nei is a verb meaning to be in.
+In Italian essere negli is a verb meaning to be in.
+In Italian essere nelle is a verb meaning to be in.
+
 In Italian essere sopra is a verb meaning to be on.
+
+In Italian essere sul is a verb meaning to be on.
+In Italian essere sullo is a verb meaning to be on.
+In Italian essere sulla is a verb meaning to be on.
+In Italian essere sui is a verb meaning to be on.
+In Italian essere sugli is a verb meaning to be on.
+In Italian essere sulle is a verb meaning to be on.
+
 In Italian essere parte di is a verb meaning to be part of.
+
+In Italian essere parte del is a verb meaning to be part of.
+In Italian essere parte dello is a verb meaning to be part of.
+In Italian essere parte dei is a verb meaning to be part of.
+In Italian essere parte degli is a verb meaning to be part of.
+In Italian essere parte delle is a verb meaning to be part of.
+
 In Italian essere superiore a is a verb meaning to be greater than.
 In Italian essere inferiore a is a verb meaning to be less than.
 In Italian essere almeno is a verb meaning to be at least.
@@ -2049,6 +2139,40 @@ In Italian essere accanto is a verb meaning to be adjacent to.
 In Italian essere sopra a is a verb meaning to be above.
 In Italian essere sotto a is a verb meaning to be below.
 In Italian essere di traverso a is a verb meaning to be through.
+
+In Italian essere a nord di is a verb meaning the mapping north relation.
+In Italian essere a nord della is a verb meaning the mapping north relation.
+In Italian essere a nord dello is a verb meaning the mapping north relation.
+In Italian essere a nord del is a verb meaning the mapping north relation.
+In Italian essere a sud di is a verb meaning the mapping south relation.
+In Italian essere a sud della is a verb meaning the mapping south relation.
+In Italian essere a sud dello is a verb meaning the mapping south relation.
+In Italian essere a sud del is a verb meaning the mapping south relation.
+In Italian essere a est di is a verb meaning the mapping east relation.
+In Italian essere a est della is a verb meaning the mapping east relation.
+In Italian essere a est dello is a verb meaning the mapping east relation.
+In Italian essere a est del is a verb meaning the mapping east relation.
+In Italian essere a ovest di is a verb meaning the mapping west relation.
+In Italian essere a ovest della is a verb meaning the mapping west relation.
+In Italian essere a ovest dello is a verb meaning the mapping west relation.
+In Italian essere a ovest del is a verb meaning the mapping west relation.
+In Italian essere a nordovest di is a verb meaning the mapping northwest relation.
+In Italian essere a nordovest della is a verb meaning the mapping northwest relation.
+In Italian essere a nordovest dello is a verb meaning the mapping northwest relation.
+In Italian essere a nordovest del is a verb meaning the mapping northwest relation.
+In Italian essere a nordest di is a verb meaning the mapping northeast relation.
+In Italian essere a nordest della is a verb meaning the mapping northeast relation.
+In Italian essere a nordest dello is a verb meaning the mapping northeast relation.
+In Italian essere a nordest del is a verb meaning the mapping northeast relation.
+In Italian essere a sudovest di is a verb meaning the mapping southwest relation.
+In Italian essere a sudovest della is a verb meaning the mapping southwest relation.
+In Italian essere a sudovest dello is a verb meaning the mapping southwest relation.
+In Italian essere a sudovest del is a verb meaning the mapping southwest relation.
+In Italian essere a sudest di is a verb meaning the mapping southeast relation.
+In Italian essere a sudest della is a verb meaning the mapping southeast relation.
+In Italian essere a sudest dello is a verb meaning the mapping southeast relation.
+In Italian essere a sudest del is a verb meaning the mapping southeast relation.
+
 
 Volume 3 - Responses
 
@@ -2170,6 +2294,8 @@ In Italian aspettare is a verb.
 In Italian toccare is a verb.
 In Italian ottenere is a verb.
 In Italian tenere is a verb.
+In Italian sostenere is a verb.
+[In Italian contenere is a verb.]
 In Italian sentire is a verb.
 In Italian agitare is a verb.
 In Italian tirare is a verb.
@@ -2241,8 +2367,6 @@ To say enter-pp:
 	otherwise if the player's command includes "salta":
 		say "[saltato]";
 	otherwise if the player's command includes "siedi":
-		say "[seduto]";
-	otherwise if the player's command includes "siediti":
 		say "[seduto]";
 	otherwise:
 		say "[entrato]";
@@ -2388,12 +2512,30 @@ Describe room gone into rule response (S) is ", portando[ti] appresso".
 
 [ Entering ]
 
-Can't enter what's already entered rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [sup the noun]."
-Can't enter what's already entered rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the noun]."
+The can't enter what's not enterable rule is not listed in any rulebook.
+Check an actor entering (this is the italian can't enter what's not enterable rule):
+	if the noun is not enterable:
+		if the player is the actor:
+			if the player's command includes "sali":
+				say "Non [regarding the player]ci [puoi] salire." (A);
+			otherwise if the player's command includes "siedi":
+				say "Non [regarding the player][ti] ci [puoi] sedere." (B);
+			otherwise if the player's command includes "sdraiati":
+				say "Non [regarding the player][ti] ci [puoi] sdraiare." (C);
+			otherwise if the player's command includes "salta":
+				say "Non [regarding the player]ci [puoi] saltare su." (E);
+			otherwise:
+				say "Non [regarding the player]ci [puoi] entrare." (D);
+		stop the action.
+
+[
 Can't enter what's not enterable rule response (A) is "Non [regarding the player]ci [puoi] salire."
 Can't enter what's not enterable rule response (B) is "Non [regarding the player][ti] ci [puoi] sedere."
 Can't enter what's not enterable rule response (C) is "Non [regarding the player][ti] ci [puoi] sdraiare."
 Can't enter what's not enterable rule response (D) is "Non [regarding the player]ci [puoi] entrare."
+]
+Can't enter what's already entered rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [sup the noun]."
+Can't enter what's already entered rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the noun]."
 Can't enter closed containers rule response (A) is "Non [regarding the player][puoi] entrare [inp the noun] perché [sei] [chiuso]."
 Can't enter something carried rule response (A) is "Non [regarding the player][puoi] entrare [inp the noun] perché [lo] [regarding the player][tieni] in mano."
 Implicitly pass through other barriers rule response (A) is "([regarding the player][scendi] [dap the current home])[command clarification break]".
@@ -3047,6 +3189,7 @@ Understand "salta su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as enteri
 Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
 Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
+Understand "sdraiati sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
 Understand "scala [something]" or "arrampicati su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" or "scala il/lo/la/i/gli/le/l [something]" as climbing.
 Understand "dentro" as inside.
 Understand "fuori" as outside.
