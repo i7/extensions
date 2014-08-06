@@ -1,4 +1,4 @@
-Telephones IT by Leonardo Boselli begin here.
+Telephones IT by Leonardo Boselli begins here.
 
 "Telephones, standard and portable. Solo tradotto in italiano."
 
