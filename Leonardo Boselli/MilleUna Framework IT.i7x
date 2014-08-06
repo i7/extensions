@@ -1,4 +1,4 @@
-Version 1/140802 of Milleuna Framework IT by Leonardo Boselli begins here.
+Version 1/140802 of MilleUna Framework IT by Leonardo Boselli begins here.
 
 Part I - Main Settings
 
@@ -307,7 +307,7 @@ The check what's being hailed rule is not listed in any rulebook.
 
 Chapter END
 
-Milleuna Framework IT ends here.
+MilleUna Framework IT ends here.
 
 ---- Documentation ----
 
