@@ -325,7 +325,7 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 
 	Chapter 2 - Includes
 
-	Include Milleuna Framework IT by Leonardo Boselli.
+	Include MilleUna Framework IT by Leonardo Boselli.
 
 	[Elenco di tutte le estensioni necessarie]
 	Include Written Inventory IT by Leonardo Boselli.
