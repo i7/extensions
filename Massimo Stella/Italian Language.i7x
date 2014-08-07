@@ -1,4 +1,4 @@
-Version 2/140806 of Italian Language by Massimo Stella begins here.
+Version 2/140807 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -2080,6 +2080,7 @@ In Italian racchiudere is a verb meaning to enclose.
 In Italian portare is a verb meaning to carry.
 In Italian indossare is a verb meaning to wear.
 In Italian tenere is a verb meaning to hold.
+In Italian reggere is a verb meaning to hold.
 In Italian nascondere is a verb meaning to conceal.
 In Italian sbloccare is a verb meaning to unlock.
 
@@ -2240,7 +2241,8 @@ To say (p - an articulated preposition) cui (obj - a thing):
 	if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise][3La of P] [end if]";
 	otherwise:
-		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]".
+		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
+	say "cui [regarding the obj][obj]".
 
 To say (p - an articulated preposition) the (obj - a room):
 	if obj is female:
@@ -2464,8 +2466,8 @@ Concise report putting rule response (A) is "[regarding the player][maiuscolo][H
 Standard report putting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] messo [the noun] [su-in the second noun]."
 [ Inserting it into ]
 Can't insert something into itself rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro se [stesso]."
-Can't insert into closed containers rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro [ap the second noun] perché [regarding the second noun][sei] [chiuso]."
-Can't insert into what's not a container rule response (A) is "Non [regarding the player][puoi] mettere [the noun] dentro [ap the second noun] perché non [regarding the second noun][puoi] contenere oggetti."
+Can't insert into closed containers rule response (A) is "Non [regarding the player][puoi] mettere [the noun] [inp the second noun] perché [regarding the second noun][sei] [chiuso]."
+Can't insert into what's not a container rule response (A) is "Non [regarding the player][puoi] mettere [the noun] [inp the second noun] perché non [regarding the second noun][puoi] contenere oggetti."
 Can't insert clothes being worn rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
 Can't insert if this exceeds carrying capacity rule response (A) is "[regarding nothing]Non [ci sei] più spazio [inp the second noun]."
 Concise report inserting rule response (A) is "Fatto."
@@ -2582,7 +2584,7 @@ Report other people looking under rule response (A) is "[The actor] [guardi] sot
 [ Searching ]
 Can't search unless container or supporter rule response (A) is "[regarding the player]Non [trovi] nulla di interessante."
 Can't search closed opaque containers rule response (A) is "Non [regarding the player][puoi] vederne l'interno visto che [the noun] [sei] [chiuso]."
-Standard search containers rule response (A) is "Dentro [ap the noun] ".
+Standard search containers rule response (A) is "Dentro [the noun] ".
 Standard search containers rule response (B) is "[The noun] [sei] [vuoto]."
 Standard search supporters rule response (A) is "Sopra [the noun] ".
 Standard search supporters rule response (B) is "Non [regarding nothing][ci sei] nulla [sup the noun]."
@@ -2893,10 +2895,10 @@ List writer internal rule response (N) is "[regarding the noun][aperto] ma [vuot
 List writer internal rule response (O) is "[regarding the noun][chiuso]".
 List writer internal rule response (P) is "[regarding the noun][chiuso] e [bloccato]".
 List writer internal rule response (Q) is "[regarding the noun][contenente]".
-List writer internal rule response (R) is " (sopra cui ".
-List writer internal rule response (S) is ", sopra cui ".
-List writer internal rule response (T) is " (dentro cui ".
-List writer internal rule response (U) is ", dentro cui ".
+List writer internal rule response (R) is " (su cui ".
+List writer internal rule response (S) is ", su cui ".
+List writer internal rule response (T) is " (in cui ".
+List writer internal rule response (U) is ", in cui ".
 List writer internal rule response (V) is "[regarding the player][vedi]".
 List writer internal rule response (W) is "[sei] niente".
 List writer internal rule response (X) is "Niente".
@@ -2979,7 +2981,7 @@ Section  3.1.1.25 - Print protagonist internal rule
 
 Print protagonist internal rule response (A) is "[Tu]".
 Print protagonist internal rule response (B) is "[te]".
-Print protagonist internal rule response (C) is "[tuo] persona".
+Print protagonist internal rule response (C) is "[te] [stesso]".
 
 Section  3.1.1.26 - Standard implicit taking rule
 
@@ -3003,8 +3005,8 @@ Immediately undo rule response (E) is "[bracket]Turno precedente annullato.[clos
 
 Chapter 3.1.2 - Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
-Understand "monta su/sul/sullo/sui/sugli/sulla/sulle/sull [something]" as mounting.
-Understand "smonta da/dal/dallo/dai/dagli/dalla/dalle/dall [something]" as dismounting.
+Understand "monta [su-art] [something]" as mounting.
+Understand "smonta [da-art] [something]" as dismounting.
 
 can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the steed].".
 can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the conveyance].".
@@ -3071,107 +3073,129 @@ Part 4.1 - Pronouns and possessives in commands
 
 Part 4.2 - Understand grammar
 
+[articoli e preposizioni articolate]
+Understand "uno/una/un" as "[art-ind]".
+Understand "il/lo/la/i/gli/le/l" as "[art-det]".
+Understand "da/dal/dallo/dalla/dai/dagli/dalle/dall" as "[da-art]".
+Understand "su/sul/sullo/sulla/sui/sugli/sulle/sull" as "[su-art]".
+Understand "in/nel/nello/nella/nei/negli/nelle/nell" as "[in-art]".
+Understand "a/al/allo/alla/ai/agli/alle/all" as "[a-art]".
+Understand "di/del/dello/della/dei/degli/delle/dell" as "[di-art]".
+Understand "con/col/coi/cogli/coll" and "con [art-det]" as "[con-art]".
+Understand "per [art-det]" and "per" as "[per-art]".
+Understand "tra [art-det]" and "tra" as "[tra-art]".
+Understand "fra [art-det]" and "fra" as "[fra-art]".
+Understand "[art-det]" and "[art-ind]" as "[any-art]"
+
 [Generali]
-Understand "attacca [things]" or "attacca il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "uccidi [things]" or "uccidi il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "prendi [things]" or "prendi il/la/lo/i/le/gli/l [something]" as taking.
-Understand "mangia [things]" or "mangia il/la/lo/i/le/gli/l [something]" as eating.
-Understand "bacia [things]" or "bacia il/la/lo/i/le/gli/l [something]" as kissing.
-Understand "tocca [things]" or "tocca il/la/lo/i/le/gli/l [something]" as touching.
-Understand "brucia [things]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
-Understand "annusa" or "annusa [things]" or "annusa il/la/lo/i/le/gli/l [something]" as smelling.
-Understand "bevi [things]" or "bevi il/la/lo/i/le/gli/l [something]" as drinking.
-Understand "compra [things]" or "compra il/la/lo/i/le/gli/l [something]" as buying.
+Understand "attacca [things]" or "attacca [art-det] [something]" as attacking.
+Understand "uccidi [things]" or "uccidi [art-det] [something]" as attacking.
+Understand "prendi [things]" or "prendi [art-det] [something]" as taking.
+Understand "mangia [things]" or "mangia [art-det] [something]" as eating.
+Understand "bacia [things]" or "bacia [art-det] [something]" as kissing.
+Understand "tocca [things]" or "tocca [art-det] [something]" as touching.
+Understand "brucia [things]" or "brucia [art-det] [something]" as burning.
+Understand "annusa" or "annusa [things]" or "annusa [art-det] [something]" as smelling.
+Understand "bevi [things]" or "bevi [art-det] [something]" as drinking.
+Understand "compra [things]" or "compra [art-det] [something]" as buying.
 Understand "dormi" as sleeping.
 Understand "salta" as jumping.
 Understand "sveglia" or "svegliati" as waking up.
-Understand "sveglia [someone]" or "sveglia il/lo/la/i/gli/le/l [someone]" as waking.
-Understand "brucia [things]" or "brucia il/la/lo/i/le/gli/l [something]" as burning.
+Understand "sveglia [someone]" or "sveglia [art-det] [someone]" as waking.
+Understand "brucia [things]" or "brucia [art-det] [something]" as burning.
 Understand "agita le mani" as waving hands.
-Understand "agita [things]" or "agita il/lo/la/i/gli/le/l [something]" as waving.
-Understand "colpisci il/la/lo/i/le/gli/l [something]" or "colpisci [things]" as swinging.
-Understand "spremi [someone]" or "spremi il/la/lo/i/le/gli/l [something]" as squeezing.
-Understand "strizza [someone]" or "strizza il/la/lo/i/le/gli/l [something]" as squeezing.
+Understand "agita [things]" or "agita [art-det] [something]" as waving.
+Understand "colpisci [art-det] [something]" or "colpisci [things]" as swinging.
+Understand "spremi [someone]" or "spremi [art-det] [something]" as squeezing.
+Understand "strizza [someone]" or "strizza [art-det] [something]" as squeezing.
 Understand "ascolta" as listening.
-Understand "ascolta [things]" or "ascolta il/lo/la/i/gli/le/l [something]" as listening to.
+Understand "ascolta [things]" or "ascolta [art-det] [something]" as listening to.
 Understand "verifica" as verifying the story file.
 Understand "pensa" or "ricorda" or "medita" as thinking.
-Understand "rompi il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "compra [things]" or "compra il/lo/la/i/gli/le/l [something]" as buying.
-Understand "imposta [something] a/al/allo/alla/ai/agli/alle/all [text]" or "imposta il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [text]" as setting it to.
-Understand "regola [something] a/al/allo/alla/ai/agli/alle/all [text]" or "regola il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [text]" as setting it to.
+Understand "rompi [art-det] [something]" as attacking.
+Understand "compra [things]" or "compra [art-det] [something]" as buying.
+Understand "imposta [something] [a-art] [text]" or "imposta [art-det] [something] [a-art] [text]" as setting it to.
+Understand "regola [something] [a-art] [text]" or "regola [art-det] [something] [a-art] [text]" as setting it to.
 Understand "scusa" or "scusati" as saying sorry.
-Understand "gusta [things]" or "gusta il/lo/la/i/gli/le/l [something]" as tasting.
-Understand "assaggia [things]" or "assaggia il/lo/la/i/gli/le/l [something]" as tasting.
-Understand "gira [things]" or "gira il/lo/la/i/gli/le/l [something]" as turning.
+Understand "gusta [things]" or "gusta [art-det] [something]" as tasting.
+Understand "assaggia [things]" or "assaggia [art-det] [something]" as tasting.
+Understand "gira [things]" or "gira [art-det] [something]" as turning.
 Understand "aspetta" as waiting.
-Understand "getta [things preferably held] a/al/allo/alla/ai/agli/alle/all [something]" or "getta il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [something]" as throwing it at.
-Understand "lancia [things preferably held] a/al/allo/alla/ai/agli/alle/all [something]" or "lancia il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [something]" as throwing it at.
-Understand "dai [things preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" or  "dai il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" as giving it to.
-Understand "mostra [things preferably held] a [someone]" or "mostra il/lo/la/i/gli/le/l [something preferably held] a/al/allo/alla/ai/agli/alle/all [someone]" as showing it to.
-Understand "consulta [things] su/sul/sullo/sulla/sui/sugli/sulle/sull [text]" or "consulta il/lo/la/i/gli/le/l [something] su/sul/sullo/sulla/sui/sugli/sulle/sull [text]" as consulting it about.
-Understand "cerca in/nel/nello/nella/nei/negli/nelle/nell [things] di/del/dello/della/dei/degli/delle/dell [text]" as consulting it about.
-Understand "leggi in/nel/nello/nella/nei/negli/nelle/nell [things] di/del/dello/della/dei/degli/delle/dell [text]" as consulting it about.
+Understand "getta [things preferably held] [a-art] [something]" or "getta [art-det] [something preferably held] [a-art] [something]" as throwing it at.
+Understand "lancia [things preferably held] [a-art] [something]" or "lancia [art-det] [something preferably held] [a-art] [something]" as throwing it at.
+Understand "dai [things preferably held] [a-art] [someone]" or  "dai [art-det] [something preferably held] [a-art] [someone]" as giving it to.
+Understand "mostra [things preferably held] a [someone]" or "mostra [art-det] [something preferably held] [a-art] [someone]" as showing it to.
+Understand "consulta [things] [su-art] [text]" or "consulta [art-det] [something] [su-art] [text]" as consulting it about.
+Understand "cerca [in-art] [things] [di-art] [text]" as consulting it about.
+Understand "leggi [in-art] [things] [di-art] [text]" as consulting it about.
 
 [Visione]
-Understand "guarda [things]" or "guarda il/la/lo/i/le/gli/l [something]" as examining.
-Understand "leggi [things]" or "leggi il/la/lo/i/le/gli/l [something]" as examining.
-Understand "guarda dentro [things]" or "guarda dentro il/la/lo/i/le/gli/l [something]" or "guarda in/nel/nello/nella/negli/nelle/nell [something]" as searching.
-Understand "esamina [things]" or "esamina il/la/lo/i/le/gli/l [something]" as examining.
+Understand "guarda [things]" or "guarda [art-det] [something]" as examining.
+Understand "leggi [things]" or "leggi [art-det] [something]" as examining.
+Understand "guarda dentro [things]" or "guarda dentro [art-det] [something]" or "guarda [in-art] [something]" as searching.
+Understand "esamina [things]" or "esamina [art-det] [something]" as examining.
 Understand "guarda" or "g" as looking.
-Understand "guarda sotto il/la/lo/i/le/gli/l/al/alla/allo/all/ai/alle/agli [something]" as looking under.
+Understand "guarda sotto [art-det] [something]" as looking under.
+Understand "guarda sotto [a-art] [something]" as looking under.
 Understand "guarda sotto [things]" as looking under.
-Understand "guarda su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" as examining.
-Understand "descrivi il/la/lo/i/le/gli/l [something]" as examining.
+Understand "guarda [su-art] [something]" as examining.
+Understand "descrivi [art-det] [something]" as examining.
 
 [Interazione Fisica]
-Understand "calcia [things]" or "calcia il/la/lo/i/le/gli/l [something]" as attacking.
-Understand "accendi [things]" or "accendi il/la/lo/i/le/gli/l [something]" as switching on.
-Understand "spegni [things]" or "spegni il/la/lo/i/le/gli/l [something]" as switching off.
-Understand "spingi [things]" or "spingi il/la/lo/i/le/gli/l [something]" as pushing.
-Understand "spingi [things] a/al/allo/alla/ai/agli/alle/all [direction]" or "spingi il/lo/la/i/gli/le/l [something] a/al/allo/alla/ai/agli/alle/all [direction]" as pushing it to.
-Understand "tira [things]" or "tira il/lo/la/i/gli/le/l [something]" as pulling.
-Understand "indossa [things]" or "indossa il/la/lo/i/le/gli/l [something]" as wearing.
-Understand "metti [things]" or "metti il/la/lo/i/le/gli/l [something]" as wearing.
-Understand "togliti il/la/lo/i/le/gli/l [something]" as taking off.
-Understand "togli [things]" or "togli il/la/lo/i/le/gli/l [something]" as taking off.
-Understand "lascia [things]" or "lascia il/la/lo/i/le/gli/l [something]" as dropping.
-Understand "mostra [things] a [something]" or "mostra il/la/lo/i/le/gli/l [something] al/alla/allo/all/ai/agli/alle/a [something]" as showing it to.
-Understand "poggia [things] su/sopra [something]" or "poggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "appoggia [things] su/sopra [something]" or "appoggia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "lascia [things] su/sopra [something]" or "lascia il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "metti [things] su/sopra [something]" or "metti il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "carica [things] su/sopra [something]" or "carica il/la/lo/i/le/gli/l [something] sul/sullo/sulla/sulle/sugli/sopra/sull [something]" as putting it on.
-Understand "inserisci [things] dentro [something]" or "inserisci il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
-Understand "metti [things] in/dentro [something]" or "metti il/la/lo/i/le/gli/l [something] nel/nello/nella/nei/negli/nelle/nell [something]" as inserting it into.
-Understand "cerca il/la/i/le/lo/l/gli/nel/nello/nell/nella/nelle/negli/nei/dentro/sul/sullo/sull/sulla/sugli/sulle/sui [something]" or "perquisisci  il/la/lo/i/le/gli/l [something]" as searching.
-Understand "lega [things] a/al/alla/alle/agli/ai/allo/all [something]" or "lega il/la/i/le/lo/gli/l [something]  a/al/alla/alle/agli/ai/allo/all [something]" as tying it to.
-Understand "taglia [things]" or "taglia il/la/lo/i/le/gli/l [something]" as cutting.
-Understand "pulisci [things]" or "pulisci il/la/lo/i/le/gli/l [something]" as rubbing.
-Understand "strofina [things]" or "strofina il/la/lo/i/le/gli/l [something]" as rubbing.
+Understand "calcia [things]" or "calcia [art-det] [something]" as attacking.
+Understand "accendi [things]" or "accendi [art-det] [something]" as switching on.
+Understand "spegni [things]" or "spegni [art-det] [something]" as switching off.
+Understand "spingi [things]" or "spingi [art-det] [something]" as pushing.
+Understand "spingi [things] [a-art] [direction]" or "spingi [art-det] [something] [a-art] [direction]" as pushing it to.
+Understand "tira [things]" or "tira [art-det] [something]" as pulling.
+Understand "indossa [things]" or "indossa [art-det] [something]" as wearing.
+Understand "metti [things]" or "metti [art-det] [something]" as wearing.
+Understand "togliti [art-det] [something]" as taking off.
+Understand "togli [things]" or "togli [art-det] [something]" as taking off.
+Understand "lascia [things]" or "lascia [art-det] [something]" as dropping.
+Understand "mostra [things] a [something]" or "mostra [art-det] [something] [a-art] [something]" as showing it to.
+Understand "poggia [things] su/sopra [something]" or "poggia [art-det] [something] [su-art] [something]" as putting it on.
+Understand "appoggia [things] su/sopra [something]" or "appoggia [art-det] [something] [su-art] [something]" as putting it on.
+Understand "lascia [things] su/sopra [something]" or "lascia [art-det] [something] [su-art] [something]" as putting it on.
+Understand "metti [things] su/sopra [something]" or "metti [art-det] [something] [su-art] [something]" as putting it on.
+Understand "carica [things] su/sopra [something]" or "carica [art-det] [something] [su-art] [something]" as putting it on.
+Understand "inserisci [things] in/dentro [something]" or "inserisci [art-det] [something] [in-art] [something]" as inserting it into.
+Understand "metti [things] in/dentro [something]" or "metti [art-det] [something] [in-art] [something]" as inserting it into.
+Understand "cerca in/dentro [something]" or "cerca dentro [art-det] [something]" or "cerca [art-det] [something]" as searching.
+Understand "cerca [in-art] [something]" as searching.
+Understand "cerca [su-art] [something]" as searching.
+Understand "perquisisci [art-det] [something]" as searching.
+Understand "lega [things] [a-art] [something]" or "lega [art-det] [something]  [a-art] [something]" as tying it to.
+Understand "taglia [things]" or "taglia [art-det] [something]" as cutting.
+Understand "pulisci [things]" or "pulisci [art-det] [something]" as rubbing.
+Understand "strofina [things]" or "strofina [art-det] [something]" as rubbing.
 
 [Dialoghi]
 Talking to is an action applying to one visible thing.
-Understand "parla [something]" or "parla col/colla/colle/con/coll [something]" or "parla al/alla/allo/all/agli/ai/a/alle/all [something]" or "parla con il/la/lo/i/le/gli/l [something]" as talking to.
-Understand "chiedi a [something] di [text]" or "chiedi al/alla/allo/all/a/ai/alle/agli [something] di/del/dei/dello/della/degli/dell/delle/dei/riguardo/circa [text]" as asking it about.
-Understand "parla a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dello/delle/degli/dell [text]" as telling it about.
-Understand "interroga il/la/i/le/lo/gli/l [something] riguardo il/la/i/le/lo/gli/l [text]" as telling it about.
-Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dello/delle/degli/dell [text]" as telling it about.
-Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] il/la/i/le/l/gli [something]" as asking it for.
-Understand "chiedi a/al/alla/alle/agli/ai/allo/all [something] riguardo/di/del/della/dell/dello/delle/degli [text]" as asking it about.
-Understand "rispondi a/al/alla/alle/agli/ai/allo/agli/all [someone] riguardo/di/del/della/dell/dello/delle/degli [text]" as answering it that.
+Understand "parla [something]" or "parla [con-art] [something]" or "parla [a-art] [something]" or "parla con [art-det] [something]" as talking to.
+Understand "chiedi a [something] di [text]" or "chiedi [a-art] [something] [di-art]/riguardo/circa [text]" as asking it about.
+Understand "parla [a-art] [something] [di-art] [text]" as telling it about.
+Understand "parla [a-art] [something] riguardo [text]" as telling it about.
+Understand "interroga [art-det] [something] riguardo [art-det] [text]" as telling it about.
+Understand "chiedi [a-art] [something] [di-art] [text]" as telling it about.
+Understand "chiedi [a-art] [something] riguardo [text]" as telling it about.
+Understand "chiedi [a-art] [something] [art-det] [something]" as asking it for.
+Understand "chiedi [a-art] [something] [di-art] [text]" as asking it about.
+Understand "chiedi [a-art] [something] riguardo [text]" as asking it about.
+Understand "rispondi [a-art] [someone] [di-art] [text]" as answering it that.
+Understand "rispondi [a-art] [someone] riguardo [text]" as answering it that.
 
 [Chiavi]
-Understand "apri [things]" or "apri il/la/lo/i/le/gli/l [something]" as opening.
-Understand "chiudi [things]" or "chiudi il/la/lo/i/le/gli/l [something]" as closing.
-Understand "sblocca [things] con [something]" or "sblocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
-Understand "apri [things] con [something]" or "apri il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as unlocking it with.
-Understand "blocca [things] con [something]" or "blocca il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
-Understand "chiudi [things] con [something]" or "chiudi il/la/lo/i/le/gli/l [something] con il/la/lo/i/le/gli/l [something]" as locking it with.
-Understand "rimuovi [things] da [something]" or "rimuovi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
-Understand "prendi [things] da [something]" or "prendi il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
-Understand "togli [things] da [something]" or "togli il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
-Understand "scarica [things] da [something]" or "scarica il/la/lo/i/le/gli/l [something] da/dalle/dalla/dagli/dai/dall [something]" as removing it from.
+Understand "apri [things]" or "apri [art-det] [something]" as opening.
+Understand "chiudi [things]" or "chiudi [art-det] [something]" as closing.
+Understand "sblocca [things] con [something]" or "sblocca [art-det] [something] con [art-det] [something]" as unlocking it with.
+Understand "apri [things] con [something]" or "apri [art-det] [something] con [art-det] [something]" as unlocking it with.
+Understand "blocca [things] con [something]" or "blocca [art-det] [something] con [art-det] [something]" as locking it with.
+Understand "chiudi [things] con [something]" or "chiudi [art-det] [something] con [art-det] [something]" as locking it with.
+Understand "rimuovi [things] da [something]" or "rimuovi [art-det] [something] [da-art] [something]" as removing it from.
+Understand "prendi [things] da [something]" or "prendi [art-det] [something] [da-art] [something]" as removing it from.
+Understand "togli [things] da [something]" or "togli [art-det] [something] [da-art] [something]" as removing it from.
+Understand "scarica [things] da [something]" or "scarica [art-det] [something] [da-art] [something]" as removing it from.
 
 [Descrizioni]
 Understand "brevi" as preferring sometimes abbreviated room descriptions.
@@ -3181,16 +3205,16 @@ Understand "inventario" or "inv" or "i" as taking inventory.
 
 [Movimento]
 Understand "vai [something]" or "vai a [something]" as going.
-Understand "scendi dalla/dal/da/dai/dalle/dagli/dall [something]" or "alzati dalla/dal/da/dai/dalle/dagli/dall [something]" as getting off.
+Understand "scendi [da-art] [something]" or "alzati [da-art] [something]" as getting off.
 Understand "scendi" as exiting.
 Understand "esci" as exiting.
-Understand "sali su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
-Understand "salta su/sul/sullo/sulla/sulle/sugli/sui/sull [something]" as entering.
-Understand "entra nello/nella/in/nel/nei/negli/nelle/nell [something]" as entering.
-Understand "siedi sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
-Understand "siediti sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
-Understand "sdraiati sullo/sulla/su/sul/sui/sugli/sulle/sull [something]" as entering.
-Understand "scala [something]" or "arrampicati su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" or "scala il/lo/la/i/gli/le/l [something]" as climbing.
+Understand "sali [su-art] [something]" as entering.
+Understand "salta [su-art] [something]" as entering.
+Understand "entra [in-art] [something]" as entering.
+Understand "siedi [su-art] [something]" as entering.
+Understand "siediti [su-art] [something]" as entering.
+Understand "sdraiati [su-art] [something]" as entering.
+Understand "scala [something]" or "arrampicati [su-art] [something]" or "scala [art-det] [something]" as climbing.
 Understand "dentro" as inside.
 Understand "fuori" as outside.
 Understand "sinistra" as west.
