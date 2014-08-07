@@ -13,9 +13,9 @@ The num is 0.
 After looking:
     Now the amount is the number of adjacent rooms;
     repeat with destination running through adjacent rooms begin;
-        if the num is 0, say "Uscite:";
+        if the num is 0, say "Da [qui] [regarding the player][puoi] andare";
         let the way be the best route from the location to the destination, using even locked doors;
-        if the way is a direction, say " [way]";
+        if the way is a direction, say " a [way]";
         if the destination is visited, say " verso [the destination]";
         Decrease the amount by 1;
         Increase the num by 1;
