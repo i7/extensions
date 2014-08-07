@@ -104,7 +104,7 @@ To say list the exits: list the exits.
 To say no-obvious-exits: say "Non [ci sono] uscite visibili."
 To say only-obvious-exit: say "L[']unica uscita visibile [regarding nothing][sei] a".
 To say obvious-exits: say "Le uscite visibili [sono] a".
-To say and-conjunction: say "e".
+To say and-conjunction: say "e a".
 To say to-preposition: say "verso".
 
 To say destname (place - a room):
