@@ -28,7 +28,7 @@ To say top rose:
 To say middle rose:
 	say "  ";
 	let place be the room west from the location;
-	if place is a discernible room, say "[set link 18][if the place is visited]w [else]W [end if][end link] "; otherwise say "* ";
+	if place is a discernible room, say "[set link 18][if the place is visited]w [else]W [end if][end link]"; otherwise say "* ";
 	say " X ";
 	let place be the room east from the location;
 	if place is a discernible room, say "[set link 14][if the place is visited] e[else] E[end if][end link] "; otherwise say " * ";
@@ -108,9 +108,12 @@ Check restoring the game:
 To destroy the command window:
 	(- DestroyCommandLine(); -)
 
+To set the command line prompt:
+	now the command prompt is ">";
+
 To focus the command window:
 	if command line build result is 1:
-		now the command prompt is ">";
+		set the command line prompt;
 	set and clear command window;
 
 To set and clear command window:
