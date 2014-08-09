@@ -122,13 +122,17 @@ This is the set hyperlink command prompt rule:
 	now the command prompt is "[set link 2]look[end link] | [set link 3]inv[end link] | [set link 1]menu[end link]>" (A);
 
 To set off echo line event:
-	(- glk_set_echo_line_event(gg_mainwin,0); -)
+	(- if(glk_gestalt(gestalt_LineInputEcho, 0)) glk_set_echo_line_event(gg_mainwin,0); -)
 	
 After reading a command:
 	if hyperlink clicked is false:
-		say "[the player's command]";
+		if the result of gestalt of LineInputEcho is not 0:
+			say "[the player's command]";
 	otherwise:
 		now hyperlink clicked is false;
+
+To decide which number is the result of gestalt of LineInputEcho:
+	(- glk_gestalt(gestalt_LineInputEcho, 0) -)
 
 Before printing a parser error:
 	say "[line break]";
