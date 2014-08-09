@@ -3173,7 +3173,9 @@ Understand "strofina [things]" or "strofina [art-det] [something]" as rubbing.
 [Dialoghi]
 Talking to is an action applying to one visible thing.
 Understand "parla [something]" or "parla [con-art] [something]" or "parla [a-art] [something]" or "parla con [art-det] [something]" as talking to.
-Understand "chiedi a [something] di [text]" or "chiedi [a-art] [something] [di-art]/riguardo/circa [text]" as asking it about.
+Understand "chiedi a [something] di [text]" as asking it about.
+Understand "chiedi [a-art] [something] [di-art] [text]" as asking it about.
+Understand "chiedi [a-art] [something] riguardo/circa [text]" as asking it about.
 Understand "parla [a-art] [something] [di-art] [text]" as telling it about.
 Understand "parla [a-art] [something] riguardo [text]" as telling it about.
 Understand "interroga [art-det] [something] riguardo [art-det] [text]" as telling it about.
