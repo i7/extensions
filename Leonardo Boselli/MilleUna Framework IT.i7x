@@ -4,7 +4,7 @@ Part I - Main Settings
 
 Chapter 1 - Includes
 
-Include Basic Help Menu IT by Leonardo Boselli.
+Include Basic Help IT by Leonardo Boselli.
 Include Creative Commons Public License IT by Leonardo Boselli.
 Include Hyperlink Interface IT by Leonardo Boselli.
 Include Tutorial Mode Hyperlinks IT by Leonardo Boselli.
