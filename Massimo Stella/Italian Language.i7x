@@ -516,7 +516,7 @@ To say Tu:
 			say "Esse".
 
 To say Ti:
-	if the prior named object is the player:
+	if the prior named object is not the player:
 		say "Si";
 	otherwise:
 		if the story viewpoint is first person singular:
