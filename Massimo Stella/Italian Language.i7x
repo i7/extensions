@@ -1,4 +1,4 @@
-Version 2/140807 of Italian Language by Massimo Stella begins here.
+Version 2/140812 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -65,8 +65,10 @@ To say La (O - object): say "[The O]".
 To say I (O - object): say "[The O]".
 To say Gli (O - object): say "[The O]".
 To say Le (O - object): say "[The O]".
+To say L' (O - object): say "[The O]".
 
 To say un (O - object): say "[a O]".
+To say un' (O - object): say "[a O]".
 To say uno (O - object): say "[a O]".
 To say una (O - object): say "[a O]".
 To say dei (O - object): say "[a O]".
@@ -76,6 +78,7 @@ To say alcuni (O - object): say "[a O]".
 To say alcune (O - object): say "[a O]".
 
 To say Un (O - object): say "[A O]".
+To say Un' (O - object): say "[A O]".
 To say Uno (O - object): say "[A O]".
 To say Una (O - object): say "[A O]".
 To say Dei (O - object): say "[A O]".
@@ -333,37 +336,39 @@ To say tu:
 	now the prior named object is the player;
 	if the story viewpoint is first person singular:
 		say "io";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "tu";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the player is male:
 			say "egli";
 		otherwise:
 			say "ella";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "noi";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "voi";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		if the player is male:
 			say "essi";
 		otherwise:
 			say "esse".
 
 To say ti:
-	now the prior named object is the player;
-	if the story viewpoint is first person singular:
-		say "mi";
-	if the story viewpoint is second person singular:
-		say "ti";
-	if the story viewpoint is third person singular:
+	if the prior named object is not the player:
 		say "si";
-	if the story viewpoint is first person plural:
-		say "ci";
-	if the story viewpoint is second person plural:
-		say "si";
-	if the story viewpoint is third person plural:
-		say "si".
+	otherwise:
+		if the story viewpoint is first person singular:
+			say "mi";
+		otherwise if the story viewpoint is second person singular:
+			say "ti";
+		otherwise if the story viewpoint is third person singular:
+			say "si";
+		otherwise if the story viewpoint is first person plural:
+			say "ci";
+		otherwise if the story viewpoint is second person plural:
+			say "vi";
+		otherwise if the story viewpoint is third person plural:
+			say "si".
 
 [Un'altra forma utile è il suffisso con valore di complemento oggetto -lo]
 To say lo:
@@ -372,28 +377,27 @@ To say lo:
 			say "lo";
 		otherwise:
 			say "li";
-	if the prior named object is female:
+	otherwise if the prior named object is female:
 		if the prior named object is singular-named:
 			say "la";
 		otherwise:
 			say "le".
 
 To say te:
-	now the prior named object is the player;
 	if the story viewpoint is first person singular:
 		say "me";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "te";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the player is male:
 			say "lui";
 		otherwise:
 			say "lei";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "noi";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "voi";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "loro".
 
 To say tuo:
@@ -408,7 +412,7 @@ To say tuo:
 				say "mio";
 			otherwise:
 				say "mia";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "tuoi";
@@ -419,7 +423,7 @@ To say tuo:
 				say "tuo";
 			otherwise:
 				say "tua";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "suoi";
@@ -430,7 +434,7 @@ To say tuo:
 				say "suo";
 			otherwise:
 				say "sua";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "nostri";
@@ -441,7 +445,7 @@ To say tuo:
 				say "nostro";
 			otherwise:
 				say "nostra";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "vostri";
@@ -452,7 +456,7 @@ To say tuo:
 				say "vostro";
 			otherwise:
 				say "vostra";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "loro".
 
 [In Italiano tuo/suo... seguono per la concordanza elementi che nel corso
@@ -463,29 +467,29 @@ singolare, da cui la defizione di tua.]
 To say tua:
 	if the story viewpoint is first person singular:
 		say "mia";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "tua";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		say "sua";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "nostra";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "vostra";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "loro".
 
 To say Tua:
 	if the story viewpoint is first person singular:
 		say "Mia";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "Tua";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		say "Sua";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "Nostra";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "Vostra";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "Loro".
 
 [And now the capitalised forms, which are identical otherwise.]
@@ -494,54 +498,55 @@ To say Tu:
 	now the prior named object is the player;
 	if the story viewpoint is first person singular:
 		say "Io";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "Tu";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the player is male:
 			say "Egli";
 		otherwise:
 			say "Ella";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "Noi";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "Voi";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		if the player is male:
 			say "Essi";
 		otherwise:
 			say "Esse".
 
 To say Ti:
-	now the prior named object is the player;
-	if the story viewpoint is first person singular:
-		say "Mi";
-	if the story viewpoint is second person singular:
-		say "Ti";
-	if the story viewpoint is third person singular:
+	if the prior named object is the player:
 		say "Si";
-	if the story viewpoint is first person plural:
-		say "Ci";
-	if the story viewpoint is second person plural:
-		say "Si";
-	if the story viewpoint is third person plural:
-		say "Si".
+	otherwise:
+		if the story viewpoint is first person singular:
+			say "Mi";
+		otherwise if the story viewpoint is second person singular:
+			say "Ti";
+		otherwise if the story viewpoint is third person singular:
+			say "Si";
+		otherwise if the story viewpoint is first person plural:
+			say "Ci";
+		otherwise if the story viewpoint is second person plural:
+			say "Vi";
+		otherwise if the story viewpoint is third person plural:
+			say "Si".
 
 To say Te:
-	now the prior named object is the player;
 	if the story viewpoint is first person singular:
 		say "Me";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		say "Te";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the player is male:
 			say "Lui";
 		otherwise:
 			say "Lei";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		say "Noi";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		say "Voi";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "Loro".
 
 []
@@ -558,7 +563,7 @@ To say Tuo:
 				say "Mio";
 			otherwise:
 				say "Mia";
-	if the story viewpoint is second person singular:
+	otherwise if the story viewpoint is second person singular:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "Tuoi";
@@ -569,7 +574,7 @@ To say Tuo:
 				say "Tuo";
 			otherwise:
 				say "Tua";
-	if the story viewpoint is third person singular:
+	otherwise if the story viewpoint is third person singular:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "Suoi";
@@ -580,7 +585,7 @@ To say Tuo:
 				say "Suo";
 			otherwise:
 				say "Sua";
-	if the story viewpoint is first person plural:
+	otherwise if the story viewpoint is first person plural:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "Nostri";
@@ -591,7 +596,7 @@ To say Tuo:
 				say "Nostro";
 			otherwise:
 				say "Nostra";
-	if the story viewpoint is second person plural:
+	otherwise if the story viewpoint is second person plural:
 		if the prior named object is plural-named:
 			if the prior named object is male:
 				say "Vostri";
@@ -602,7 +607,7 @@ To say Tuo:
 				say "Vostro";
 			otherwise:
 				say "Vostra";
-	if the story viewpoint is third person plural:
+	otherwise if the story viewpoint is third person plural:
 		say "Loro".
 
 Chapter 2.2.3 - Pronouns and possessives for other objects
@@ -2360,24 +2365,27 @@ In Italian saltato is an adjective.
 In Italian seduto is an adjective.
 In Italian entrato is an adjective.
 In Italian sceso is an adjective.
+In Italian alzato is an adjective.
 In Italian uscito is an adjective.
 In Italian tolto is an adjective.
 
-To say enter-pp:
+To say sei entrato:
 	if the player's command includes "sali":
-		say "[salito]";
+		say "[sei] [salito]";
 	otherwise if the player's command includes "salta":
-		say "[saltato]";
-	otherwise if the player's command includes "siedi":
-		say "[seduto]";
+		say "[sei] [saltato]";
+	otherwise if the player's command includes "siedi" or the player's command includes "siediti":
+		say "[ti] [sei] [seduto]";
 	otherwise:
-		say "[entrato]";
+		say "[sei] [entrato]";
 
-To say exit-pp:
+To say sei uscito:
 	if the player's command includes "scendi":
-		say "[sceso]";
+		say "[sei] [sceso]";
+	otherwise if the player's command includes "alzati":
+		say "[ti] [sei] [alzato]";
 	otherwise:
-		say "[uscito]";
+		say "[sei] [uscito]";
 
 To say Ora:
 	let t be "[ora]";
@@ -2545,20 +2553,20 @@ Implicitly pass through other barriers rule response (B) is "([regarding the pla
 Implicitly pass through other barriers rule response (C) is "([regarding the player][sali] [sup the target])[command clarification break]".
 Implicitly pass through other barriers rule response (D) is "([regarding the player][entri] [inp the target])[command clarification break]".
 Implicitly pass through other barriers rule response (E) is "([regarding the player][entri] [inp the target])[command clarification break]".
-Standard report entering rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] [enter-pp] [sup the noun]."
-Standard report entering rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] [enter-pp] [inp the noun]."
-Standard report entering rule response (C) is "[The actor] [sei] [enter-pp] [inp the noun]."
-Standard report entering rule response (D) is "[The actor] [sei] [enter-pp] [sup the noun]."
+Standard report entering rule response (A) is "[regarding the player][maiuscolo][Sei entrato][maiuscolo] [sup the noun]."
+Standard report entering rule response (B) is "[regarding the player][maiuscolo][Sei entrato][maiuscolo] [inp the noun]."
+Standard report entering rule response (C) is "[The actor] [sei entrato] [inp the noun]."
+Standard report entering rule response (D) is "[The actor] [sei entrato] [sup the noun]."
 
 [ Exiting ]
 Can't exit when not inside anything rule response (A) is "[Ora] non [regarding the player][sei] dentro [if the noun is nothing]a nulla[otherwise][ap the noun][end if]."
 Can't exit closed containers rule response (A) is "Non [regarding the player][puoi] uscire [dap the cage] perché [sei] [chiuso]."
-Standard report exiting rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] [exit-pp] [dap the container exited from]."
-Standard report exiting rule response (B) is "[regarding the player][maiuscolo][Sei][maiuscolo] [exit-pp] [dap the container exited from]."
-Standard report exiting rule response (C) is "[The actor] [sei] [exit-pp] [dap the container exited from]."
+Standard report exiting rule response (A) is "[regarding the player][maiuscolo][Sei uscito][maiuscolo] [dap the container exited from]."
+Standard report exiting rule response (B) is "[regarding the player][maiuscolo][Sei uscito][maiuscolo] [dap the container exited from]."
+Standard report exiting rule response (C) is "[The actor] [sei uscito] [dap the container exited from]."
 [ Getting off ]
 Can't get off things rule response (A) is "[Ora] non [regarding the player][sei] [sup the noun]."
-Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Sei][maiuscolo][otherwise][The actor] [sei][end if] [exit-pp] [dap the noun]."
+Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Sei uscito][maiuscolo][otherwise][The actor] [sei uscito][end if] [dap the noun]."
 
 Section 3.1.1.3 - Standard actions concerning the actor's vision
 
