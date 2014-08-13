@@ -1,4 +1,4 @@
-Version 2/140812 of Italian Language by Massimo Stella begins here.
+Version 2/140813 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -52,40 +52,13 @@ Part 2.1 - Determiners
 
 Chapter 2.1.1 - Articles
 
-To say il (O - object): say "[the O]".
-To say lo (O - object): say "[the O]".
-To say la (O - object): say "[the O]".
-To say i (O - object): say "[the O]".
-To say gli (O - object): say "[the O]".
-To say le (O - object): say "[the O]".
+To say il/lo/la/i/gli/le/l' (O - object): say "[the O]".
 
-To say Il (O - object): say "[The O]".
-To say Lo (O - object): say "[The O]".
-To say La (O - object): say "[The O]".
-To say I (O - object): say "[The O]".
-To say Gli (O - object): say "[The O]".
-To say Le (O - object): say "[The O]".
-To say L' (O - object): say "[The O]".
+To say Il/Lo/La/I/Gli/Le/L' (O - object): say "[The O]".
 
-To say un (O - object): say "[a O]".
-To say un' (O - object): say "[a O]".
-To say uno (O - object): say "[a O]".
-To say una (O - object): say "[a O]".
-To say dei (O - object): say "[a O]".
-To say degli (O - object): say "[a O]".
-To say delle (O - object): say "[a O]".
-To say alcuni (O - object): say "[a O]".
-To say alcune (O - object): say "[a O]".
+To say un/un'/uno/una/dei/degli/delle/alcuni/alcune (O - object): say "[a O]".
 
-To say Un (O - object): say "[A O]".
-To say Un' (O - object): say "[A O]".
-To say Uno (O - object): say "[A O]".
-To say Una (O - object): say "[A O]".
-To say Dei (O - object): say "[A O]".
-To say Degli (O - object): say "[A O]".
-To say Delle (O - object): say "[A O]".
-To say Alcuni (O - object): say "[A O]".
-To say Alcune (O - object): say "[A O]".
+To say Un/Un'/Uno/Una/Dei/Degli/Delle/Alcuni/Alcune (O - object): say "[A O]".
 
 Include (-
 language Italian
@@ -819,6 +792,33 @@ device translates into Italian as dispositivo.
 direction translates into Italian as direzione.
 region translates into Italian as regione.
 
+contenitore aperto is a kind of container. It is usually open.
+contenitore chiuso is a kind of container. It is usually closed.
+contenitore chiuso apribile is a kind of container. It is usually closed and openable.
+contenitore bloccato apribile is a kind of container. It is usually locked and openable.
+contenitore aperto bloccabile is a kind of container. It is usually open and lockable.
+contenitore accessibile is a kind of container. It is usually enterable.
+contenitore aperto accessibile is a kind of container. It is usually open and enterable.
+contenitore chiuso apribile accessibile is a kind of container. It is usually closed, openable and enterable.
+contenitore bloccato apribile accessibile is a kind of container. It is usually locked, openable and enterable.
+contenitore aperto bloccabile accessibile is a kind of container. It is usually open, lockable and enterable.
+indossabile is a kind of thing. It is usually wearable.
+cosa indossabile is a kind of thing. It is usually wearable.
+contenitore indossabile is a kind of container. It is usually wearable.
+contenitore aperto indossabile is a kind of container. It is usually open and wearable.
+contenitore chiuso indossabile is a kind of container. It is usually closed and wearable.
+contenitore chiuso apribile indossabile is a kind of container. It is usually closed, openable and wearable.
+contenitore bloccato apribile indossabile is a kind of container. It is usually locked, openable and wearable.
+contenitore aperto bloccabile indossabile is a kind of container. It is usually open, lockable and wearable.
+supporto accessibile is a kind of supporter. It is usually enterable.
+supporto indossabile is a kind of supporter. It is usually wearable.
+commestibile is a kind of thing. It is usually edible.
+cosa commestibile is a kind of thing. It is usually edible.
+cosa illuminata is a kind of thing. It is usually lit.
+dispositivo acceso is a kind of device. It is usually switched on.
+dispositivo spento is a kind of device. It is usually switched off.
+scenario is a kind of thing. It is usually scenery.
+
 number translates into Italian as numero.
 real number translates into Italian as numero reale. the plural of numero reale is numeri reali.
 time translates into Italian as ora.
@@ -1124,6 +1124,9 @@ i modi e i tempi irregolari.]
 	uscire	<it-uscire-conjugation> |
 	toccare	<it-toccare-conjugation> |
 	ottenere	<it-ottenere-conjugation> |
+	nascondere	<it-nascondere-conjugation> |
+	reggere	<it-reggere-conjugation> |
+	racchiudere	<it-racchiudere-conjugation> |
 	assaggiare	<it-assaggiare-conjugation> |
 	dare			<it-dare-conjugation> |
 	bloccare		<it-bloccare-conjugation> |
@@ -1785,6 +1788,102 @@ English, where the asterisks are never used. ]
 	ottenni | 5+esti | ottenne | 5+emmo | 5+este | ottennero
 
 [
+---> Italian : "NASCONDERE" verb. <----
+]
+
+<it-nascondere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		nascosto |
+	<it-nascondere-tabulation>
+
+<it-nascondere-tabulation> ::=
+	a1+		<it-nascondere-present> |
+	a2+		<it-nascondere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-nascondere-future> |
+	a6+		<it-nascondere-past-historic> |
+	a7+		<it-nascondere-future> 3 |
+	p*		3+*
+
+<it-ottenere-present> ::=
+	5+o | 5+i | 5+e | 5+iamo | 5+ete | 5+ono
+
+<it-ottenere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-ottenere-future> ::=
+	5+erò | 5+erai | 5+erete | 5+eremo | 5+erete | 5+eranno
+
+<it-ottenere-past-historic> ::=
+	nascosi | 5+esti | nascose | 5+emmo | 5+este | nascosero
+
+[
+---> Italian : "REGGERE" verb. <----
+]
+
+<it-reggere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		retto |
+	<it-reggere-tabulation>
+
+<it-reggere-tabulation> ::=
+	a1+		<it-reggere-present> |
+	a2+		<it-reggere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-reggere-future> |
+	a6+		<it-reggere-past-historic> |
+	a7+		<it-essere-future> 3 |
+	p*		3+*
+
+<it-reggere-present> ::=
+	5+o | 5+i | 5+e | 5+iamo | 5+ete | 5+ono
+
+<it-reggere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-reggere-future> ::=
+	5+erò | 5+erai | 5+erà | 5+eremo | 5+erete | 5+eranno
+
+<it-reggere-past-historic> ::=
+	ressi | 5+esti | resse | 5+emmo | 5+este | ressero
+
+[
+---> Italian : "RACCHIUDERE" verb. <----
+]
+
+<it-racchiudere-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		5+endo |
+	3		racchiuso |
+	<it-ottenere-tabulation>
+
+<it-racchiudere-tabulation> ::=
+	a1+		<it-racchiudere-present> |
+	a2+		<it-racchiudere-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-racchiudere-future> |
+	a6+		<it-racchiudere-past-historic> |
+	a7+		<it-essere-future> 3 |
+	p*		3+*
+
+<it-racchiudere-present> ::=
+	5+o | 5+i | 5+e | 5+iamo | 5+ete | 5+ono
+
+<it-racchiudere-past> ::=
+	5+evo | 5+evi | 5+eva | 5+evamo | 5+evate | 5+evano
+
+<it-racchiudere-future> ::=
+	5+erò | 5+erai | 5+erete | 5+eremo | 5+erete | 5+eranno
+
+<it-racchiudere-past-historic> ::=
+	racchiusi | 5+esti | racchiuse | 5+emmo | 5+este | racchiusero
+
+[
 ---> Italian : "ASSAGGIARE" verb. <----
 ]
 
@@ -2346,7 +2445,6 @@ In Italian chiuso is an adjective.
 In Italian vuoto is an adjective.
 In Italian acceso is an adjective.
 In Italian spento is an adjective.
-In Italian ingombrante is an adjective.
 In Italian fissato is an adjective.
 In Italian preso is an adjective.
 In Italian rimasto is an adjective.
@@ -2443,7 +2541,7 @@ Can't take people's possessions rule response (A) is "[The noun] [sembri] appart
 Can't take items out of play rule response (A) is "[The noun] non [sei] a [tua] disposizione."
 Can't take what you're inside rule response (A) is "Prima dovresti [if noun is a supporter]scendere[otherwise]uscire[end if] [dap the noun]."
 Can't take what's already taken rule response (A) is "[The noun] [sei] già in [regarding the player][tuo] possesso."
-Can't take scenery rule response (A) is "[The noun] [sei] troppo [ingombrante] da trasportare."
+Can't take scenery rule response (A) is "[The noun] non si [regarding nothing][puoi] trasportare."
 Can only take things rule response (A) is "[The noun] [sei] fuori dalla [tua] portata."
 Can't take what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Use player's holdall to avoid exceeding carrying capacity rule response (A) is "(prima [regarding the player][metti] qualcosa [inp the current working sack] per fare spazio)[command clarification break]".
@@ -3072,6 +3170,58 @@ final question wording	only if victorious	topic		final response rule		final resp
 "ricevere qualche commento DIVERTENTE"	true	"divertente"	--	amusing a victorious player
 "USCIRE"					false				"uscire"		immediately quit rule	--
 --						false				"undo"		immediately undo rule	--
+
+Part 3.3 - The banner
+
+[Taken from the Spanish extension by Sebastian Arg - replaces "by" by "di".]
+Include (-
+
+[ Banner;
+!print (string) Story;!deprecated
+!print " / Inform 7 build ", (string) NI_BUILD_COUNT, " ";!deprecated
+   BeginActivity(PRINTING_BANNER_TEXT_ACT);
+   if (ForActivity(PRINTING_BANNER_TEXT_ACT) == false) {
+VM_Style(HEADER_VMSTY);
+TEXT_TY_Say(Story);
+VM_Style(NORMAL_VMSTY);
+new_line;
+TEXT_TY_Say(Headline);
+#ifdef Story_Author;
+!print " by "; TEXT_TY_Say(Story_Author);
+	print " di "; TEXT_TY_Say(Story_Author);! infsp hack 'by'
+#endif; ! Story_Author
+new_line;
+VM_Describe_Release();
+print " / Inform 7 build ", (PrintI6Text) NI_BUILD_COUNT, " ";
+print "(I6/v"; inversion;
+print " lib ", (PrintI6Text) LibRelease, ") ";
+#Ifdef STRICT_MODE;
+print "S";
+#Endif; ! STRICT_MODE
+#Ifdef DEBUG;
+print "D";
+#Endif; ! DEBUG
+new_line;
+	}
+	EndActivity(PRINTING_BANNER_TEXT_ACT);
+
+];
+-) instead of "Banner" in "Printing.i6t".
+
+Part 3.4 - The bibliographical data
+
+Section 3.4.1 - The bibliographical data (in place of Section SR2/6a - Unindexed Standard Rules variables - Unindexed in Standard Rules by Graham Nelson)
+
+The story title, the story author, the story headline, the story genre and the story description are text variables.
+The release number and the story creation year are number variables.
+
+The release number is usually 1.
+The story title is usually "Senza titolo".
+The story author is usually "Anonimo".
+The story headline is usually "Un[']opera di narrativa interattiva".
+The story genre is usually "Narrativa".
+
+The story title variable translates into I6 as "Story".
 
 Volume 4 - Command parsing
 
