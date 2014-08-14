@@ -1,4 +1,4 @@
-Version 2/140813 of Italian Language by Massimo Stella begins here.
+Version 2/140814 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -2456,6 +2456,7 @@ In Italian adatto is an adjective.
 In Italian interessato is an adjective.
 In Italian capace is an adjective.
 In Italian contenente is an adjective.
+In Italian ingombrante is an adjective.
 In Italian sveglio is an adjective.
 In Italian stesso is an adjective.
 In Italian salito is an adjective.
@@ -3229,7 +3230,90 @@ Part 4.1 - Pronouns and possessives in commands
 
 [ Tali meccanismi sono ancora da implementare... ]
 
-Part 4.2 - Understand grammar
+
+Part 4.2.1 - Replacing English verbs 
+ 
+[ Propósito: Para no incluir el bloque de gramaticas (y verbos) ingleses en el fuente (optimiza memoria)] 
+ 
+Understand nothing as answering it that. 
+Understand nothing as asking it about. 
+Understand nothing as asking it for. 
+Understand nothing as attacking. 
+Understand nothing as burning. 
+Understand nothing as buying. 
+Understand nothing as climbing. 
+Understand nothing as closing. 
+Understand nothing as consulting it about. 
+Understand nothing as cutting. 
+Understand nothing as drinking. 
+Understand nothing as dropping. 
+Understand nothing as eating. 
+Understand nothing as entering. 
+Understand nothing as examining. 
+Understand nothing as exiting. 
+Understand nothing as getting off. 
+Understand nothing as giving it to. 
+Understand nothing as going. 
+Understand nothing as inserting it into. 
+Understand nothing as jumping. 
+Understand nothing as kissing. 
+Understand nothing as listening to. 
+Understand nothing as locking it with. 
+Understand nothing as looking under. 
+Understand nothing as looking. 
+Understand nothing as opening. 
+Understand nothing as preferring abbreviated room descriptions. 
+Understand nothing as preferring sometimes abbreviated room descriptions. 
+Understand nothing as preferring unabbreviated room descriptions. 
+Understand nothing as pulling. 
+Understand nothing as pushing it to. 
+Understand nothing as pushing. 
+Understand nothing as putting it on. 
+Understand nothing as quitting the game. 
+Understand nothing as removing it from. 
+Understand nothing as requesting the pronoun meanings. 
+Understand nothing as requesting the score. 
+Understand nothing as requesting the story file version. 
+Understand nothing as restarting the game. 
+Understand nothing as restoring the game. 
+Understand nothing as rubbing. 
+Understand nothing as saving the game. 
+Understand nothing as saying no. 
+Understand nothing as saying sorry. 
+Understand nothing as saying yes. 
+Understand nothing as searching. 
+Understand nothing as setting it to. 
+Understand nothing as showing it to. 
+Understand nothing as sleeping. 
+Understand nothing as smelling. 
+Understand nothing as squeezing. 
+Understand nothing as swinging. 
+Understand nothing as switching off. 
+Understand nothing as switching off. 
+Understand nothing as switching on. 
+Understand nothing as switching score notification off. 
+Understand nothing as switching score notification on. 
+Understand nothing as switching the story transcript off. 
+Understand nothing as switching the story transcript on. 
+Understand nothing as taking inventory. 
+Understand nothing as taking off. 
+Understand nothing as taking. 
+Understand nothing as tasting. 
+Understand nothing as telling it about. 
+Understand nothing as thinking. 
+Understand nothing as throwing it at. 
+Understand nothing as touching. 
+Understand nothing as turning. 
+Understand nothing as tying it to. 
+Understand nothing as unlocking it with. 
+Understand nothing as verifying the story file. 
+Understand nothing as waiting. 
+Understand nothing as waking up. 
+Understand nothing as waving hands. 
+Understand nothing as waving. 
+Understand nothing as wearing. 
+
+Part 4.2.2 - Understand grammar
 
 [articoli e preposizioni articolate]
 Understand "uno/una/un" as "[art-ind]".
@@ -3291,8 +3375,9 @@ Understand "leggi [in-art] [things] [di-art] [text]" as consulting it about.
 Understand "guarda [things]" or "guarda [art-det] [something]" as examining.
 Understand "leggi [things]" or "leggi [art-det] [something]" as examining.
 Understand "guarda dentro [things]" or "guarda dentro [art-det] [something]" or "guarda [in-art] [something]" as searching.
-Understand "esamina [things]" or "esamina [art-det] [something]" as examining.
+Understand "esamina [things]" or "esamina [art-det] [something]" or "x [things]" as examining.
 Understand "guarda" or "g" as looking.
+Understand "look" or "l" as looking.
 Understand "guarda sotto [art-det] [something]" as looking under.
 Understand "guarda sotto [a-art] [something]" as looking under.
 Understand "guarda sotto [things]" as looking under.
@@ -3331,6 +3416,20 @@ Understand "strofina [things]" or "strofina [art-det] [something]" as rubbing.
 [Dialoghi]
 Talking to is an action applying to one visible thing.
 Understand "parla [something]" or "parla [con-art] [something]" or "parla [a-art] [something]" or "parla con [art-det] [something]" as talking to.
+Check talking to (this is the can't talk to a non-person rule):
+	if the noun is not a person, say "Non [regarding the player][puoi] parlare [ap the noun]." (A) instead.
+Check someone talking to (this is the other people can't talk to a non-person rule):
+	if the noun is not a person, stop the action.
+Check an actor talking to (this is the talking to yourself rule):
+	if the actor is the player and the noun is the player:
+		say "[regarding the player][maiuscolo][Hai][maiuscolo] parlato a [te] [stesso]." (A) instead;
+	else if the actor is not the player and the noun is the actor:
+		stop the action.
+Unsuccessful attempt by someone talking to while the reason the action failed is the talking to yourself rule: 
+	say "[The actor] [hai] parlato a [te] [stesso].".
+Report an actor talking to (this is the standard report talking to rule):
+	say "[if the actor is the player]Non [regarding the player][else][The actor] non[end if][hai] niente da dire." (A).
+
 Understand "chiedi a [something] di [text]" as asking it about.
 Understand "chiedi [a-art] [something] [di-art] [text]" as asking it about.
 Understand "chiedi [a-art] [something] riguardo/circa [text]" as asking it about.
@@ -3380,7 +3479,7 @@ Understand "fuori" as outside.
 Understand "sinistra" as west.
 Understand "destra" as east.
 Understand "su" as up.
-Understand "giu" or "giù" as up.
+Understand "giu" or "giù" as down.
 Understand "nord" or "n" as north.
 Understand "sud" or "s" as south.
 Understand "ovest" or "o" as west.
@@ -3396,7 +3495,7 @@ Understand "sipunti" or "sipunteggio" or "notifica" as switching score notificat
 Understand "nopunti" or "nopunteggio" or "notifica off" as switching score notification off.
 Understand "salva" as saving the game.
 Understand "carica" as restoring the game.
-Understand "interrompi" or "smetti" as quitting the game.
+Understand "interrompi" or "smetti" or "q" as quitting the game.
 Understand "ricomincia" as restarting the game.
 Understand "versione" as requesting the story file version.
 
