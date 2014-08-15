@@ -1,15 +1,17 @@
-Version 1/140802 of MilleUna Framework IT by Leonardo Boselli begins here.
+Version 1/140813 of MilleUna Framework IT by Leonardo Boselli begins here.
 
 Part I - Main Settings
 
 Chapter 1 - Includes
 
 Include Basic Help IT by Leonardo Boselli.
+Include Tutorial Mode Hyperlinks IT by Leonardo Boselli.
 Include Creative Commons Public License IT by Leonardo Boselli.
 Include Hyperlink Interface IT by Leonardo Boselli.
-Include Tutorial Mode Hyperlinks IT by Leonardo Boselli.
-Include Automap IT by Leonardo Boselli.
+Include Written Inventory IT by Leonardo Boselli.
 Include Command Line IT by Leonardo Boselli.
+Include Automap IT by Leonardo Boselli.
+Include Bulk Limiter IT by Leonardo Boselli.
 Include Suggested Actions IT by Leonardo Boselli.
 Include Conversation Package IT by Leonardo Boselli.
 
@@ -40,7 +42,7 @@ To say ringrazia-news:
 	say "Il newsgroup italiano [bold type]it.comp.giochi.avventure.testuali[roman type]".
 
 To say ringrazia-gente:
-	say "[line break][bold type]Massimo Stella[roman type] per l[']estensione 'Italian language'[line break][bold type]Graham Nelson[roman type] per lo sviluppo di Inform7[line break][bold type]Mark Tilford[roman type] per varie estensioni[line break][bold type]Aaron Reed[roman type] per varie estensioni[line break][bold type]Emily Short[roman type] per varie estensioni[line break][bold type]Jon Ingold[roman type] per varie estensioni[line break][bold type]Eric Eve[roman type] per varie estensioni"
+	say "[line break][bold type]Massimo Stella[roman type] per l[']estensione 'Italian language'[line break][bold type]Leonardo Boselli[roman type] per l[']estensione 'MilleUna Framework'[line break][bold type]Graham Nelson[roman type] per lo sviluppo di Inform7[line break][bold type]Mark Tilford[roman type] per varie estensioni[line break][bold type]Aaron Reed[roman type] per varie estensioni[line break][bold type]Emily Short[roman type] per varie estensioni[line break][bold type]Jon Ingold[roman type] per varie estensioni[line break][bold type]Eric Eve[roman type] per varie estensioni"
 
 Chapter 4 - Status Line
 
@@ -132,34 +134,6 @@ When play begins:
 To award (pts - a number):
 	increase the score by pts;
 	say "[bracket]Il tuo punteggio è [if pts >= 0]aumentato di [pts][otherwise]diminuito [0 minus pts][end if] punti[close bracket][paragraph break]".
-
-Chapter 7 - Proximity
-
-The no-person is a person.
-The no-supporter is a supporter.
-The no-container is a container.
-
-The nearest-person is a person that varies. Nearest-person is usually no-person.
-The nearest-supporter is a supporter that varies. The nearest-supporter is usually no-supporter.
-The nearest-container is a container that varies. The nearest-container is usually no-container.
-
-A person has a supporter called my-nearest-supporter. The my-nearest-supporter of a person is usually no-supporter.
-A person has a container called my-nearest-container. The my-nearest-container of a person is usually no-container.
-
-After examining a person (called the examined):
-	now the nearest-person is the examined;
-	now the nearest-supporter is the my-nearest-supporter of the examined;
-	now the nearest-container is the my-nearest-container of the examined;
-	continue the action.
-
-After examining a supporter (called the examined):
-	now the nearest-supporter is the examined;
-	continue the action.
-
-After examining a container (called the examined):
-	now the nearest-container is the examined;
-	continue the action.
-
 
 Part II - Multimedia
 
@@ -325,10 +299,7 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 
 	Chapter 2 - Includes
 
-	Include MilleUna Framework IT by Leonardo Boselli.
-
-	[Elenco di tutte le estensioni necessarie]
-	Include Written Inventory IT by Leonardo Boselli.
+	Include Milleuna Framework IT by Leonardo Boselli.
 
 	Chapter 2 - Titolo
 
@@ -349,21 +320,24 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 
 	The maximum score is 100.
 
-	Chapter 6 - Azioni suggerite
+	Chapter 6 - Azioni suggerite aggiuntive
 
-	After examining a thing (called the object):
-		say "[fixed letter spacing]";
-		[azioni suggerite aggiuntive]
-		say "[roman type][no line break]";
-		continue the action.
+	[
+	Carry out suggesting actions for a thing (called the O):
+		if the O is worn by the player:
+			now txt is "togliti";
+			say "[suggest single-action txt on O]";
+		otherwise if the O is wearable:
+			now txt is "indossa";
+			say "[suggest single-action txt on O]";
+		say "[run paragraph on]".
+	]
 
 	Part II - L'avventura
 
 	Chapter 1 - Geografia
 
 	Section 1a - Il tutorial
-
-	[Oggetti necessari per il tutorial (che il giocatore può attivare con il comando TUTOR) ed è opportuno che si riferiscano a oggetti esistenti nella prima stanza]
 
 	example-thing è il mestolo.
 	example-worn sono gli occhiali.
@@ -372,23 +346,23 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 	example-contained è il pollo.
 	example-container è la pentola.
 
-	Section 1b - Il mondo
+Section 1b - Il mondo
 
 	La cucina è una stanza. La description è "Un[']ampia cucina. A [d]nord[x] [regarding nothing][ci sei] il salotto."
 	Il salotto è una stanza. La description è "Un elegante salotto. A [d]sud[x] [regarding nothing][ci sei] la cucina."
-	Il salotto è north of cucina.
-	La cuoca è una donna dentro la cucina. La description è "Un[']abile [cuoca] intenta a cucinare. Se vuoi parlarle, augurale [t]buongiorno[x]."
+	Il salotto è a nord della cucina.
+	La cuoca è una donna dentro la cucina. La description è "Un[']abile [cuoca] intenta a cucinare[if the current interlocutor is not the cuoca]. Se vuoi parlarle, di[']: '[t]cuoca, buongiorno[x]'[end if]."
 	Il tavolo è un supporto dentro la cucina.
-	Il mestolo è una cosa sopra il tavolo.
-	La pentola è un open, openable contenitore sopra il tavolo.
-	Il pollo è una edible cosa dentro la pentola.
-	La poltrona è un enterable supporto dentro il salotto.
+	Il mestolo è una cosa sopra il tavolo. Il bulk è 2.
+	La pentola è un contenitore aperto chiudibile sopra il tavolo. La bulk capacity è 10.
+	Il pollo è una cosa commestibile dentro la pentola. Il bulk è 8. La description è "Un [pollo] appetitoso."
+	La poltrona è un supporto accessibile dentro il salotto.
 	L' attaccapanni è un supporto dentro il salotto.
-	Il cappello, la sciarpa sono una wearable cosa sopra l' attaccapanni.
+	Il cappello, la sciarpa sono una cosa indossabile sopra l' attaccapanni.
 	Il tavolino è un supporto dentro il salotto.
 	La tabacchiera è un contenitore sopra il tavolino.
 	Il tabacco è una cosa dentro la tabacchiera. The indefinite article of tabacco is "del".
-	Gli occhiali sono una wearable cosa.
+	Gli occhiali sono una cosa indossabile.
 	Il player indossa gli occhiali.
 
 	Chapter 2 - Introduzione
@@ -400,19 +374,20 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 
 	Chapter 3 - NPC
 
-	[Un esempio di come impostare una conversazione. Serve per il tutorial]
-
 	cuoca-node is a closed convnode.
 	The node of the cuoca is cuoca-node.
 
 	The semolino is a discussable.
 	The semolino is part of the cuoca.
 
+	The pollo_arrosto is a discussable.
+	The pollo_arrosto is part of the cuoca.
+
 	After saying hello to the cuoca when the greeting type is explicit:
-		say "'Buongiorno' esordisci.[paragraph break]La cuoca ti osserva e ti chiede: 'Lei sembra affamato. Cosa vuole mangiare?'[add semolino ask suggestion]".
+		say "'Buongiorno' esordisci.[paragraph break]La cuoca ti osserva e ti chiede: 'Lei sembra affamato. Cosa vuole mangiare?'[add semolino ask suggestion][add pollo_arrosto ask suggestion]".
 
 	After saying hello to the cuoca when the greeting type is implicit:
-		say "Attiri l[']attenzione con un colpo di tosse.[add semolino ask suggestion]".
+		say "La cuoca si accorge di te.[add semolino ask suggestion][add pollo_arrosto ask suggestion]".
 
 	After saying goodbye to the cuoca when the farewell type is explicit:
 		say "'Addio!' concludi.[paragraph break]'Addio' ti risponde e torna a cucinare."
@@ -421,7 +396,10 @@ Questo framework contiene tutto quanto è necessario per creare narrativa intera
 		say "La cuoca ti saluta e torna a cucinare."
 
 	Default Response of cuoca-node:
-		say "'Ha qualcosa di cui parlare o da chiedere? Altrimenti torno a cucinare' dice la cuoca con impazienza.[list-topics]".
+		say "'Ha qualcosa di cui parlare o da chiedere? Altrimenti torno a cucinare' dice la cuoca con impazienza.[list-topics][run paragraph on]".
 
 	Response of cuoca-node when asked about the semolino:
 		say "'Vorrei del semolino, grazie' chiedi con gentilezza.[paragraph break]'Vuole mangiare del semolino di prima mattina? De gustibus!' replica stupita.[paragraph break][remove semolino ask suggestion][list-topics][run paragraph on]".
+
+	Response of cuoca-node when asked about the pollo_arrosto:
+		say "'Vorrei del [pollo], grazie' chiedi affamato.[paragraph break]'[if the pollo is in the pentola]Il pollo è nella [pentola]. Si serva[otherwise if the player carries the pollo]Ce l[']ha in mano. Si serva[otherwise if the pollo is offstage]Il pollo era nella [pentola], ma ora non ne so più nulla[otherwise]Il pollo è [inp the location of the pollo]. Se lo cerchi[end if]'.[paragraph break][remove pollo_arrosto ask suggestion][list-topics][run paragraph on]".
