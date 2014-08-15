@@ -49,6 +49,49 @@ complex list suggested topics rule response (A) is "[nothing specific]".
 complex list suggested topics rule response (B) is "[if topic-request is implicit]([end if]Argomenti ".
 complex list suggested topics rule response (F) is "[if topic-request is implicit])[otherwise].[end if][paragraph break]".
 
+Section S - Rule replacement for carry out listing
+
+The complex list suggested topics rule is not listed in any rulebook.
+Carry out listing suggested topics (this is the italian complex list suggested topics rule):
+	follow the suggestion list construction rules;
+	let ask-suggs be the number of entries in sugg-list-ask;
+	let tell-suggs be the number of entries in sugg-list-tell;
+	let other-suggs be the number of entries in sugg-list-other;
+	if ask-suggs + tell-suggs + other-suggs is 0:
+		say "[nothing specific]" (A);
+		rule succeeds;
+	let sugg-rep be a text;
+	say "[if topic-request is implicit]([end if][regarding the player][maiuscolo][Puoi][maiuscolo] " (B);
+	if other-suggs > 0:
+		let sugg-rep be "[sugg-list-other]";
+		replace the regular expression "\band\b" in sugg-rep with "o";
+		say "[sugg-rep][if tell-suggs + ask-suggs > 0]; o [end if]" (C);
+	if ask-suggs > 0:
+		say "chiedere [ap the current interlocutor] " (D);
+		let CT be 0;
+		repeat with TT running through sugg-list-ask:
+			let txt be "[dip the TT]";
+			say "[word number 1 in txt] [t][word number 2 in txt][x]" (E);
+			increment CT;
+			if CT < ask-suggs - 1:
+				say ", " (F);
+			otherwise if CT < ask-suggs:
+				say " o " (G);
+		say "[if tell-suggs > 0]; o [end if]" (H);
+	if tell-suggs > 0:
+		say "parlare [ap the current interlocutor] " (I);
+		let CT be 0;
+		repeat with TT running through sugg-list-tell:
+			let txt be "[dip the TT]";
+			say "[word number 1 in txt] [t][word number 2 in txt][x]" (J);
+			increment CT;
+			if CT < tell-suggs - 1:
+				say ", ";
+			otherwise if CT < tell-suggs:
+				say " o ";
+	say "[if topic-request is implicit].)[otherwise].[end if][paragraph break]" (K).
+
+[
 Section H (for use with Hyperlink Interface IT by Leonardo Boselli)
 
 complex list suggested topics rule response (C) is "[word number 1 in sugg-rep] [t][word number 2 in sugg-rep][x][if tell-suggs + ask-suggs > 0], o [end if]".
@@ -60,6 +103,7 @@ Section K (for use without Hyperlink Interface IT by Leonardo Boselli)
 complex list suggested topics rule response (C) is "[sugg-rep][if tell-suggs + ask-suggs > 0], o [end if]".
 complex list suggested topics rule response (D) is "da chiedere [ap the current interlocutor]: [sugg-rep][if tell-suggs > 0], o [end if]".
 complex list suggested topics rule response (E) is "di cui parlare [ap the current interlocutor]: [sugg-rep]".
+]
 
 Conversation Suggestions IT ends here.
 
