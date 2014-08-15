@@ -4,7 +4,6 @@ Version 5/140605 of Threaded Conversation IT by Leonardo Boselli begins here.
 
 A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
-
 Include Threaded Conversation by Chris Conley.
 Include Conversation Framework IT by Leonardo Boselli.
 
@@ -21,7 +20,7 @@ Chapter 1 - Understanding and basic definitions
 
 Understand the commands "chiedi", "parla", "dici", "di'", "discuti", "rispondi", "c", "p" as something new.
 	
-Understand "dici/di' addio/arrivederci" as leavetaking. [The system needs to recognize that this is not an attempt at conversation.]
+Understand "dici addio/arrivederci" or "di' addio/arrivederci" as leavetaking. [The system needs to recognize that this is not an attempt at conversation.]
 
 Section 1a - discussing it with
 
@@ -38,7 +37,9 @@ Understand
 Understand 
 	"parla a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell [a typable informative quip]" or 
 	"chiedi a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell [a typable questioning quip]" or
-	"parla/dici/di' a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell/che [a typable informative quip]" pr
+	"parla a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell/che [a typable informative quip]" or
+	"dici a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell/che [a typable informative quip]" or
+	"di' a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell/che [a typable informative quip]" or
 	"riferisci a/al/allo/alla/ai/agli/alle/all [someone] di/del/dello/della/dei/degli/delle/dell/che [a typable informative quip]"
 	as discussing it with (with nouns reversed)
 	when the current interlocutor is a person.
@@ -83,7 +84,8 @@ Book IV - Conversing With No One
 Understand 
 	"parla [any quip]" and
 	"parla di [any quip]" and
-	"dici/di' [any quip]" and
+	"dici [any quip]" and
+	"di' [any quip]" and
 	"discuti [any quip]" as non-speaking
 	 when the current interlocutor is not a person.
 
@@ -98,7 +100,9 @@ Understand
 
 Chapter - Responses
 
-    check for mis-defined items rule response (A) is "[line break][The item] [parla] di se [stesso], ciò causa il blocco del programma.".
+In Italian pensare is a verb.
+
+    check for mis-defined items rule response (A) is "[line break][The item] [parli] di [te] [stesso], ciò causa il blocco del programma.".
     check for mis-defined items rule response (B) is "Per risolvere il problema, trova la dichiarazione degli elementi elencati; nota dove menzionano soggetti che sono parte del loro stesso nome; e aggiungi una riga al tuo sorgente del tipo 'Florble is a subject.' *prima* che il testo appaia per la prima volta. Di solito è una buona idea dichiarare tutti i soggetti della conversazione all[']inizio del sorgente e prima che il testo appaia. Allo stesso modo, se l'oggetto nominato non è un soggetto, ma qualcosa che comunque appare nel gioco, sii certo che quei testi siano tutti definiti dopo il codice sorgente che descrive l[']impostazione del mondo.".
     scan for unidentified subjects rule response (A) is "[The item] is a subject.[line break]".
     recap of known facts rule response (A) is "[regarding the player]Finora non [hai] scoperto molto.".
@@ -109,26 +113,30 @@ Chapter - Responses
     standard listing subject changes rule response (A) is "[quip-suggestion-phrase][the prepared list delimited in disjunctive style].".
     standard quip plausibility rule response (A) is "[quip-suggestion-phrase][the prepared list delimited in disjunctive style].".
     prefix-ask rule response (A) is "chiedi ".
-    prefix-say rule response (A) is "dici ".
-    standard quip disambiguation rule response (A) is "Cosa [regarding the player][vuoi] discutere: [the prepared list delimited in disjunctive style]?".
+    prefix-say rule response (A) is "di['] ".
+    standard quip disambiguation rule response (A) is "Cosa [regarding the player][hai] intenzione di discutere: [the prepared list delimited in disjunctive style]?".
     implicitly greet a named potential conversant rule response (A) is "Non [regarding the player][stai] parlando [ap the second noun].".
+[
     quips are not tangible rule response (A) is "Non ho capito la frase.".
     quips are not visible rule response (A) is "Non sembra essere un argomento di conversazione al momento.".
+]
     cannot talk without an interlocutor rule response (A) is "Non [regarding the player][stai] parlando con nessuno [ora].".
     say the player's line rule response (A) is "[comment of the noun][paragraph break]".
     say the player's line rule response (B) is "[regarding the player][maiuscolo][parli][maiuscolo] [dip the noun].".
     interlocutor's reply rule response (A) is "[reply of the noun]".
     interlocutor's reply rule response (B) is " [run paragraph on]".
+[
     characters remind you if you are ignoring them rule response (A) is "[nag of the current quip][paragraph break]".
+]
     default pause-construction rule response (A) is "[if a random chance of 1 in 2 succeeds][run paragraph on][otherwise][paragraph break][end if]".
     default pause-construction rule response (B) is "[beat] [run paragraph on]".
     character takes the initiative rule response (A) is "[reply of the noun] [run paragraph on]".
-    default beat rule response (A) is "[There's] a brief pause.[run paragraph on]".
+    default beat rule response (A) is "[regarding nothing][maiuscolo][Ci sei][maiuscolo] una breve pausa.[run paragraph on]".
     no quip worth saying default rule response (A) is "Non [regarding the player][hai] nulla di appropriato da dire. [run paragraph on]".
     interlocutor ignorance default rule response (A) is "'Non lo so,' [regarding the doofus][say] [the doofus]. [run paragraph on]".
     subject change default rule response (A) is "Non [regarding the player][hai] altri argomenti da proporre [ora].".
 
- 
+
 Threaded Conversation IT ends here.
 
 ---- Documentation ----
