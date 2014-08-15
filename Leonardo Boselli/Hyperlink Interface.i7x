@@ -1,4 +1,4 @@
-Version 9/140601 of Hyperlink Interface (for Glulx only) by Leonardo Boselli begins here.
+Version 9/140814 of Hyperlink Interface (for Glulx only) by Leonardo Boselli begins here.
 
 "This extension emulates Blue Lacuna's emphasized hyperlink system for simplifying common IF input (by Aaron Reed) substituting emphasis with hyperlinks. Nouns, directions, and topics can be clicked directly to examine, go, or discuss.
 
@@ -137,13 +137,15 @@ To decide which number is the result of gestalt of LineInputEcho:
 Before printing a parser error:
 	say "[line break]";
 
+HI capturing is a truth state that varies. Hi capturing is usually false.
 To start HI hyperlink capture:
-	if the active style is not hyperlink-no-style:
-		start capturing text;
+	now HI capturing is true;
+	start capturing text;
 
 To end HI hyperlink capture:
-	if the active style is not hyperlink-no-style:
+	if HI capturing is true:
 		stop capturing text;
+		now HI capturing is false;
 		let cap-text be "[captured text]";
 		increment HI-hyperlinks-counter;
 		if HI-hyperlinks-counter is greater than HI-max-hyperlinks:
@@ -161,16 +163,6 @@ A clicking hyperlink rule (this is the alternative command replacement by hyperl
 		rule succeeds;
 	choose row ( current link number ) in the Table of Hyperlink Commands;
 	now the glulx replacement command is replacement entry;
-
-The HI hyperlink text is an indexed text that varies.
-To print HI hyperlink:
-	increment HI-hyperlinks-counter;
-	if HI-hyperlinks-counter is greater than HI-max-hyperlinks,
-		now HI-hyperlinks-counter is HI-min-hyperlinks;
-	say " [set link HI-hyperlinks-counter][HI hyperlink text][end link][line break]";
-	choose row ( HI-hyperlinks-counter ) in the Table of Hyperlink Commands;
-	let hi-text be "[HI hyperlink text]";
-	now replacement entry is "[hi-text]".
 
 Section - Rule for object hyperlinking something
 
@@ -273,7 +265,7 @@ To say t:
 	if capturing-depth is 1 and topic hyperlink highlighting is true:
 		set the text style for the style of topic-word; 
 		now the active style is the style of topic-word;
-		start HI hyperlink capture.
+		start HI hyperlink capture;
  
 To say d: 
 	increment capturing-depth;
@@ -286,7 +278,35 @@ To say x:
 	decrement capturing-depth;
 	if capturing-depth is 0:
 		end HI hyperlink capture;
-		reset styles with active style.
+		reset styles with active style;
+
+txtlink is an indexed text that varies.
+To say setlink:
+	increment capturing-depth;
+	if capturing-depth is 1:
+		increment HI-hyperlinks-counter;
+		if HI-hyperlinks-counter is greater than HI-max-hyperlinks:
+			now HI-hyperlinks-counter is HI-min-hyperlinks;
+		now txtlink is "";
+		start capturing text;
+
+To say aslink:
+	if capturing-depth is 1:
+		stop capturing text;
+		let cap-text be "[captured text]";
+		now txtlink is "[cap-text]";
+		start capturing text;
+
+To say endlink:
+	decrement capturing-depth;
+	if capturing-depth is 0:
+		stop capturing text;
+		let cap-text be "[captured text]";
+		if txtlink is "":
+			now txtlink is "[cap-text]";
+		say "[set link HI-hyperlinks-counter][txtlink][end link]";
+		choose row ( HI-hyperlinks-counter ) in the Table of Hyperlink Commands;
+		now replacement entry is "[cap-text]";
 
 	         
 Section - Glulx Style Definitions
