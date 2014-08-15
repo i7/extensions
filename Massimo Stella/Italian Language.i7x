@@ -794,11 +794,13 @@ region translates into Italian as regione.
 
 contenitore aperto is a kind of container. It is usually open.
 contenitore chiuso is a kind of container. It is usually closed.
+contenitore aperto chiudibile is a kind of container. It is usually open and openable.
 contenitore chiuso apribile is a kind of container. It is usually closed and openable.
 contenitore bloccato apribile is a kind of container. It is usually locked and openable.
 contenitore aperto bloccabile is a kind of container. It is usually open and lockable.
 contenitore accessibile is a kind of container. It is usually enterable.
 contenitore aperto accessibile is a kind of container. It is usually open and enterable.
+contenitore aperto chiudibile accessibile is a kind of container. It is usually open, openable and enterable.
 contenitore chiuso apribile accessibile is a kind of container. It is usually closed, openable and enterable.
 contenitore bloccato apribile accessibile is a kind of container. It is usually locked, openable and enterable.
 contenitore aperto bloccabile accessibile is a kind of container. It is usually open, lockable and enterable.
@@ -807,6 +809,7 @@ cosa indossabile is a kind of thing. It is usually wearable.
 contenitore indossabile is a kind of container. It is usually wearable.
 contenitore aperto indossabile is a kind of container. It is usually open and wearable.
 contenitore chiuso indossabile is a kind of container. It is usually closed and wearable.
+contenitore aperto chiudibile indossabile is a kind of container. It is usually open, openable and wearable.
 contenitore chiuso apribile indossabile is a kind of container. It is usually closed, openable and wearable.
 contenitore bloccato apribile indossabile is a kind of container. It is usually locked, openable and wearable.
 contenitore aperto bloccabile indossabile is a kind of container. It is usually open, lockable and wearable.
