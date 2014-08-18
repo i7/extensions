@@ -1,4 +1,4 @@
-Version 1/140817 of Xorshift by Dannii Willis begins here.
+Version 1/140818 of Xorshift by Dannii Willis begins here.
 
 "Allows Inform 7's random number generator to be replaced with one that is consistent across all interpreters"
 
@@ -23,10 +23,11 @@ Replace random;
 		return result;
 	}
 	! If the number we generate is close to MAX_POSITIVE_NUMBER then the results may be skewed
-	mod = ( MAX_POSITIVE_NUMBER % range ) + 1;
+	mod = MAX_POSITIVE_NUMBER % range;
 	! The xorshift generator (xorshift* for Glulx)
 	.Begin;
 	#ifdef TARGET_ZCODE;
+		! This xorshift generator is from http://b2d-f9r.blogspot.com/2010/08/16-bit-xorshift-rng.html
 		@log_shift xorshift_seed 4 -> temp;
 		! The Z-Machine has no xor opcode! :'(
 		xorshift_seed = ( xorshift_seed | temp ) & ( ~( xorshift_seed & temp ) );
