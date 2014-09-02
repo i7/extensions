@@ -36,7 +36,7 @@ To decide what indexed text is (selected action - stored action) conjugated in t
 				let found be true;
 				break;
 		if found is false: [As in, we didn't find an exception for this one.]
-			replace the regular expression "ing\b" in temp with ""; [and it will, because of tempule 1] [rule 2: remove -ing]
+			replace the regular expression "ing\b" in temp with ""; [and it will, because of rule 1] [rule 2: remove -ing]
 			if temp matches the regular expression ".*<^aeiouxy><aeiou>(<^aeiouwy>|s<^aeiou>)\b": [rule 3: add -e to -CVC]
 				let temp be "[temp]e"; [The x in the first C group is a hack to fix "exiting" -> "exites".]
 			replace the regular expression "(.+<aeiou>)(<tpkdbgvfr>)(\2)(\b)" in temp with "\1\2\4"; [rule 4: cut final character from -VCC]
