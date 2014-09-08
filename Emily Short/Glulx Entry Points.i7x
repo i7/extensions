@@ -1,4 +1,4 @@
-Version 10/140201 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/140425 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -242,16 +242,16 @@ Section - Debounce arrange events - unindexed
 
 [ Gargoyle sends an arrange event while the user is dragging the window borders, but we really only want one event at the end. Debounce the arrange event to ignore the earlier ones. ]
 
-Arranging now is a truth state variable. Arranging now is false.
+Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
 
-First glulx input handling rule for an arrange-event while arranging now is false (this is the debounce arrange event rule):
+First glulx input handling rule for an arrange-event while arranging now in GEP is false (this is the debounce arrange event rule):
 	let i be 0; [ for the I6 polling code to use ]
 	let final return value be a number;
 	let arrange again be true;
 	[ Poll for further arrange events ]
 	while 1 is 1:
-		poll for events;
-		if the current event number is 0:
+		poll for events in GEP;
+		if the current event number in GEP is 0:
 			break;
 		otherwise if the current glk event is an arrange-event:
 			next;
@@ -259,9 +259,9 @@ First glulx input handling rule for an arrange-event while arranging now is fals
 		otherwise:
 			[ Run the arrange rules ]
 			let temp event type be the current glk event;
-			set the current glk event to an arrange-event;
+			set the current glk event in GEP to an arrange-event;
 			now final return value is the glulx input handling rules for an arrange event;
-			set the current glk event to temp event type;
+			set the current glk event in GEP to temp event type;
 			now arrange again is false;
 			now final return value is the value returned by glk event handling;
 			break;
@@ -277,18 +277,18 @@ First glulx input handling rule for an arrange-event while arranging now is fals
 
 To decide what number is the glulx input handling rules for an arrange event:
 	let final return value be a number;
-	now arranging now is true;
+	now arranging now in GEP is true;
 	now final return value is the value returned by glk event handling;
-	now arranging now is false;
+	now arranging now in GEP is false;
 	decide on final return value;
 
-To poll for events:
-	(- glk_select_poll( gg_event ); for ( t_0 = 0 : t_0 < 3 : t_0++) { evGlobal-->t_0 = gg_event-->t_0; } -).
+To poll for events in GEP:
+	(- glk_select_poll( gg_event ); for ( tmp_0 = 0 : tmp_0 < 3 : tmp_0++) { evGlobal-->tmp_0 = gg_event-->tmp_0; } -).
 
-To decide what number is the current event number:
+To decide what number is the current event number in GEP:
 	(- evGlobal-->0 -).
 
-To set the current glk event to (ev - a g-event):
+To set the current glk event in GEP to (ev - a g-event):
 	(- evGlobal-->0 = {ev}; -).
 
 
