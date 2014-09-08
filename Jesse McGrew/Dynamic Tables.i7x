@@ -1,4 +1,4 @@
-Version 4/130712 of Dynamic Tables by Jesse McGrew begins here.
+Version 5/140908 of Dynamic Tables by Jesse McGrew begins here.
 
 "Provides a way to change the capacity of a table during the game."
 
@@ -8,7 +8,7 @@ To change (T - table name) to have (N - number) row/rows: (- DT_ResizeTable({T},
 
 To decide which number is the original number of rows in (T - table name): (- DT_OrigSize({T}) -).
 
-To decide which table name is a new table with columns (CS - list of table columns) and (N - number) blank row/rows: (- DT_NewTable({N}, {-pointer-to:CS}); -).
+To decide which table name is a new table with columns (CS - list of table columns) and (N - number) blank row/rows: (- DT_NewTable({N}, {-by-reference:CS}); -).
 
 To deallocate (T - table name): (- DT_FreeTable({T}); -).
 
@@ -48,14 +48,14 @@ Constant DT_CIB_NEWBLANKS 0;	! address of the dynamically allocated blank bits (
 Constant DT_CIB_ORIGDATA 1;	! address of the original (static) column data, or 0 for a fully dynamic table
 
 [ DT_Alloc s  rv;
-	! Pretend we're allocating indexed text, since BlkFree demands a valid KOV.
-	rv = BlkAllocate(s, INDEXED_TEXT_TY, 0);
+	! Pretend we're allocating text, since FlexAllocate demands a valid KOV.
+	rv = FlexAllocate(s, TEXT_TY, 0);
 	if (rv) return rv + BLK_DATA_OFFSET;
 	print "*** Failed to allocate ", s, " bytes ***^";
 	rfalse;
 ];
 
-[ DT_Free b; if (b) BlkFree(b - BLK_DATA_OFFSET); ];
+[ DT_Free b; if (b) FlexFree(b - BLK_DATA_OFFSET); ];
 
 [ DT_CopyBytes num src dest  i;
 	#ifdef TARGET_GLULX;
@@ -340,7 +340,7 @@ Constant DT_CIB_ORIGDATA 1;	! address of the original (static) column data, or 0
 			v = col-->i;
 			if (v==0) continue;
 			if (v==TABLE_NOVALUE && CheckTableEntryIsBlank(tab, col, i - 2)) continue;
-			BlkFree(v);
+			FlexFree(v);
 			col-->i = 0;
 		}
 	}
@@ -391,7 +391,7 @@ Constant DT_CIB_ORIGDATA 1;	! address of the original (static) column data, or 0
 			tc = tc | TB_COLUMN_SIGNED;
 		if (kov == UNDERSTANDING_TY)
 			tc = tc | TB_COLUMN_TOPIC;
-		if (kov == NUMBER_TY or TIME_TY or LIST_OF_TY or INDEXED_TEXT_TY || kov >= 100)
+		if (kov == NUMBER_TY or TIME_TY or LIST_OF_TY or TEXT_TY || kov >= 100)
 			tc = tc | TB_COLUMN_CANEXCHANGE;
 		if (KOVIsBlockValue(kov))
 			tc = tc | TB_COLUMN_ALLOCATED;
@@ -469,7 +469,7 @@ Include (-
 	flags = (tab-->col)-->1;
 	oldv = (tab-->col)-->(row+COL_HSIZE);
 	if ((flags & TB_COLUMN_ALLOCATED) && (oldv ~= 0 or TABLE_NOVALUE))
-		BlkFree(oldv);
+		FlexFree(oldv);
 	(tab-->col)-->(row+COL_HSIZE) = TABLE_NOVALUE;
 	if (flags & TB_COLUMN_NOBLANKBITS) return;
 	row--;
@@ -569,7 +569,7 @@ Include (-
 Include (-
 [ PrintTableName T;
 	switch(T) {
-{-call:Data::Tables::compile_print_table_names}
+{-call:Tables::Support::compile_print_table_names}
 		default:
 			if (DT_IsFullyDynamic(T))
 				print "** Dynamically created table **";
@@ -631,6 +631,8 @@ Version 3 works with Inform 7 version 6E59.
 
 Version 4 fixes a bug where dynamically created tables couldn't be resized.
 
+Version 5 works with (and requires) version 6L38.
+
 Example: * Notlob - A parrot that assigns a value to everything he hears, and repeats the lines back in his preferred order.
 
 The Table of Parrot Quips holds the lines that the parrot has heard, along with a score indicating how much the parrot likes each one, and a usage count to limit the number of times he repeats each one. We use a dynamic table, rather than three lists, because we need to keep the score and usage count associated with the correct text: table sorting keeps rows together, but lists can only be sorted independently of each other.
@@ -655,9 +657,9 @@ The Table of Parrot Quips holds the lines that the parrot has heard, along with 
 		let the current quip score be the calculated quip score of the textual quip;
 		if the number of blank rows in the Table of Parrot Quips is 0, change the Table of Parrot Quips to have (2 * the number of rows in the Table of Parrot Quips) rows;
 		choose a blank row in the Table of Parrot Quips;
-		change the quip text entry to the textual quip;
-		change the quip score entry to the current quip score;
-		change the usage count entry to 0;
+		now the quip text entry is the textual quip;
+		now the quip score entry is the current quip score;
+		now the usage count entry is 0;
 		sort the Table of Parrot Quips in reverse quip score order;
 		if the current quip score is greater than the highest quip score:
 			say "The parrot listens intently, whistling with excitement.";
@@ -715,12 +717,12 @@ A table is a two-dimensional structure already, but you can only access columns 
 		repeat with R running from 1 to 20:
 			let the subtable be a new table with columns {factor, product} and 20 blank rows;
 			choose row R in the Table of Multiplication;
-			change the factor entry to R;
-			change the cross reference entry to the subtable;
+			now the factor entry is R;
+			now the cross reference entry is the subtable;
 			repeat with C running from 1 to 20:
 				choose row C in the subtable;
-				change the factor entry to C;
-				change the product entry to R * C.
+				now the factor entry is C;
+				now the product entry is R * C.
 	
 	To look up (X - number) times (Y - number) in the multiplication table:
 		if X is a factor listed in the Table of Multiplication:
