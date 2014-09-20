@@ -1,19 +1,14 @@
-Telephones IT by Leonardo Boselli begin here.
+Telephones IT by Leonardo Boselli begins here.
 
 "Telephones, standard and portable. Solo tradotto in italiano."
 
 "based on Telephones by George Tryfonas."
 
-Include Italian by Leonardo Boselli.
-
 A telephone is a kind of thing. A telephone has a number called the calling number. A telephone has a person
-called the owner. A telephone can be inuse. A telephone is usually not inuse. Understand "phone" as a telephone.
+called the owner. A telephone can be inuse. A telephone is usually not inuse. Understand "telefono" as a telephone.
 
 Understand "componi [a number]" as dialling it on. 
-Understand "componi [a number] [su-art] [something]" as dialling it on.
-Understand "componi [a number] [con-art] [something]" as dialling it on.
-Understand "componi [a number] usando [something]" as dialling it on.
-Understand "componi [a number] usando [art-det] [something]" as dialling it on.
+Understand "componi [a number] su/sul/sullo/sulla/sui/sugli/sulle/sull [something]" as dialling it on.
 Understand the command "chiama" or "telefona" as "componi".
 
 Connection relates one person to another (called the other party). 
@@ -32,7 +27,7 @@ Check dialling it on (this is the can't dial on something that is not a telephon
 	if the second noun is not a telephone, say "Non essere stupido." instead;
 
 Check dialling it on (this is the can't dial the calling number rule):
-	if the number understood is the calling number of the second noun, say "E['] occupato." instead;
+	if the number understood is the calling number of the second noun, say "È occupato." instead;
 
 Check dialling it on (this is the can't dial an emergency number rule):
 	if the number understood is a number listed in the Table of Misdialled Numbers, say "[the retort corresponding to a number of the number understood in the Table of Misdialled Numbers]" instead.
@@ -51,7 +46,7 @@ After deciding the scope of the player while the player reaches someone (this is
 	place the other party of the player in scope.
 
 Instead of listening to a inuse telephone when the player reaches someone (this is the listening to a connected telephone rule): 
-	say "Puoi sentire il respiro [di-prep the other party of the player]." 
+	say "Puoi sentire il respiro [dip the other party of the player]." 
 
 
 Before listening to someone when the player cannot touch the noun (this is the listening to a connected party rule): 
@@ -63,13 +58,13 @@ Rule for supplying a missing second noun while dialling:
 
 To assign a phone: 
 	if the player can touch a telephone (called the current phone): 
-		say "([su-prep the current phone])[line break]"; 
-		change the second noun to the current phone; 
+		say "([sup the current phone])[line break]"; 
+		now the second noun is the current phone; 
 	otherwise: 
 		say "Non hai un telefono a portata di mano."
 
 Before dialling when the player reaches someone (this is the dialling a telephone while on the line rule): 
-	say "(prima interrompi la comunicazione [con-prep the other party of the player])[command clarification break]";
+	say "(prima interrompi la comunicazione [conp the other party of the player])[command clarification break]";
 	end current conversation. 
 
 
@@ -96,7 +91,7 @@ Report hanging up (this is the standard report hanging up rule):
 
 Before going somewhere when the player reaches someone (this is the go somewhere while on the line rule):
 	if the number of inuse telephones held by the player is 0: 
-		say "(prima interrompi la comunicazione  [con-prep the other party of the player])[command clarification break]"; 
+		say "(prima interrompi la comunicazione  [conp the other party of the player])[command clarification break]"; 
 		end current conversation.
 
 After looking when the player reaches someone (this is the look while on the line rule):
@@ -108,7 +103,7 @@ To end current conversation:
 
 Table of Misdialled Numbers
 number	retort
-911	"In questa nazione, la legge punisce gli scherzi telefonici fatti alla polizia."
+113	"In questa nazione, la legge punisce gli scherzi telefonici fatti alla polizia."
 
 Telephones IT end here.
 

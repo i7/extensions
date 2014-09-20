@@ -11,9 +11,6 @@ Include Basic Screen Effects by Emily Short.
 
 section 2 - definitions
 
-Use menus translates as (- Constant USE_MENUS; -). 
-Use skip intro translates as (- Constant Skip_Intro; -).
-
 [The quotation is some text that varies. The quotation is "[story headline]".]
 
 To say quotation: say story headline.
@@ -47,7 +44,7 @@ To display (chosen figure - a figure-name) inline:
 
 Include (-
 [ DrawInline N;
-	glk_image_draw(gg_mainwin, N,  imagealign_InlineUp, 0);
+	glk_image_draw(gg_mainwin, ResourceIDsOfFigures-->N,  imagealign_InlineUp, 0);
 ]; 
 -)
 
@@ -62,10 +59,13 @@ Section 3b - no cover art (for Z-machine only)
 
 To display art if appropriate: do nothing.
 
+
 Section 4a - title screen rule
 
+TITLEPAGE-DISPLAY-ART is a truth state that varies. TITLEPAGE-DISPLAY-ART is true;
+
 The first when play begins rule (this is the title screen rule):
-while 1 is 1 begin;
+while true is true begin;
 	clear the screen;
 	redraw status line;
 	say "[line break]       [bold type][story title][roman type]";
@@ -73,16 +73,17 @@ while 1 is 1 begin;
 	say "[line break]          di [story author]";
 	[centre "   di [story author]";]
 	say paragraph break;
-	display art if appropriate;
-	say line break;
+	if TITLEPAGE-DISPLAY-ART is true begin;
+		display art if appropriate;
+		say line break;
+	end if;
 	say fixed letter spacing;
 	say "   [quotation]";
 	[centre "[quotation]", italic;]
 	say roman type;
 	say paragraph break;
 	say fixed letter spacing;
-	if using the menus option, 
-		say "       M   :   Mostra il menù d[']aiuto[line break]";
+	say "       M   :   Mostra il menù d[']aiuto[line break]";
 	say "   (SPAZIO):   Inizia la storia dall[']inizio[line break]";
 	say "       R   :   Continua una storia salvata[line break]";
 	say "       Q   :   Esci[line break]";  
@@ -93,27 +94,20 @@ while 1 is 1 begin;
 	end while;
 	if k is 13 or k is 31 or k is 32 begin;
 		clear the screen; 
+		redraw status line;
 		make no decision;
 	otherwise if k is 113 or k is 81;
 		stop game abruptly;
 	otherwise if k is 82 or k is 114;
 		follow the restore the game rule;
 	otherwise if k is 109 or k is 77;
-		if using the menus option begin;
-			change the current menu to the intro menu;
-			carry out the displaying activity;
-		end if;
+		now the current menu is the intro menu;
+		carry out the displaying activity;
 	end if;
 	say "Premi SPAZIO per continuare.";
 	wait for SPACE key;
 end while;
 
-
-
-Section 5 - the debug option - not for release
-
-A procedural rule when using the skip intro option: 
-	ignore the title screen rule.
 
 Title Page IT ends here.
 

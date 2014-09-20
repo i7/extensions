@@ -5,7 +5,6 @@ Version 5 of Simple Followers IT by Leonardo Boselli begins here.
 "basato su Simple Followers by Emily Short."
 
 [Include Plurality by Emily Short.]
-Include Italian by Leonardo Boselli.
 
 Section 1 - The shadowing relation
 
@@ -26,7 +25,7 @@ Every turn:
 
 Section 2 - The FOLLOW action
 
-Understand "segui [something]" or "segui [art-det] [something]" as following. Following is an action applying to one thing. Understand the commands "insegui" as "segui". [Understand "start following/pursuing/chasing [something]" as following. Understand the commands "begin" and "commence" as "start".]
+Understand "segui [something]" or "segui il/lo/la/i/gli/le/l [something]" as following. Following is an action applying to one thing. Understand the commands "insegui" as "segui". [Understand "start following/pursuing/chasing [something]" as following. Understand the commands "begin" and "commence" as "start".]
 
 Check following something (this is the block following rule): 
 	say "Preferisci tenere questa opzione aperta." instead.
@@ -50,7 +49,7 @@ Unsuccessful attempt by someone trying following (this is the excuses for not fo
 
 Section 3 - The STOP FOLLOWING action
 
-Understand "smetti di seguire/inseguire [something]" or "smetti di seguire/inseguire [art-det] [something]" as ceasing to follow. Ceasing to follow is an action applying to one thing. [Understand the commands "cease" and "desist" as "stop". Understand "quit following/chasing/pursuing [something]" as ceasing to follow.]
+Understand "smetti di seguire/inseguire [something]" or "smetti di seguire/inseguire il/lo/la/i/gli/le/l [something]" as ceasing to follow. Ceasing to follow is an action applying to one thing. [Understand the commands "cease" and "desist" as "stop". Understand "quit following/chasing/pursuing [something]" as ceasing to follow.]
 
 Check ceasing to follow something (this is the block ceasing to follow rule):
 	say "Non stai seguendo più nessuno." instead.
