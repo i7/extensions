@@ -122,8 +122,10 @@ Array LanguageArticles -->
 				   !             s     p     s     p
 				   !             m f n m f n m f n m f n
 
-Array LanguageGNAsToArticles --> 0 1 0 2 3 0 0 1 0 2 3 0;
+Array LanguageGNAsToArticles --> 0 1 0 2 3 2 0 1 0 2 3 2;
 -) instead of "Articles" in "Language.i6t".
+
+[??? Array LanguageGNAsToArticles --> 0 1 0 2 3 0 0 1 0 2 3 0;]
 
 Chapter 2.1.2 - Numbers
 
@@ -846,8 +848,10 @@ external file translates into Italian as nome di file. the plural of nome di fil
 
 Section 2.2.5.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
+[
 A rideable animal translates into Italian as un animale montabile.
 A rideable vehicle translates into Italian as un veicolo montabile.
+]
 
 Section 2.2.5.3 - In Locksmith (for use with Locksmith by Emily Short)
 
@@ -1132,6 +1136,7 @@ i modi e i tempi irregolari.]
 	racchiudere	<it-racchiudere-conjugation> |
 	assaggiare	<it-assaggiare-conjugation> |
 	dare			<it-dare-conjugation> |
+	dire		<it-dire-conjugation> |
 	bloccare		<it-bloccare-conjugation> |
 	sbloccare	<it-sbloccare-conjugation> |
 	capire			<it-incoativi-terza-conjugation> |
@@ -1951,6 +1956,38 @@ English, where the asterisks are never used. ]
 	diedi | desti | diede | demmo | deste | diedero
 
 [
+---> Italian : "DIRE" verb. <----
+]
+
+<it-dire-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		dicendo |
+	3		detto |
+	<it-dire-tabulation>
+
+<it-dire-tabulation> ::=
+	a1+		<it-dire-present> |
+	a2+		<it-dire-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-dire-future> |
+	a6+		<it-dire-past-historic> |
+	a7+		<it-avere-future> 3 |
+	p*		3+*
+
+<it-dire-present> ::=
+	dico | dici | dice | diciamo | dite | dicono
+
+<it-dare-past> ::=
+	dicevo | dicevi | diceva | dicevamo | dicevate | dicevano
+
+<it-dare-future> ::=
+	dirò | dirai | dirà | diremo | direte | diranno
+
+<it-dare-past-historic> ::=
+	dissi | dicesti | disse | dicemmo | diceste | dissero
+
+[
 --------> Italian : "BLOCCARE e SBLOCCARE" verb. <-------
 ]
 
@@ -2193,8 +2230,10 @@ In Italian sbloccare is a verb meaning to unlock.
 
 Section 2.4.2.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
+[
 In Italian montare su is a verb meaning to mount.
 In Italian scendere is a verb meaning to dismount.
+]
 
 Section 2.4.2.3 - In Locksmith (for use with Locksmith by Emily Short)
 
@@ -2324,19 +2363,21 @@ To decide which number is the artflag of (sostan - a room):
 Articulated preposition is a kind of value. Some articulated prepositions are defined by the Table of Prepositions.
 
 Table of Prepositions
-Name	1Il	2Lo	3La	4I	5Gli	6Le	7L
-dip	"del"	"dello"	"della"	"dei"	"degli"	"delle"	"dell[']"
-ap	"al"	"allo"	"alla"	"ai"	"agli"	"alle"	"all[']"
-dap	"dal"	"dallo"	"dalla"	"dai"	"dagli"	"dalle"	"dall[']"
-inp	"nel"	"nello"	"nella"	"nei"	"negli"	"nelle"	"nell[']"
-conp	"con il"	"con lo"	"con la"	"con i"	"con gli"	"con le"	"con l[']"
-sup	"sul"	"sullo"	"sulla"	"sui"	"sugli"	"sulle"	"sull[']"
-perp	"per il"	"per lo"	"per la"	"per i"	"per gli"	"per le"	"per l[']"
-trap	"tra il"	"tra lo"	"tra la"	"tra i"	"tra gli"	"tra le"	"tra l[']"
-frap	"fra il"	"fra lo"	"fra la"	"fra i"	"fra gli"	"fra le"	"fra l[']"
+Name	1Il	2Lo	3La	4I	5Gli	6Le	7L	8pn
+dip	"del"	"dello"	"della"	"dei"	"degli"	"delle"	"dell[']"	"di"
+ap	"al"	"allo"	"alla"	"ai"	"agli"	"alle"	"all[']"	"a"
+dap	"dal"	"dallo"	"dalla"	"dai"	"dagli"	"dalle"	"dall[']"	"da"
+inp	"nel"	"nello"	"nella"	"nei"	"negli"	"nelle"	"nell[']"	"in"
+conp	"con il"	"con lo"	"con la"	"con i"	"con gli"	"con le"	"con l[']"	"con"
+sup	"sul"	"sullo"	"sulla"	"sui"	"sugli"	"sulle"	"sull[']"	"su"
+perp	"per il"	"per lo"	"per la"	"per i"	"per gli"	"per le"	"per l[']"	"per"
+trap	"tra il"	"tra lo"	"tra la"	"tra i"	"tra gli"	"tra le"	"tra l[']"	"tra"
+frap	"fra il"	"fra lo"	"fra la"	"fra i"	"fra gli"	"fra le"	"fra l[']"	"fra"
 
 To say (p - an articulated preposition) the (obj - a thing):
-	if obj is female:
+	if obj is proper-named:
+		say "[8pn of p] ";
+	otherwise if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
 	otherwise if artflag of obj is 2:
 		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
@@ -2352,7 +2393,9 @@ To say (p - an articulated preposition) cui (obj - a thing):
 	say "cui [regarding the obj][obj]".
 
 To say (p - an articulated preposition) the (obj - a room):
-	if obj is female:
+	if obj is proper-named:
+		say "[8pn of p] ";
+	otherwise if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
 	otherwise if artflag of obj is 2:
 		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
@@ -2381,6 +2424,8 @@ In Italian possedere is a verb.
 In Italian provare is a verb.
 In Italian parlare is a verb.
 In Italian rispondere is a verb.
+In Italian chiedere is a verb.
+In Italian dire is a verb.
 In Italian salutare is a verb.
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
@@ -2421,27 +2466,37 @@ In Italian ascoltare is a verb.
 
 To say ci sei:
 	if story tense is present tense:
-		say "c[']è";
+		if the prior named object is plural-named:
+			say "ci sono";
+		otherwise:
+			say "c[']è";
 	otherwise if story tense is past tense:
-		say "c[']era";
+		if the prior named object is plural-named:
+			say "c[']erano";
+		otherwise:
+			say "c[']era";
 	otherwise:
-		say "ci sarà";
+		if the prior named object is plural-named:
+			say "ci saranno";
+		otherwise:
+			say "ci sarà";
 
-To say ci sono:
+To say Ci sei:
 	if story tense is present tense:
-		say "ci sono";
+		if the prior named object is plural-named:
+			say "Ci sono";
+		otherwise:
+			say "C[']è";
 	otherwise if story tense is past tense:
-		say "c[']erano";
+		if the prior named object is plural-named:
+			say "C[']erano";
+		otherwise:
+			say "C[']era";
 	otherwise:
-		say "ci saranno";
-
-To say sono:
-	if story tense is present tense:
-		say "sono";
-	otherwise if story tense is past tense:
-		say "erano";
-	otherwise:
-		say "saranno";
+		if the prior named object is plural-named:
+			say "Ci saranno";
+		otherwise:
+			say "Ci sarà";
 
 In Italian aperto is an adjective.
 In Italian chiuso is an adjective.
@@ -2541,11 +2596,11 @@ Report other people taking inventory rule response (A) is "[The actor] [guardi] 
 Can't take yourself rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] sempre con [te]."
 Can't take other people rule response (A) is "[regarding the player]Non [puoi] prendere [the noun]."
 Can't take component parts rule response (A) is "[The noun] [fai] parte [dip the whole]."
-Can't take people's possessions rule response (A) is "[The noun] [sembri] appartenere [ap the owner]."
+Can't take people's possessions rule response (A) is "[The noun] appar[tieni] [ap the owner]."
 Can't take items out of play rule response (A) is "[The noun] non [sei] a [tua] disposizione."
 Can't take what you're inside rule response (A) is "Prima dovresti [if noun is a supporter]scendere[otherwise]uscire[end if] [dap the noun]."
 Can't take what's already taken rule response (A) is "[The noun] [sei] già in [regarding the player][tuo] possesso."
-Can't take scenery rule response (A) is "[The noun] non si [regarding nothing][puoi] trasportare."
+Can't take scenery rule response (A) is "[The noun] non si [puoi] trasportare."
 Can only take things rule response (A) is "[The noun] [sei] fuori dalla [tua] portata."
 Can't take what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Use player's holdall to avoid exceeding carrying capacity rule response (A) is "(prima [regarding the player][metti] qualcosa [inp the current working sack] per fare spazio)[command clarification break]".
@@ -2681,12 +2736,12 @@ Room description heading rule response (C) is " (dentro [the intermediate level]
 Room description body text rule response (A) is "L'oscurità avvolge tutto. Non [regarding the player][puoi] vedere nulla."
 Other people looking rule response (A) is "[The actor] si [guardi] attorno."
 [ Examining ]
-Examine directions rule response (A) is "[regarding the player]Non [vedi] nulla di speciale in quella direzione."
+Examine directions rule response (A) is "[regarding the player]Non [vedi] nulla di particolare in quella direzione."
 Examine containers rule response (A) is "Dentro [the noun] ".
 Examine containers rule response (B) is "[The noun] [sei] [vuoto]."
 Examine supporters rule response (A) is "Sopra [the noun] ".
 Examine devices rule response (A) is "[Ora] [the noun] [sei] [if the noun is switched on][acceso][otherwise][spento][end if]."
-Examine undescribed things rule response (A) is "[regarding the player]Non [trovi] nulla di speciale [inp the noun]."
+Examine undescribed things rule response (A) is "[regarding the player]Non [trovi] nulla di particolare [inp the noun]."
 Report other people examining rule response (A) is "[The actor] [guardi] con attenzione [the noun]."
 [ Looking under ]
 Standard looking under rule response (A) is "[regarding the player]Non [trovi] nulla di interessante."
@@ -3005,9 +3060,9 @@ List writer internal rule response (N) is "[regarding the noun][aperto] ma [vuot
 List writer internal rule response (O) is "[regarding the noun][chiuso]".
 List writer internal rule response (P) is "[regarding the noun][chiuso] e [bloccato]".
 List writer internal rule response (Q) is "[regarding the noun][contenente]".
-List writer internal rule response (R) is " (su cui ".
+List writer internal rule response (R) is "su cui ".
 List writer internal rule response (S) is ", su cui ".
-List writer internal rule response (T) is " (in cui ".
+List writer internal rule response (T) is "in cui ".
 List writer internal rule response (U) is ", in cui ".
 List writer internal rule response (V) is "[regarding the player][vedi]".
 List writer internal rule response (W) is "[sei] niente".
@@ -3033,7 +3088,7 @@ Parser error internal rule response (A) is "Non ho capito la frase."
 Parser error internal rule response (B) is "Ho capito solo: ".
 Parser error internal rule response (C) is "Ho capito solo: ".
 Parser error internal rule response (D) is "Non ho compreso il numero."
-Parser error internal rule response (E) is "Non [regarding the player][puoi] vedere nulla del genere."
+Parser error internal rule response (E) is "[Qui] non [regarding the player][puoi] vedere nulla del genere."
 Parser error internal rule response (F) is "Hai detto troppo poco."
 Parser error internal rule response (G) is "[Ora] non lo [possiedi]."
 Parser error internal rule response (H) is "Non puoi usare più di un oggetto con questo verbo."
@@ -3115,21 +3170,28 @@ Immediately undo rule response (E) is "[bracket]Turno precedente annullato.[clos
 
 Chapter 3.1.2 - Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
-Understand "monta [su-art] [something]" as mounting.
-Understand "smonta [da-art] [something]" as dismounting.
+Understand "monta [art-det] [something]" as mounting.
+Understand "monta [something]" or "monta [su-art] [something]" as mounting.
+Understand "smonta" as dismounting.
 
-can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the steed].".
-can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the conveyance].".
-can't mount something unrideable rule response (A) is "[The noun] non [puoi] essere montato.".
-standard report mounting rule response (A) is "[regarding the player][maiuscolo][Monti][maiuscolo] [the noun].".
-standard report mounting rule response (B) is "[The actor] [monti] [the noun].".
-mounting excuses rule response (A) is "[The person asked] [stai] già montando [the steed].".
-mounting excuses rule response (B) is "[The person asked] [stai] già montando [the conveyance].".
-mounting excuses rule response (C) is "[The noun] non [puoi] essere montato.".
-can't dismount when not mounted rule response (A) is "Non [regarding the player][stai] montando nulla.".
-standard report dismounting rule response (A) is "[refarding the player][maiuscolo][Smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
+In Italian montare is a verb.
+In Italian smontare is a verb.
+
+In Italian cavalcato is an adjective.
+In Italian montato is an adjective.
+
+can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già cavalcando [the steed].".
+can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [montato] [sup the conveyance].".
+can't mount something unrideable rule response (A) is "[The noun] non [puoi] essere [cavalcato].".
+standard report mounting rule response (A) is "[regarding the player][maiuscolo][Monti][maiuscolo] [sup the noun].".
+standard report mounting rule response (B) is "[The actor] [monti] [sup the noun].".
+mounting excuses rule response (A) is "[The person asked] [stai] già cavalcando [the steed].".
+mounting excuses rule response (B) is "[The person asked] [sei] già [montato] [sup the conveyance].".
+mounting excuses rule response (C) is "Non si [regarding nothing][puoi] montare [sup the noun].".
+can't dismount when not mounted rule response (A) is "Non [regarding the player][sei] [montato] su nulla.".
+standard report dismounting rule response (A) is "[regarding the player][maiuscolo][Smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
 standard report dismounting rule response (B) is "[The actor] [smonti] [dap the noun].".
-dismounting excuses rule response (A) is "[The person asked] non [stai] montando nulla.".
+dismounting excuses rule response (A) is "[The person asked] non [sei] [montato] su nulla.".
 
 Chapter 3.1.3 - Locksmith (for use with Locksmith by Emily Short)
 
