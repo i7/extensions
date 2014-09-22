@@ -1,4 +1,4 @@
-Version 14/140419 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 14/140922 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "An extension for constructing multiple-window interfaces. Windows can be created and destroyed during play. Facilities for per-window character input and hyperlinks are provided."
 
@@ -143,7 +143,7 @@ The main-window is g-required.
 The rock-value of the main-window is 100.
 
 The status-window is a text-grid g-window.
-The status-window is g-required.
+[The status-window is g-required.]																[!!! Somehow messes up the coloring of the status bar !!!]
 The scale method of the status-window is g-fixed-size.
 The measurement of the status-window is 1.
 The position of the status-window is g-placeabove.
@@ -419,7 +419,7 @@ Include (-
 [ WindowSize g  index result;
 	if (g hasnt g_present) return 0;
 	result = glk_window_get_size(g.ref_number, gg_arguments, gg_arguments+WORDSIZE);
-            return  gg_arguments-->index;
+			return  gg_arguments-->index;
 ];
 
 -)
@@ -538,7 +538,7 @@ To clear the/-- (win - a g-window):
 		graphics-clear win;
 	otherwise:
 		text-clear win.
-        
+		
 To text-clear the/-- (g - a g-window):
 (-    if ({g} has g_present) glk_window_clear({g}.ref_number); -).
 
@@ -548,12 +548,12 @@ To graphics-clear the/-- (g - a g-window):
 Include (-
 
 [ BlankWindowToColor g result graph_width graph_height col;
-    col = ColVal(g.back_colour);
-    result = glk_window_get_size(g.ref_number, gg_arguments, gg_arguments+WORDSIZE);
-                 graph_width  = gg_arguments-->0;
-                 graph_height = gg_arguments-->1; 
+	col = ColVal(g.back_colour);
+	result = glk_window_get_size(g.ref_number, gg_arguments, gg_arguments+WORDSIZE);
+				 graph_width  = gg_arguments-->0;
+				 graph_height = gg_arguments-->1; 
 
-    glk_window_fill_rect(g.ref_number, col, 0, 0, graph_width, graph_height);
+	glk_window_fill_rect(g.ref_number, col, 0, 0, graph_width, graph_height);
 ];
 
 -).
@@ -892,7 +892,7 @@ Include (-
 	!ClearBoxedText();
 	!ClearParagraphing();
 	CarryOutActivity( (+ printing the command prompt +) );
-	enable_rte = true;
+	!enable_rte = true; 																						No longer present in the i6t file
 ];
 
 -) instead of "Prompt" in "Printing.i6t"
@@ -1183,11 +1183,18 @@ Include (-
 
 Section - Background colours
 
-Include Glulx Text Effects by Emily Short.
+[Include Glulx Text Effects by Emily Short.]															[!!! No longer uses a table of common color values !!!]
 
-Table of Common Color Values (continued)
-glulx color value		assigned number
-g-placenullcol		0
+Glulx color value is a kind of value. Some glulx color values are defined by the Table of Common Color Values.	[!!! Definition moved from Glulx Text Effects !!!]
+
+Table of Common Color Values [(continued)]                                                                                                                [!!! No longer defined in Glulx Text Effects !!!]
+glulx color value	assigned number
+g-black	0
+g-dark-grey	4473924
+g-medium-grey	8947848
+g-light-grey	14540253
+g-white	16777215																	[!!! Copy & pasted from the old Glulx Text Effects !!!]
+g-placenullcol	0
 g-darkgreen	25600
 g-green		32768
 g-lime		65280
@@ -1311,9 +1318,9 @@ Include (-
 
 [ SetReverse flag i;
    for (i = 0: i < style_NUMSTYLES : i++)
-       if (flag)	
+	   if (flag)	
 	glk_stylehint_set(wintype_textgrid, i, stylehint_ReverseColor, 0);
-      else
+	  else
 	glk_stylehint_clear(wintype_textgrid, i, stylehint_ReverseColor);
 
 ];
@@ -1803,7 +1810,7 @@ A window can be defined as a "bordered g-window", and it will then be produced w
 
 The main-window can be bordered too, by declaring that "the main-window is a bordered g-window". 
 
-    Section: Status Line
+	Section: Status Line
 
 By default, Glulx games will incorporate a status line. To turn this off quickly, a use option is provided:
 
@@ -2050,4 +2057,3 @@ What follows is some I6 code for handling the glulx imagery. Note that you may n
 	-).
 
 	Test me with "examine letter/z/attack letter".
-
