@@ -2,9 +2,11 @@ Version 3 of Exit Lister by Gavin Lambert begins here.
 
 "Automatic listing of available exits, with a reasonable dose of customization built in."
 
-"version 1 by Andre Kosmos" [basic features]
-"version 2 by Gavin Lambert" [more features]
-"version 3 by Mark Harviston <mark.harviston@gmail.com>" [updated for 6L38]
+[
+version 1 by Andre Kosmos - basic features
+version 2 by Gavin Lambert - more features
+version 3 by Mark Harviston <mark.harviston@gmail.com> - updated for 6L38
+]
 
 Section 1 - Text
 
