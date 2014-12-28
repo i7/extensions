@@ -1,4 +1,4 @@
-Version 2/140513 of Menus by Wade Clarke begins here.
+Version 2/141228 of Menus by Wade Clarke begins here.
 
 "Lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code project. This is an upgrade of Emily Short's Menus extension featuring user-friendly single keypress controls and a more sophisticated UI. It also has configurable options, a book mode with automatic pagination, isolated message content to make translation to other languages easier and a Screen Reader mode. Old Menus format tables can be upgraded for use with this extension with a little work."
 
@@ -247,7 +247,7 @@ To say mn_bookintro_4:
 Section 5 - Main Tables and variables
 
 table of pagey menus
-storage (a table name)	path (indexed text)	bookhead (a table name)	parthead (a table name)	chapterhead (a table name)
+storage-xx (a table name)	path (indexed text)	bookhead (a table name)	parthead (a table name)	chapterhead (a table name)
 table of help contents	""	--	--	--
 with 30 blank rows.
 
@@ -367,7 +367,7 @@ To mn_assess (T - a table name):
 					-- 4: now mn_tablesection is subtable entry;
 				let targettable be subtable entry;
 				choose a blank row in table of pagey menus;
-				now storage entry is targettable;
+				now storage-xx entry is targettable;
 				if mn_masterpath is not "":
 					now path entry is "[mn_masterpath] - [mn_temptitle]";
 				otherwise:
@@ -401,7 +401,7 @@ To mn_assess (T - a table name):
 				if mn_debug > 0, say "- Returning to [temptable] -[line break]";
 				now mn_currenttable is temptable; [Retrieve table of current level]
 				now mn_masterpath is mn_pathstorage; [Retrieve text path of current level]
-				if mn_debug > 1, say "retrieved mn_masterpath from storage: it's now [mn_masterpath].[line break]";
+				if mn_debug > 1, say "retrieved mn_masterpath from storage-xx: it's now [mn_masterpath].[line break]";
 				now mn_stackpointer is tempstackpointer; [Retrieve stack pointer of current level]
 				if mn_debug > 1, say "stack retrieved and it's now [mn_stackpointer][line break]";
 				next;
@@ -477,7 +477,7 @@ Last when play begins (this is the Menus startup scan rule):
 			let old marker be 0;
 			let farthest hint page be 0; [After the loop in the next line, this variable will hold the value of the REAL last global page number in the volume]
 			repeat through table of pagey menus:
-				now mn_currenttable is storage entry;
+				now mn_currenttable is storage-xx entry;
 				repeat through mn_currenttable:
 					if bookpage entry < 0: [A negative entry indicates a hint page]
 						now farthest hint page is mn_book_total minus bookpage entry; [Subtracting a negative value = adding]
@@ -507,7 +507,7 @@ Last when play begins (this is the Menus startup scan rule):
 	if mn_debug > 0 and mn_menu_init_abort is false:
 		say "RESULTS SUMMARY:[paragraph break]";
 		repeat through table of pagey menus:
-			say "[storage entry][line break]Textpath: [path entry][line break]Tables path: ";
+			say "[storage-xx entry][line break]Textpath: [path entry][line break]Tables path: ";
 			if there is a bookhead entry:
 				say "[bookhead entry], ";
 			otherwise:
@@ -651,8 +651,8 @@ To mn_count the local pages:
 
 To mn_identify the book page:
 	repeat through table of pagey menus:
-		if there is a bookpage of mn_currentbookpage in storage entry:
-			now current menu is storage entry;
+		if there is a bookpage of mn_currentbookpage in storage-xx entry:
+			now current menu is storage-xx entry;
 			let headerstorage be "temp"; [Create a temporary text variable]
 			repeat with N running from 1 to the number of rows in current menu:
 				choose row N in current menu;
@@ -686,7 +686,7 @@ To show menu contents:
 		let __index be 0;			
 		while __index is not 1:
 			let globaljump be false; [a temp flag for use during the drill down sequence]
-			now mn_breadcrumb is the path corresponding to a storage of current menu in table of pagey menus;
+			now mn_breadcrumb is the path corresponding to a storage-xx of current menu in table of pagey menus;
 			if mn_refresh is true:
 				reprint current menu;
 			now mn_refresh is true;
@@ -776,7 +776,7 @@ This is the menuprint rule:
 		choose row mn_temp_selection in the current menu; [While in a multi-page topic, mn_temp_selection points to the local page we're reading]
 		now mn_currentbookpage is bookpage entry;
 		now mn_currentlocalpage is localpage entry;
-		now mn_breadcrumb is the path corresponding to a storage of current menu in table of pagey menus;
+		now mn_breadcrumb is the path corresponding to a storage-xx of current menu in table of pagey menus;
 		now the mn_endnode_flag is true;
 		mn_redraw status line;
 		if mn_refresh is true:
@@ -861,21 +861,21 @@ To mn_zap the stack:
 To mn_reconstruct the stack:
 	mn_zap the stack;
 	now mn_stackpointer is 1;
-	choose row with a storage of current menu in table of pagey menus;
+	choose row with a storage-xx of current menu in table of pagey menus;
 	if there is a bookhead entry:
 		increment mn_stackpointer;
 		choose row mn_stackpointer in table of mn_stack;
-		now desk entry is bookhead corresponding to a storage of current menu in table of pagey menus;
-		choose row with a storage of current menu in table of pagey menus;
+		now desk entry is bookhead corresponding to a storage-xx of current menu in table of pagey menus;
+		choose row with a storage-xx of current menu in table of pagey menus;
 		if there is a parthead entry:
 			increment mn_stackpointer;
 			choose row mn_stackpointer in table of mn_stack;
-			now desk entry is parthead corresponding to a storage of current menu in table of pagey menus;
-			choose row with a storage of current menu in table of pagey menus;
+			now desk entry is parthead corresponding to a storage-xx of current menu in table of pagey menus;
+			choose row with a storage-xx of current menu in table of pagey menus;
 			if there is a chapterhead entry:
 				increment mn_stackpointer;
 				choose row mn_stackpointer in table of mn_stack;
-				now desk entry is chapterhead corresponding to a storage of current menu in table of pagey menus;
+				now desk entry is chapterhead corresponding to a storage-xx of current menu in table of pagey menus;
 	unless current menu is table of help contents:
 		increment mn_stackpointer;
 		choose row mn_stackpointer in table of mn_stack;
@@ -1829,6 +1829,13 @@ Now, here is a complete new Menus version of the same material:
 Again, note how I was able to entirely dispense with the toggle column from the old table because after the translation to the new format, no standalone toggle entries remained that would need to go into it.
 
 Chapter: Change log, credits and contact info [Chapter 12]
+
+Version 2/141228
+
+6L38 Compatibility Update
+
+This extension differs from the author's original version: it has been modified for compatibility with version 6L38 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
 Version 2/140513
 
