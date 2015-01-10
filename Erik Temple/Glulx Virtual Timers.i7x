@@ -1,8 +1,8 @@
-Version 1/150104 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
+Version 1/150110 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
 
 Include Glulx Entry Points by Emily Short.
 
-[****The basic virtual timer mechanism is possibly incorrect--we probably ought to check all timers each time any timer is activated or deactivated to ensure that the global timer reflects their intervals most efficiently. The current model may achieve that in the vast majority of cases, but it certainly doesn't  do it directly...]
+[****The basic virtual timer mechanism is possibly incorrect--we probably ought to check all timers each time any timer is activated or deactivated to ensure that the global timer reflects their intervals most efficiently. The current model may achieve that in the vast majority of cases, but it certainly doesn't do it directly...]
 
 Part - The virtual timer kind
 
@@ -10,7 +10,9 @@ A virtual timer is a kind of value. Some virtual timers are timer-1, timer-2, ti
 
 A virtual timer can be active or inactive.
 A virtual timer can be cyclic.
-A virtual timer can be reserved or unreserved.
+A virtual timer can be reserved or unreserved. A virtual timer is usually reserved.
+
+Timer-1 is unreserved. Timer-2 is unreserved. Timer-3 is unreserved. Timer-4 is unreserved. Timer-5 is unreserved. Timer-6 is unreserved.  Timer-7 is unreserved.
 
 The triggered timer is a virtual timer variable.
 The last created timer is a virtual timer variable.
@@ -25,7 +27,7 @@ A virtual timer has a number called the cycles completed. The cycles completed i
 A virtual timer has a number called the cycle target. The cycle target is usually 0.
 A virtual timer has a text called the text-callback.
 A virtual timer has a rule called the rule-callback.
-A virtual timer has a truth state called interrupting line input. Interrupting line input is usually true.
+A virtual timer has a truth state called interrupting line input. Interrupting line input is usually false.
 
 Virtual timers active is a truth state variable. Virtual timers active is usually true.
 
@@ -82,7 +84,8 @@ To stop virtualized timers:
 
 To restart virtualized timers:
 	now virtual timers active is true;
-	recalibrate the Glulx timer;
+	if timers are queued:
+		recalibrate the Glulx timer;
 	#if utilizing inline debugging;
 	say "[>console][bold type]Restarting virtual timers[roman type].[<]";
 	#end if.
@@ -95,18 +98,17 @@ To request non-virtualized timer event at (T - a number) milliseconds:
 
 [Inform 7 seems to have no way to test whether an enumerated value is valid for its kind; this does that for virtual timers.]
 To decide whether (chron - a virtual timer) is a valid timer:
-	repeat with test running through virtual timers:
-		if chron is test:
-			decide yes;
-	decide no.
+	if chron >= first value of virtual timer and chron <= last value of virtual timer:
+		decide yes.
 
 To deactivate (chron - a virtual timer):
 	now chron is inactive;
 	#if utilizing inline debugging;
 	say "[>console]Virtual timer [italic type][triggered timer][roman type] deactivated.[<]";
 	#end if;
-	recalibrate the Glulx timer;
-	unless a virtual timer is ticking:
+	if a virtual timer is ticking:
+		recalibrate the Glulx timer;
+	otherwise:
 		stop virtualized timers.
 
 To reset the Glulx timer:
@@ -114,11 +116,18 @@ To reset the Glulx timer:
 	
 To recalibrate the Glulx timer:
 	let min be 2147483647[maximum Glk integer value];
+	#if utilizing inline debugging;
+	say "[>console]Recalibrating timers.[<]";
+	#end if;
 	repeat with chron running through active virtual timers:
+		#if utilizing inline debugging;
+		say "[>console]  [italic type][chron][roman type]: [interval of the chron].[<]";
+		#end if;
 		now min is the lesser of min or the interval of the chron;
-	if min is greater than the global timer interval:
+	if min is greater than the global timer interval and min is not 2147483647:
 		now the global timer interval is min;
-	reset the Glulx timer.
+	if the global timer interval > 0 and min < 2147483647:
+		reset the Glulx timer.
 	
 
 Chapter - Restart the timer after restoring
@@ -177,7 +186,7 @@ To delay input until (chron - a virtual timer) is complete:
 			
 Chapter - Pausing input for a specified period
 
-To wait (N - a number) before continuing:
+To wait for/-- (N - a number) before continuing:
 	after (N) follow the little-used do nothing rule, disallowing input.
 	
 	
@@ -187,7 +196,7 @@ The timers deferred is a truth state variable. Timers deferred is usually false.
 The timer deferral interval is initially 500.
 			
 A glulx timed activity rule when timers are queued and timers deferred is false (this is the virtual timer dispatch rule):
-	if we are in alternate parsing:
+	if we are receiving alternate input:
 		now timers deferred is true;
 		request non-virtualized timer event at (timer deferral interval) milliseconds;
 		#if utilizing inline debugging;
@@ -195,6 +204,11 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 		#end if;
 	otherwise:
 		repeat with chron running through active virtual timers:
+			if we are receiving alternate input:
+				#if utilizing inline debugging;
+				say "[>console]Aborting processing of virtual timers until after deferral stage.[<]";
+				#end if;
+				break;
 			increase the timer count of chron by 1;
 			#if utilizing inline debugging;
 			say "[>console][bold type][chron][roman type] count: [timer count of chron].[<]";
@@ -206,6 +220,11 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 				now the triggered timer is chron;
 				follow the timer exception rules for chron;
 				if the outcome of the rulebook is the allow timer event outcome:
+					if chron is cyclic:
+						increment cycles completed of the chron;
+						#if utilizing inline debugging;
+						say "[>console][bold type][chron]:[roman type] cycles completed = [cycles completed of the chron][if cycle target of the chron > 0]; cycles queued = [cycle target of the chron][end if].[<]";
+						#end if;
 					if interrupting line input of the chron is true:
 						suspend standard line input;
 					if the text-callback of the chron is not empty:
@@ -220,10 +239,6 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 						#end if;
 						follow the rule-callback of the chron;
 					if chron is cyclic:
-						increment cycles completed of the chron;
-						#if utilizing inline debugging;
-						say "[>console][bold type][chron]:[roman type] cycles completed = [cycles completed of the chron][if cycle target of the chron > 0]; cycles queued = [cycle target of the chron][end if].[<]";
-						#end if;
 						if the cycle target of the chron > 0 and the cycles completed of the chron >= the cycle target of the chron:
 							#if utilizing inline debugging;
 							say "[>console][bold type][chron]:[roman type] All cycles completed.[<]";
@@ -239,7 +254,7 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 					#end if;
 		
 First glulx timed activity rule when timers are queued and timers deferred is true (this is the bide timers rule):
-	Unless we are in alternate parsing:
+	Unless we are receiving alternate input:
 		now timers deferred is false;
 		reset the Glulx timer;
 		#if utilizing inline debugging;
@@ -277,9 +292,9 @@ Last timer exception rule (this is the allow timer events rule):
 
 Part - Phrases to invoke virtual timers
 
-To start (chron - a virtual timer) at (N - a number) milliseconds, without cancelling line input, disallowing input:
+To start (chron - a virtual timer) at (N - a number) milliseconds, cancelling line input, disallowing input:
 	[this rule assumes that the timer's main properties have already been set elsewhere.]
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	activate chron at N milliseconds;
 	#if utilizing inline debugging;
@@ -305,7 +320,7 @@ To reset critical timer properties for (chron - a virtual timer):
 	now the interval of chron is 0;
 	now the timer count of chron is 0;
 	now the timer frame-multiple of chron is 1;
-	now interrupting line input of the chron is true;
+	now interrupting line input of the chron is false;
 	now cycles completed of the chron is 0;
 	now cycle target of the chron is 0;
 	now the chron is not cyclic.
@@ -332,10 +347,10 @@ To say resume:
 
 Chapter - One-time events
 
-To after (N - a number) say (callback - a text), without cancelling line input, disallowing input:
+To after (N - a number) say (callback - a text), cancelling line input, disallowing input:
 	let chron be a new timer;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input;
@@ -355,10 +370,10 @@ To after (N - a number) follow (callback - a rule), cancelling line input, disal
 
 Section - One-time events on a specific virtual timer
 		 
-To after (N - a number) on (chron - a virtual timer) say (callback - a text), without cancelling line input, disallowing input:
+To after (N - a number) on (chron - a virtual timer) say (callback - a text), cancelling line input, disallowing input:
 	reset critical timer properties for the chron;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input;
@@ -378,11 +393,11 @@ To after (N - a number) on (chron - a virtual timer) follow (callback - a rule),
 
 Chapter - Cyclic events
 		
-To every (N - a number) say (callback - a text), without cancelling line input, disallowing input:
+To every (N - a number) say (callback - a text), cancelling line input, disallowing input:
 	let chron be a new timer;
 	now chron is cyclic;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input;
@@ -403,11 +418,11 @@ To every (N - a number) follow (callback - a rule), cancelling line input, disal
 
 Section - Cyclic events on a specific virtual timer
 		
-To every (N - a number) on (chron - a virtual timer) say (callback - a text), without cancelling line input, disallowing input:
+To every (N - a number) on (chron - a virtual timer) say (callback - a text), cancelling line input, disallowing input:
 	reset critical timer properties for the chron;
 	now chron is cyclic;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input;
@@ -428,12 +443,12 @@ To every (N - a number) on (chron - a virtual timer) follow (callback - a rule),
 		
 Chapter - Cyclic events with sunset
 
-To every (N - a number) up to (T - a number) times say (callback - a text), without cancelling line input, disallowing input:
+To every (N - a number) up to (T - a number) times say (callback - a text), cancelling line input, disallowing input:
 	let chron be a new timer;
 	now chron is cyclic;
 	now cycle target of the chron is T;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input; 
@@ -455,12 +470,12 @@ To every (N - a number) up to (T - a number) times follow (callback - a rule), c
 		
 Section - Sunsetting cyclic events on a specific virtual timer
 		
-To every (N - a number) up to (T - a number) times on (chron - a virtual timer) say (callback - a text), without cancelling line input, disallowing input:
+To every (N - a number) up to (T - a number) times on (chron - a virtual timer) say (callback - a text), cancelling line input, disallowing input:
 	reset critical timer properties for the chron;
 	now chron is cyclic;
 	now cycle target of the chron is T;
 	now text-callback of the chron is callback;
-	if without cancelling line input:
+	unless cancelling line input:
 		now interrupting line input of the chron is false;
 	if disallowing input:
 		start chron at N milliseconds, disallowing input;
@@ -503,10 +518,38 @@ To decide whether we are in a yes-no question:
 To decide whether we are answering the final question:
 	(- final_answer == 1 -)
 	
-To decide whether we are in alternate parsing:
-	if we are disambiguating or we are in a yes-no question or we are answering the final question, decide yes.
+To decide whether we are receiving alternate input:
+	if we are disambiguating or we are in a yes-no question or we are answering the final question or the alternate input flag is true, decide yes.
 	
-[The following phrase is provided in case the user needs it. However, the extension does not attempt to handle character input.]
+
+Chapter - Manual flag for alternate input
+
+[When this flag is set to true, virtual timers will be automatically suspended until the author sets it to false. This allows for any input to be collected without being interrupted by an attempt to print to the screen illegally.]
+The alternate input flag is initially false.
+
+
+Chapter - Safe phrases for getting keystroke input
+
+To wait for any key while deferring virtual timers:
+	let cached flag be the alternate input flag;
+	now the alternate input flag is true;
+	wait for any key;
+	now the alternate input flag is the cached flag.
+	
+To wait for the/-- SPACE key while deferring virtual timers:
+	let cached flag be the alternate input flag;
+	now the alternate input flag is true;
+	wait for the SPACE key;
+	now the alternate input flag is the cached flag.
+	
+To decide what number is the timer-safe chosen letter:
+	let cached flag be the alternate input flag;
+	now the alternate input flag is true;
+	let N be the chosen letter;
+	now the alternate input flag is the cached flag;
+	decide on N.
+	
+[The following phrase is provided in case the user needs it. It isn't used by the extension, which doesn't make any attempt to deal comprehensively with character input. ]
 To cancel character input in the/-- main window:
 	(- glk_cancel_char_event(gg_mainwin); -)
 	
@@ -879,11 +922,34 @@ To #end if:
 	
 [If we don't have the Glulx Debugging Console extension installed, we direct console output inline into the transcript.]
 To say >console:
-	say echo stream of main-window.
+	say echo stream of main window.
 	
 To say <:
-	say stream of main-window;
+	say stream of main window;
 	say run paragraph on.
+	
+To say echo stream of main window:
+	(- if (glk_window_get_echo_stream(gg_mainwin)) { glk_stream_set_current( glk_window_get_echo_stream(gg_mainwin) ); } -)
+	
+To say stream of main window:
+	(- glk_set_window(gg_mainwin); -)
+
+
+Chapter - Abbreviations
+
+[These are phpBB-inspired macros for some fairly keystroke-intensive I7 text substitutions.]
+
+To say b:
+	say "[bold type]";
+
+To say /b:
+	say "[roman type]";
+
+To say i:
+	say "[italic type]";
+
+To say /i:
+	say "[roman type]";
 			
 
 Part - Utility functions
@@ -903,3 +969,153 @@ To decide what number is the greatest common divisor of (A - a number) and (B - 
 	
 		
 Glulx Virtual Timers ends here.
+
+---- Documentation ----
+
+Example: *** Soggy Caverns - A short and quite unfair race to escape from a flooding cavern, in which a number of uses for virtual timers are demonstrated.
+
+	***: 	"Soggy Caverns"
+
+	Release along with an interpreter and a website. 
+
+	Include Basic Screen Effects by Emily Short.
+
+	[Include Glulx Debugging Console by Erik Temple.
+	Use inline debugging.]
+
+	Include Glulx Virtual Timers by Erik Temple.
+
+
+	Section - Startup
+		
+	[First when play begins:
+		say "This is a demonstration of most of the features of the Glulx Virtual Timers extension.  Would you like to open the debugging console window now? ";
+		[if the player consents:
+			initiate console;]
+		say "[line break]You can open and close the console window using these commands:[paragraph break]     OPEN G-CONSOLE[line break]     CLOSE G-CONSOLE[paragraph break][italic type]Press any key.[roman type]";
+		wait for any key;
+		clear the screen.]
+
+	When play begins:
+		repeat with lines running from 1 to 10:
+			say "[line break]";
+		teletype "   Soggy Caverns[line break]  %an unfair demo";[the % symbol is read as a change to roman type]
+		wait 1000 milliseconds before continuing;
+		say "[paragraph break][italic type]   Press any key.[roman type]";
+		wait for any key;
+		clear the screen.
+		
+	When play begins (this is the set up timers rule):
+		now the right hand status line is "[timer-icon]";
+		every 1 second say "[@ increment time elapsed]";[this is a quick perform phrase]
+		every 6 seconds say an atmospheric effect;
+		every 15 seconds follow the flooding rule.
+		
+	To teletype (text-to-be-printed - text):
+		say "[bold type]";
+		repeat with N running from 1 to the number of characters in the text-to-be-printed:
+			if character number N in the text-to-be-printed is "[line break]":
+				wait 400 milliseconds before continuing;
+			if character number N in the text-to-be-printed is "[paragraph break]":
+				wait 400 milliseconds before continuing;
+			if character number N in the text-to-be-printed is "%":
+				say "[roman type]";
+				replace character number N in the text-to-be-printed with " ";
+			say "[character number N in the text-to-be-printed][run paragraph on]";
+			wait 50 milliseconds before continuing;
+		say "[roman type]".
+		
+	After printing the banner text:
+		say "[paragraph break]The caverns are filling rapidly with water. Can you find your way before you are swallowed up?[paragraph break]Be aware of the following:[line break]     * Every 15 seconds, the water will rise.[line break]     * You have just a few seconds to type each command.[line break]     * Watch for random atmospheric effects that will appear once in a while.[line break]     * Type SCORE to see how many seconds have elapsed."
+
+
+	Section - Elapsed time
+
+	Time elapsed is initially 0.
+
+	Report requesting the score:
+		say "Time elapsed: [time elapsed] seconds."
+
+
+	Section - Command timeout
+
+	Input-timer is a virtual timer.
+
+	Before reading a command:
+		every 1 second up to 6 times on the input-timer follow the input timer rule.
+		
+	This is the input timer rule:
+		update the status line;
+		if cycles completed of the input-timer is 6:
+			say "[interrupt][one of]Watch yourself! You have only a few second to enter your command. If the line of pips in the upper right fills up, the water will rise immediately.[line break][line break][italic type]Press any key.[roman type][or][@ increment the current depth]You've been idle for too long! [bold type]The water level rises noticeably--it's [entry current depth of water depths]![roman type][line break][line break][italic type]Press any key.[roman type][stopping]";
+			wait for any key while deferring virtual timers;
+			say resume;
+			every 1 second up to 6 times on the input-timer follow the input timer rule.
+		
+	To say timer-icon:
+		let current stage be cycles completed of the input-timer;
+		say "          ";
+		repeat with index running from 2 to 5:
+			if index > current stage:
+				say "▫";
+			otherwise:
+				say "▪"
+				
+				
+	Section - Atmospheric effects
+
+	An atmospheric effect is initially "[if a random chance of 1 in 10 succeeds][interrupt][italic type][one of]You hear the sound of far-off rushing water[or]You wonder if you are alone down here.[or]Was that a screech?[or][slippage][or]Your ears strain to resolve what sound like weird whispers[stopping].[roman type][resume][else][run paragraph on][end if]".
+				
+	To say slippage:
+		say "You slip [if the current depth > 1]and plunge into the frigid water. As if things weren't bad enough[end if]but recover yourself"
+		
+	Section - Flooding
+
+	The water depths are initially {"up to your ankles", "up to your knees", "up to your waist", "up to your armpits", "up to your neck", "above your head"}. The current depth is initially 0.
+		
+	This is the flooding rule:
+		depth report occurs on the next turn.
+		
+	At the time when the depth report occurs:
+		increment the current depth;
+		say "[bold type]The water rapidly and mysteriously rises [entry current depth of water depths]![roman type][line break]";
+
+	Every turn:
+		if the current depth > 5, end the story saying "You have drowned".
+		
+
+	Section - Map
+
+	The printed name of a room is usually "Cavern".
+
+	The description of a room is usually "High walls of [one of]smooth[or]dimpled[or]phosphorescent[or]striated[or]water-streaked[or]orange-streaked[or]mica-flaked[or]milky[sticky random] [one of]flowstone[or]rock[or]stone[or]limestone[or]calcareous extrusions[or]white pillars[or]stalagmitic growths[sticky random]. [water situation][line break][exit list][run paragraph on]".
+
+	To say water situation:
+		if the current depth is 0:
+			say "The floor is [one of]wet[or]mud-streaked[or]slick[or]glossy[at random] and [one of]scattered[or]littered[or]strewn[at random] with puddles.";
+		otherwise if the current depth is less than 6:
+			say "You are [if current depth is 1]sloshing[otherwise][one of]slogging[or]plowing[or]spashing[or]wading[purely at random] [end if] through water [entry current depth of water depths].";
+		otherwise:
+			say "[paragraph break]You struggle to get your nose and mouth above the surface of the water!"
+		
+	To say exit list:
+		if current depth < 6:
+			let place be location; 
+			say "Exits: ";
+			let dirs be a list of directions;
+			repeat with way running through directions: 
+				let place be the room way from the location; 
+				if place is a room, add way to dirs;
+			if dirs is not empty:
+				say "[dirs].";
+			otherwise:
+				say "none."
+
+	R01 is a room. R02 is north of R01. R03 is east of R01. R04 is north of R02 and northwest of R03. R05 is northeast of R02. R06 is north of R05. R07 is west of R06. R08 is southwest of R04 and northwest of R02. R09 is east of R06. R10 is northeast of R06. R11 is east of R10. R12 is southeast of R09. R13 is south of R12. R14 is northeast of R12. R14 is southeast of R11. R15 is up from R03. R16 is east of R15. R17 is north of R16. R18 is down from R17.
+
+	After looking in R18 when current depth < 6:
+			say "You feel a cool breath of air from the northeast."
+		
+	Exit is northeast of R18. Exit is outside from R18. The printed name of Exit is "Outside". "You emerge into sunlight." Southwest from Exit is nowhere. Inside from Exit is nowhere. After looking in Exit, end the story saying "You have won".
+
+
