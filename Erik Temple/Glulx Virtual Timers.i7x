@@ -1,6 +1,6 @@
 Version 1/150111 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
 
-"Allows the user to easily create multiple timers for virtual events. Compatible with Inform build 6L38."
+"Allows the user to easily create multiple virtual timers for real-time events. Compatible with Inform build 6L38."
 
 Include Glulx Entry Points by Emily Short.
 
