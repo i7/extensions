@@ -1,4 +1,4 @@
-Version 1/150110 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
+Version 1/150111 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
 
 "Allows the user to easily create multiple timers for virtual events. Compatible with Inform build 6L38."
 
@@ -26,12 +26,12 @@ A virtual timer has a number called the interval.
 A virtual timer has a number called the timer count.
 A virtual timer has a number called the timer frame-multiple. The timer frame-multiple is usually 1.
 A virtual timer has a number called the cycles completed. The cycles completed is usually 0.
-A virtual timer has a number called the cycle target. The cycle target is usually 0.
+A virtual timer has a number called the cycles desired. The cycles desired is usually 0.
 A virtual timer has a text called the text-callback.
 A virtual timer has a rule called the rule-callback.
 A virtual timer has a truth state called interrupting line input. Interrupting line input is usually false.
 
-Virtual timers active is a truth state variable. Virtual timers active is usually true.
+virtual timers active is a truth state variable. Virtual timers active is usually true.
 
 To decide whether timers are queued:
 	if there is an active virtual timer, decide yes.
@@ -225,7 +225,7 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 					if chron is cyclic:
 						increment cycles completed of the chron;
 						#if utilizing inline debugging;
-						say "[>console][bold type][chron]:[roman type] cycles completed = [cycles completed of the chron][if cycle target of the chron > 0]; cycles queued = [cycle target of the chron][end if].[<]";
+						say "[>console][bold type][chron]:[roman type] cycles completed = [cycles completed of the chron][if cycles desired of the chron > 0]; cycles queued = [cycles desired of the chron][end if].[<]";
 						#end if;
 					if interrupting line input of the chron is true:
 						suspend standard line input;
@@ -241,7 +241,7 @@ A glulx timed activity rule when timers are queued and timers deferred is false 
 						#end if;
 						follow the rule-callback of the chron;
 					if chron is cyclic:
-						if the cycle target of the chron > 0 and the cycles completed of the chron >= the cycle target of the chron:
+						if the cycles desired of the chron > 0 and the cycles completed of the chron >= the cycles desired of the chron:
 							#if utilizing inline debugging;
 							say "[>console][bold type][chron]:[roman type] All cycles completed.[<]";
 							#end if;
@@ -314,7 +314,7 @@ To decide which virtual timer is a new timer (this is the new timer selection ru
 		reset critical timer properties for the chron;
 		decide on chron;
 	otherwise:
-		say "ERROR: A new virtual timer was requested but there are no free timers available. Create one or more new timers."
+		say "[interrupt]ERROR: A new virtual timer was requested but there are no free timers available. Create one or more new timers.[resume][line break][run paragraph on]"
 		
 To reset critical timer properties for (chron - a virtual timer):
 	now the text-callback of the chron is "";
@@ -324,7 +324,7 @@ To reset critical timer properties for (chron - a virtual timer):
 	now the timer frame-multiple of chron is 1;
 	now interrupting line input of the chron is false;
 	now cycles completed of the chron is 0;
-	now cycle target of the chron is 0;
+	now cycles desired of the chron is 0;
 	now the chron is not cyclic.
 	
 To activate (chron - a virtual timer) at (N - a number) milliseconds:
@@ -448,7 +448,7 @@ Chapter - Cyclic events with sunset
 To every (N - a number) up to (T - a number) times say (callback - a text), cancelling line input, disallowing input:
 	let chron be a new timer;
 	now chron is cyclic;
-	now cycle target of the chron is T;
+	now cycles desired of the chron is T;
 	now text-callback of the chron is callback;
 	unless cancelling line input:
 		now interrupting line input of the chron is false;
@@ -460,7 +460,7 @@ To every (N - a number) up to (T - a number) times say (callback - a text), canc
 To every (N - a number) up to (T - a number) times follow (callback - a rule), cancelling line input, disallowing input:
 	let chron be a new timer;
 	now chron is cyclic;
-	now cycle target of the chron is T;
+	now cycles desired of the chron is T;
 	now rule-callback of the chron is callback;
 	unless cancelling line input:
 		now interrupting line input of the chron is false;
@@ -475,7 +475,7 @@ Section - Sunsetting cyclic events on a specific virtual timer
 To every (N - a number) up to (T - a number) times on (chron - a virtual timer) say (callback - a text), cancelling line input, disallowing input:
 	reset critical timer properties for the chron;
 	now chron is cyclic;
-	now cycle target of the chron is T;
+	now cycles desired of the chron is T;
 	now text-callback of the chron is callback;
 	unless cancelling line input:
 		now interrupting line input of the chron is false;
@@ -487,7 +487,7 @@ To every (N - a number) up to (T - a number) times on (chron - a virtual timer) 
 To every (N - a number) up to (T - a number) times on (chron - a virtual timer) follow (callback - a rule), cancelling line input, disallowing input:
 	reset critical timer properties for the chron;
 	now chron is cyclic;
-	now cycle target of the chron is T;
+	now cycles desired of the chron is T;
 	now rule-callback of the chron is callback;
 	unless cancelling line input:
 		now interrupting line input of the chron is false;
@@ -973,6 +973,157 @@ To decide what number is the greatest common divisor of (A - a number) and (B - 
 Glulx Virtual Timers ends here.
 
 ---- Documentation ----
+
+Glulx Virtual Timers allows authors to freely create real-time events that fire on either a one-time or a cyclical basis. Timers can be used for many purposes, including keeping track of elapsed time, printing atmospheric text to the screen, implementing time-limited input and various multimedia effects, and more. It automatically deals with undo and with restored games.
+
+There are three types of timers: those that fire just once, those that cycle indefinitely, and those that cycle a prescribed number of times ("sunset timers"). All of these types can do one of two things when an event fires: print a text (including special performative texts), or fire a rule. Timers are usually initialized anonymously, and they begin ticking immediately. Examples of the three types of timer:
+
+	after 400 milliseconds say "[interrupt]Manna begins to fall from the heavens![resume]".
+	after 30 seconds follow the manna from heaven rule.
+	
+	every 180 seconds say atmospherics [a text variable].
+	every 10 minutes follow the atmospheric effects rule.
+	
+	every 1 hour up to 5 times say "[interrupt]You have wasted [one of]an[or]another[stopping] hour playing this game![resume]".
+	every 3800 milliseconds up to 10 times follow the annoy the player rule.
+	
+Intervals may be enumerated in milliseconds, seconds, minutes, or hours. You may have up to seven timers running at the same time without making any special effort. If you need more than that, you may create your own; see the next section.
+
+Section: Pausing the game
+
+It is possible to pause the game until a timer fires; that is, to disallow the player any input until the event fires. For example, this will pause the game for one seconds, then prompt the player.
+
+	after 1000 milliseconds, say "[interrupt]You should try going north.[resume]", disallowing input.
+	
+Be warned that a rule like this will pause the game permanently unless you provide logic to cancel the input from within the fired rule.
+
+	every 3 seconds follow the terrible beeps rule, disallowing input.
+	
+To cancel the timer from within the rule, use "deactivate the triggered timer" from within the rule called by the timer, e.g.:
+
+	The delay counter is initially 0.
+	
+	This is the terrible beeps rule:
+		if a random chance of 1 in 5 succeeds:
+			increment the delay counter;
+		if the delay counter is greater than 3:
+			deactivate the triggered timer;
+		otherwise:
+			play the sound of terrible beep.
+			
+If you simply want to pause the game for a period without any other effect:
+	 
+	 wait 1 second before continuing.
+	 
+It is also possible to pause the game until one or all timers complete using these phrases:
+
+	delay input until <virtual timer> is complete;
+	delay input until all timers are complete;
+	
+The pause begins immediately. Be careful with the second one! If you have a cyclic timer that doesn't cancel itself or isn't canceled by another timer, the pause will never end.
+
+See the next section for working with named timers.
+
+			
+Section: New timers, including named timers
+
+If you need to run more than seven timers at once, you will need to create new virtual timers. (Note that running so many timers concurrently is not necessarily to be recommended, since it has at least the potential to negatively impact performance.) New timers can be either anonymous, or named so that we can easily interact with them later. We can create new anonymous timers like so:
+
+	Timer-8 is a virtual timer. It is unreserved.
+	
+The keyword "unreserved" allows the timer to be used in the same anonymous way as the built-in timers. Timers--including any of the built-in timers--can also be declared "reserved". This means that they cannot be used anonymously. Instead, they can only be used by name.
+
+Newly created timers are in fact "reserved" by default, and can be therefore be defined quite simply:
+
+	The countdown is a virtual timer.
+	
+To use a reserved timer, we must be instantiate it by providing its name, e.g. for a timer called "countdown":
+
+	Every 1 second up to 6 times on the countdown follow the counting down rule.
+	
+We can refer to the timer by name anywhere in our code. For that reason, it will usually be best to name a timer if we need to, for example, cancel it based on external effects. That said, we can use the following terms to refer to both anonymous and named (i.e. reserved and unreserved) timers:
+		
+	the triggered timer - this phrase should be used only within a rule that is fired by a timer.
+	
+	the last created timer - this identifier should only be used within the same rule that instantiated a timer. It refers to the timer defined in the last "After <time>..." or "Every <time>..." phrase.
+	
+			
+Section: Printing text from a timer
+
+It is illegal to print text to a window while Glulx is waiting for keyboard input in that window. Because an Inform game is almost always waiting for typed input when a timer event fires, we need to ensure that we cancel the input request before printing to the screen. Note that it is only necessary to cancel input when printing to the same window in which the input is pending. If your game uses the standard library for input and you are printing to the main window, you will need to cancel input each time. But if your timers only print to the status line or to a secondary window (e.g., created using Flexible Windows), then you probably won't need to cancel input.
+
+Glulx Virtual Timers provides two ways to cancel standard keyboard input ("line input" in Glk parlance). We can add a bit at the end of the timer definition, e.g.:
+
+	every 3800 milliseconds up to 10 times follow the annoy the player rule, cancelling line input.
+	after 12 seconds on my fancy timer say "Fancy, huh?", cancelling line input.
+	
+This will cancel line input before triggering the requested text or effect, and then restart it again afterward.  Actually, line input will be requested automatically, even if a line input request was not pending prior to cancellation.
+
+Alternatively, we can do this manually using the text substitutions "interrupt" and "resume":
+
+	after 1000 milliseconds, say "[interrupt]You should try going north.[resume]"
+	
+See the extension's example game for a situation where this manual method turns out to be useful.
+
+Glulx Virtual Timers does not make any attempt to deal with single-character input.
+
+
+Section:  Special input
+
+Glulx Virtual Timers deals with certain types of "special input" by simply putting timer events on hold. This is true of the Inform library's disambiguation prompts, yes/no prompts, and the final question prompt. Any timer event that would fire while these alternate states are in effect is deferred until standard input is resumed.
+
+While Glulx Virtual Timers doesn't provide support for single-character or "char" input, it is possible to request the same deferral of timer-triggered events for single-character input. We must request char input with one of the following phrases (modified from the built-in Basic Screen Effects extension):
+
+	wait for any key while deferring virtual timers;
+	wait for the SPACE key while deferring virtual timers;
+	let the character entered be the timer-safe chosen letter;
+	
+Section: Timer cycles and suppressing triggered effects
+
+We can find out how many times a cyclic timer has fired by referring to the "cycles completed" of that timer, e.g.:
+
+	anonymous timer: cycles completed of the triggered timer
+	named timer: cycles completed of the countdown
+	
+We can also use the "cycles desired" property to find out how many cycles were specified for a "sunset" timer. An indefinitely cycling timer's cycles desired is 0.
+
+Finally, we can prevent a timer's effect from triggering by writing a "timer exception rule". The timer exception rulebook has two possible outcomes. The default is to "allow timer event", while we can suppress the triggered effect using the "disallow timer event" outcome:
+
+	A timer exception rule for the countdown:
+		if a given condition holds:
+			disallow timer event.
+
+Note that the timer will consider itself to have completed a cycle even if the timer exception rules prevent the effect from firing (that is, the cycles completed property will be incremented). For a one-shot timer, there will simply be no effect; the timer will be deactivated.
+
+
+Section: Pausing and restarting all timers
+
+We can pause and restart all timers using the following phrases:
+
+	pause virtualized timers;
+	restart virtualized timers;
+	
+When paused, the timers will remain in a frozen state, and restarting them will cause them to start exactly as they were.
+
+We can also ask:
+
+	whether a virtual timer is ticking: true only if the timer is presently running
+	whether timers are queued: true if there is a timer queued, even if timers currently happen to be paused
+
+Section: Debugging
+
+If we employ the "inline debugging" use option, we can get a detailed debugging log of timer behavior:
+
+	Use inline debugging.
+
+Because of the difficulties with printing text to the screen during timer events, the debugging log is printed only to the transcript. To avoid missing any of the log, we can start a new transcript at the beginning of play like so:
+
+	First when play begins:
+		try switching the story transcript on.
+		
+Alternatively, if we use the Glulx Debugging Console extension (requires Flexible Windows by Jon Ingold), the log will be printed to a subsidiary window rather than to the transcript. 
+
+
 
 Example: *** Soggy Caverns - A short and quite unfair race to escape from a flooding cavern, in which a number of uses for virtual timers are demonstrated.
 
