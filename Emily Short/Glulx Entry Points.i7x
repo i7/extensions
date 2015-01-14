@@ -1,4 +1,4 @@
-Version 10/140425 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/150114 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -31,6 +31,7 @@ The glulx zeroing-reference rules is a rulebook.
 The glulx resetting-windows rules is a rulebook.
 The glulx resetting-streams rules is a rulebook.
 The glulx resetting-filerefs rules is a rulebook.
+The glulx resetting-channels rules is a rulebook.
 The glulx object-updating rules is a rulebook.
 
 
@@ -89,34 +90,136 @@ To decide whether glulx hyperlinks are supported:
 	(- ( glk_gestalt(gestalt_Hyperlinks, 0) ) -)
 
 
+
+Section - Update GGRecoverObjects() to identify sound channels
+
+Include (-
+Replace GGRecoverObjects;
+-) before "Glulx.i6t".
+
+Include (-
+
+[ GGRecoverObjects id;
+    ! If GGRecoverObjects() has been called, all these stored IDs are
+    ! invalid, so we start by clearing them all out.
+    ! (In fact, after a restoreundo, some of them may still be good.
+    ! For simplicity, though, we assume the general case.)
+    gg_mainwin = 0;
+    gg_statuswin = 0;
+    gg_quotewin = 0;
+    gg_scriptfref = 0;
+    gg_scriptstr = 0;
+    gg_savestr = 0;
+    statuswin_cursize = 0;
+    gg_foregroundchan = 0;
+    gg_backgroundchan = 0;
+    #Ifdef DEBUG;
+    gg_commandstr = 0;
+    gg_command_reading = false;
+    #Endif; ! DEBUG
+    ! Also tell the game to clear its object references.
+    IdentifyGlkObject(0);
+
+    id = glk_stream_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_SAVESTR_ROCK: gg_savestr = id;
+            GG_SCRIPTSTR_ROCK: gg_scriptstr = id;
+            #Ifdef DEBUG;
+            GG_COMMANDWSTR_ROCK: gg_commandstr = id;
+                                 gg_command_reading = false;
+            GG_COMMANDRSTR_ROCK: gg_commandstr = id;
+                                 gg_command_reading = true;
+            #Endif; ! DEBUG
+            default: IdentifyGlkObject(1, 1, id, gg_arguments-->0);
+        }
+        id = glk_stream_iterate(id, gg_arguments);
+    }
+
+    id = glk_window_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_MAINWIN_ROCK: gg_mainwin = id;
+            GG_STATUSWIN_ROCK: gg_statuswin = id;
+            GG_QUOTEWIN_ROCK: gg_quotewin = id;
+            default: IdentifyGlkObject(1, 0, id, gg_arguments-->0);
+        }
+        id = glk_window_iterate(id, gg_arguments);
+    }
+
+    id = glk_fileref_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_SCRIPTFREF_ROCK: gg_scriptfref = id;
+            default: IdentifyGlkObject(1, 2, id, gg_arguments-->0);
+        }
+        id = glk_fileref_iterate(id, gg_arguments);
+    }
+
+	if (glk_gestalt(gestalt_Sound, 0)) {
+		id = glk_schannel_iterate(0, gg_arguments);
+		while (id) {
+			switch (gg_arguments-->0) {
+				GG_FOREGROUNDCHAN_ROCK: gg_foregroundchan = id;
+				GG_BACKGROUNDCHAN_ROCK: gg_backgroundchan = id;
+				default: IdentifyGlkObject(1, 3, id, gg_arguments-->0);
+			}
+			id = glk_schannel_iterate(id, gg_arguments);
+		}
+		if (gg_foregroundchan ~= 0) { glk_schannel_stop(gg_foregroundchan); }
+		if (gg_backgroundchan ~= 0) { glk_schannel_stop(gg_backgroundchan); }
+	}
+
+    ! Tell the game to tie up any loose ends.
+    IdentifyGlkObject(2);
+];
+
+-) after "Glulx.i6t".
+
+
+
 Section - IdentifyGlkObject routine
 
 Include (-
 
-   [ IdentifyGlkObject phase type ref rock;
-      if (phase == 0) { ! Zero out references to our objects.
-	 if (FollowRulebook( (+glulx zeroing-reference rules+) ) && RulebookSucceeded()) { rtrue; }
-      }
+[ IdentifyGlkObject phase type ref rock;
+	if ( phase == 0 )
+	{
+		! Zero out references to our objects.
+		if ( FollowRulebook( (+ glulx zeroing-reference rules +) ) && RulebookSucceeded() )
+		{
+			rtrue;
+		}
+	}
 
-      if (phase == 1) { ! Reset our windows, streams and filerefs.
-	(+ current glulx rock +) = rock;
-	(+ current glulx rock-ref +) = ref;
-         switch (type) {
-            0: ! it's a window 
-               	FollowRulebook( (+ glulx resetting-windows rules +) );
-	 1 : ! it's a stream
-               	FollowRulebook( (+ glulx resetting-streams rules +) );
-    	   2 : ! it's a file reference
-               	FollowRulebook( (+ glulx resetting-filerefs rules +) );
-         }
-         return;
-      }
+	if ( phase == 1 )
+	{
+		! Reset our windows, streams and filerefs.
+		(+ current glulx rock +) = rock;
+		(+ current glulx rock-ref +) = ref;
+		switch (type)
+		{
+			0: ! it's a window 
+				FollowRulebook( (+ glulx resetting-windows rules +) );
+			1 : ! it's a stream
+				FollowRulebook( (+ glulx resetting-streams rules +) );
+			2 : ! it's a file reference
+				FollowRulebook( (+ glulx resetting-filerefs rules +) );
+			3 : ! it's a sound channel
+				FollowRulebook( (+ glulx resetting-channels rules +) );
+		}
+		return;
+	}
 
-      if (phase == 2) { ! Update our objects.
-         if (FollowRulebook( (+glulx object-updating rules+) ) && RulebookSucceeded()) { rtrue; }
-      }
-
-   ];
+	if ( phase == 2 )
+	{
+		! Update our objects.
+		if ( FollowRulebook( (+ glulx object-updating rules +) ) && RulebookSucceeded() )
+		{
+			rtrue;
+		}
+	}
+];
 
 -) before "Glulx.i6t".
 
@@ -412,6 +515,7 @@ We also have a series of rulebooks for handling the stages of IdentifyGlkObject:
 	The glulx resetting-windows rules is a rulebook.
 	The glulx resetting-streams rules is a rulebook.
 	The glulx resetting-filerefs rules is a rulebook.
+	The glulx resetting-channels rules is a rulebook.
 	The glulx object-updating rules is a rulebook.
 
 Examples of the use of these can be seen in the extension Simple Graphics Windows. 
