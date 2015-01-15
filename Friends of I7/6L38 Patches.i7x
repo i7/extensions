@@ -1,4 +1,4 @@
-Version 1/140928 of 6L38 Patches by Friends of I7 begins here.
+Version 1/150116 of 6L38 Patches by Friends of I7 begins here.
 
 "Patches to work around bugs in version 6L38 of Inform 7 for which an extension-based workaround is known to exist."
 
@@ -96,6 +96,95 @@ Include (-
 ];
 
 -) instead of "Serialising Tables" in "FileIO.i6t".
+
+
+
+Volume 0001506 - Update GGRecoverObjects() to identify sound channels
+
+[ Adds one line to GGRecoverObjects() to call IdentifyGlkObject() for sound channels ]
+
+Include (-
+Replace GGRecoverObjects;
+-) before "Glulx.i6t".
+
+Include (-
+
+[ GGRecoverObjects id;
+    ! If GGRecoverObjects() has been called, all these stored IDs are
+    ! invalid, so we start by clearing them all out.
+    ! (In fact, after a restoreundo, some of them may still be good.
+    ! For simplicity, though, we assume the general case.)
+    gg_mainwin = 0;
+    gg_statuswin = 0;
+    gg_quotewin = 0;
+    gg_scriptfref = 0;
+    gg_scriptstr = 0;
+    gg_savestr = 0;
+    statuswin_cursize = 0;
+    gg_foregroundchan = 0;
+    gg_backgroundchan = 0;
+    #Ifdef DEBUG;
+    gg_commandstr = 0;
+    gg_command_reading = false;
+    #Endif; ! DEBUG
+    ! Also tell the game to clear its object references.
+    IdentifyGlkObject(0);
+
+    id = glk_stream_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_SAVESTR_ROCK: gg_savestr = id;
+            GG_SCRIPTSTR_ROCK: gg_scriptstr = id;
+            #Ifdef DEBUG;
+            GG_COMMANDWSTR_ROCK: gg_commandstr = id;
+                                 gg_command_reading = false;
+            GG_COMMANDRSTR_ROCK: gg_commandstr = id;
+                                 gg_command_reading = true;
+            #Endif; ! DEBUG
+            default: IdentifyGlkObject(1, 1, id, gg_arguments-->0);
+        }
+        id = glk_stream_iterate(id, gg_arguments);
+    }
+
+    id = glk_window_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_MAINWIN_ROCK: gg_mainwin = id;
+            GG_STATUSWIN_ROCK: gg_statuswin = id;
+            GG_QUOTEWIN_ROCK: gg_quotewin = id;
+            default: IdentifyGlkObject(1, 0, id, gg_arguments-->0);
+        }
+        id = glk_window_iterate(id, gg_arguments);
+    }
+
+    id = glk_fileref_iterate(0, gg_arguments);
+    while (id) {
+        switch (gg_arguments-->0) {
+            GG_SCRIPTFREF_ROCK: gg_scriptfref = id;
+            default: IdentifyGlkObject(1, 2, id, gg_arguments-->0);
+        }
+        id = glk_fileref_iterate(id, gg_arguments);
+    }
+
+	if (glk_gestalt(gestalt_Sound, 0)) {
+		id = glk_schannel_iterate(0, gg_arguments);
+		while (id) {
+			switch (gg_arguments-->0) {
+				GG_FOREGROUNDCHAN_ROCK: gg_foregroundchan = id;
+				GG_BACKGROUNDCHAN_ROCK: gg_backgroundchan = id;
+				default: IdentifyGlkObject(1, 3, id, gg_arguments-->0);
+			}
+			id = glk_schannel_iterate(id, gg_arguments);
+		}
+		if (gg_foregroundchan ~= 0) { glk_schannel_stop(gg_foregroundchan); }
+		if (gg_backgroundchan ~= 0) { glk_schannel_stop(gg_backgroundchan); }
+	}
+
+    ! Tell the game to tie up any loose ends.
+    IdentifyGlkObject(2);
+];
+
+-) after "Glulx.i6t".
 
 
 
