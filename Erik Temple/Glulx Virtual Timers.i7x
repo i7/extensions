@@ -1,4 +1,4 @@
-Version 1/150111 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
+Version 1/150115 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
 
 "Allows the user to easily create multiple virtual timers for real-time events. Compatible with Inform build 6L38."
 
@@ -976,6 +976,8 @@ Glulx Virtual Timers ends here.
 
 Glulx Virtual Timers allows authors to freely create real-time events that fire on either a one-time or a cyclical basis. Timers can be used for many purposes, including keeping track of elapsed time, printing atmospheric text to the screen, implementing time-limited input and various multimedia effects, and more. It automatically deals with undo and with restored games.
 
+Section: Types of virtual timers
+
 There are three types of timers: those that fire just once, those that cycle indefinitely, and those that cycle a prescribed number of times ("sunset timers"). All of these types can do one of two things when an event fires: print a text (including special performative texts), or fire a rule. Timers are usually initialized anonymously, and they begin ticking immediately. Examples of the three types of timer:
 
 	after 400 milliseconds say "[interrupt]Manna begins to fall from the heavens![resume]".
@@ -989,13 +991,37 @@ There are three types of timers: those that fire just once, those that cycle ind
 	
 Intervals may be enumerated in milliseconds, seconds, minutes, or hours. You may have up to seven timers running at the same time without making any special effort. If you need more than that, you may create your own; see the next section.
 
+Section: Performative text
+
+Glulx Virtual Timers allows for special "performative" construction. Just include a @ before a phrase instruction and it will be called as if it were its own line of code:
+
+	after 300 milliseconds say "[@ follow the annoy the player rules][interrupt]Annoyed yet?[resume]".
+
+Due to limitations in Inform text substitutions, some punctuation will not work in these performative substitutions. Otherwise, just about any phrase can be invoked in this way.
+
+Section: Triggering standard Inform timed events
+
+An extension available for earlier versions of Inform (Basic Real Time by Sarah Morayati) allowed Inform's standard timed events to be triggered by a real-time event.  This is useful to allow for real time's passage to influence the game without breaking the turn-by-turn feeling of the interface. Use the phrase "<timed event> on the next turn" to cause a timed event to happen on the turn following a real-time event:
+
+	After 300 seconds follow the egg timer rule.
+	
+	This is the egg timer rule:
+		the egg-timer clucks on the next turn.
+		
+Or, using "performative" text:
+
+	After 300 seconds "[@ the egg-timer clucks on the next turn]".	
+
+See §9.11 Future Events in the Inform manual for more on timed events.
+
+
 Section: Pausing the game
 
 It is possible to pause the game until a timer fires; that is, to disallow the player any input until the event fires. For example, this will pause the game for one seconds, then prompt the player.
 
 	after 1000 milliseconds, say "[interrupt]You should try going north.[resume]", disallowing input.
 	
-Be warned that a rule like this will pause the game permanently unless you provide logic to cancel the input from within the fired rule.
+Be warned that a rule like the following will pause the game permanently unless you provide logic to cancel the input from within the fired rule.
 
 	every 3 seconds follow the terrible beeps rule, disallowing input.
 	
@@ -1048,7 +1074,7 @@ We can refer to the timer by name anywhere in our code. For that reason, it will
 	the last created timer - this identifier should only be used within the same rule that instantiated a timer. It refers to the timer defined in the last "After <time>..." or "Every <time>..." phrase.
 	
 			
-Section: Printing text from a timer
+Section: Safely printing text from a timer
 
 It is illegal to print text to a window while Glulx is waiting for keyboard input in that window. Because an Inform game is almost always waiting for typed input when a timer event fires, we need to ensure that we cancel the input request before printing to the screen. Note that it is only necessary to cancel input when printing to the same window in which the input is pending. If your game uses the standard library for input and you are printing to the main window, you will need to cancel input each time. But if your timers only print to the status line or to a secondary window (e.g., created using Flexible Windows), then you probably won't need to cancel input.
 
@@ -1127,11 +1153,10 @@ Alternatively, if we use the Glulx Debugging Console extension (requires Flexibl
 
 Example: *** Soggy Caverns - A short and quite unfair race to escape from a flooding cavern, in which a number of uses for virtual timers are demonstrated.
 
-	***: 	"Soggy Caverns"
-
-	Release along with an interpreter and a website. 
+	*:  "Soggy Caverns"
 
 	Include Basic Screen Effects by Emily Short.
+	[Release along with an interpreter and a website. ]
 
 	[Include Glulx Debugging Console by Erik Temple.
 	Use inline debugging.]
@@ -1148,8 +1173,12 @@ Example: *** Soggy Caverns - A short and quite unfair race to escape from a floo
 		say "[line break]You can open and close the console window using these commands:[paragraph break]     OPEN G-CONSOLE[line break]     CLOSE G-CONSOLE[paragraph break][italic type]Press any key.[roman type]";
 		wait for any key;
 		clear the screen.]
+		
+The following rules, and particularly the teletype routine, demonstrate the use of the "wait...before continuing" phrase. We pause for a brief period after printing each letter of the title, mimicking the common (and unfortunately still popular) "typewriter effect". 
 
-	When play begins:
+In the set up timers rule, we invoke three recurring events, each using a different interval. Every second, we increment the time elapsed variable, providing a real-time count of the time played. (Note that this is done using a "performative" text substitution, though we could equally have called a rule--the text substitution is briefer.) See the notes below for more information on the other two timers that are set up here.
+
+	*: When play begins:
 		repeat with lines running from 1 to 10:
 			say "[line break]";
 		teletype "   Soggy Caverns[line break]  %an unfair demo";[the % symbol is read as a change to roman type]
@@ -1189,8 +1218,11 @@ Example: *** Soggy Caverns - A short and quite unfair race to escape from a floo
 	Report requesting the score:
 		say "Time elapsed: [time elapsed] seconds."
 
+Next we set up a sunset timer that will begin each time the command prompt appears. If the player completes his command before this timer finishes all of its cycles, all is well. But if the timer reaches its final cycle, it prints an error message, possibly punishing the player by raising the water level in the caverns. The timer is then restarted, which we need to do because we have not rejected a command from the player--we have simply interrupted the input to print text and perform calculations.
 
-	Section - Command timeout
+The cycling timer also fills up a meter to allow the player to gauge his progress. Each tick of the timer, it prints to the status line a series of open or filled boxes. 
+
+	*: Section - Command timeout
 
 	Input-timer is a virtual timer.
 
@@ -1214,15 +1246,18 @@ Example: *** Soggy Caverns - A short and quite unfair race to escape from a floo
 			otherwise:
 				say "▪"
 				
-				
-	Section - Atmospheric effects
+Every 6 seconds, we check to see whether we ought to print an atmospheric effect. Actually, we print the text each time, but via a substitution, the text itself regulates whether or not it will print any text. There is a 1 in 10 chance that an atmospheric message will be printed. Notice how we only interrupt and resume input when it is necessary to actually write text to the screen.
+	
+	*: Section - Atmospheric effects
 
 	An atmospheric effect is initially "[if a random chance of 1 in 10 succeeds][interrupt][italic type][one of]You hear the sound of far-off rushing water[or]You wonder if you are alone down here.[or]Was that a screech?[or][slippage][or]Your ears strain to resolve what sound like weird whispers[stopping].[roman type][resume][else][run paragraph on][end if]".
 				
 	To say slippage:
 		say "You slip [if the current depth > 1]and plunge into the frigid water. As if things weren't bad enough[end if]but recover yourself"
 		
-	Section - Flooding
+Finally, every 15 seconds, we increase the depth of water in the cave. The water depth is an integer between 0 and 6--once it reaches 6, the game is over.
+
+	*: Section - Flooding
 
 	The water depths are initially {"up to your ankles", "up to your knees", "up to your waist", "up to your armpits", "up to your neck", "above your head"}. The current depth is initially 0.
 		
@@ -1270,5 +1305,3 @@ Example: *** Soggy Caverns - A short and quite unfair race to escape from a floo
 			say "You feel a cool breath of air from the northeast."
 		
 	Exit is northeast of R18. Exit is outside from R18. The printed name of Exit is "Outside". "You emerge into sunlight." Southwest from Exit is nowhere. Inside from Exit is nowhere. After looking in Exit, end the story saying "You have won".
-
-
