@@ -1,10 +1,10 @@
-Version 1/150115 of Glulx Virtual Timers (for Glulx only) by Erik Temple begins here.
+Version 1/150115 of Glulx Real Time (for Glulx only) by Erik Temple begins here.
 
 "Allows the user to easily create multiple virtual timers for real-time events. Compatible with Inform build 6L38."
 
 Include Glulx Entry Points by Emily Short.
 
-[****The basic virtual timer mechanism is possibly incorrect--we probably ought to check all timers each time any timer is activated or deactivated to ensure that the global timer reflects their intervals most efficiently. The current model may achieve that in the vast majority of cases, but it certainly doesn't do it directly...]
+[****The basic virtual timer mechanism is possibly incorrect--we probably ought to check all timers each time any timer is activated or deactivated to ensure that the global timer reflects their intervals most efficiently. The current model may achieve that in the vast majority of cases, but it certainly doesn't do iittut directly...]
 
 Part - The virtual timer kind
 
@@ -970,11 +970,11 @@ To decide what number is the greatest common divisor of (A - a number) and (B - 
 	decide on the greatest common divisor of B and the remainder after dividing A by B.
 	
 		
-Glulx Virtual Timers ends here.
+Glulx Real Time ends here.
 
 ---- Documentation ----
 
-Glulx Virtual Timers allows authors to freely create real-time events that fire on either a one-time or a cyclical basis. Timers can be used for many purposes, including keeping track of elapsed time, printing atmospheric text to the screen, implementing time-limited input and various multimedia effects, and more. It automatically deals with undo and with restored games.
+Glulx Real Time allows authors to freely create real-time events that fire on either a one-time or a cyclical basis. Timers can be used for many purposes, including keeping track of elapsed time, printing atmospheric text to the screen, implementing time-limited input and various multimedia effects, and more. It automatically deals with undo and with restored games.
 
 Section: Types of virtual timers
 
@@ -993,7 +993,7 @@ Intervals may be enumerated in milliseconds, seconds, minutes, or hours. You may
 
 Section: Performative text
 
-Glulx Virtual Timers allows for special "performative" construction. Just include a @ before a phrase instruction and it will be called as if it were its own line of code:
+Glulx Real Time allows for special "performative" construction. Just include a @ before a phrase instruction and it will be called as if it were its own line of code:
 
 	after 300 milliseconds say "[@ follow the annoy the player rules][interrupt]Annoyed yet?[resume]".
 
@@ -1078,7 +1078,7 @@ Section: Safely printing text from a timer
 
 It is illegal to print text to a window while Glulx is waiting for keyboard input in that window. Because an Inform game is almost always waiting for typed input when a timer event fires, we need to ensure that we cancel the input request before printing to the screen. Note that it is only necessary to cancel input when printing to the same window in which the input is pending. If your game uses the standard library for input and you are printing to the main window, you will need to cancel input each time. But if your timers only print to the status line or to a secondary window (e.g., created using Flexible Windows), then you probably won't need to cancel input.
 
-Glulx Virtual Timers provides two ways to cancel standard keyboard input ("line input" in Glk parlance). We can add a bit at the end of the timer definition, e.g.:
+Glulx Real Time provides two ways to cancel standard keyboard input ("line input" in Glk parlance). We can add a bit at the end of the timer definition, e.g.:
 
 	every 3800 milliseconds up to 10 times follow the annoy the player rule, cancelling line input.
 	after 12 seconds on my fancy timer say "Fancy, huh?", cancelling line input.
@@ -1091,14 +1091,14 @@ Alternatively, we can do this manually using the text substitutions "interrupt" 
 	
 See the extension's example game for a situation where this manual method turns out to be useful.
 
-Glulx Virtual Timers does not make any attempt to deal with single-character input.
+Glulx Real Time does not make any attempt to deal with single-character input.
 
 
 Section:  Special input
 
-Glulx Virtual Timers deals with certain types of "special input" by simply putting timer events on hold. This is true of the Inform library's disambiguation prompts, yes/no prompts, and the final question prompt. Any timer event that would fire while these alternate states are in effect is deferred until standard input is resumed.
+Glulx Real Time deals with certain types of "special input" by simply putting timer events on hold. This is true of the Inform library's disambiguation prompts, yes/no prompts, and the final question prompt. Any timer event that would fire while these alternate states are in effect is deferred until standard input is resumed.
 
-While Glulx Virtual Timers doesn't provide support for single-character or "char" input, it is possible to request the same deferral of timer-triggered events for single-character input. We must request char input with one of the following phrases (modified from the built-in Basic Screen Effects extension):
+While Glulx Real Time doesn't provide support for single-character or "char" input, it is possible to request the same deferral of timer-triggered events for single-character input. We must request char input with one of the following phrases (modified from the built-in Basic Screen Effects extension):
 
 	wait for any key while deferring virtual timers;
 	wait for the SPACE key while deferring virtual timers;
@@ -1161,13 +1161,13 @@ Example: *** Soggy Caverns - A short and quite unfair race to escape from a floo
 	[Include Glulx Debugging Console by Erik Temple.
 	Use inline debugging.]
 
-	Include Glulx Virtual Timers by Erik Temple.
+	Include Glulx Real Time by Erik Temple.
 
 
 	Section - Startup
 		
 	[First when play begins:
-		say "This is a demonstration of most of the features of the Glulx Virtual Timers extension.  Would you like to open the debugging console window now? ";
+		say "This is a demonstration of most of the features of the Glulx Real Time extension.  Would you like to open the debugging console window now? ";
 		[if the player consents:
 			initiate console;]
 		say "[line break]You can open and close the console window using these commands:[paragraph break]     OPEN G-CONSOLE[line break]     CLOSE G-CONSOLE[paragraph break][italic type]Press any key.[roman type]";
@@ -1305,3 +1305,5 @@ Finally, every 15 seconds, we increase the depth of water in the cave. The water
 			say "You feel a cool breath of air from the northeast."
 		
 	Exit is northeast of R18. Exit is outside from R18. The printed name of Exit is "Outside". "You emerge into sunlight." Southwest from Exit is nowhere. Inside from Exit is nowhere. After looking in Exit, end the story saying "You have won".
+
+
