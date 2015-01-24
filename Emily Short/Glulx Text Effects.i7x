@@ -1,4 +1,4 @@
-Version 5/140516 of Glulx Text Effects (for Glulx only) by Emily Short begins here.
+Version 5/150123 of Glulx Text Effects (for Glulx only) by Emily Short begins here.
 
 "Gives control over text formatting in Glulx."
 
@@ -103,10 +103,10 @@ Last before starting the virtual machine (this is the set text styles rule):
 			set reversed for the style name entry to the reversed entry;
 
 To set the background color for (style - a glulx text style) to (N - a text):
-	(- GTE_SetStylehint( wintype_TextBuffer, {style}, stylehint_BackColor, GTE_ConvertColour( {N} ) ); -).
+	(- GTE_SetStylehint( wintype_TextBuffer, {style}, stylehint_BackColor, GTE_ConvertColour( {-by-reference:N} ) ); -).
 
 To set the color for (style - a glulx text style) to (N - a text):
-	(- GTE_SetStylehint( wintype_TextBuffer, {style}, stylehint_TextColor, GTE_ConvertColour( {N} ) ); -).
+	(- GTE_SetStylehint( wintype_TextBuffer, {style}, stylehint_TextColor, GTE_ConvertColour( {-by-reference:N} ) ); -).
 
 To set the first line indentation for (style - a glulx text style) to (N - a number):
 	(- GTE_SetStylehint( wintype_TextBuffer, {style}, stylehint_ParaIndentation, {N} ); -).

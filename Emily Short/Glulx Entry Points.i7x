@@ -1,4 +1,4 @@
-Version 10/150116 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/150124 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -47,47 +47,129 @@ Library input context is a number variable. [This describes the event context in
 
 Section - Gestalts
 
-To decide whether glulx character input is supported:
-	(- ( glk_gestalt(gestalt_CharInput, 0) ) -)
+The test Glulx and Glk gestalts rule is listed in the before starting the virtual machine rules.
+The test Glulx and Glk gestalts rule translates into I6 as "GEP_TestGestalts".
 
-To decide whether glulx mouse input is supported:
-	(- ( glk_gestalt(gestalt_MouseInput, winType_AllTypes) ) -)
+Include (-
 
-To decide whether glulx graphic-window mouse input is supported:
-	(- ( glk_gestalt(gestalt_MouseInput, winType_Graphics) ) -)
+Array GEP_GlulxGestaltResults --> 12;
+Array GEP_GlkGestaltResults --> 23;
 
-To decide whether glulx text-grid mouse input is supported:
-	(- ( glk_gestalt(gestalt_MouseInput, winType_TextGrid) ) -)
+[ GEP_TestGestalts i res;
+	for ( i = 0 : i < 12 : i++ )
+	{
+		@gestalt i 0 res;
+		GEP_GlulxGestaltResults-->i = res;
+	}
+	for ( i = 0 : i < 23 : i++ )
+	{
+		GEP_GlkGestaltResults-->i = glk_gestalt( i, 0 );
+	}
+	rfalse;
+];
+-).
 
-To decide whether glulx timekeeping is supported:
-	(- ( glk_gestalt(gestalt_Timer, 0) ) -)
+A glulx zeroing-reference rule (this is the update the stored Glulx and Glk gestalt results rule):
+	follow the test Glulx and Glk gestalts rule;
 
-To decide whether glulx graphics is supported:
-	(- ( glk_gestalt(gestalt_Graphics, 0) ) -)
+To decide what number is the glulx version:
+	(- ( GEP_GlulxGestaltResults-->0 ) -).
 
-To decide whether glulx text-buffer graphics is supported:
-	(- ( glk_gestalt(gestalt_DrawImage, winType_TextBuffer) ) -)
+To decide what number is the interpreter version:
+	(- ( GEP_GlulxGestaltResults-->1 ) -).
 
-To decide whether glulx graphic-window graphics is supported:
-	(- ( glk_gestalt(gestalt_DrawImage, winType_Graphics) ) -)
+To decide whether glulx memory resizing is supported:
+	(- ( GEP_GlulxGestaltResults-->2 ) -).
 
-To decide whether glulx PNG transparency is supported:
-	(- ( glk_gestalt(gestalt_GraphicsTransparency, 0) ) -)
+To decide whether glulx undo is supported:
+	(- ( GEP_GlulxGestaltResults-->3 ) -).
 
-To decide whether glulx sound is supported:
-	(- ( glk_gestalt(gestalt_Sound, 0) ) -)
+To decide whether glulx memory copying is supported:
+	(- ( GEP_GlulxGestaltResults-->6 ) -).
 
-To decide whether glulx mod sound is supported:
-	(- ( glk_gestalt(gestalt_SoundMusic, 0) ) -)
+To decide whether glulx malloc is supported:
+	(- ( GEP_GlulxGestaltResults-->7 ) -).
 
-To decide whether glulx sound volume is supported:
-	(- ( glk_gestalt(gestalt_SoundVolume, 0) ) -)
+To decide whether glulx function acceleration is supported:
+	(- ( GEP_GlulxGestaltResults-->9 ) -).
 
-To decide whether glulx sound notification is supported:
-	(- ( glk_gestalt(gestalt_SoundNotify, 0) ) -)
+To decide whether glulx real numbers are supported:
+	(- ( GEP_GlulxGestaltResults-->11 ) -).
 
-To decide whether glulx hyperlinks are supported:
-	(- ( glk_gestalt(gestalt_Hyperlinks, 0) ) -)
+To decide what number is the glk version:
+	(- ( GEP_GlkGestaltResults-->gestalt_Version ) -).
+
+To decide whether glk/glulx character input is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_CharInput ) -).
+
+To decide whether glk/glulx line input is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_LineInput ) -).
+
+To decide whether glk/glulx mouse input is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_MouseInput ) -).
+
+To decide whether glk/glulx graphic-window mouse input is supported:
+	(- ( glk_gestalt( gestalt_MouseInput, winType_Graphics ) ) -).
+
+To decide whether glk/glulx text-grid mouse input is supported:
+	(- ( glk_gestalt( gestalt_MouseInput, winType_TextGrid ) ) -).
+
+To decide whether glk/glulx timekeeping is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Timer ) -).
+
+To decide whether glk/glulx graphics are/is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Graphics ) -).
+
+To decide whether glk/glulx text-buffer graphics are/is supported:
+	(- ( glk_gestalt( gestalt_DrawImage, winType_TextBuffer ) ) -).
+
+To decide whether glk/glulx graphic-window graphics are/is supported:
+	(- ( glk_gestalt( gestalt_DrawImage, winType_Graphics ) ) -).
+
+To decide whether glk/glulx basic/-- sounds/sound are/is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Sound ) -).
+
+To decide whether glk/glulx sound volume is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_SoundVolume ) -).
+
+To decide whether glk/glulx sound notification is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_SoundNotify ) -).
+
+To decide whether glk/glulx hyperlinks are supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Hyperlinks ) -).
+
+To decide whether glk/glulx hyperlink input is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_HyperlinkInput ) -).
+
+To decide whether glk/glulx mod sound is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_SoundMusic ) -).
+
+To decide whether glk/glulx PNG transparency is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_GraphicsTransparency ) -).
+
+To decide whether glk/glulx unicode is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Unicode ) -).
+
+To decide whether glk/glulx unicode normalization is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_UnicodeNorm ) -).
+
+To decide whether glk/glulx line input echo suppression is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_LineInputEcho ) -).
+
+To decide whether glk/glulx line input terminators are supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_LineTerminators  ) -).
+
+To decide whether the/-- glk/glulx system clock is supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_DateTime  ) -).
+
+To decide whether glk/glulx line input terminators are supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_LineTerminators  ) -).
+
+To decide whether glk/glulx sounds are fully supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_Sound2 ) -).
+
+To decide whether glk/glulx resource streams supported:
+	(- ( GEP_GlkGestaltResults-->gestalt_ResourceStream ) -).
 
 
 
