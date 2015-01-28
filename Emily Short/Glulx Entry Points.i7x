@@ -1,4 +1,4 @@
-Version 10/150124 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/150126 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -47,7 +47,7 @@ Library input context is a number variable. [This describes the event context in
 
 Section - Gestalts
 
-The test Glulx and Glk gestalts rule is listed in the before starting the virtual machine rules.
+The test Glulx and Glk gestalts rule is listed in the glulx zeroing-reference rules.
 The test Glulx and Glk gestalts rule translates into I6 as "GEP_TestGestalts".
 
 Include (-
@@ -68,9 +68,6 @@ Array GEP_GlkGestaltResults --> 23;
 	rfalse;
 ];
 -).
-
-A glulx zeroing-reference rule (this is the update the stored Glulx and Glk gestalt results rule):
-	follow the test Glulx and Glk gestalts rule;
 
 To decide what number is the glulx version:
 	(- ( GEP_GlulxGestaltResults-->0 ) -).

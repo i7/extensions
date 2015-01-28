@@ -1,4 +1,4 @@
-Version 1/140416 of Menus by Dannii Willis begins here.
+Version 1/150128 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -8,8 +8,8 @@ Include Basic Screen Effects by Emily Short.
 
 Section (for Glulx only)
 
-Include version 10 of Glulx Entry Points by Emily Short.
-Include version 14/140416 of Flexible Windows by Jon Ingold.
+Include version 10/150126 of Glulx Entry Points by Emily Short.
+Include version 1/150128 of Flexible Windows by Jon Ingold.
 
 
 
@@ -94,37 +94,6 @@ To decide what number is the chosen menu option for (x - a number):
 		decide on x - 87;
 	decide on 0;
 
-
-
-Part - Interface phrases - unindexed
-
-[ Wait for a safe non navigating key. The user might press Down/PgDn or use the mouse scroll wheel when reading a menu page, so we will stop those key codes from returning to the menu. ]
-To wait for any non navigating key:
-	(- WaitForNonNavigatingKey(); -).
-	
-Include (-
-
-[ WaitForNonNavigatingKey key;
-	while ( 1 )
-	{
-		key = VM_KeyChar();
-		#Ifdef TARGET_ZCODE;
-		if ( key == 63 or 129 or 130 or 132 )
-		{
-			continue;
-		}
-		#Ifnot; ! TARGET_GLULX
-		if ( key == -4 or -5 or -10 or -11 or -12 or -13 )
-		{
-			continue;
-		}
-		#Endif; ! TARGET_
-		rfalse;
-	}
-];
-
--).
-
 To request a key press:
 	say "[italic type]Press a key to go back.[roman type][run paragraph on]";
 
@@ -177,13 +146,10 @@ To show menu page (page - a text) with title (t - a text):
 	redraw status line;
 	now the current menu title is the temp menu title;
 	now the menu header is Table of Deep Menu Status;
-	wait for any non navigating key;
+	wait for any key;
 	clear the screen;
 	if manually running is 1:
 		end the displaying activity;
-
-After displaying (this is the run the exiting a menu rules rule):
-	follow the exiting a menu rules for the submenu in row 1 of the Table of Menu history;
 
 
 
@@ -313,43 +279,40 @@ enable menu hyperlinks is a truth state variable. [ False by default ]
 
 Chapter - Popover menu window
 
-The popover menu window is a text-buffer g-window spawned by the main-window.
+The popover menu window is a text buffer g-window spawned by the main window.
 The position of the popover menu window is g-placeabove.
 The scale method of the popover menu window is g-proportional.
 The measurement of the popover menu window is 100.
 
 First before displaying rule (this is the switch to the popover menu window rule):
 	if disable the popover menu window is false:
-		open up the popover menu window as the main text output window;
+		open the popover menu window, as the acting main window;
 
 Last after displaying rule (this is the switch back to the main-window rule):
 	if disable the popover menu window is false:
-		shut down the popover menu window;
+		close the popover menu window;
 
 
 
 Chapter - Open the status window if required - unindexed
 
-The old status-window presence is a truth state variable.
-
-[ The order is important: this must be before the switch to the popover menu window rule, or else there'll be no room for the status window ]
-The open the status window if required rule is listed before the switch to the popover menu window rule in the before displaying rules.
+The old status window presence is a truth state variable.
 
 First before displaying rule (this is the open the status window if required rule):
-	now the old status-window presence is whether or not the status-window is g-present;
-	if the old status-window presence is false:
-		open up the status-window;
+	now the old status window presence is whether or not the status window is g-present;
+	if the old status window presence is false:
+		open the status window;
 
-Last after displaying rule (this is the shut down the status window if required rule):
-	if the old status-window presence is false:
-		shut down the status-window;
+Last after displaying rule (this is the close the status window if required rule):
+	if the old status window presence is false:
+		close the status window;
 
 
 
 Chapter - Menu hyperlinks - unindexed
 
 After starting the virtual machine (this is the check if menus can use hyperlinks rule):
-	unless glulx hyperlinks are supported:
+	unless glk hyperlinks are supported:
 		now enable menu hyperlinks is false;
 
 The main menu display with hyperlinks rule is listed instead of the main menu display rule in the displaying a menu rules.
