@@ -1,4 +1,4 @@
-Version 7/130712 of Dynamic Objects (for Glulx only) by Jesse McGrew begins here.
+Version 8/140515 of Dynamic Objects (for Glulx only) by Jesse McGrew begins here.
 
 "Provides the ability to create new objects during game play."
 
@@ -234,7 +234,7 @@ Include (-
 					for ( i=LIST_OF_TY_GetLength(list): i>0: i-- )
 						handler(rel, RELS_ASSERT_TRUE, LIST_OF_TY_GetItem(list, i), obj);
 				}
-				BlkFree(list);
+				FlexFree(list);
 			}
 		} else if ((storage = rel-->RR_STORAGE) ~= 0) {
 			! static relation: we may need to resize the storage array (for V-to-V) or clear properties (for others, when not preserving)
@@ -301,7 +301,7 @@ Constant VTOVS_HDR_WORDS = 8;
 	if (~~nbmp) { print "*** No memory to resize V2V relation ***^"; rfalse; }
 
 	! point from the dynamic bitmap to the static bitmap
-	if (bitmap >= Blk_Heap) nbmp-->0 = bitmap-->(-1); else nbmp-->0 = bitmap;
+	if (bitmap >= Flex_Heap) nbmp-->0 = bitmap-->(-1); else nbmp-->0 = bitmap;
 
 	! point from the static bitmap to the dynamic bitmap
 	!(nbmp-->0)-->0 = -1;
@@ -344,7 +344,7 @@ Constant VTOVS_HDR_WORDS = 8;
 	}
 
 	! deallocate old bitmap if necessary
-	if (bitmap >= Blk_Heap) DT_Free(bitmap - WORDSIZE);
+	if (bitmap >= Flex_Heap) DT_Free(bitmap - WORDSIZE);
 
 	return nbmp;
 ];
@@ -498,6 +498,8 @@ Version 5 works with Inform 7 version 6E59. It also adds the "cloning a new obje
 Version 6 works with Inform 7 version 6G60.
 
 Version 7 fixes another bug with relations and a bug that prevented the "new object cloned from" phrase from being used in certain contexts.
+
+Version 8 works with (and requires) Inform 7 version 6L02.
 
 Example: * The Cubbins Effect - Creating a new hat every time the player removes the one he's wearing.
 
