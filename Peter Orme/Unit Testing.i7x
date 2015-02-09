@@ -1,4 +1,4 @@
-Version 1/150130 of Unit Testing by Peter Orme begins here.
+Version 2/150205 of Unit Testing by Peter Orme begins here.
 
 "A developer extension that lets you write unit tests (asserts) in Inform 7."
 
@@ -25,55 +25,86 @@ Chapter 2 - Asserter methods
 
 Section 1 - Asserting A is B
 
+to assert that/-- (actual - a value) is (expected - a value):
+	assert actual is expected saying only "Expected [expected], was [actual]"
+
 [
 	Asserts that a given value is an expected value, with a descriptive message.
 ]
-to assert (actual - a value) is (expected - a value) saying (msg - a text):
+to assert that/-- (actual - a value) is (expected - a value) saying (msg - a text):
+	assert actual is expected saying only "[msg], expected [expected], was [actual]"
+		
+[
+	Asserts that a given value is an expected value, with a descriptive message.
+]
+to assert that/-- (actual - a value) is (expected - a value) saying only (msg - a text):
 	if actual is expected:
-		assert_ok "[msg], expected [expected], was [actual][line break]";
+		assert_ok "[msg][line break]";
 	otherwise:
-		assert_fail "[msg], expected [expected], was [actual][line break]";		
+		assert_fail "[msg][line break]";	
 
 Section 2 - Asserting A is not B
+
+to assert that/-- (actual - a value) is not (expected - a value):
+	assert that actual is not expected saying only "Expected anything but [expected], was [actual]"
 
 [
 	Asserts that a given value is different from some other value, with a descriptive message.
 ]
-to assert (actual - a value) is not (expected - a value) saying (msg - a text):
+to assert that/-- (actual - a value) is not (expected - a value) saying (msg - a text):
+	assert that actual is not expected saying only "[msg], expected anything but [expected], was [actual]"
+		
+to assert that/-- (actual - a value) is not (expected - a value) saying only (msg - a text):
 	if actual is not expected:
-		assert_ok "[msg], expected anything but [expected], was [actual][line break]";
+		assert_ok "[msg][line break]";
 	otherwise:
-		assert_fail "[msg], expected anything but [expected], was [actual][line break]";
+		assert_fail "[msg][line break]";
 
 Section 3 - Asserting some value is greater than some other value
 
 [
 	Asserts that a given value is greater than some expected value, with a descriptive message.
 ]
-to assert (actual - a number) is greater than (min - a number) saying (msg - a text):
-	if actual is greater than min:
-		assert_ok "[msg], minimum [min], was [actual][line break]";
-	otherwise:
-		assert_fail "[msg], minimum [min], was [actual][line break]";
+to assert that/-- (actual - a number) is greater than (min - a number):
+	assert actual is greater than min saying only "Expected minimum [min], was [actual]".
 
+[
+	Asserts that a given value is greater than some expected value, with a descriptive message.
+]
+to assert that/-- (actual - a number) is greater than (min - a number) saying (msg - a text):
+	assert actual is greater than min saying only "[msg], expected minimum [min], was [actual]".
+
+to assert that/-- (actual - a number) is greater than (min - a number) saying only (msg - a text):
+	if actual is greater than min:
+		assert_ok "[msg][line break]";
+	otherwise:
+		assert_fail "[msg][line break]";
+		
 Section 4 - Asserting some text is empty
 
 [
 	Asserts that a text is empty, with a descriptive message.
 ]
-to assert (actual - a text) is empty saying (msg - a text):
+to assert that/-- (actual - a text) is empty:
 	if actual is empty:
-		assert_ok "[msg] - checked empty[line break]";
+		assert_ok "Expected an empty text, ok.[line break]";
 	otherwise:
-		assert_fail "[msg] - '[actual]' is not empty[line break]";	
+		assert_fail "Expected an empty text, was [actual].[line break]";	
 
-Section 5 - Asserting some text is empty saying only some message
+[
+	Asserts that a text is empty, with a descriptive message.
+]
+to assert that/-- (actual - a text) is empty saying (msg - a text):
+	if actual is empty:
+		assert_ok "[msg] - expected an empty text, ok.[line break]";
+	otherwise:
+		assert_fail "[msg] - '[actual]' is not an empty text[line break]";	
 
 [
 	This is like assert (text) is empty saying (message) except this will not 
 	append the "'[actual]' is not empty" in the message.
 ]
-to assert (actual - a text) is empty saying only (msg - a text):
+to assert that/-- (actual - a text) is empty saying only (msg - a text):
 	if actual is empty:
 		assert_ok "[msg][line break]";
 	otherwise:
@@ -180,9 +211,10 @@ The main idea is to make a bunch of assertions, and then check the results, as a
 
 Chapter: Testing 
 
-The typical usage involves writing some code that runs a number of "assert" tests. The assert calls all have the form "assert" (actual) something (expected) saying (message) where actual is the actual value, expected some expected value, and message is the message that is used if the assertion fails (or succeeeds, in verbose mode).
+The typical usage involves writing some code that runs a number of "assert" tests. The assert calls all have the form "assert" (actual) something (expected) saying (message) where actual is the actual value, expected some expected value, and message is the message that is used if the assertion fails (or succeeeds, in verbose mode). Finally the "something" is one of "is", "is not" or "is greater than".
 
-Finally the "something" is one of "is", "is not" or "is greater than".
+There are some versions on this. First, there is an optional "that", if we think that reads more fluently: "assert that 1 + 2 is 3 saying 'adding numbers'". Second, if we don't want to include a message (the "saying" part) we can just leave that out, but adding a message makes it easier for us too recognize where the test is in the code. Finally there is a "saying only" version. The "saying (message)" version prepends that message to whatever text the test naturally logs, typically the expected and actual parameters. If we want to be in complete control we can use the "saying only" version which does not append any such additional texts. In fact, the other two versions use the "saying only" version internally.  
+
 
 Section: asserting two values are the same
 
@@ -224,7 +256,13 @@ Section: Setting the halting behavior
 
 There are also three values for the "halting behavior". Setting it to "halt on failure" will make it halt (stop the execution of the entire game) as soon as an assertion fails. Setting it to "halt never" will, not surprisingly, make it never halt. The default is "halt on summary", which will make it halt in the "report asserts" action, but only if there were any failures.
 
+Chapter: Version History
 
+Section: Version 2
+
+Introduces an optional "that" so you can use either "assert that 1 + 1 is 2 saying 'adding numbers'" or "assert that 1 + 1 is 2 saying 'adding numbers'". Also makes the "saying" part optional, so you can use just "assert that 1 + 1 is 2".
+
+Chapter: Examples
 
 Example: * Asserting Arithmetic - Using assertions to check we know how to do math operations.
 
@@ -240,6 +278,8 @@ In this example we make an "assert" verb available to the player. Another option
 		assert 3 + 3 is 6 saying "adding numbers";
 		assert 3 - 1 is 2 saying "subtracting numbers";
 		assert 1 * 4 is 4 saying "mutliplying numbers";
+		assert that 2 + 2 is 4;
+		assert 5 - 2 is 3;
 
 	asserting is an action out of world applying to nothing. Understand "assert" as asserting. 
 
@@ -250,5 +290,4 @@ In this example we make an "assert" verb available to the player. Another option
 		
 	test me with "assert";
 	
-
 
