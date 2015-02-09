@@ -9,7 +9,7 @@ Chapter 1 - Checkpoint Assertions
 Section 1 - Table of Checkpoints
 
 Table of Checkpoints
-topic	assertion	message
+topic (a topic)	assertion (a text)	message (a text)
 --	--	--
 
 Section 2 - Checkpoint-asserting 
@@ -50,10 +50,8 @@ carry out checkpoint-going to the topic understood (this is the checkpoint going
 		say "There is no checkpoint script for [topic understood].";
 	
 Table of Checkpoint Scripts
-topic	name	rule
-"dummy"	"dummy"	dummy-checkpoint rule
-
-this is the dummy-checkpoint rule: do nothing
+topic (a topic)	name (a text)	rule (a rule)
+--	--	--
 
 [
 We need to define this table and fill it up with named rules for the script we want to be able 
