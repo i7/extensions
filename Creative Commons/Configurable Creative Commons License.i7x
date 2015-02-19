@@ -185,9 +185,9 @@ The print CC deed on startup rule is listed after the automatically set assumed 
 
 Section 7 - License command
 
-Requesting the license is an action applying to nothing. Understand "license" as requesting the license.
+Requesting the license is an action out of world applying to nothing. Understand "license" as requesting the license.
 
-After requesting the license (this is the display CC license on request rule), display the license.
+Carry out requesting the license (this is the display CC license on request rule): display the license.
 
 To display the license preface:
 	say "[italic type]CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES.
@@ -975,9 +975,9 @@ To display the license:
 
 Section 8 - Warranty command
 
-Requesting the warranty is an action applying to nothing. Understand "warranty" as requesting the warranty.
+Requesting the warranty is an action out of world applying to nothing. Understand "warranty" as requesting the warranty.
 
-After requesting the warranty (this is the display CC warranty on request rule), display the warranty.
+Carry out requesting the warranty (this is the display CC warranty on request rule): display the warranty.
 
 To display the warranty:
 	display the license section 5 specific to CC license chosen;
@@ -988,9 +988,9 @@ To display the warranty:
 
 Section 9 - Deed command
 
-Requesting the deed is an action applying to nothing. Understand "deed" as requesting the deed.
+Requesting the deed is an action out of world applying to nothing. Understand "deed" as requesting the deed.
 
-After requesting the deed (this is the display CC deed on request rule), display the deed.
+Carry out requesting the deed (this is the display CC deed on request rule): display the deed.
 
 To display the deed:
 	display the deed specific to CC license chosen.
