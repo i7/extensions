@@ -86,6 +86,28 @@ Include (-
 
 -)
 
+Section - Special Characters
+
+to say emdash:
+	say "--";
+
+to say list bullet:
+	say "*";
+
+to say copyright sign:
+	say "(c)"
+
+Section - Special Characters (for use with Unicode Full Character Names by Graham Nelson)
+
+to say emdash:
+	say "[unicode em dash]"
+
+to say list bullet:
+	say "[unicode bullet]"
+
+to say copyright sign:
+	say "[unicode copyright sign]"
+
 Section 2a -Flag to allow suppression of extension warnings in non-release builds
 
 Suppress CC license warnings is a truth state that varies. 
@@ -165,7 +187,7 @@ Section 5 - Saying the copyright notice
 Copyright year string is a text that varies. [deliberately left blank, author may set in story file if desired]
 
 To say copyright notice:
-	say "Copyright (c) [if copyright year string is not empty][copyright year string] [else if story creation year is not 0][story creation year] [else][assumed copyright year] [end if][copyright holder]".
+	say "Copyright [copyright sign] [if copyright year string is not empty][copyright year string] [else if story creation year is not 0][story creation year] [else][assumed copyright year] [end if][copyright holder]".
 
 Section 6 - Automated announcement at start of game
 
@@ -1001,53 +1023,53 @@ To display the deed specific to (variant - a CC license type):
 	say "[line break]";
 	say "[bold type]You are free:[roman type]";
 	say "[paragraph break]";
-	say "      [bold type]to Share[roman type] -- to copy, distribute, and transmit the work";
+	say "      [bold type]to Share[roman type] [emdash] to copy, distribute, and transmit the work";
 	if variant is not ND
 	begin;
 		say "[paragraph break]";
-		say "      [bold type]to Remix[roman type] -- to adapt the work";
+		say "      [bold type]to Remix[roman type] [emdash] to adapt the work";
 	end if;
 	say "[paragraph break]";
 	say "[bold type]Under the following conditions:[roman type]";
 	say "[paragraph break]";
-	say "      [bold type]Attribution[roman type] -- You must attribute the work in the manner specified by the author
+	say "      [bold type]Attribution[roman type] [emdash] You must attribute the work in the manner specified by the author
 	or licensor (but not in any way that suggests that they endorse you or your use of the work).";
 	if variant is NC
 	begin;
 		say "[line break]";
-		say "      [bold type]Noncommercial[roman type] -- You may not use this work for commercial purposes.";
+		say "      [bold type]Noncommercial[roman type] [emdash] You may not use this work for commercial purposes.";
 	end if;
 	if variant is ND
 	begin;
 		say "[line break]";
-		say "      [bold type]No Derivative Works[roman type] -- You may not alter, transform, or build upon this work.";
+		say "      [bold type]No Derivative Works[roman type] [emdash] You may not alter, transform, or build upon this work.";
 	end if;
 	if variant is SA
 	begin;
 		say "[line break]";
-		say "      [bold type]Share Alike[roman type] -- If you alter, transform, or build upon this work, you may distribute
+		say "      [bold type]Share Alike[roman type] [emdash] If you alter, transform, or build upon this work, you may distribute
 		the resulting work only under the [if variant is NC]same or similar license to this one[else]same, similar or a compatible license[end if].";
 	end if;
 	say "[line break]";
 	say "[bold type]With the understanding that:[roman type]";
 	say "[paragraph break]";
-	say "      [bold type]Waiver[roman type] -- Any of the above conditions can be [bold type]waived[roman type] if you get
+	say "      [bold type]Waiver[roman type] [emdash] Any of the above conditions can be [bold type]waived[roman type] if you get
 	permission from the copyright holder.";
 	say "[line break]";
-	say "      [bold type]Public Domain[roman type] -- Where the work or any of its elements is in the [bold type]public
+	say "      [bold type]Public Domain[roman type] [emdash] Where the work or any of its elements is in the [bold type]public
 	domain[roman type] under applicable law, that status is in no way affected by the license.";
 	say "[line break]";
-	say "      [bold type]Other Rights[roman type] -- In no way are any of the following rights affected by the license:";
+	say "      [bold type]Other Rights[roman type] [emdash] In no way are any of the following rights affected by the license:";
 	say "[paragraph break]";
-	say "            * Your fair dealing or [bold type]fair use[roman type] rights, or other applicable copyright exceptions and
+	say "            [list bullet] Your fair dealing or [bold type]fair use[roman type] rights, or other applicable copyright exceptions and
 	limitations;";
 	say "[paragraph break]";
-	say "            * The author's [bold type]moral[roman type] rights;";
+	say "            [list bullet] The author's [bold type]moral[roman type] rights;";
 	say "[paragraph break]";
-	say "            * Rights other persons may have either in the work itself or in how the work is used, such as
+	say "            [list bullet] Rights other persons may have either in the work itself or in how the work is used, such as
 	[bold type]publicity[roman type] or privacy rights.";
 	say "[line break]";
-	say "      [bold type]Notice[roman type] -- For any reuse or distribution, you must make clear to others the license terms
+	say "      [bold type]Notice[roman type] [emdash] For any reuse or distribution, you must make clear to others the license terms
 	of this work. The best way to do this is with a link to http://creativecommons.org/licenses/[CC license chosen]/3.0/";
 	say "[paragraph break]";
 	say "[italic type]The above 'deed' is a plain English outline of the rights
