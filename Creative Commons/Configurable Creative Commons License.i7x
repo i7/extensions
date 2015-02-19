@@ -158,7 +158,7 @@ When play begins (this is the automatically set story creation year if not suppr
 ]
 
 When play begins (this is the automatically set assumed copyright year rule):
-	change assumed copyright year to serial number year.
+	now assumed copyright year is serial number year.
 
 Section 5 - Saying the copyright notice
 
