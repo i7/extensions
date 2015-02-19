@@ -55,12 +55,12 @@ To decide whether (variant - a CC license type) specifies Attribution:
 
 [Definition: a CC license type is BY if it specifies Attribution.] [Compiler didn't like this -- interferes with license types enumeration.]
 
-Default CC license type is a CC license type that varies. Default CC license type is always by-nc-sa.
+Default CC license type is a CC license type that varies. Default CC license type is by-nc-sa.
 
 CC license chosen is a CC license type that varies.
 
 When play begins while CC license chosen is undefined (this is the apply default license if no type specified by author rule):
-	change CC license chosen to the default CC license type.
+	now CC license chosen is the default CC license type.
 
 Section 1G (for Glulx only)
 
