@@ -214,7 +214,7 @@ Check an actor going somewhere (this is the can't go without standing rule):
 
 Section 9 - Convert Exits when sitting or lying in a room
 
-Check an actor exiting when the holder of the actor is a room (this is the convert exits to standing rule):
+Check an actor exiting when the holder of the actor is a room and the actor is not standing (this is the convert exits to standing rule):
 	try the actor taking position standing instead.
 
 Postures ends here.
