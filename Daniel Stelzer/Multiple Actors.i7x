@@ -1,4 +1,4 @@
-Multiple Actors by Daniel Stelzer begins here.
+Version 2/150226 of Multiple Actors by Daniel Stelzer begins here.
 
 "Allows the player to give commands to multiple actors at the same time. (This version heavily modifies the I6 parser.)"
 
@@ -118,6 +118,7 @@ A multiple actor rule when debug is active (this is the debug multicommand varia
 	say "DBG: multicommand flag is [multicommand flag].[line break]";
 	say "DBG: multicommand word number is [multicommand word number].[line break]".
 A last multiple actor rule (this is the clear multiple object list after use rule):
+	debug say "DBG: list is [the multiple object list].";
 	alter the multiple object list to {};
 	rule succeeds.
 
@@ -154,6 +155,7 @@ Include (-
 	l = ParseToken(ELEMENTARY_TT, MULTI_TOKEN); ! Wtf--the list of return codes for ParseToken is wrong! 2 is the code for success; 0 is the same as GPR_PREPOSITION.
 	wn--;
 	mc_wn = wn;
+!	print "DBG: about to follow rulebook^";
 	FollowRulebook((+the multiple actor rules+));
 	if(RulebookFailed()){	! The multiple object list was invalid as a list of actors, so our parsing was wrong.
 		wn = 1;
@@ -163,7 +165,8 @@ Include (-
 !	print "Verb_wordnum is ", verb_wordnum, "^";
 	verb_wordnum = wn;
 	actorflag = 2; ! So this doesn't loop.
-	rtrue;
+	!rtrue;
+	jump ReParse;
 ! I cut the rest, since it's now redundant.
 -) instead of "Parser Letter C" in "Parser.i6t".
 
