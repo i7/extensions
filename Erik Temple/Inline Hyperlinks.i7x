@@ -69,8 +69,8 @@ To say end link:
 	let hyperlink index be a number;
 	stop capturing text;
 	if the hyperlinked text is "":
-		now the hyperlinked text is "[captured text]";
-	now the hyperlinked command is "[captured text]";
+		now the hyperlinked text is the substituted form of "[captured text]";
+	now the hyperlinked command is the substituted form of "[captured text]";
 	if the hyperlinked command is listed in the hyperlink list:
 		repeat with count running from 1 to the number of entries in the hyperlink list:
 			if entry (count) of the hyperlink list is hyperlinked command:
@@ -124,8 +124,8 @@ To say end link:
 	let hyperlink index be a number;
 	stop capturing text;
 	if the hyperlinked text is "":
-		now the hyperlinked text is "[captured text]";
-	now the hyperlinked command is "[captured text]";
+		now the hyperlinked text is the substituted form of "[captured text]";
+	now the hyperlinked command is the substituted form of "[captured text]";
 	if the hyperlinked command is listed in the hyperlink list:
 		repeat with count running from 1 to the number of entries in the hyperlink list:
 			if entry (count) of the hyperlink list is hyperlinked command:
