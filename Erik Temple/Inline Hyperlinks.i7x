@@ -1,4 +1,4 @@
-Version 2/111105 of Inline Hyperlinks (for Glulx only) by Erik Temple begins here.
+Version 2/150305 of Inline Hyperlinks (for Glulx only) by Erik Temple begins here.
 
 "Provides a simple, HTML-inspired syntax for adding hyperlinks within say phrases. No manual management of hyperlinks required. Requires Text Capture by Eric Eve. Works seamlessly with, but does not require, Flexible Windows."
 
