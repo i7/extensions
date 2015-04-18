@@ -10,7 +10,7 @@ Part 1 - definitions and globals
 
 chapter defining a hint-topic
 
-a hint-topic is a kind of thing. a hint-topic has text called descrip-text.
+a hint-topic is a kind of thing.
 
 a hint-topic can be active, inactive or rule-dependent. a hint-topic is usually inactive.
 
@@ -32,6 +32,12 @@ chapter stubs
 
 to say h-bold:
 	say "[bold type]H[roman type]";
+
+to say ha-b:
+	say "[bold type]HA[roman type]";
+
+to say hl-b:
+	say "[bold type]HL[roman type]";
 
 to say hi-b:
 	say "[bold type]HINT[roman type]";
@@ -166,8 +172,8 @@ carry out hinting (this is the top level hint request rule) :
 			say "[if naht > 1][count]) [else]* [end if][top-desc of ht] ([table-row of ht] of [number of rows in hint-list of ht] hints seen[if last-topic-hinted is HT], current active topic[end if])[line break]";
 
 to say top-desc of (ht - a hint-topic):
-	if the descrip-text of ht is non-empty:
-		say "[descrip-text of ht]";
+	if the description of ht is non-empty:
+		say "[description of ht]";
 	else:
 		say "[ht]";
 
@@ -192,14 +198,14 @@ carry out hintblocking (this is the block hints but verify first rule):
 		now hint-block is true;
 	the rule succeeds;
 
-chapter hintoning
+chapter turning hints on
 
-hintoning is an action out of world.
+turning hints on is an action out of world.
 
-understand "hint on" as hintoning.
-understand "hints on" as hintoning.
+understand "hint on" as turning hints on.
+understand "hints on" as turning hints on.
 
-carry out hintoning (this is the turn hints on rule):
+carry out turning hints on (this is the turn hints on rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is false:
@@ -208,14 +214,14 @@ carry out hintoning (this is the turn hints on rule):
 	say "Hints are now on. You can turn them off with [bold type]HINT OFF[roman type].";
 	the rule succeeds;
 
-chapter hintoffing
+chapter turning hints off
 
-hintoffing is an action out of world.
+turning hints off is an action out of world.
 
-understand "hint off" as hintoffing.
-understand "hints off" as hintoffing.
+understand "hint off" as turning hints off.
+understand "hints off" as turning hints off.
 
-carry out hintoffing (this is the turn hints off rule):
+carry out turning hints off (this is the turn hints off rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -334,11 +340,11 @@ to say still-stuck:
 		if number of available hint-topics > 1:
 			say "HINT will show other topics";
 
-hing is an action out of world.
+seeing the next hint is an action out of world.
 
 understand the command "h" as something new.
 
-understand "h" as hing.
+understand "h" as seeing the next hint.
 
 to say try-hint-instead:
 	say "The last hint topic you tried is no longer available, so let's try to list the available topics, instead";
@@ -346,7 +352,7 @@ to say try-hint-instead:
 to say ok-use-hint:
 	say "OK. Use [hi-b] to see a list of hint topics"
 
-carry out hing (this is the show next hint rule):
+carry out seeing the next hint (this is the show next hint rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -378,73 +384,74 @@ carry out hing (this is the show next hint rule):
 	try expounding last-topic-hinted;
 	now in-hint is true instead;
 
-section haing
+section showing all hints once
 
-haing is an action out of world.
+showing all hints once is an action out of world.
 
 understand the command "ha" as something new.
 
-understand "ha" as haing.
+understand "ha" as showing all hints once.
 
-to say no-topic-yet:
-	say "Since you haven't looked up a topic yet, let's try to look for a list of topics, instead";
-
-carry out haing (this is the force all hints in a topic rule) :
-	if hint-block is true:
-		say "[all-blocked]." instead;
-	if hint-local-block is true:
-		say "[temp-blocked]." instead;
-	if last-topic-hinted is null-topic:
-		say "[no-topic-yet]." instead;
-	if last-topic-hinted is not available:
-		say "[try-hint-instead].";
-		try hinting instead;
-	if last-topic-hinted is nothing:
-		say "You need to request a hint before looking into a hint topic." instead;
+carry out showing all hints once (this is the force all hints in a topic rule) :
+	follow the check if hints are viable rule;
 	now temp-hint-style is all-hint;
-	try expounding last-topic-hinted;
-	now temp-hint-style is flex-hint;
-	now in-hint is true;
+	follow the show one temporary hint rule;
 	the rule succeeds;
 
-section hling
+section showing one hint once
 
-[it stinks that this is a duplicate of ha, but I don't see any other way to do this short of asking if Word # 1 is ha/hl, and that gets into parser problems if someone uses X.Y]
-
-hling is an action out of world.
+showing one hint once is an action out of world.
 
 understand the command "hl" as something new.
 
-understand "hl" as hling.
+understand "hl" as showing one hint once.
+
+carry out showing one hint once (this is the force one hint in a topic rule) :
+	follow the check if hints are viable rule;
+	now temp-hint-style is one-hint;
+	follow the show one temporary hint rule;
+	the rule succeeds;
+
+section hl and ha stubs
 
 to say no-topic-yet:
 	say "Since you haven't looked up a topic yet, let's try to look for a list of topics, instead";
 
-carry out hling (this is the force one hint in a topic rule) :
-	if hint-block is true:
-		say "[all-blocked]." instead;
-	if hint-local-block is true:
-		say "[temp-blocked]." instead;
-	if last-topic-hinted is null-topic:
-		say "[no-topic-yet]." instead;
-	if last-topic-hinted is not available:
-		say "[try-hint-instead].";
-		try hinting instead;
-	if last-topic-hinted is nothing:
-		say "You need to request a hint before looking into a hint topic." instead;
-	now temp-hint-style is one-hint;
+this is the show one temporary hint rule:
 	try expounding last-topic-hinted;
 	now temp-hint-style is flex-hint;
 	now in-hint is true;
 	the rule succeeds;
 
-section hintflexing
+this is the check if hints are viable rule:
+	if hint-block is true:
+		say "[all-blocked].";
+		the rule fails;
+	if hint-local-block is true:
+		say "[temp-blocked].";
+		the rule fails;
+	if last-topic-hinted is null-topic:
+		say "[no-topic-yet].";
+		the rule fails;
+	if last-topic-hinted is not available:
+		say "[try-hint-instead].";
+		try hinting instead;
+		the rule fails;
+	if last-topic-hinted is nothing:
+		say "You need to request a hint before looking into a hint topic.";
+		the rule fails;
+	else:
+		the rule succeeds;
+	the rule fails;
+	the rule succeeds;
 
-hintflexing is an action out of world.
+section flexibly hinting
 
-understand "hint flexible/flex/f" as hintflexing.
+flexibly hinting is an action out of world.
 
-carry out hintflexing (this is the see flexible hints in a topic rule):
+understand "hint flexible/flex/f" as flexibly hinting.
+
+carry out flexibly hinting (this is the see flexible hints in a topic rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -452,13 +459,13 @@ carry out hintflexing (this is the see flexible hints in a topic rule):
 	say "[if current-hint-style is flex-hint]You're already using[else]You're now using[end if] flexible hints. When [h-bold] is used twice in a row, you see only the new hint. Otherwise, you see all previous hints as well.";
 	now current-hint-style is flex-hint;
 
-section hintalling
+section forcing all hints
 
-hintalling is an action out of world.
+forcing all hints is an action out of world.
 
-understand "hint all/review" as hintalling.
+understand "hint all/review" as forcing all hints.
 
-carry out hintalling (this is the see all hints in a topic rule):
+carry out forcing all hints (this is the see all hints in a topic rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -466,13 +473,13 @@ carry out hintalling (this is the see all hints in a topic rule):
 	say "[if current-hint-style is all-hint][h-bold] already shows[else]Now [h-bold] will always show[end if] all previous hints in a hint topic, in addition to the new hint.";
 	now current-hint-style is all-hint;
 
-section hintoneing
+section forcing one hint
 
-understand "hint one/latest" as hintoneing.
+understand "hint one/latest" as forcing one hint.
 
-hintoneing is an action out of world.
+forcing one hint is an action out of world.
 
-carry out hintoneing (this is the see one hint at a time rule):
+carry out forcing one hint (this is the see one hint at a time rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -480,15 +487,15 @@ carry out hintoneing (this is the see one hint at a time rule):
 	say "[if current-hint-style is one-hint][h-bold] already shows[else]Now [h-bold] will always show[end if] only the next hint in a topic.";
 	now current-hint-style is one-hint;
 
-chapter hintautoing
+chapter jumping to sole available topic
 
-hintautoing is an action out of world.
+jumping to sole available topic is an action out of world.
 
 understand the command "hintauto" as something new.
 
-understand "hint auto" as hintautoing.
+understand "hint auto" as jumping to sole available topic.
 
-carry out hintautoing (this is the automatic hints rule) :
+carry out jumping to sole available topic (this is the automatic hints rule) :
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -500,13 +507,13 @@ carry out hintautoing (this is the automatic hints rule) :
 		say "Auto-hinting turned [if hint-auto is true]on[else]off[end if]--if there's only one topic, you [if hint-auto is true]won't[else]will[end if] need to type [h-bold] to see the first hint.";
 	the rule succeeds;
 
-chapter hintcriting
+chapter toggling critical hints
 
-hintcriting is an action out of world.
+toggling critical hints is an action out of world.
 
-understand "hint crit" as hintcriting.
+understand "hint crit" as toggling critical hints.
 
-carry out hintcriting (this is the toggle critical hints rule):
+carry out toggling critical hints (this is the toggle critical hints rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -518,16 +525,16 @@ carry out hintcriting (this is the toggle critical hints rule):
 	say "[if number of noncritical hint-topics is 0]There aren't currently any noncritical hints, but when available, they[else]Noncritical hints[end if] will now be [if hint-crit-only is true]hidden[else]shown[end if].";
 	the rule succeeds;
 
-chapter hintverboseing
+chapter displaying verbose hint options
 
-hintverboseing is an action out of world.
+displaying verbose hint options is an action out of world.
 
-understand "hint verbose" and "hint v" as hintverboseing.
+understand "hint verbose" and "hint v" as displaying verbose hint options.
 
 to eq-say (eqtxt - text):
 	say "[line break][italic type][eqtxt][roman type][line break]";
 
-carry out hintverboseing (this is the display verbose hint help rule):
+carry out displaying verbose hint options (this is the display verbose hint help rule):
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -539,7 +546,7 @@ carry out hintverboseing (this is the display verbose hint help rule):
 	say "  [bold type]HINT FLEXIBLE[roman type]/[bold type]FLEX[roman type]/[bold type]F[roman type] makes [h-bold] show all the revealed hints in a topic unless you type [h-bold] two times in a row. This is the default, and it is recommended. [if current-hint-style is flex-hint](current setting)[end if][line break]";
 	say "  [bold type]HINT ALL[roman type]/[bold type]REVIEW[roman type] makes [h-bold] show the next available hint in a topic as well as all previous ones. [if current-hint-style is all-hint](current setting)[end if][line break]";
 	say "  [bold type]HINT ONE[roman type]/[bold type]LATEST[roman type] makes [h-bold] show only the next available hint in a topic. [if current-hint-style is one-hint] (current setting)[end if][line break]";
-	say "  As alternatives to [h-bold], [bold type]HA[roman type] and [bold type]HL[roman type] override the options above, showing all the previous hints in a topic ([bold type]HA[roman type]) or showing only the next one ([bold type]HL[roman type]).";
+	say "  As alternatives to [h-bold], [ha-b] and [hl-b] override the options above. [hl-b] only shows the next hint, but [ha-b] shows all previous hints in the topic before the next hint.";
 	if hide-auto is false:
 		say "  [bold type]HINT AUTO[roman type] toggles behavior when you type [hi-b] and there's only one hint topic. Currently the game [unless hint-auto is true]does not expose[else]exposes[end if] the first hint without you typing [h-bold].";
 	eq-say "AVOIDING SPOILERS";
@@ -582,15 +589,15 @@ to debug-say (x - text):
 
 hint-debug is a truth state that varies.
 
-chapter hintdebuging - not for release
+chapter toggling in-game hint debugging - not for release
 
-hintdebuging is an action out of world.
+toggling in-game hint debugging is an action out of world.
 
 understand the command "hintdebug" as something new.
 
-understand "hintdebug" as hintdebuging.
+understand "hintdebug" as toggling in-game hint debugging.
 
-carry out hintdebuging (this is the hint debugging for programmers rule):
+carry out toggling in-game hint debugging (this is the hint debugging for programmers rule):
 	now hint-debug is whether or not hint-debug is false;
 	say "Now hint debugging every turn is [if hint-debug is true]on[else]off[end if].";
 	the rule succeeds;
@@ -642,7 +649,7 @@ when play begins (this is the last topic is null topic to start rule):
 
 every turn (this is the check if we're in hints rule):
 	debug-say "check in hints before: [in-hint].";
-	if current action is haing or current action is hing or topicing or current action is hinting:
+	if current action is forcing all hints or current action is seeing the next hint or topicing or current action is hinting:
 		do nothing;
 	else:
 		now in-hint is false;
@@ -658,15 +665,15 @@ the file of potential hint topics is "hint-topics"
 every turn when debug-hints-to-file is true (this is the dump hint topics to file rule):
 	append ">>[text of the player's command]: [list of available hint-topics].[line break]" to the file of potential hint topics;
 
-chapter recordhintsing
+chapter toggling recording hints to file
 
-recordhintsing is an action out of world.
+toggling recording hints to file is an action out of world.
 
 understand the command "recordhints" as something new.
 
-understand "recordhints" as recordhintsing.
+understand "recordhints" as toggling recording hints to file.
 
-carry out recordhintsing (this is the hint record toggle rule):
+carry out toggling recording hints to file (this is the hint record toggle rule):
 	now record-hints is whether or not record-hints is false;
 	say "Now recording hints is [if record-hints is true]on. Remember to search for hint-topics as a file. On the Mac, it won't have an extension. On Windows, it will have a GLKDATA extension[else]off[end if].";
 	the rule succeeds;
@@ -684,9 +691,14 @@ In-Line Topical Hints ends here.
 
 PURPOSE
 
-In-Line Topical Hints is meant to circumnavigate hint menus, which can break immersion for the player. Also, it tries to keep unwieldy hint menus under control. While it offers progressive hinting, it also tries not to overwhelm the reader with text. The basic use case is is a player wants hints. If there is only one available hint topic, the game chooses that. If not, the player is offered an option. Once they choose that option, H goes to the next clue in the topic. It also, by default, only shows the next clue. The player can change this behavior if they want, but the point is to make the hints as unintrusive as possible.
+In-Line Topical Hints is meant to circumnavigate hint menus, which can break immersion for the player. Also, it tries to keep unwieldy hint menus under control. While it offers progressive hinting, it also tries not to overwhelm the reader with text. The basic use case is that a player asks for hints and is given a list of potential topics. Then he types the topic number, and he can type H to see the next hint. By default, hints are shown one at a time if the player requests them continually, but if the player performs a few actions and comes back, the whole list is shown again. This is what the extension terms flexible hinting. The programmer can also force the default to showing all hints in a topic or only the last one, but the player can override these with special commands.
 
-There are two ways to decide whether to display hint topics. You can either switch them between active to inactive, or you can make them rule-based and create a rule whether you can display them. If you are comfortable with rules, it may be smoother for you to establish a rule (e.g. if escape hatch is visited and typed-security-code is false).
+There are two ways for a programmer to decide whether to display a specific hint topics. You can either label it active to inactive, or you can make it rule-based and create a rule whether you can display them. If you are comfortable with rules, it may be smoother for you to establish a rule (e.g. if escape hatch is visited and typed-security-code is false).
+
+One special case worth mentioning is if there is only one available hint topic. HINT AUTO lets the player toggle whether to skip to the hint in the topic or to avoid spoilers. The default is to avoid spoilers, but the programmer can change this.
+
+next is a player wants hints. If there is only one available hint topic, the game chooses that. If not, the player is offered an option. Once they choose that option, H goes to the next clue in the topic. It also, by default, only shows the next clue. The player can change this behavior if they want, but the point is to make the hints as unintrusive as possible.
+
 
 One fine-tuning feature is that you are able to create a show-rule in a hint table. If this is left blank, the hint will always be shown. However, it can be changed to eliminate a hint the player should already know about. Let's take potential hints from a formerly popular RPG. While conditional text is possible, the player may appreciate having longer hint topics cut down as much as possible.
 
@@ -785,7 +797,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 			end the story saying "YOU GOT ALL THE LOOT, AND YOU ESCAPED!";
 		continue the action;
 
-	bronzy is a hint-topic. descrip-text is "Finding the bronze coin".
+	bronzy is a hint-topic. "Finding the bronze coin".
 
 	hint-list of bronzy is table of bronzy hints.
 
@@ -795,7 +807,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"It's in the bronze room."
 	"North of the Center Room."
 
-	silvery is a hint-topic. descrip-text is "Finding the silver coin".
+	silvery is a hint-topic. "Finding the silver coin".
 
 	hint-list of silvery is table of silvery hints.
 
@@ -805,7 +817,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"It's in the silver room."
 	"The silver room is east of the Center Room."
 
-	goldy is a hint-topic. descrip-text of goldy is "Finding the gold coin.".
+	goldy is a hint-topic. "Finding the gold coin.".
 
 	hint-list of goldy is table of goldy hints.
 
@@ -816,7 +828,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"Gold Room is west of the Center Room."
 	"Once you get the gold coin, you can get out of the maze back at the Glass Room, south of the Center Room."
 
-	get-out is a rule-dependent hint-topic. descrip-text of get-out is "Getting out.".
+	get-out is a rule-dependent hint-topic. "Getting out.".
 
 	hint-list of get-out is table of get-out hints.
 
@@ -831,7 +843,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 		if the player has the gold coin, the rule succeeds;
 		the rule fails.
 
-	is-this-easy is a noncritical active hint-topic. descrip-text of is-this-easy is "Isn't this example too easy for a real game?"
+	is-this-easy is a noncritical active hint-topic. "Isn't this example too easy for a real game?"
 
 	table of is-easy hints
 	hint-text	done-yet	show-rule
@@ -969,7 +981,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter emerald
 
-	emerald-hint is a rule-dependent hint-topic. descrip-text of emerald-hint is "using the emerald"
+	emerald-hint is a rule-dependent hint-topic. "using the emerald"
 
 	avail-rule of emerald-hint is emerald-hint rule.
 
@@ -989,7 +1001,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter amethyst
 
-	amethyst-hint is a rule-dependent hint-topic. descrip-text of amethyst-hint is "using the amethyst"
+	amethyst-hint is a rule-dependent hint-topic. "using the amethyst"
 
 	avail-rule of amethyst-hint is amethyst-hint rule.
 
@@ -1008,7 +1020,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter sapphire
 
-	sapphire-hint is a rule-dependent hint-topic. descrip-text of sapphire-hint is "using the sapphire"
+	sapphire-hint is a rule-dependent hint-topic. "using the sapphire"
 
 	avail-rule of sapphire-hint is sapphire-hint rule.
 
@@ -1027,7 +1039,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter diamond
 
-	diamond-hint is a rule-dependent hint-topic. descrip-text of diamond-hint is "using the diamond"
+	diamond-hint is a rule-dependent hint-topic. "using the diamond"
 
 	avail-rule of diamond-hint is diamond-hint rule.
 
@@ -1046,7 +1058,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter ruby
 
-	ruby-hint is a rule-dependent hint-topic. descrip-text of ruby-hint is "using the ruby"
+	ruby-hint is a rule-dependent hint-topic. "using the ruby"
 
 	avail-rule of ruby-hint is ruby-hint rule.
 
@@ -1065,7 +1077,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter onyx
 
-	onyx-hint is a rule-dependent hint-topic. descrip-text of onyx-hint is "using the onyx"
+	onyx-hint is a rule-dependent hint-topic. "using the onyx"
 
 	avail-rule of onyx-hint is onyx-hint rule.
 
