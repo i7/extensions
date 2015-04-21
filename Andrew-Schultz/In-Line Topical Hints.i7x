@@ -1,4 +1,4 @@
-Version 2/150418 of In-Line Topical Hints by Andrew Schultz begins here.
+Version 2/150421 of In-Line Topical Hints by Andrew Schultz begins here.
 
 "Lets the author offer the player in-line hints, with options for presentation. This extension requires Inform 6L02 or higher to run."
 
@@ -10,7 +10,9 @@ Part 1 - definitions and globals
 
 chapter defining a hint-topic
 
-a hint-topic is a kind of thing.
+a hint-topic is a kind of thing. a hint-topic is usually privately-named. [This is just so that we don't have any disambiguation.]
+
+[hint topics should always be given a printed name.]
 
 a hint-topic can be active, inactive or rule-dependent. a hint-topic is usually inactive.
 
@@ -26,7 +28,16 @@ a hint-topic has a number called reference-number.
 
 a hint-topic can be critical or noncritical. a hint-topic is usually critical.
 
-hint-style is a kind of value. the hint-styles are all-hint, flex-hint, and one-hint.
+section hint styles
+
+hint-style is a kind of value. the hint-styles are all-hint, flex-hint, and one-hint. [The three styles work as follows: all-hint shows all previous hints in a topic, all the time, when the player types H. One-hint shows only the most recent hint topic. Flex-hint is a combination of the two: it will show the most recent hint if the player asked for a hint the turn before, but it will show them all otherwise. The player can switch among these styles, but flexible hinting is recommended as a default and is set below.
+
+The author may change this with a "when play begins" rule. For instance, if they have relatively small hint topics, then all-hint is reasonable, or if they want to use very minimal text space, one-hint is reasonable, though it would be polite to notify the player of the HA command.]
+
+current-hint-style is a hint-style that varies. current-hint-style is usually flex-hint.
+
+temp-hint-style is a hint-style that varies. temp-hint-style is usually flex-hint. [this variable should not be changed! It is used with HL and HA, which are commands that give the player the last hint and all hints in a topic, respectively, for one turn only, hence the "temp" prefix.]
+
 
 chapter stubs
 
@@ -82,21 +93,27 @@ hint-crit-only is a truth state that varies. [The default is false, which means 
 
 in-hint is a truth state that varies.
 
-null-topic is a hint-topic. null-topic is inactive. [this is so that last-topic-hinted does not point to the first hint topic the programmer describes. That would cause bugs.]
+null-topic is a hint-topic. null-topic is inactive. [this is so that last-topic-hinted does not point to the first hint topic the programmer describes. That would cause bugs.] description is "the null topic".
 
 section Variables the Programmer can Change
 
-hint-topic-end-note is a truth state that varies. [This toggles whether or not we give the player an note when they hit the end. While the (8/8) clues are adequate, it can be useful if the player forgets.]
+hint-topic-end-note is a truth state that varies. [This toggles whether or not we give the player a note when they hit the end. While the (8/8) clues are adequate, it can be useful if the player forgets.]
 
-mention-critical-hints is a truth state that varies. [this can be switched to TRUE if you, as the author, know there are no side quests.]
+mention-critical-hints is a truth state that varies. [This has no effect on which hint topics are displayed. It merely determines whether HINT VERBOSE prompts the player to try HINT CRIT. It's potentially fiddly, but it can be set to true when
+1. there are optional hint-topics
+2. the author wants to make sure the player knows they can shut hints off
+It should be left false if there are no optional hint-topics, because then HINT CRIT has no effect.
+You can either disable the rule below or force mention-critical-hints to false in your main program if you want to. However, it is probably polite to let the player know about non-critical hints if you use them.
+]
 
-hide-auto is a truth state that varies. [this is something the author can change if they are sure there will never be only one hint topic.]
+when play begins (this is the mention existing noncritical hints in verbose hinting rule):
+	if number of noncritical hint-topics > 0:
+		now mention-critical-hints is true;
+	continue the action;
 
-current-hint-style is a hint-style that varies. current-hint-style is usually flex-hint. [flexible hints are recommended but not mandatory. They try to give the player as much as they need to see without a text dump.]
+hide-auto is a truth state that varies. hide-auto is usually false. [This is another fine-tuning boolean that toggles HINT VERBOSE behavior. It determines whether the user sees the "HINT AUTO" documentation and should probably be set to false in most cases. However, if the programmer is confident there will be more than one hint topic at all times, then it can be set to true. If activated, it gives a warning that HINT AUTO is likely useless, since auto-hinting can occur when there is only one topic available.]
 
 confirm-hint-block is a truth state that varies. confirm-hint-block is usually true; [this has the player confirm HINT BLOCK for a session. It's polite to keep it true, though the player can still undo.]
-
-temp-hint-style is a hint-style that varies. temp-hint-style is usually flex-hint. [this should not be changed! It is used with HL and HA.]
 
 Part 2 - hinting
 
@@ -169,13 +186,7 @@ carry out hinting (this is the top level hint request rule) :
 		else:
 			increment count;
 			now reference-number of HT is count;
-			say "[if naht > 1][count]) [else]* [end if][top-desc of ht] ([table-row of ht] of [number of rows in hint-list of ht] hints seen[if last-topic-hinted is HT], current active topic[end if])[line break]";
-
-to say top-desc of (ht - a hint-topic):
-	if the description of ht is non-empty:
-		say "[description of ht]";
-	else:
-		say "[ht]";
+			say "[if naht > 1][count]) [else]* [end if][ht] ([table-row of ht] of [number of rows in hint-list of ht] hints seen[if last-topic-hinted is HT], current active topic[end if])[line break]";
 
 chapter hint blocking
 
@@ -232,7 +243,7 @@ carry out turning hints off (this is the turn hints off rule):
 
 Part 3 - topics and expounding
 
-topicing is an action applying to one number.
+accessing hint topics by number is an action applying to one number.
 
 understand the command "t" as something new.
 
@@ -240,7 +251,7 @@ understand "t" as a mistake ("[if hint-block is true][all-blocked][else if hint-
 
 understand "t [text]" and "topic [text]" as a mistake ("[if hint-block is true][all-blocked][else if hint-local-block is true][temp-blocked][else]You can only use a number when accessing a topic. So TOPIC 2, T 2 and even T2 work, but TOPIC TWO does not[end if].").
 
-understand "t [number]" and "topic [number]" and "topics [number]" as topicing.
+understand "t [number]" and "topic [number]" and "topics [number]" as accessing hint topics by number.
 
 after reading a command (this is the avoid odd errors but allow numbers rule):
 	if the player's command matches the regular expression "^<0-9>":
@@ -258,7 +269,7 @@ topics-sorted-yet is a truth state that varies.
 
 last-topic-hinted is a hint-topic that varies.
 
-carry out topicing (this is the check for topic rule) :
+carry out accessing hint topics by number (this is the check for topic rule) :
 	if hint-block is true:
 		say "[all-blocked]." instead;
 	if hint-local-block is true:
@@ -297,9 +308,9 @@ carry out expounding (this is the look for topic's next available hint rule) :
 	if noun is not a hint-topic:
 		say "Oops! You should not be expounding a non-hint-topic." instead;
 	if noun is not available:
-		say "The hint topic '[top-desc of noun]' is not available. You've likely solved everything. You may wish to [hi-b] for a new list of topics, instead." instead;
+		say "The hint topic '[noun]' is not available. You've likely solved everything. You may wish to [hi-b] for a new list of topics, instead." instead;
 	if in-hint is false:
-		say "[bold type][top-desc of noun][if noun is not unfinished] (all hints shown)[end if][roman type][line break]";
+		say "[bold type][noun][if noun is not unfinished] (all hints shown)[end if][roman type][line break]";
 	else if noun is repeat-viewed and noun is not last-topic-hinted:
 		say "[italic type][bracket]NOTE: you requested a hint topic you've already gone through[still-stuck].[close bracket][roman type][line break]";
 	if table-row of noun < number of rows in hint-list of noun:
@@ -384,32 +395,32 @@ carry out seeing the next hint (this is the show next hint rule):
 	try expounding last-topic-hinted;
 	now in-hint is true instead;
 
-section showing all hints once
+section temporarily showing all hints
 
-showing all hints once is an action out of world.
+temporarily showing all hints is an action out of world.
 
 understand the command "ha" as something new.
 
-understand "ha" as showing all hints once.
+understand "ha" as temporarily showing all hints.
 
-carry out showing all hints once (this is the force all hints in a topic rule) :
+carry out temporarily showing all hints (this is the show all hints in a topic once rule) :
 	follow the check if hints are viable rule;
 	now temp-hint-style is all-hint;
-	follow the show one temporary hint rule;
+	follow the show hints differently just once rule;
 	the rule succeeds;
 
-section showing one hint once
+section temporarily showing one hint
 
-showing one hint once is an action out of world.
+temporarily showing one hint is an action out of world.
 
 understand the command "hl" as something new.
 
-understand "hl" as showing one hint once.
+understand "hl" as temporarily showing one hint.
 
-carry out showing one hint once (this is the force one hint in a topic rule) :
+carry out temporarily showing one hint (this is the show one hint in a topic once rule) :
 	follow the check if hints are viable rule;
 	now temp-hint-style is one-hint;
-	follow the show one temporary hint rule;
+	follow the show hints differently just once rule;
 	the rule succeeds;
 
 section hl and ha stubs
@@ -417,9 +428,9 @@ section hl and ha stubs
 to say no-topic-yet:
 	say "Since you haven't looked up a topic yet, let's try to look for a list of topics, instead";
 
-this is the show one temporary hint rule:
+this is the show hints differently just once rule:
 	try expounding last-topic-hinted;
-	now temp-hint-style is flex-hint;
+	now temp-hint-style is current-hint-style; [go back to flexible hinting]
 	now in-hint is true;
 	the rule succeeds;
 
@@ -579,32 +590,6 @@ hint-punc is a num-punc. hint-punc is brackets. [this can be changed to any of t
 
 slash-not-of is a truth state that varies. slash-not-of is usually false. [these two lines make the default (1/2). You can change this with a when play begins rule.]
 
-Part 5 - debugging
-
-[note: everything except these 2 statements should be in Not For Release. This simply says that we will, if HINTDEBUG is toggled, display which topics are visible.]
-
-to debug-say (x - text):
-	if hint-debug is true:
-		say "[x][line break]";
-
-hint-debug is a truth state that varies.
-
-chapter toggling in-game hint debugging - not for release
-
-toggling in-game hint debugging is an action out of world.
-
-understand the command "hintdebug" as something new.
-
-understand "hintdebug" as toggling in-game hint debugging.
-
-carry out toggling in-game hint debugging (this is the hint debugging for programmers rule):
-	now hint-debug is whether or not hint-debug is false;
-	say "Now hint debugging every turn is [if hint-debug is true]on[else]off[end if].";
-	the rule succeeds;
-
-every turn when hint-debug is true (this is the list topics every turn rule) : [you may wish to change the text here to make it more useer friendly.]
-	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. Last topic hinted = [last-topic-hinted].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
-
 Part 5 - stubs
 
 to say all-blocked:
@@ -649,12 +634,70 @@ when play begins (this is the last topic is null topic to start rule):
 
 every turn (this is the check if we're in hints rule):
 	debug-say "check in hints before: [in-hint].";
-	if current action is forcing all hints or current action is seeing the next hint or topicing or current action is hinting:
+	if current action is temporarily showing all hints or current action is seeing the next hint or current action is accessing hint topics by number or current action is hinting:
 		do nothing;
 	else:
 		now in-hint is false;
-		
-Part 6 - Recording testers' potential hints (for glulx only)
+
+Part 6 - debugging
+
+[note: everything except these 2 statements should be in Not For Release. This simply says that we will, if HINTDEBUG is toggled, display which topics are visible.]
+
+to debug-say (x - text):
+	if hint-debug is true:
+		say "[x][line break]";
+
+hint-debug is a truth state that varies.
+
+chapter toggling in-game hint debugging - not for release
+
+toggling in-game hint debugging is an action out of world.
+
+understand the command "hintdebug" as something new.
+
+understand "hintdebug" as toggling in-game hint debugging.
+
+carry out toggling in-game hint debugging (this is the hint debugging for programmers rule):
+	now hint-debug is whether or not hint-debug is false;
+	say "Now hint debugging every turn is [if hint-debug is true]on[else]off[end if].";
+	the rule succeeds;
+
+every turn when hint-debug is true (this is the list topics every turn rule) : [you may wish to change the text here to make it more useer friendly.]
+	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. Last topic hinted = [last-topic-hinted].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
+
+section showing every hint name
+
+[this is a simple debug command so the programmer can make sure their hint names make sense, don't clash, etc.]
+
+showing every hint name is an action applying to nothing.
+
+understand the command "allhintnames" as something new.
+
+understand "allhintnames" as showing every hint name.
+
+carry out showing every hint name:
+	say "You have [number of hint-topics] total hints. Here are their names.";
+	repeat with xxx running through hint-topics:
+		say "[xxx][line break]";
+	the rule succeeds;
+
+section resetting hint topics
+
+resetting hint topics is an action out of world.
+
+understand the command "hintreset" as something new.
+
+understand "hintreset" as resetting hint topics.
+
+carry out resetting hint topics:
+	repeat with QQ running through hint-topics:
+		now table-row of QQ is 0;
+		now QQ is unfinished;
+	the rule succeeds;
+
+Part 7 - Recording testers' potential hints (for glulx only)
+
+chapter debug tests - not for release
 
 [The programmer may want to see what hint topics a player's run-through would give every turn, just to make sure nothing goes wrong. The problem with this is that 1) it would spoil puzzles for the tester and 2) it would take up a lot of space in a transcript. So the solution is to pipe the text to a transcript every turn.]
 
@@ -665,7 +708,7 @@ the file of potential hint topics is "hint-topics"
 every turn when debug-hints-to-file is true (this is the dump hint topics to file rule):
 	append ">>[text of the player's command]: [list of available hint-topics].[line break]" to the file of potential hint topics;
 
-chapter toggling recording hints to file
+section toggling recording hints to file
 
 toggling recording hints to file is an action out of world.
 
@@ -695,10 +738,9 @@ In-Line Topical Hints is meant to circumnavigate hint menus, which can break imm
 
 There are two ways for a programmer to decide whether to display a specific hint topics. You can either label it active to inactive, or you can make it rule-based and create a rule whether you can display them. If you are comfortable with rules, it may be smoother for you to establish a rule (e.g. if escape hatch is visited and typed-security-code is false).
 
-One special case worth mentioning is if there is only one available hint topic. HINT AUTO lets the player toggle whether to skip to the hint in the topic or to avoid spoilers. The default is to avoid spoilers, but the programmer can change this.
+One special case worth mentioning is if there is only one available hint topic. HINT AUTO lets the player toggle whether to skip to the hint in the topic or to avoid spoilers. The default is to avoid spoilers, but the programmer can change this by setting the hint-auto flag to true.
 
-next is a player wants hints. If there is only one available hint topic, the game chooses that. If not, the player is offered an option. Once they choose that option, H goes to the next clue in the topic. It also, by default, only shows the next clue. The player can change this behavior if they want, but the point is to make the hints as unintrusive as possible.
-
+So if hint-auto is set to true, and a player tries hints, and there is only one available hint topic, the game chooses that. If not, the player is offered an option from one to the available number of hint topics. Whichever number they choose, they see the next hint they haven't seen yet. Once they choose that option, H goes to the next clue in the topic. It also, by default, only shows the next clue. The player can change this behavior if they want, but the point is to make the hints as unintrusive as possible.
 
 One fine-tuning feature is that you are able to create a show-rule in a hint table. If this is left blank, the hint will always be shown. However, it can be changed to eliminate a hint the player should already know about. Let's take potential hints from a formerly popular RPG. While conditional text is possible, the player may appreciate having longer hint topics cut down as much as possible.
 
@@ -723,7 +765,9 @@ One of the big problems with a hint system is that your testers can't tell you w
 
 Some basic debugging is provided with In-Line Topical Hints so that you are able to verify a test walkthrough works. HINTDEBUG is a not-for-release command that prints out all the topics available every move. This is probably more useful for the programmer than a player, who may get overwhelmed with the text.
 
-The deliberately awkward RECORDHINTS is available for the tester if they wish to create a text file of topics they would've seen. It is Glulx-only, since it requires output to a file. The format is >>(command): (List of topics).
+RECORDHINTS is available for the tester if they wish to create a text file of topics they would've seen. It is Glulx-only, since it requires output to a file. The format is >>(command): (List of topics).
+
+ALLHINTNAMES simply shows all the hint names, so you can see if there are any egregious duplicates, or if one sticks out as out-of-place.
 
 CREDITS
 
@@ -763,18 +807,18 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	check dropping:
 		say "No way! The coin is too valuable, or something." instead;
 
-	Center Room is a room. "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
+	Center Room is a room. printed name is "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
 
 	Bronze Room is north of Center Room.
 
 	check going nowhere:
 		say "[if player is in center room]You can go any of the four directions[else]Only one way out[end if]."
 
-	Silver Room is east of Center Room. "You can go back west."
+	Silver Room is east of Center Room. printed name is "You can go back west."
 
-	Gold Room is west of Center Room. "You can go back east."
+	Gold Room is west of Center Room. printed name is "You can go back east."
 
-	Glass Room is south of Center Room. "You can go back north."
+	Glass Room is south of Center Room. printed name is "You can go back north."
 
 	The bronze coin is in Bronze Room.
 
@@ -797,7 +841,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 			end the story saying "YOU GOT ALL THE LOOT, AND YOU ESCAPED!";
 		continue the action;
 
-	bronzy is a hint-topic. "Finding the bronze coin".
+	bronzy is a hint-topic. printed name is "Finding the bronze coin".
 
 	hint-list of bronzy is table of bronzy hints.
 
@@ -807,7 +851,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"It's in the bronze room."
 	"North of the Center Room."
 
-	silvery is a hint-topic. "Finding the silver coin".
+	silvery is a hint-topic. printed name is "Finding the silver coin".
 
 	hint-list of silvery is table of silvery hints.
 
@@ -817,7 +861,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"It's in the silver room."
 	"The silver room is east of the Center Room."
 
-	goldy is a hint-topic. "Finding the gold coin.".
+	goldy is a hint-topic. printed name is "Finding the gold coin.".
 
 	hint-list of goldy is table of goldy hints.
 
@@ -828,7 +872,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"Gold Room is west of the Center Room."
 	"Once you get the gold coin, you can get out of the maze back at the Glass Room, south of the Center Room."
 
-	get-out is a rule-dependent hint-topic. "Getting out.".
+	get-out is a rule-dependent hint-topic. printed name is "Getting out.".
 
 	hint-list of get-out is table of get-out hints.
 
@@ -843,7 +887,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 		if the player has the gold coin, the rule succeeds;
 		the rule fails.
 
-	is-this-easy is a noncritical active hint-topic. "Isn't this example too easy for a real game?"
+	is-this-easy is a noncritical active hint-topic. printed name is "Isn't this example too easy for a real game?"
 
 	table of is-easy hints
 	hint-text	done-yet	show-rule
@@ -883,7 +927,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	Branching Room is a not gemmish room.
 
-	the gaudy hatch is a supporter in Branching Room. "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
+	the gaudy hatch is a supporter in Branching Room. printed name is "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
 
 	the blue hole is a container. the blue hole is part of the gaudy hatch.
 	the green hole is a container. the green hole is part of the gaudy hatch.
@@ -981,7 +1025,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter emerald
 
-	emerald-hint is a rule-dependent hint-topic. "using the emerald"
+	emerald-hint is a rule-dependent hint-topic. printed name is "using the emerald"
 
 	avail-rule of emerald-hint is emerald-hint rule.
 
@@ -1001,7 +1045,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter amethyst
 
-	amethyst-hint is a rule-dependent hint-topic. "using the amethyst"
+	amethyst-hint is a rule-dependent hint-topic. printed name is "using the amethyst"
 
 	avail-rule of amethyst-hint is amethyst-hint rule.
 
@@ -1020,7 +1064,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter sapphire
 
-	sapphire-hint is a rule-dependent hint-topic. "using the sapphire"
+	sapphire-hint is a rule-dependent hint-topic. printed name is "using the sapphire"
 
 	avail-rule of sapphire-hint is sapphire-hint rule.
 
@@ -1039,7 +1083,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter diamond
 
-	diamond-hint is a rule-dependent hint-topic. "using the diamond"
+	diamond-hint is a rule-dependent hint-topic. printed name is "using the diamond"
 
 	avail-rule of diamond-hint is diamond-hint rule.
 
@@ -1058,7 +1102,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter ruby
 
-	ruby-hint is a rule-dependent hint-topic. "using the ruby"
+	ruby-hint is a rule-dependent hint-topic. printed name is "using the ruby"
 
 	avail-rule of ruby-hint is ruby-hint rule.
 
@@ -1077,7 +1121,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	chapter onyx
 
-	onyx-hint is a rule-dependent hint-topic. "using the onyx"
+	onyx-hint is a rule-dependent hint-topic. printed name is "using the onyx"
 
 	avail-rule of onyx-hint is onyx-hint rule.
 
