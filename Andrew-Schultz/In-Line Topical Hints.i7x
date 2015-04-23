@@ -38,7 +38,6 @@ current-hint-style is a hint-style that varies. current-hint-style is usually fl
 
 temp-hint-style is a hint-style that varies. temp-hint-style is usually flex-hint. [this variable should not be changed! It is used with HL and HA, which are commands that give the player the last hint and all hints in a topic, respectively, for one turn only, hence the "temp" prefix.]
 
-
 chapter stubs
 
 to say h-bold:
@@ -83,6 +82,16 @@ to activate (ht - a hint-topic):
 to deactivate (ht - a hint-topic):
 	now ht is inactive;
 
+section debugging stubs
+
+[these can't quite go in part 6, because we need some way to determine if hint debug is turned on, and there are debug-print commands in some major functions. Hint-debug should never be altered except in not-for-release sections.]
+
+to debug-say (x - text):
+	if hint-debug is true:
+		say "[x][line break]";
+
+hint-debug is a truth state that varies.
+
 chapter globals
 
 hint-block is a truth state that varies.
@@ -93,7 +102,7 @@ hint-crit-only is a truth state that varies. [The default is false, which means 
 
 in-hint is a truth state that varies.
 
-null-topic is a hint-topic. null-topic is inactive. [this is so that last-topic-hinted does not point to the first hint topic the programmer describes. That would cause bugs.] description is "the null topic".
+null-topic is a hint-topic. null-topic is inactive. [this is so that last-topic-hinted does not point to the first hint topic the programmer describes. That would cause bugs.] printed name is "the null topic".
 
 section Variables the Programmer can Change
 
@@ -639,17 +648,9 @@ every turn (this is the check if we're in hints rule):
 	else:
 		now in-hint is false;
 
-Part 6 - debugging
+Part 6  - debugging - not for release
 
-[note: everything except these 2 statements should be in Not For Release. This simply says that we will, if HINTDEBUG is toggled, display which topics are visible.]
-
-to debug-say (x - text):
-	if hint-debug is true:
-		say "[x][line break]";
-
-hint-debug is a truth state that varies.
-
-chapter toggling in-game hint debugging - not for release
+section toggling in-game hint debugging
 
 toggling in-game hint debugging is an action out of world.
 
@@ -665,11 +666,93 @@ carry out toggling in-game hint debugging (this is the hint debugging for progra
 every turn when hint-debug is true (this is the list topics every turn rule) : [you may wish to change the text here to make it more useer friendly.]
 	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. Last topic hinted = [last-topic-hinted].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
 
+section showing all active full hint topics
+
+fully showing all active hint topics is an action out of world.
+
+understand the command "taa" as something new.
+
+understand "taa" as fully showing all active hint topics.
+
+carry out fully showing all active hint topics (this is the fully show all active topics rule):
+	let curtop be 0;
+	let alltop be the number of available hint-topics;
+	repeat with my-topic running through all available hint-topics:
+		increment curtop;
+		say "[curtop] of [alltop]:[my-topic]:[line break]";
+		try fully revealing my-topic;
+		if curtop < alltop:
+			follow the continue-listing rule;
+			if the rule failed:
+				the rule succeeds;
+
+this is the continue-listing rule:
+	say "Q to exit or any key to continue>";
+	let thiskey be the chosen letter;
+	if thiskey is 80 or thiskey is 112:
+		the rule succeeds;
+	say "[line break]";
+
+section showing all full hint topics
+
+fully showing all hint topics is an action out of world.
+
+understand the command "ta" as something new.
+
+understand "ta" as fully showing all hint topics.
+
+definition: a hint-topic (called ht) is meaningful:
+	if ht is null-topic, decide no;
+	decide yes;
+
+carry out fully showing all hint topics (this is the fully show all topics rule):
+	let curtop be 0;
+	let alltop be the number of meaningful hint-topics;
+	repeat with my-topic running through all meaningful hint-topics:
+		increment curtop;
+		say "[curtop] of [alltop]:[my-topic] ([unless my-topic is available]un[end if]available) :[line break]";
+		try fully revealing my-topic;
+		if curtop < alltop:
+			follow the continue-listing rule;
+			if the rule failed:
+				the rule succeeds;
+
+section showing one full hint topic
+
+[!! not documented yet]
+
+showing one full hint topic is an action applying to one number.
+
+understand the command "tx" as something new.
+
+understand "tx [number]" as showing one full hint topic.
+
+carry out showing one full hint topic (this is the debug a full hint topic rule) :
+	let naht be number of available hint-topics;
+	if number understood < 1 or number understood > naht:
+		if naht is 1:
+			say "There's only one hint topic available." instead;
+		say "You need a number from 1 to [naht]." instead;
+	repeat with Q running through hint-topics:
+		if reference-number of Q is number understood:
+			try fully revealing Q;
+
+fully revealing is an action applying to one visible thing.
+
+carry out fully revealing:
+	let Z be the hint-list of noun;
+	repeat through Z:
+		if there is a show-rule entry:
+			follow the show-rule entry;
+			if the rule failed:
+				say "[italic type]****NOT SHOWN: [roman type]";
+		say "[hint-text entry][line break]";
+
 section showing every hint name
 
 [this is a simple debug command so the programmer can make sure their hint names make sense, don't clash, etc.]
 
-showing every hint name is an action applying to nothing.
+showing every hint name is an action out of world.
 
 understand the command "allhintnames" as something new.
 
@@ -807,18 +890,18 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	check dropping:
 		say "No way! The coin is too valuable, or something." instead;
 
-	Center Room is a room. printed name is "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
+	Center Room is a room. description is "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
 
 	Bronze Room is north of Center Room.
 
 	check going nowhere:
 		say "[if player is in center room]You can go any of the four directions[else]Only one way out[end if]."
 
-	Silver Room is east of Center Room. printed name is "You can go back west."
+	Silver Room is east of Center room. description is "You can go back west."
 
-	Gold Room is west of Center Room. printed name is "You can go back east."
+	Gold Room is west of Center room. description is "You can go back east."
 
-	Glass Room is south of Center Room. printed name is "You can go back north."
+	Glass Room is south of Center room. description is "You can go back north."
 
 	The bronze coin is in Bronze Room.
 
@@ -893,6 +976,11 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	hint-text	done-yet	show-rule
 	"Yes, it is, but I was going for practicality."	false	a rule
 	"It didn't make sense to get too fancy."
+	"However, having good test cases is important, so here I'm making a semi-long hint topic to test that."
+	"There is nothing of value from here on out."
+	"I basically want a topic where I can test various behaviors in a long table, so I am sure nothing in my extension is broken."
+	"One more random hint should do it."
+	"There we go."
 
 	test win with "n/get all/s/e/get all/w/w/get all/e/s"
 
@@ -927,7 +1015,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	Branching Room is a not gemmish room.
 
-	the gaudy hatch is a supporter in Branching Room. printed name is "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
+	the gaudy hatch is a supporter in Branching room. description is "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
 
 	the blue hole is a container. the blue hole is part of the gaudy hatch.
 	the green hole is a container. the green hole is part of the gaudy hatch.
