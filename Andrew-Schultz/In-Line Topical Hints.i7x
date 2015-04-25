@@ -664,7 +664,7 @@ carry out toggling in-game hint debugging (this is the hint debugging for progra
 	the rule succeeds;
 
 every turn when hint-debug is true (this is the list topics every turn rule) : [you may wish to change the text here to make it more useer friendly.]
-	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. Last topic hinted = [last-topic-hinted].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
+	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. [if last-topic-hinted is not null-topic]Last topic hinted = [last-topic-hinted][else]No topic hinted yet[end if].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
 
 section showing all active full hint topics
 
@@ -759,8 +759,8 @@ understand the command "allhintnames" as something new.
 understand "allhintnames" as showing every hint name.
 
 carry out showing every hint name:
-	say "You have [number of hint-topics] total hints. Here are their names.";
-	repeat with xxx running through hint-topics:
+	say "You have [number of meaningful hint-topics] total hints. Here are their names.";
+	repeat with xxx running through meaningful hint-topics:
 		say "[xxx][line break]";
 	the rule succeeds;
 
@@ -890,18 +890,18 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	check dropping:
 		say "No way! The coin is too valuable, or something." instead;
 
-	Center Room is a room. description is "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
+	Center Room is a room. "You can go north to the bronze room, east to the silver room, west to the gold room, or south to the glass room."
 
 	Bronze Room is north of Center Room.
 
 	check going nowhere:
 		say "[if player is in center room]You can go any of the four directions[else]Only one way out[end if]."
 
-	Silver Room is east of Center room. description is "You can go back west."
+	Silver Room is east of Center Room. "You can go back west."
 
-	Gold Room is west of Center room. description is "You can go back east."
+	Gold Room is west of Center Room. "You can go back east."
 
-	Glass Room is south of Center room. description is "You can go back north."
+	Glass Room is south of Center Room. "You can go back north."
 
 	The bronze coin is in Bronze Room.
 
@@ -982,6 +982,8 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	"One more random hint should do it."
 	"There we go."
 
+	volume testing - not for release
+
 	test win with "n/get all/s/e/get all/w/w/get all/e/s"
 
 	test hprod with "hintdebug/n/get all/hint/topic 1/x me/topic 1"
@@ -989,6 +991,8 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 	test hintchange with "n/get all/s/hint/n/topic 1/topic 2"
 
 	test block with "hint block/hint/hint all/h/t/topic/topic 1/t 1/t1/1/hint block/hint all/hint review/hint one/hint recent/hint on/hint off/"
+	
+	[end example]
 
 Example: *** Gems - a small game with strictly rule-based hints
 
@@ -1015,7 +1019,7 @@ Example: *** Gems - a small game with strictly rule-based hints
 
 	Branching Room is a not gemmish room.
 
-	the gaudy hatch is a supporter in Branching room. description is "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
+	the gaudy hatch is a supporter in Branching room. "A gaudy hatch blocks the way south. It seems to be indented. You can go any other way from west clockwise to east."
 
 	the blue hole is a container. the blue hole is part of the gaudy hatch.
 	the green hole is a container. the green hole is part of the gaudy hatch.
@@ -1265,3 +1269,5 @@ Example: *** Gems - a small game with strictly rule-based hints
 	test win-sa with "put sapphire in blue/n/get amethyst/s/put amethyst in yellow/ne/get diamond/sw/put diamond in white/e/get ruby/w/put ruby in red/w/get emerald/e/put emerald in green/nw/get onyx/se/put onyx in hatch/s"
 
 	test win-1 with "i/test win-di/test win-ru/test win-am/test win-em/test win-sa"
+	
+	[end example]
