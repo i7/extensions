@@ -1,4 +1,4 @@
-Version 6 of Conversation Suggestions by Eric Eve begins here.
+Version 6/150607 of Conversation Suggestions by Eric Eve begins here.
 "Provides a means of suggesting topics of conversation to the player, either in response to a TOPICS command or when NPCs are greeted. This extension requires Conversation Framework. Version 3 makes use of Complex Listing by Emily Short if it's included in the same game rather than indexed text to generate a list of suggestions."
 
 Book 1 - Includes
@@ -120,16 +120,15 @@ Carry out listing suggested topics (this is the list suggested topics rule):
 	let ask-suggs be the number of entries in sugg-list-ask;
 	let tell-suggs be the number of entries in sugg-list-tell;
 	let other-suggs be the number of entries in sugg-list-other;
-	if ask-suggs + tell-suggs + other-suggs is 0 begin;
+	if ask-suggs + tell-suggs + other-suggs is 0:
 		say "[nothing specific]";
 		rule succeeds;
-	end if;
 	say "[if topic-request is implicit]([end if][We] [could] " (A);
-	if other-suggs > 0 then
+	if other-suggs > 0:
 		say "[sugg-list-other in topic format][if tell-suggs + ask-suggs > 0]; or [end if]" (B);
-	if ask-suggs > 0 then
+	if ask-suggs > 0:
 		say "ask [regarding the current interlocutor][them] about [sugg-list-ask in topic format][if tell-suggs > 0]; or [end if]" (C);
-	if tell-suggs > 0 then
+	if tell-suggs > 0:
 		say "tell [regarding the current interlocutor][them] about [sugg-list-tell in topic format]" (D);
 	say "[if topic-request is implicit].)[otherwise].[end if][paragraph break]" (E).
 	
