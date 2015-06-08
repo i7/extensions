@@ -1,4 +1,4 @@
-Version 9/140501 of Keyword Interface by Aaron Reed begins here.
+Version 9/150607 of Keyword Interface by Aaron Reed begins here.
 
 "This extension emulates Blue Lacuna's emphasized keyword system for simplifying common IF input. Nouns, directions, and topics can be typed without a verb to examine, go, or discuss. Works with Glulx or z-code."
 
@@ -170,14 +170,9 @@ The keyword emphases are keyword-color1-style, keyword-color2-style, keyword-bol
 The style of object-word is usually keyword-color1-style. The style of direction-word is usually keyword-color2-style. The style of topic-word is usually keyword-bold-style. The style of parser-word is usually keyword-italics-style.
 
 Table of User Styles (continued)
-style name	fixed width	boldness	relative size	glulx color
-special-style-1	proportional-font	bold-weight	0	g-color1
-special-style-2	proportional-font	bold-weight	0	g-color2
- 
-Table of Common Color Values (continued)
-glulx color value	assigned number   
-g-color1	255	[blue]
-g-color2	3381555	[green]
+style name	fixed width	font weight	relative size	color
+special-style-1	false	bold-weight 	0	"#0000FF"	[blue]
+special-style-2	false	bold-weight 	0	"#339933"	[green]
 
 To set the text style for (val - a keyword emphasis):
 	if val is keyword-color1-style:
