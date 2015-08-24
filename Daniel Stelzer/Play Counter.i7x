@@ -1,4 +1,4 @@
-Play Counter by Daniel Stelzer (for Glulx only) begins here.
+Play Counter (for Glulx only) by Daniel Stelzer begins here.
 
 "Allows an author to check how many times their story has been played."
 
