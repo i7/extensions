@@ -1,6 +1,6 @@
 Glulx Text Styles (for Glulx only) by Daniel Stelzer begins here.
 
-"Glulx Text Styles provides a more powerful way to set up special text effects for Glulx."
+"Glulx Text Styles provides an more powerful way to set up special text effects for Glulx."
 
 "based on code by Emily Short and Brady Garvin"
 
@@ -9,9 +9,9 @@ Glulx color value is a kind of value. Some glulx color values are defined by the
 Table of Common Color Values
 glulx color value	assigned number
 g-black	0
-g-dark-grey	4473924
-g-medium-grey	8947848
-g-light-grey	14540253
+g-dark-gray	4473924
+g-medium-gray	8947848
+g-light-gray	14540253
 g-white	16777215
 
 text-justification is a kind of value. The text-justifications are left-justified, left-right-justified, center-justified, and right-justified. 
@@ -29,9 +29,12 @@ Before starting the virtual machine:
 	initialize user styles.
 	
 Table of User Styles
-style name	justification	obliquity	indentation	first-line indentation	boldness	fixed width	relative size	glulx color glulx background color
-a glulx-style		a text-justification	an obliquity	a number	a number	a boldness	a fixity	a number	a glulx color value	a glulx color value
+style name (a glulx-style)	justification (a text-justification)	obliquity (an obliquity)	indentation (a number)	first-line indentation (a number)	boldness (a boldness)	fixed width (a fixity)	relative size (a number)	glulx color (a glulx color value)	glulx background color (a glulx color value)
+--	--	--	--	--	--	--	--	--	--
 
+Table of Status Line Styles
+style name (a glulx-style)	justification (a text-justification)	obliquity (an obliquity)	indentation (a number)	first-line indentation (a number)	boldness (a boldness)	fixed width (a fixity)	relative size (a number)	glulx color (a glulx color value)	glulx background color (a glulx color value)
+--	--	--	--	--	--	--	--	--	--
 
 To initialize user styles:
 	repeat through the Table of User Styles:
@@ -42,12 +45,23 @@ To initialize user styles:
 		if there is a boldness entry, apply (boldness entry) boldness to (style name entry);
 		if there is a fixed width entry, apply fixed-width-ness (fixed width entry) to (style name entry);
 		if there is a relative size entry, apply (relative size entry) size-change to (style name entry);
-		if there is a glulx color entry, apply (assigned number of glulx color entry) color to (style name entry).
+		if there is a glulx color entry, apply (assigned number of glulx color entry) color to (style name entry);
+		if there is a glulx background color entry, apply (assigned number of glulx background color entry) background color to (style name entry);
+	repeat through the Table of Status Line Styles:
+		if there is a justification entry, apply status line justification of (justification entry) to (style name entry);
+		if there is an obliquity entry, apply status line obliquity (obliquity entry) to (style name entry);
+		if there is an indentation entry, apply status line (indentation entry) indentation to (style name entry);
+		if there is a first-line indentation entry, apply status line (first-line indentation entry) first-line indentation to (style name entry);
+		if there is a boldness entry, apply status line (boldness entry) boldness to (style name entry);
+		if there is a fixed width entry, apply status line fixed-width-ness (fixed width entry) to (style name entry);
+		if there is a relative size entry, apply status line (relative size entry) size-change to (style name entry);
+		if there is a glulx color entry, apply status line (assigned number of glulx color entry) color to (style name entry);
+		if there is a glulx background color entry, apply status line (assigned number of glulx background color entry) background color to (style name entry);
 
 To apply (color change - a number) color to (chosen style - a glulx-style):
 	(- SetColor({chosen style}, {color change}); -).
 
-To apply (color change - a number) background color to (chosen style - a special-style):
+To apply (color change - a number) background color to (chosen style - a glulx-style):
 	(- SetBackgroundColor({chosen style}, {color change}); -).
 
 To apply (relative size change - a number) size-change to (chosen style - a glulx-style):
@@ -124,7 +138,90 @@ Include (-
 
 -)
 
+To apply status line (color change - a number) color to (chosen style - a glulx-style):
+	(- SetSLColor({chosen style}, {color change}); -).
+
+To apply status line (color change - a number) background color to (chosen style - a glulx-style):
+	(- SetSLBackgroundColor({chosen style}, {color change}); -).
+
+To apply status line (relative size change - a number) size-change to (chosen style - a glulx-style):
+	(- SetSLSize({chosen style}, {relative size change}); -).
+
+To apply status line (chosen boldness - a boldness) boldness to (chosen style - a glulx-style):
+	(- BoldnessSetSL({chosen style}, {chosen boldness}); -).
+
+To apply status line (indentation amount - a number) indentation to (chosen style - a glulx-style):
+	(- IndentSL({chosen style}, {indentation amount}); -).
+
+To apply status line (indentation amount - a number) first-line indentation to (chosen style - a glulx-style):
+	(- ParaIndentSL({chosen style}, {indentation amount}); -).
+
+To apply status line justification of (justify - a text-justification) to (chosen style - a glulx-style):
+	(- JustificationSL({chosen style}, {chosen style}); -).
+
+To apply status line fixed-width-ness (chosen fixity - a fixity) to (chosen style - a glulx-style):
+	(- FixitySetSL({chosen style}, {chosen fixity}); -).
+
+To apply status line obliquity (chosen obliquity - an obliquity) to (chosen style - a glulx-style):
+	(- ObliquifySL({chosen style}, {chosen obliquity}); -).
+
+Include (-
+
+[ SetSLColor S N;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_TextColor, N); 
+];
+
+[ SetSLBackgroundColor S N;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_BackColor, N);
+];
+
+[ FixitySetSL S N;
+	N--;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Proportional, N); 
+];
+
+[ SetSLSize S N;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Size, N); 
+];
+
+[ BoldnessSetSL S N;
+	N = N-2;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Weight, N); 
+];
+
+[ ParaIndentSL S N;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_ParaIndentation, N); 
+];
+
+[ IndentSL S N;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Indentation, N); 
+];
+
+[ JustificationSL N S;
+	N--;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Justification, N); 
+];
+
+[ ObliquifySL S N;
+	N--;
+	S--;
+	glk_stylehint_set(wintype_TextGrid, S, stylehint_Oblique, N); 
+];
+
+-)
+
 To say using (chosen style - a glulx-style):
+	(-glk_set_style({chosen style}-1);-)
+
+To say using style number (chosen style - a number):
 	(-glk_set_style({chosen style}-1);-)
 
 Glulx Text Styles ends here.
