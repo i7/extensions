@@ -1,6 +1,6 @@
 Glulx Text Styles (for Glulx only) by Daniel Stelzer begins here.
 
-"Glulx Text Styles provides an more powerful way to set up special text effects for Glulx."
+"Glulx Text Styles provides a more powerful way to set up special text effects for Glulx."
 
 "based on code by Emily Short and Brady Garvin"
 
@@ -10,8 +10,11 @@ Table of Common Color Values
 glulx color value	assigned number
 g-black	0
 g-dark-gray	4473924
+g-dark-grey	4473924
 g-medium-gray	8947848
+g-medium-grey	8947848
 g-light-gray	14540253
+g-light-grey	14540253
 g-white	16777215
 
 text-justification is a kind of value. The text-justifications are left-justified, left-right-justified, center-justified, and right-justified. 
