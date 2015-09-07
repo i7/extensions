@@ -1,29 +1,14 @@
-Version 1 of Object Descriptors by Peter Orme begins here.
+Version 2 of Object Descriptors by Peter Orme begins here.
 
-Section 1 - Text list wrappers
+Section 1 - the Object Descriptor Rule Book 
 
-[This is a little helper object that contains a list of text. Sometimes you need to use an object and not a list.]
-
-A text list wrapper is a kind of object. 
-Every text list wrapper has a list of text called the contents. 
-
-Section 2 - the Object Descriptor Rule Book 
-
-[Because a rulebook can not produce a list of text, we need this global dummy object to wrap a list of text in. 
-The rulebook formally produces a text list wrapper, but it will always produce the same one. The interesting 
-thing is what is in the "contents" - the actual list of text - of this object after we've followed the rules for some object.]
-
-The object descriptor text list wrapper is a text list wrapper.
-
-The object descriptor rules are an object-based rulebook producing a text list wrapper.
+The object descriptor rules are an object-based rulebook producing lists of text.
 The object descriptor rulebook has a list of text called descriptors.
 
-the last object descriptor rule (this is the wrap properties up rule):
-	truncate the contents of the object descriptor text list wrapper to 0 entries;
-	add descriptors to the contents of the object descriptor text list wrapper;
-	rule succeeds with result the object descriptor text list wrapper.	
+the last object descriptor rule (this is the descriptors are descriptors rule):
+	rule succeeds with result the descriptors.	
 
-Section 3 - Basic Object Descriptor Rules
+Section 2 - Basic Object Descriptor Rules
 
 an object descriptor rule for a person (called item) (this is the descriptors of gender rule):
 	if the item is male, add "male" to the descriptors;
@@ -72,13 +57,12 @@ an object descriptor rule for a device (called item) (this is the descriptors of
 	if the item is switched on, add "switched on" to the descriptors;
 	if the item is switched off, add "switched off" to the descriptors;
 
-Section 4 - Deciding on Object Descriptors of an Object
+Section 3 - Deciding on Object Descriptors of an Object
 	
 to decide what list of text is the object descriptors of (item - an object):
-	let wrapper be the text list wrapper produced by the object descriptor rules for the item;
-	decide on the contents of the wrapper.
+	decide on the list of text produced by the object descriptor rules for the item.
 	
-section 5 - Dev inspecting - Not for Release
+section 4 - Dev inspecting - Not for Release
 
 dev inspecting is an action out of world applying to one visible thing.
 
