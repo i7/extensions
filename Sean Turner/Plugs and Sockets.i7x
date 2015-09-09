@@ -1,4 +1,4 @@
-Version 4 of Plugs and Sockets by Sean Turner begins here.
+Version 4/150909 of Plugs and Sockets by Sean Turner begins here.
 
 "System for handling plugs and sockets."
 
@@ -258,6 +258,7 @@ Check an actor plugging something into something (this is the plug-unknown-socke
 	if the candidate plug is nothing, and the candidate socket is nothing:
 		let matching connection type be "";
 		repeat with test-plug running through the PS-plugs which are part of the candidate inserter:
+			if the actual plug is not nothing and the actual socket is not nothing, break;
 			if the attachment of the test-plug is nothing:
 				now the actual plug is the test-plug;
 				repeat with test-socket running through the PS-sockets which are part of the candidate receiver:
@@ -295,7 +296,7 @@ The plug-known-socket-known rule is listed last in the check plugging it into ru
 Carry out an actor plugging something into something (this is the plug-something-into-something rule):
 	now the attachment of the actual plug is the actual socket;
 	now the attachment of the actual socket is the actual plug.
-	
+
 To plug is a verb.
 
 Report an actor plugging something into something (this is the report-plugging it into rule):
