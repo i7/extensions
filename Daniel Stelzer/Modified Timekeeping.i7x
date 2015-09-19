@@ -21,10 +21,13 @@ The implicit actions add time rule is listed first in the for implicitly taking 
 This is the modified generate action rule:
 	now the action-processing success flag is false;
 	abide by the generate action rule;
+	[say "Current action: [current action].";]
 	if the action-processing success flag is false, rule succeeds;
-	if the current action is acting fast, rule succeeds.
+	if the current action is acting fast, rule succeeds;
+	make no decision.
+	[say "    Time passing.";]
 
-This is the record action success rule: now the action-processing success flag is true.
+This is the record action success rule: now the action-processing success flag is true; make no decision.
 
 To take no time:
 	now the action-processing success flag is false.
