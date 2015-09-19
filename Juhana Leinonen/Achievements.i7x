@@ -1,4 +1,4 @@
-Version 1 of Achievements by Juhana Leinonen begins here.
+Version 1/150919 of Achievements by Juhana Leinonen begins here.
 
 "A simple but flexible rule-based achievement system. Awarded achievements can optionally persist in external files after a restart."
 
@@ -8,6 +8,9 @@ Chapter 1 - Awarding achievements
 Use persistent achievements translates as (- Constant PERSISTENT_ACHIEVEMENTS; -).
 
 The file of Persistent Achievements is called "achievementdata".
+
+Loadingstate is a truth state that varies.  LoadingState is true.
+
 
 This is the check for achievements rule:
 	repeat through the Table of Achievements:
@@ -26,7 +29,8 @@ To award the/-- (name - text) achievement, silently:
 				now print achievement command hint is true;
 			now the awarded entry is true;
 			If the persistent achievements option is active:
-				write achievement name to an external file;
+				if loadingstate is false:
+					write achievement name to an external file;
 			if not silently:
 				carry out the printing the achievement activity with the achievement entry.
 			
@@ -149,7 +153,8 @@ First when play begins when the persistent achievements option is active (this i
 			otherwise if mode is "name":
 				now name is "[name][character number C in data]";
 			otherwise if mode is "checksum":
-				now checksum is "[checksum][character number C in data]".
+				now checksum is "[checksum][character number C in data]";
+	now loadingstate is false.
 
 
 Chapter 6 - Persistent achievements Z-code dummy (for Z-machine only)
@@ -259,7 +264,6 @@ Example: * Another Day at the Office - Rule-based and manually awarded achieveme
 		end the story finally.
 		
 	Test me with "read memo/look under desk/z/z/exit".
-
 
 
 
