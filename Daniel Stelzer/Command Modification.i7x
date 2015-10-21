@@ -37,13 +37,18 @@ To visually force the command (typed command - text): [This just does the typing
 		let X be the next keypress;
 	say "[roman type][line break]".
 
-The command override queue is a list of text that varies.
+The command override queue is a list of lists of text that varies.
 An override mode is a kind of value. The override modes are replay mode, forced mode, and silent mode.
-The command override mode is an override mode that varies. The command override mode is replay mode.
+The command override mode is a list of override modes that varies.
 
 Rule for reading a command when the command override queue is not empty (this is the command modification rule):
-	let the new command be entry 1 in the command override queue;
-	if the command override mode is:
+	while entry 1 in the command override queue is empty: [We've finished this set. Now on to the next one!]
+		remove entry 1 from the command override queue; [We need the "while" instead of a simple "if" to deal with an edge case when the last command of one set adds another set, leaving an empty vestige behind in the queue.]
+		remove entry 1 from the command override mode; [The loop means it'll be cleaned up before it causes any problems.]
+		if the command override queue is empty, make no decision; [Drop back to normal reading-a-command rules when we have nothing more to do here.]
+	let the new command be entry 1 in entry 1 in the command override queue; [Go one level deeper.]
+	let the chosen mode be entry 1 in the command override mode;
+	if the chosen mode is:
 		-- replay mode:
 			say "[command prompt][alert][new command][/alert][line break]" (A);
 		-- forced mode:
@@ -52,31 +57,37 @@ Rule for reading a command when the command override queue is not empty (this is
 		-- silent mode:
 			do nothing;
 	change the text of the player's command to the new command;
-	remove entry 1 from the command override queue.
+	remove entry 1 from entry 1 in the command override queue; [Pop this command off.]
+	if entry 1 in the command override queue is empty: [Check this once at the end as well just in case.]
+		remove entry 1 from the command override queue;
+		remove entry 1 from the command override mode.
+
+To push command-forcing for (commands - list of text) in (mode - override mode):
+	add the commands at entry 1 in the command override queue;
+	add the mode at entry 1 in the command override mode.
+
+To push single command-forcing for (command - text) in (mode - override mode):
+	let L be a list of texts;
+	add the command to L;
+	push command-forcing for L in the mode.
 
 To force the command (typed command - text):
-	add the substituted form of the typed command to the command override queue;
-	now the command override mode is forced mode.
+	push single command-forcing for the typed command in forced mode.
 
 To force the command set (commands - list of text):
-	add the commands to the command override queue;
-	now the command override mode is forced mode.
+	push command-forcing for the commands in forced mode.
 
 To replay the command (typed command - text):
-	add the substituted form of the typed command to the command override queue;
-	now the command override mode is replay mode.
+	push single command-forcing for the typed command in replay mode.
 
 To replay the command set (commands - list of text):
-	add the commands to the command override queue;
-	now the command override mode is replay mode.
+	push command-forcing for the commands in replay mode.
 
 To silently execute the command (typed command - text):
-	add the substituted form of the typed command to the command override queue;
-	now the command override mode is silent mode.
+	push single command-forcing for the typed command in silent mode.
 
 To silently execute the command set (commands - list of text):
-	add the commands to the command override queue;
-	now the command override mode is silent mode.
+	push command-forcing for the commands in silent mode.
 
 Command Modification ends here.
 
