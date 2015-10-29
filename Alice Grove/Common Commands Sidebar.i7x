@@ -1,11 +1,10 @@
-Version 1/151028 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/151029 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. Requires version 6L of Inform 7."
 
 
 
 [CCS is in beta. Known issues:
-* Crashes in Spatterlight.
 * In Gargoyle, the text color used in the sidebar will also be the color used for the cursor in the main window.
 * Refreshing the sidebar may result in an extra line break in the main window. For the moment I've tried to keep refreshing to a minimum.]
 
@@ -291,20 +290,11 @@ To finalize the sidebar attributes:
 Chapter - Sidebar Behavior	
 
 
-Section - Detecting Whether the Interpreter Will Support the Sidebar
+Section - Spatterlight Warning
 
-[This exists to reduce the risk of crashing in Spatterlight.]
+[Gives the player a warning to use another interpreter if Spatterlight is detected.]
 
-The sidebar can be awaiting interpreter detection, supported by the interpreter, or unsupported by the interpreter (this is the sidebar/interpreter compatibility property). The sidebar is awaiting interpreter detection.
-
-
-To decide if the interpreter supports the sidebar:
-	if the sidebar is awaiting interpreter detection:
-		follow the detect whether the interpreter is compatible with the sidebar rule;
-	if the sidebar is supported by the interpreter, yes;
-	no.
-
-This is the detect whether the interpreter is compatible with the sidebar rule:	
+When play begins (this is the detect whether we're using Spatterlight rule):	
 	if the glk version is 1792:
 		unless Glulx character input is supported:
 			if Glulx mouse input is supported:
@@ -313,18 +303,10 @@ This is the detect whether the interpreter is compatible with the sidebar rule:
 					if Glulx timekeeping is supported:
 						unless Glulx sound notification is supported:
 							if Glulx graphic-window mouse input is supported:
-								now the sidebar is unsupported by the interpreter; [i.e. we're using Spatterlight]
-								make no decision; [i.e. stop the rule here]
-	now the sidebar is supported by the interpreter.
-	
-Check saving the game (this is the reset the sidebar/interpreter compatibility before saving rule):
-	now the sidebar is awaiting interpreter detection.
+								say "[bold type]Warning:[roman type] This story is not compatible with the Spatterlight interpreter. If you are using Spatterlight, please switch to a different interpreter to avoid crashing." (A);
+								wait for any key.
 
-[
- The refresh windows after arranging rule does nothing unless the interpreter supports the sidebar.
- 
- The refresh windows after restoring rule does nothing unless the interpreter supports the sidebar.
-]
+
 
 Section - Introducing the Sidebar
 
@@ -335,10 +317,10 @@ The sidebar can be introduced already. The sidebar is not introduced already.
 
 
 After printing the banner text when (the sidebar is shown automatically) and (the sidebar is not introduced already) (this is the automatically show the command sidebar rule):
-	if (the interpreter supports the sidebar) and (the main window is large enough to show the sidebar):
+	if the main window is large enough to show the sidebar:
 		show the command sidebar window;
 		if the sidebar is g-present:
-			say "[italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
+			say "[line break][italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
 			say "[roman type]" (B);
 			now the sidebar is introduced already;
 		[if it's not present, the show phrase will print a message]
@@ -346,9 +328,9 @@ After printing the banner text when (the sidebar is shown automatically) and (th
 		follow the introduce the sidebar commands as a list rule.
 		
 
-After printing the banner text when (the sidebar is prompted automatically ) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
-	if (the interpreter supports the sidebar) and (the main window is large enough to show the sidebar):
-		say "[italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
+After printing the banner text when (the sidebar is prompted automatically) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
+	if the main window is large enough to show the sidebar:
+		say "[line break][italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
 		if player consents:
 			show the command sidebar window;
 			if sidebar is g-present:
@@ -385,49 +367,39 @@ To decide if the main window is large enough to show the sidebar:
 	
 
 To show the command sidebar window:
-	if the interpreter supports the sidebar:
-		if sidebar_attributes_finalized is false:
-			finalize the sidebar attributes;
-		if the main window is large enough to show the sidebar:
-			open the sidebar;
-			unless the sidebar is g-present:
-				follow the can't open the sidebar for unknown reason rule;
-		otherwise:
-			follow the can't open the sidebar when the main window is too small rule;
+	if sidebar_attributes_finalized is false:
+		finalize the sidebar attributes;
+	if the main window is large enough to show the sidebar:
+		open the sidebar;
+		unless the sidebar is g-present:
+			follow the can't open the sidebar for unknown reason rule;
 	otherwise:
-		follow the can't use the sidebar when the interpreter doesn't support it rule.
+		follow the can't open the sidebar when the main window is too small rule.
 
-	
-
-This is the can't use the sidebar when the interpreter doesn't support it rule:
-	say "The commands sidebar is not supported by your interpreter[if the sidebar is allowing toggling]. To list the commands in the main window instead, type COMMANDS[end if]." (A).
 	
 This is the can't open the sidebar when the main window is too small rule: [Also catches Parchment, which seems to fail the minimum size tests no matter what]
-	say "The commands sidebar could not be opened. Either your interpreter does not support this feature, or the window is not large enough to conveniently display the sidebar[if the sidebar is allowing toggling]. To list the commands in the main window instead, type COMMANDS[end if]." (A).
+	say "The commands sidebar could not be opened. Either your interpreter does not support this feature, or the window is not large enough to conveniently display the sidebar. To list the commands in the main window instead, type COMMANDS." (A).
 	
 This is the can't open the sidebar for unknown reason rule:
-	say "The commands sidebar could not be opened[if the sidebar is allowing toggling]. To list the commands in the main window instead, type COMMANDS[end if]." (A).
+	say "The commands sidebar could not be opened. To list the commands in the main window instead, type COMMANDS." (A).
 	
 	
-To hide the command sidebar window:
-	if the interpreter supports the sidebar:
-		close the sidebar;
-	otherwise:
-		follow the can't use the sidebar when the interpreter doesn't support it rule.
+To hide the command sidebar window: [Need to revisit this]
+	close the sidebar.
+	
 		
 		
 		
 Section - Refreshing the Sidebar
 
 
-[Every turn when the interpreter supports the sidebar and the sidebar is g-present (This is the Refresh the Sidebar Window Rule):
+[Every turn when the sidebar is g-present (This is the Refresh the Sidebar Window Rule):
 	refresh the sidebar.]
 	
 
 Rule for refreshing the sidebar (This is the Refresh the Sidebar Commands Rule):
-	if the interpreter supports the sidebar:
-		follow the print the commands sidebar text rule;
-		say "[run paragraph on]" (A). [an attempt to compensate for the line break otherwise printed when switching back to the main window]
+	follow the print the commands sidebar text rule;
+	say "[run paragraph on]" (A). [an attempt to compensate for the line break otherwise printed when switching back to the main window]
 	
 	
 	
@@ -436,27 +408,9 @@ Section - Turning the Sidebar On and Off
 The sidebar can be either allowing toggling or disallowing toggling. The sidebar is allowing toggling.
 
 
-Toggling the commands sidebar is an action out of world.
-Understand "sidebar" as toggling the commands sidebar.
-
-Check toggling the commands sidebar:
-	unless the interpreter supports the sidebar:
-		follow the can't use the sidebar when the interpreter doesn't support it rule instead.
-
-Carry out toggling the commands sidebar (this is the toggle the commands sidebar rule):
-	if the sidebar is g-unpresent:
-		try turning on the commands sidebar;
-	otherwise if the sidebar is g-present:
-		try turning off the commands sidebar.
-
-
 Turning on the commands sidebar is an action out of world.
 Understand "sidebar on" as turning on the commands sidebar when the sidebar is allowing toggling.
-[Understand "sidebar" as turning on the commands sidebar when the sidebar is allowing toggling and the sidebar is g-unpresent.]
-
-Check turning on the commands sidebar:
-	unless the interpreter supports the sidebar:
-		follow the can't use the sidebar when the interpreter doesn't support it rule instead.
+Understand "sidebar" as turning on the commands sidebar when the sidebar is allowing toggling and the sidebar is g-unpresent.
 
 Carry out turning on the commands sidebar (this is the turn on the commands sidebar rule):
 	if sidebar is g-unpresent:
@@ -470,13 +424,7 @@ Carry out turning on the commands sidebar (this is the turn on the commands side
 			
 Turning off the commands sidebar is an action out of world.
 Understand "sidebar off" as turning off the commands sidebar when the sidebar is allowing toggling.
-
-[Understand "sidebar" as turning off the commands sidebar when the sidebar is allowing toggling and the sidebar is g-present.]
-[Understand "sidebar" as turning off the commands sidebar when the sidebar is allowing toggling.]
-
-Check turning off the commands sidebar:
-	unless the interpreter supports the sidebar:
-		follow the can't use the sidebar when the interpreter doesn't support it rule instead.
+Understand "sidebar" as turning off the commands sidebar when the sidebar is allowing toggling and the sidebar is g-present.
 
 Carry out turning off the commands sidebar (this is the turn off the commands sidebar rule):
 	if sidebar is g-present:
@@ -487,7 +435,7 @@ Carry out turning off the commands sidebar (this is the turn off the commands si
 		
 		
 		
-Understand "sidebar [text]" as a mistake ("Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle. To list the commands in the main window, type COMMANDS.") when the sidebar is allowing toggling.
+Understand "sidebar [text]" as a mistake ("Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.") when the sidebar is allowing toggling.
 		
 
 
@@ -495,7 +443,7 @@ Section - Swapping Tables
 
 To swap (TN - a table name) into the/-- sidebar:
 	now the chosen table of commands is TN;
-	if (the interpreter supports the sidebar) and (the sidebar is g-present):
+	if the sidebar is g-present:
 		refresh the sidebar;
 	now commands_table_chosen is true.
 	
@@ -520,7 +468,7 @@ The sidebar can be flagged to appear later. The sidebar is not flagged to appear
 		
 		
 To temporarily hide the sidebar if necessary:
-	if (the interpreter supports the sidebar) and (the sidebar is g-present):
+	if the sidebar is g-present:
 		now the sidebar is flagged to appear later;
 		hide the command sidebar window;
 	now menu_on_display is true.
@@ -585,10 +533,10 @@ Rule for constructing the status line when (the sidebar is auto-adjusting the st
 	
 Chapter - Suggesting the Sidebar after a Blank Command
 
-The sidebar can be suggested following blank commands. [default to false?]
+The sidebar can be suggested following blank commands.
 
 Rule for printing a parser error when ((the latest parser error is the I beg your pardon error) and (the sidebar is suggested following blank commands) and (the sidebar is g-unpresent)) (this is the suggest the sidebar when the player enters a blank command rule):
-	say "If you're not sure what to do, type [if (the sidebar is allowing toggling) and (the sidebar is supported by the interpreter) and (the main window is large enough to show the sidebar)]SIDEBAR ON[otherwise]COMMANDS[end if] to see some commands you can try." (A) instead.	
+	say "If you're not sure what to do, type [if (the sidebar is allowing toggling) and (the main window is large enough to show the sidebar)]SIDEBAR ON[otherwise]COMMANDS[end if] to see some commands you can try." (A) instead.	
 	
 	
 	
@@ -680,7 +628,7 @@ Report requesting the story file version (this is the attribute the play IF post
 	say "'How To Play Interactive Fiction: An entire strategy guide on a single postcard,' written by Andrew Plotkin and designed by Lea Albaugh, was the inspiration for the Common Commands Sidebar extension. The postcard, available at <http://pr-if.org/doc/play-if-card/>, is licensed under a CC BY SA 3.0 United States licen[if the American dialect option is active]s[otherwise]c[end if]e, available at <http://creativecommons.org/licenses/by-sa/3.0/us/>.  Content was adapted with permission. See the extension documentation for details." (A).
 
 
-
+	
 
 Common Commands Sidebar ends here.
 
@@ -689,7 +637,7 @@ Common Commands Sidebar ends here.
 
 Chapter: Acknowledgements
 
-Thanks to Joseph Geipel, Andrew Schultz, and Nick Turner for testing, to BjÃ¶rn Paulsen for code feedback, and to BjÃ¶rn Paulsen, Daniel Stelzer, Dannii Willis, Erik Temple, Hanon Ondricek, Joseph Geipel, Juhana, Matt Weiner, Peter Piers, and zarf for responding to my questions.
+Thanks to Joseph Geipel, Andrew Schultz, and Nick Turner for testing, to Björn Paulsen for code feedback, and to Björn Paulsen, Daniel Stelzer, Dannii Willis, Erik Temple, Hanon Ondricek, Joseph Geipel, Juhana, Matt Weiner, Peter Piers, and zarf for responding to my questions.
 
 This extension is inspired by 'How To Play Interactive Fiction: An entire strategy guide on a single postcard' written by Andrew Plotkin and designed by Lea Albaugh. The postcard, available at <http://pr-if.org/doc/play-if-card/>, is licensed under a CC BY SA 3.0 United States license, available at <http://creativecommons.org/licenses/by-sa/3.0/us/>. Content from the postcard has been adapted with permission.
 
@@ -730,7 +678,7 @@ and
 	
 (Basic Screen Effects is also required, but any relatively recent version will do.)
 
-Note that Flexible Windows uses the container relation for windows, so we'll need to be cautious about iterating through all containers.
+Note that Flexible Windows uses the container relation for windows, so we'll need to be cautious about iterating through all containers. Also note that Spatterlight is liable to crash when Flexible Windows is used. If Common Commands Sidebar detects Spatterlight, the player will be warned to switch interpreters.
 
 
 Section: Bare Minimum Implementation
