@@ -1,4 +1,4 @@
-Version 1/151029 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/151031 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. Requires version 6L of Inform 7."
 
@@ -316,21 +316,10 @@ The sidebar is prompted automatically.
 The sidebar can be introduced already. The sidebar is not introduced already.
 
 
-After printing the banner text when (the sidebar is shown automatically) and (the sidebar is not introduced already) (this is the automatically show the command sidebar rule):
-	if the main window is large enough to show the sidebar:
-		show the command sidebar window;
-		if the sidebar is g-present:
-			say "[line break][italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
-			say "[roman type]" (B);
-			now the sidebar is introduced already;
-		[if it's not present, the show phrase will print a message]
-	otherwise:
-		follow the introduce the sidebar commands as a list rule.
-		
 
 After printing the banner text when (the sidebar is prompted automatically) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
 	if the main window is large enough to show the sidebar:
-		say "[line break][italic type]This story offers a sidebar that shows some commands commonly used in interactive fiction. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
+		say "[line break][italic type]This story offers a sidebar that shows some useful commands. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
 		if player consents:
 			show the command sidebar window;
 			if sidebar is g-present:
@@ -338,15 +327,30 @@ After printing the banner text when (the sidebar is prompted automatically) and 
 				say "[roman type]" (C);
 			[if it's not present, the show phrase will print a message]
 		otherwise:
-			say "[line break][italic type]The commands sidebar is currently hidden[if the sidebar is allowing toggling]. You can turn the sidebar on and off by typing SIDEBAR ON and SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS.[roman type][paragraph break]" (D);
+			say "[line break][italic type]The commands sidebar is currently hidden[if the sidebar is allowing toggling]. You can turn the sidebar on and off by typing SIDEBAR ON and SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS." (D);
+			say "[roman type]" (E);
 		now the sidebar is introduced already;
 	otherwise:
 		follow the introduce the sidebar commands as a list rule.
 		
 		
+
+After printing the banner text when (the sidebar is shown automatically) and (the sidebar is not introduced already) (this is the automatically show the command sidebar rule):
+	if the main window is large enough to show the sidebar:
+		show the command sidebar window;
+		if the sidebar is g-present:
+			say "[italic type]This story offers a sidebar that shows some useful commands[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
+			say "[roman type]" (B);
+			now the sidebar is introduced already;
+		[if it's not present, the show phrase will print a message]
+	otherwise:
+		follow the introduce the sidebar commands as a list rule.
+
+		
+
 This is the introduce the sidebar commands as a list rule:
-	say  "[italic type]For your reference, this story offers a list of commands commonly used in interactive fiction. You can see this list at any time by typing COMMANDS." (A);
-	say "[roman type]" (B);
+	say  "[italic type]This story offers a list of commands you may find useful. You can see this list at any time by typing COMMANDS." (A);
+	say "[roman type][line break]" (B);
 	now the sidebar is introduced already.
 
 
@@ -384,11 +388,6 @@ This is the can't open the sidebar for unknown reason rule:
 	say "The commands sidebar could not be opened. To list the commands in the main window instead, type COMMANDS." (A).
 	
 	
-To hide the command sidebar window: [Need to revisit this]
-	close the sidebar.
-	
-		
-		
 		
 Section - Refreshing the Sidebar
 
@@ -428,7 +427,7 @@ Understand "sidebar" as turning off the commands sidebar when the sidebar is all
 
 Carry out turning off the commands sidebar (this is the turn off the commands sidebar rule):
 	if sidebar is g-present:
-		hide the command sidebar window;
+		close the sidebar;
 		Say "The commands sidebar is now hidden[if the sidebar is allowing toggling]. To show it again, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
 	otherwise:
 		say "The commands sidebar is already hidden[if the sidebar is allowing toggling]. To show it, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B).
@@ -470,7 +469,7 @@ The sidebar can be flagged to appear later. The sidebar is not flagged to appear
 To temporarily hide the sidebar if necessary:
 	if the sidebar is g-present:
 		now the sidebar is flagged to appear later;
-		hide the command sidebar window;
+		close the sidebar;
 	now menu_on_display is true.
 	
 
@@ -565,7 +564,6 @@ To decide if (TN - a table name) uses the default compass rose:
 						decide yes;
 	decide no.
 	
-
 					
 To decide if (T - a text) is a default compass rose entry:
 	if T is "     N", yes;
@@ -578,16 +576,11 @@ To decide if (T - a text) is a default compass rose entry:
 compass_rose_already_listed is a truth state that varies. compass_rose_already_listed is usually false.
 
 
-[To decide if (T - a text) should be included among the listed commands:
-	if T is "", no;
-	if T is " ", no;
-	if T is "?", no;
-	yes.]
-	
 To decide if (T - a text) should be included among the listed commands:
 	if T is "", no;
 	if T is " ", no;
 	yes.
+	
 	
 
 Carry out listing the sidebar commands (this is the print the sidebar commands in the main window rule):
