@@ -11,6 +11,7 @@ with 16 blank rows.
 The temporary working text is initially "". [The replacement machinery doesn't seem to work on local variables.]
 
 After reading a command:
+	if word number 1 in the player's command is "undef", make no decision; [Don't make replacements here!]
 	now the temporary working text is the player's command;
 	repeat through the Table of Text Macros:
 		replace the word "[input entry]" in the temporary working text with "[replacement entry]";
