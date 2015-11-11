@@ -1,4 +1,4 @@
-Version 1/151031 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/151110 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. Requires version 6L of Inform 7."
 
@@ -10,176 +10,211 @@ Version 1/151031 of Common Commands Sidebar (for Glulx only) by Alice Grove begi
 
 
 
+Part - Required Extensions
 
-Chapter - Required Extensions
-
-Include version 15/150620 of Flexible Windows by Jon Ingold. [See extension documentation about where to find this version.]
+Include version 15/150620 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
 Include Basic Screen Effects by Emily Short.
 
 
-Chapter - Inform 6 Inclusions
+Part - Inform 6
+
+[The glk version helps determine whether the player is using Spatterlight.]
 
 To decide what number is the glk version:
 	(- glk_gestalt( gestalt_Version, 0 ) -).
-
-To decide whether a/the/-- column (TC - table column) exists in (T - table name):
-	(- (TableFindCol({T}, {TC}) ~= 0) -).
-
-
-Chapter - Debugging
-			
-Section - Enabling Debugging - Not For Release
-
-CCS_debug is a truth state that varies. CCS_debug is usually true.
-
-To decide if CCS debugging is on:
-	if CCS_debug is true:
-		decide yes;
-	decide no.
-
-
-Section - Disabling Debugging - For Release Only
-
-CCS_debug is a truth state that varies.
-
-To decide if CCS debugging is on:
-	decide no.
 	
-Section - Debug-Specific Variables - unindexed
+	
+[Story authors may create their own tables of commands, and each table must include a particular column. The phrase below is used to guard against a run-time error in case the required column is missing or mislabled.]
 
-sidebar_prepared is a truth state that varies. sidebar_prepared is usually false.
-
-sidebar_intro_setting_count is a number that varies.
-sidebar_position_setting_count is a number that varies.
-sidebar_text_setting_count is a number that varies.
-sidebar_divider_setting_count is a number that varies.
-prepare_sidebar_count is a number that varies.
+To decide whether the/-- column (C - table column) exists in (T - table name):
+	(- (TableFindCol({T}, {C}) ~= 0) -).
 
 
+Part - Glk Window Attributes
 
-Chapter - Setting Up the Sidebar
-
-Section - Declaring the Window
+[Type, position, and the other values here are defined by the Flexible Windows extension.]
 
 The sidebar is a g-window.
+The type of the sidebar is usually g-text-buffer. [G-text-grid is also possible, but gives us less control over formatting.]
 The main window spawns the sidebar.
 The position of the sidebar is usually g-placeleft.
-The rock of the sidebar is 225.  [For use in a CSS stylesheet.]
 The scale method of the sidebar is g-fixed-size.
 The measurement of the sidebar is usually 30.
+The rock of the sidebar is 225.  [For use in a CSS stylesheet.]
+The background color of the sidebar is usually "#F0E2C7". [beige]
 
 
+Part - Showing and Hiding the Sidebar
 
-Section - Setting the Built-in Options
+Chapter - Showing the Sidebar
 
-[If the phrase setting up the sidebar appears more than once in the source, the earlier settings will be reset to default before the later ones take effect, so we don't get a mix of old and new settings.]
+The minimum window width for opening the sidebar is a number that varies. The minimum window width for opening the sidebar is usually 50.
 
-To reset the sidebar settings: 
-	now the sidebar is prompted automatically ;
-	now the position of the sidebar is g-placeleft;
-	now the sidebar lettering is "[roman type]";
-	now the sidebar is space-divided;
-	now the sidebar is not suggested following blank commands;
-	now the sidebar is allowing toggling;
-	now the sidebar is auto-adjusting the status bar.	
+The minimum window height for opening the sidebar is a number that varies. The minimum window height for opening the sidebar is usually 15.
 
-To reset the sidebar setting counters:
-	now sidebar_intro_setting_count is 0;
-	now sidebar_position_setting_count is 0;
-	now sidebar_text_setting_count is 0;
-	now sidebar_divider_setting_count is 0.	
-
-
-To prepare the/-- command/commands sidebar, prompted automatically, shown automatically, shown manually, on the left, on the right, with roman type, with fixed letter spacing, with italic type, with bold type, divided with space, divided with stars, not divided, suggested after blank commands, with toggling disabled, and/or without changing the status line:
-	if sidebar_prepared is true:
-		reset the sidebar settings;	
-		reset the sidebar setting counters;
-	if shown manually:
-		now the sidebar is shown manually;
-		increment sidebar_intro_setting_count;
-	if shown automatically:
-		now the sidebar is shown  automatically;
-		increment sidebar_intro_setting_count;
-	if prompted automatically:
-		now the sidebar is prompted automatically;
-		increment sidebar_intro_setting_count;
-	if on the right:
-		now the position of the sidebar is g-placeright;	
-		increment sidebar_position_setting_count;
-	if on the left:
-		now the position of the sidebar is g-placeleft;
-		increment sidebar_position_setting_count;
-	if with bold type:
-		now sidebar lettering is "[bold type]";
-		increment sidebar_text_setting_count;
-	if with italic type:
-		now sidebar lettering is "[italic type]";
-		increment sidebar_text_setting_count;
-	if with fixed letter spacing:
-		now sidebar lettering is "[fixed letter spacing]";
-		increment sidebar_text_setting_count;
-	if with roman type:
-		now sidebar lettering is "[roman type]";
-		increment sidebar_text_setting_count;
-	if not divided:
-		now the sidebar is undivided;
-		increment sidebar_divider_setting_count;
-	if divided with stars:
-		now the sidebar is star-divided;
-		increment sidebar_divider_setting_count;
-	if divided with space:
-		now the sidebar is space-divided;
-		increment sidebar_divider_setting_count;
-	if suggested after blank commands:
-		now the sidebar is suggested following blank commands;
-	if with toggling disabled:
-		now the sidebar is disallowing toggling;
-	if without changing the status line:
-		now the sidebar is leaving the status bar alone;
-	if CCS debugging is on:
-		mention sidebar preparation bugs;
-	now sidebar_prepared is true.
+To decide if the main window is large enough to show the sidebar:
+	if the width of the main window >= minimum window width for opening the sidebar:
+		if the height of the main window >= minimum window height for opening the sidebar:
+			decide yes;
+	decide no.
 	
+This is the can't open the sidebar for unknown reason rule:
+	say "The commands sidebar could not be opened. To list the commands in the main window instead, type COMMANDS." (A).
+	
+This is the can't open the sidebar when the main window is too small rule: [Also catches Parchment, which seems to fail the minimum size tests no matter what]
+	say "The commands sidebar could not be opened. Either your interpreter does not support this feature, or the window is not large enough to conveniently display the sidebar. To list the commands in the main window instead, type COMMANDS." (A).
+	
+To show the command sidebar window:
+	if sidebar_attributes_finalized is false:
+		finalize the sidebar attributes;
+	if the main window is large enough to show the sidebar:
+		open the sidebar;
+		unless the sidebar is g-present:
+			follow the can't open the sidebar for unknown reason rule;
+	otherwise:
+		follow the can't open the sidebar when the main window is too small rule.
+
+
+Chapter - Introducing the Sidebar
+
+The sidebar can be prompted automatically, shown automatically, or shown manually (this is the sidebar introduction method). The sidebar is prompted automatically.
+
+The sidebar can be introduced already. The sidebar is not introduced already.
+
+This is the introduce the sidebar commands as a list rule: [a fallback in case the sidebar can't be shown]
+	say  "[italic type]This story offers a list of commands you may find useful. You can see this list at any time by typing COMMANDS." (A);
+	say "[roman type][line break]" (B);
+	now the sidebar is introduced already.
+
+After printing the banner text when (the sidebar is prompted automatically) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
+	if the main window is large enough to show the sidebar:
+		say "[line break][italic type]This story offers a sidebar that shows some useful commands. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
+		if player consents:
+			show the command sidebar window;
+			if sidebar is g-present:
+				Say "[line break][italic type]The commands sidebar is now displayed[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B);
+				say "[roman type]" (C);
+			[if it's not present, the show phrase will print a message]
+		otherwise:
+			say "[line break][italic type]The commands sidebar is currently hidden[if the sidebar is allowing toggling]. You can turn the sidebar on and off by typing SIDEBAR ON and SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS." (D);
+			say "[roman type]" (E);
+		now the sidebar is introduced already;
+	otherwise:
+		follow the introduce the sidebar commands as a list rule.
+	
+After printing the banner text when (the sidebar is shown automatically) and (the sidebar is not introduced already) (this is the automatically show the command sidebar rule):
+	if the main window is large enough to show the sidebar:
+		show the command sidebar window;
+		if the sidebar is g-present:
+			say "[italic type]This story offers a sidebar that shows some useful commands[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
+			say "[roman type]" (B);
+			now the sidebar is introduced already;
+		[if it's not present, the show phrase will print a message]
+	otherwise:
+		follow the introduce the sidebar commands as a list rule.
+	
+
+Chapter - Temporarily Hiding the Sidebar When a Full-Screen Menu is Displayed
+
+[The sidebar is temporarily hidden when we open a full-screen menu with Emily Short's Menus extension or Wade Clarke's Menus extension.]
+
+
+Section - Phrases for Temporary Hiding
+
+The sidebar can be flagged to appear later. The sidebar is not flagged to appear later.
+		
+To temporarily hide the sidebar if necessary:
+	if the sidebar is g-present:
+		now the sidebar is flagged to appear later;
+		close the sidebar.
+	
+To show the hidden sidebar if necessary:
+	If the sidebar is flagged to appear later:
+		show the command sidebar window;
+		now the sidebar is not flagged to appear later.
+		
+
+Section - Compatibility with Emily Short's Menus (for use with Menus by Emily Short)
+
+Before displaying (This is the hide the sidebar before opening a menu with Emily Short's Menus rule):
+	temporarily hide the sidebar if necessary.
+	
+After displaying (This is the show the hidden sidebar after closing a menu with Emily Short's Menus rule):
+	show the hidden sidebar if necessary.
 	
 		
-To mention sidebar preparation bugs:
-	if sidebar_prepared is true:
-		say "CCS Debug Message #2: 'Prepare the command sidebar' has been invoked more than once in the code. This may result in unexpected sidebar settings, since later invocations will override earlier ones.[line break]";
-	if sidebar_intro_setting_count > 1:
-		say "CCS Debug Message #4: The sidebar introduction method (available choices are 'prompted automatically,' 'shown automatically,' and 'shown manually') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
-	if sidebar_position_setting_count > 1:
-		say "CCS Debug Message #6: The sidebar position (available choices are 'on the left,' and 'on the right') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
-	if sidebar_text_setting_count > 1:
-		say "CCS Debug Message #8: The text style setting for the sidebar (available choices are 'with roman type,' 'with fixed letter spacing,' 'with italic type,' and 'with bold type') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one text style option can take effect.[line break]";
-	if sidebar_divider_setting_count > 1:
-		say "CCS Debug Message #10: The divider setting for the sidebar (built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one divider option can take effect.[line break]";
-	if (sidebar_divider_setting_count > 0) and (custom sidebar divider is not ""):
-		say "CCS Error Message #12: The divider setting for the sidebar (available built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set in a 'Prepare the command sidebar' line, but a 'custom sidebar divider' has also been specified elsewhere. This may have unexpected results, since only one divider option can take effect.[line break]";
-		
-	
+Section - Compatibility with Wade Clarke's Menus (for use with Menus by Wade Clarke)
 
-Section - Colors
+Before displaying (This is the hide the sidebar before opening a menu with Wade Clarke's Menus rule):
+	temporarily hide the sidebar if necessary.
+	
+After displaying (This is the show the hidden sidebar after closing a menu with Wade Clarke's Menus rule):
+	show the hidden sidebar if necessary.
+		
+		
+Chapter - Actions for Turning the Sidebar On and Off
+
+The sidebar can be either allowing toggling or disallowing toggling. The sidebar is allowing toggling.
+
+
+Turning on the commands sidebar is an action out of world.
+Understand "sidebar on" as turning on the commands sidebar when the sidebar is allowing toggling.
+Understand "sidebar" as turning on the commands sidebar when the sidebar is allowing toggling and the sidebar is g-unpresent.
+Understand "sidebar [text]" as a mistake ("Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.") when the sidebar is allowing toggling.
+
+Carry out turning on the commands sidebar (this is the turn on the commands sidebar rule):
+	if sidebar is g-unpresent:
+		show the command sidebar window;
+		if the sidebar is g-present:
+			Say "The commands sidebar is now displayed[if the sidebar is allowing toggling]. To hide it, type SIDEBAR OFF[end if]." (A);
+		[show phrase will print message if unsuccessful]
+	otherwise:
+		say "The commands sidebar is already displayed[if the sidebar is allowing toggling]. To hide it, type SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS." (B).
+			
+			
+Turning off the commands sidebar is an action out of world.
+Understand "sidebar off" as turning off the commands sidebar when the sidebar is allowing toggling.
+Understand "sidebar" as turning off the commands sidebar when the sidebar is allowing toggling and the sidebar is g-present.
+
+Carry out turning off the commands sidebar (this is the turn off the commands sidebar rule):
+	if sidebar is g-present:
+		close the sidebar;
+		Say "The commands sidebar is now hidden[if the sidebar is allowing toggling]. To show it again, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
+	otherwise:
+		say "The commands sidebar is already hidden[if the sidebar is allowing toggling]. To show it, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B).
+		
+
+Part - Sidebar Text
+
+Chapter - Text Appearance
+
+The text color of the sidebar is a text that varies. The text color of the sidebar is usually "#363025". [dark brown]
+
+
+[The relative text size is set to 0 to reduce disparity between the results in Gargoyle and other interpreters. Otherwise a bold title may barely fit into the width of the sidebar in WinGluxe, while it looks relatively small in Gargoyle.]
 
 Table of User Styles (continued)
 window (a g-window)	relative size
 sidebar	0
 
-[The relative text size is set to 0 to reduce disparity between the results in Gargoyle and other interpreters. Otherwise a bold title may barely fit into the width of the sidebar in WinGluxe, while it looks relatively small in Gargoyle.]
-		
+
+[The following rule is invoked in the "Phrases to Prepare the Commands Sidebar" section.]
+
 This is the set the sidebar text color rule:
 	if there is a window of sidebar in the Table of User Styles: [should always be the case; a safeguard against run-time errors]
-		now the color corresponding to a window of sidebar in the Table of User Styles is the text color of the sidebar;
-		
-
-The background color of the sidebar is usually "#F0E2C7". [beige]
-
-The text color of the sidebar is a text that varies. The text color of the sidebar is usually "#363025". [dark brown]
+		now the color corresponding to a window of sidebar in the Table of User Styles is the text color of the sidebar.
 
 
+The sidebar indent is a text that varies. The sidebar indent is usually "  ".
+
+The sidebar lettering is some text that varies. The sidebar lettering is usually "[roman type]".
+
+The sidebar can be space-divided, star-divided, undivided, or custom-divided (this is the sidebar divider type property). The sidebar is space-divided.
+
+The custom sidebar divider is some text that varies. The custom sidebar divider is usually "".
 
 
-Section - Sidebar Text
-
+Chapter - Command Tables
 
 Table of Default Sidebar Commands
 Displayed Command (a text)
@@ -224,24 +259,40 @@ Table of Extension-Provided Sidebar Commands
 Displayed Command (a text)
 --
 
+	
+Chapter - Choosing a Table of Commands
+
+The chosen table of commands is a table name that varies. The chosen table of commands is usually the Table of Default Sidebar Commands.
+
+commands_table_chosen is a truth state that varies. commands_table_chosen is usually false.
+
+When play begins (this is the choose the appropriate table of commands rule):
+	if commands_table_chosen is false: [if author has not already swapped in a table]
+		if the Table of Custom Sidebar Commands is not empty:
+			now the chosen table of commands is the Table of Custom Sidebar Commands;
+		otherwise if the Table of Custom Sidebar Commands is empty:
+			now the chosen table of commands is the Table of Default Sidebar Commands;
+		now commands_table_chosen is true.
 
 
-The sidebar indent is a text that varies. The sidebar indent is usually "  ".
-
-The sidebar lettering is some text that varies. The sidebar lettering is usually "[roman type]".
-
-The sidebar can be space-divided, star-divided, undivided, or custom-divided (this is the sidebar divider type property). The sidebar is space-divided.
-
-The custom sidebar divider is some text that varies. The custom sidebar divider is usually "".
-
-
+[Swapping is provided for the story author's use.]
+		
+To swap (T - a table name) into the/-- sidebar:
+	now the chosen table of commands is T;
+	if the sidebar is g-present:
+		refresh the sidebar;
+	now commands_table_chosen is true.
+		
+		
+Chapter - Printing the Text in the Sidebar
+		
 This is the print the commands sidebar text rule:
 	if the column Displayed Command exists in the chosen table of commands:
 		repeat through the chosen table of commands:
 			if there is a Displayed Command entry and the Displayed Command entry is not "": 
 				if the Displayed Command entry is not "?": [if it's not a divider row]
 					say "[line break][fixed letter spacing][sidebar indent][sidebar lettering][displayed command entry]" (A); [line break (prints blank line before the first line of text as well), indent and print command in chosen typeface]
-				otherwise: [if it's "?"--a row for a built-in divider]
+				otherwise: [if it's "?", i.e. a row for a built-in divider]
 					if the sidebar is space-divided:
 						say "[line break]" (B);
 					otherwise if the sidebar is undivided:
@@ -254,306 +305,23 @@ This is the print the commands sidebar text rule:
 							say custom sidebar divider;
 						say "[line break]" (E). [blank line below divider symbols]
 
-	
-	
-Section - Choosing the Appropriate Table - unindexed
-
-
-The chosen table of commands is a table name that varies. The chosen table of commands is usually the Table of Default Sidebar Commands.
-
-commands_table_chosen is a truth state that varies. commands_table_chosen is usually false.
-	
-When play begins (this is the choose the appropriate table of commands rule):
-	if commands_table_chosen is false: [if author has not already swapped in a table]
-		if the Table of Custom Sidebar Commands is not empty:
-			now the chosen table of commands is the Table of Custom Sidebar Commands;
-		otherwise if the Table of Custom Sidebar Commands is empty:
-			now the chosen table of commands is the Table of Default Sidebar Commands;
-		now commands_table_chosen is true.
-		
-
-
-Section - Finalizing the Window Attributes
-
-[Optional window attributes are set just before opening the sidebar for the first time, so that the story author's "when play begins: prepare the command sidebar" rule, if there is one, will happen first.]
-
-sidebar_attributes_finalized is a truth state that varies. sidebar_attributes_finalized is initially false.
-
-To finalize the sidebar attributes:
-	follow the set the sidebar text color rule;
-	if the custom sidebar divider is not "":
-		now the sidebar is custom-divided;
-	now sidebar_attributes_finalized is true.
-	
-	
-
-Chapter - Sidebar Behavior	
-
-
-Section - Spatterlight Warning
-
-[Gives the player a warning to use another interpreter if Spatterlight is detected.]
-
-When play begins (this is the detect whether we're using Spatterlight rule):	
-	if the glk version is 1792:
-		unless Glulx character input is supported:
-			if Glulx mouse input is supported:
-				unless Glulx hyperlinks are supported:
-				[unique Spatterlight characteristics (i.e. not shared by Zoom and Mac IDE) end here]
-					if Glulx timekeeping is supported:
-						unless Glulx sound notification is supported:
-							if Glulx graphic-window mouse input is supported:
-								say "[bold type]Warning:[roman type] This story is not compatible with the Spatterlight interpreter. If you are using Spatterlight, please switch to a different interpreter to avoid crashing." (A);
-								wait for any key.
-
-
-
-Section - Introducing the Sidebar
-
-The sidebar can be prompted automatically, shown automatically, or shown manually (this is the sidebar introduction method).
-The sidebar is prompted automatically.
-
-The sidebar can be introduced already. The sidebar is not introduced already.
-
-
-
-After printing the banner text when (the sidebar is prompted automatically) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
-	if the main window is large enough to show the sidebar:
-		say "[line break][italic type]This story offers a sidebar that shows some useful commands. Would you like to see the sidebar? (Y/N)[roman type]>[run paragraph on]" (A);
-		if player consents:
-			show the command sidebar window;
-			if sidebar is g-present:
-				Say "[line break][italic type]The commands sidebar is now displayed[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B);
-				say "[roman type]" (C);
-			[if it's not present, the show phrase will print a message]
-		otherwise:
-			say "[line break][italic type]The commands sidebar is currently hidden[if the sidebar is allowing toggling]. You can turn the sidebar on and off by typing SIDEBAR ON and SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS." (D);
-			say "[roman type]" (E);
-		now the sidebar is introduced already;
-	otherwise:
-		follow the introduce the sidebar commands as a list rule.
-		
-		
-
-After printing the banner text when (the sidebar is shown automatically) and (the sidebar is not introduced already) (this is the automatically show the command sidebar rule):
-	if the main window is large enough to show the sidebar:
-		show the command sidebar window;
-		if the sidebar is g-present:
-			say "[italic type]This story offers a sidebar that shows some useful commands[if the sidebar is allowing toggling]. You can turn the sidebar off and on by typing SIDEBAR OFF and SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
-			say "[roman type]" (B);
-			now the sidebar is introduced already;
-		[if it's not present, the show phrase will print a message]
-	otherwise:
-		follow the introduce the sidebar commands as a list rule.
-
-		
-
-This is the introduce the sidebar commands as a list rule:
-	say  "[italic type]This story offers a list of commands you may find useful. You can see this list at any time by typing COMMANDS." (A);
-	say "[roman type][line break]" (B);
-	now the sidebar is introduced already.
-
-
-
-Section - Showing and Hiding the Sidebar
-
-
-The minimum window width for opening the sidebar is a number that varies. The minimum window width for opening the sidebar is usually 50.
-
-The minimum window height for opening the sidebar is a number that varies. The minimum window height for opening the sidebar is usually 15.
-
-
-To decide if the main window is large enough to show the sidebar:
-	if the width of the main window >= minimum window width for opening the sidebar:
-		if the height of the main window >= minimum window height for opening the sidebar:
-			decide yes;
-	decide no.
-	
-
-To show the command sidebar window:
-	if sidebar_attributes_finalized is false:
-		finalize the sidebar attributes;
-	if the main window is large enough to show the sidebar:
-		open the sidebar;
-		unless the sidebar is g-present:
-			follow the can't open the sidebar for unknown reason rule;
-	otherwise:
-		follow the can't open the sidebar when the main window is too small rule.
-
-	
-This is the can't open the sidebar when the main window is too small rule: [Also catches Parchment, which seems to fail the minimum size tests no matter what]
-	say "The commands sidebar could not be opened. Either your interpreter does not support this feature, or the window is not large enough to conveniently display the sidebar. To list the commands in the main window instead, type COMMANDS." (A).
-	
-This is the can't open the sidebar for unknown reason rule:
-	say "The commands sidebar could not be opened. To list the commands in the main window instead, type COMMANDS." (A).
-	
-	
-		
-Section - Refreshing the Sidebar
-
-
-[Every turn when the sidebar is g-present (This is the Refresh the Sidebar Window Rule):
-	refresh the sidebar.]
-	
-
-Rule for refreshing the sidebar (This is the Refresh the Sidebar Commands Rule):
+Rule for refreshing the sidebar (This is the refresh the sidebar commands rule):
 	follow the print the commands sidebar text rule;
 	say "[run paragraph on]" (A). [an attempt to compensate for the line break otherwise printed when switching back to the main window]
-	
-	
-	
-Section - Turning the Sidebar On and Off
-
-The sidebar can be either allowing toggling or disallowing toggling. The sidebar is allowing toggling.
-
-
-Turning on the commands sidebar is an action out of world.
-Understand "sidebar on" as turning on the commands sidebar when the sidebar is allowing toggling.
-Understand "sidebar" as turning on the commands sidebar when the sidebar is allowing toggling and the sidebar is g-unpresent.
-
-Carry out turning on the commands sidebar (this is the turn on the commands sidebar rule):
-	if sidebar is g-unpresent:
-		show the command sidebar window;
-		if the sidebar is g-present:
-			Say "The commands sidebar is now displayed[if the sidebar is allowing toggling]. To hide it, type SIDEBAR OFF[end if]." (A);
-		[show phrase will print message if unsuccessful]
-	otherwise:
-		say "The commands sidebar is already displayed[if the sidebar is allowing toggling]. To hide it, type SIDEBAR OFF[end if]. To list the commands in the main window, type COMMANDS." (B).
-			
-			
-Turning off the commands sidebar is an action out of world.
-Understand "sidebar off" as turning off the commands sidebar when the sidebar is allowing toggling.
-Understand "sidebar" as turning off the commands sidebar when the sidebar is allowing toggling and the sidebar is g-present.
-
-Carry out turning off the commands sidebar (this is the turn off the commands sidebar rule):
-	if sidebar is g-present:
-		close the sidebar;
-		Say "The commands sidebar is now hidden[if the sidebar is allowing toggling]. To show it again, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (A);
-	otherwise:
-		say "The commands sidebar is already hidden[if the sidebar is allowing toggling]. To show it, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B).
 		
 		
-		
-Understand "sidebar [text]" as a mistake ("Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.") when the sidebar is allowing toggling.
-		
+Chapter - Action for Listing the Sidebar Commands in the Main Window
 
-
-Section - Swapping Tables
-
-To swap (TN - a table name) into the/-- sidebar:
-	now the chosen table of commands is TN;
-	if the sidebar is g-present:
-		refresh the sidebar;
-	now commands_table_chosen is true.
-	
-	
-
-
-
-
-
-Chapter - Compatibility with Menus Extensions
-
-[Temporarily hide the sidebar when we open a full-screen menu with Emily Short's Menus extension or Wade Clarke's Menus extension.]
-
-
-
-Section - Temporarily Hiding and Showing with Full Screen Menus
-
-
-menu_on_display is a truth state that varies. menu_on_display is usually false. 
-
-The sidebar can be flagged to appear later. The sidebar is not flagged to appear later.
-		
-		
-To temporarily hide the sidebar if necessary:
-	if the sidebar is g-present:
-		now the sidebar is flagged to appear later;
-		close the sidebar;
-	now menu_on_display is true.
-	
-
-To show the hidden sidebar if necessary:
-	now menu_on_display is false;
-	If the sidebar is flagged to appear later:
-		show the command sidebar window;
-		now the sidebar is not flagged to appear later.
-		
-
-
-Section - Compatibility with Emily Short's Menus (for use with Menus by Emily Short)
-
-
-Before displaying (This is the hide the sidebar before opening a menu with Emily Short's Menus rule):
-	temporarily hide the sidebar if necessary.
-	
-	
-After displaying (This is the show the hidden sidebar after closing a menu with Emily Short's Menus rule):
-	show the hidden sidebar if necessary.
-	
-	
-	
-Section - Compatibility with Wade Clarke's Menus (for use with Menus by Wade Clarke)
-
-
-Before displaying (This is the hide the sidebar before opening a menu with Wade Clarke's Menus rule):
-	temporarily hide the sidebar if necessary.
-	
-	
-After displaying (This is the show the hidden sidebar after closing a menu with Wade Clarke's Menus rule):
-	show the hidden sidebar if necessary.
-
-
-
-Chapter - Adjusting the Status Line
-
-The sidebar can be either auto-adjusting the status bar or leaving the status bar alone. The sidebar is auto-adjusting the status bar.
-
-
-The sidebar can be either far from the status line text or near the status line text.
-
-Before constructing the status line when the sidebar is auto-adjusting the status bar (this is the will the sidebar be too close to the status line text rule):
-	if the sidebar is g-unpresent:
-		now the sidebar is far from the status line text;
-	otherwise if the no status line option is active:
-		now the sidebar is far from the status line text;	
-	otherwise if the position of the sidebar is g-placeleft:
-		now the sidebar is near the status line text;
-	otherwise if the scoring option is active:
-		now the sidebar is near the status line text;
-	otherwise:
-		now the sidebar is far from the status line text.
-		
-		
-Rule for constructing the status line when (the sidebar is auto-adjusting the status bar) and (the sidebar is near the status line text) (this is the center the status line text when it's too close to the sidebar rule):
-	center "[Player's surroundings][if the scoring option is active] ([score]/[turn count])[end if]" (A) at row 1.
-	
-	
-	
-Chapter - Suggesting the Sidebar after a Blank Command
-
-The sidebar can be suggested following blank commands.
-
-Rule for printing a parser error when ((the latest parser error is the I beg your pardon error) and (the sidebar is suggested following blank commands) and (the sidebar is g-unpresent)) (this is the suggest the sidebar when the player enters a blank command rule):
-	say "If you're not sure what to do, type [if (the sidebar is allowing toggling) and (the main window is large enough to show the sidebar)]SIDEBAR ON[otherwise]COMMANDS[end if] to see some commands you can try." (A) instead.	
-	
-	
-	
-Chapter - Listing the Sidebar Commands in the Main Window
-
-[The action "Listing the Sidebar Commands" lists the commands in the main window. This serves as an alternative to the sidebar for players using screenreaders or interpreters that don't support extra windows. The carry out rule converts the commands into list form and translates the default compass rose, if present, into words. We may want to check the results, especially if we've made any changes to the commands.]
-
-
+[The "Listing the Sidebar Commands" action lists the commands in the main window. This serves as an alternative to the sidebar when players use screenreaders or interpreters that don't support extra windows. The carry out rule converts the commands into list form and translates the default compass rose, if present, into words.]
 
 Listing the sidebar commands is an action out of world.
 Understand "commands" as listing the sidebar commands.
 Understand "commands [text]" as a mistake ("To list useful commands in the main window, type just COMMANDS[if the sidebar is allowing toggling].  Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it[end if].").
-.
-Check listing the sidebar commands when commands_table_chosen is false (this is the choose the appropriate table of commands before printing the command list rule):
+
+Check listing the sidebar commands when commands_table_chosen is false (this is the select the appropriate table of commands before printing the command list rule):
 	follow the choose the appropriate table of commands rule.
-
+	
 custom command list is some text that varies. custom command list is usually "".
-
 
 To decide if (TN - a table name) uses the default compass rose:
 	if there is a displayed command of "     N" in TN:
@@ -563,8 +331,14 @@ To decide if (TN - a table name) uses the default compass rose:
 					if there is a displayed command of "     S" in TN:
 						decide yes;
 	decide no.
+
+compass_rose_already_listed is a truth state that varies. compass_rose_already_listed is usually false.
+
+To decide if (T - a text) should be included among the listed commands:
+	if T is "", no;
+	if T is " ", no;
+	yes.
 	
-					
 To decide if (T - a text) is a default compass rose entry:
 	if T is "     N", yes;
 	if T is "  NW   NE", yes;
@@ -573,16 +347,6 @@ To decide if (T - a text) is a default compass rose entry:
 	if T is "     S", yes;
 	no.
 	
-compass_rose_already_listed is a truth state that varies. compass_rose_already_listed is usually false.
-
-
-To decide if (T - a text) should be included among the listed commands:
-	if T is "", no;
-	if T is " ", no;
-	yes.
-	
-	
-
 Carry out listing the sidebar commands (this is the print the sidebar commands in the main window rule):
 	if the custom command list is not "":
 		say the custom command list;
@@ -592,7 +356,7 @@ Carry out listing the sidebar commands (this is the print the sidebar commands i
 			repeat through the chosen table of commands:
 				if there is a Displayed Command entry:
 					if the Displayed Command entry should be included among the listed commands:
-						if the Displayed Command entry is "?":
+						if the Displayed Command entry is "?": [a divider]
 							say "[paragraph break]" (A);
 						otherwise if the Displayed Command entry is a default compass rose entry:
 							if compass_rose_already_listed is false:
@@ -614,14 +378,203 @@ Carry out listing the sidebar commands (this is the print the sidebar commands i
 			say "[line break]" (G).
 
 		
+Part - Adjusting the Status Line
 
+[Under most circumstances, the status line text is centered when the sidebar is shown. This is done to avoid inconsistent alignment between the status line text (which appears at the left edge) and the sidebar text (which is slightly indented), and to prevent the status line text from looking like part of the sidebar text when the status bar and sidebar are the same color.]
+
+The sidebar can be either auto-adjusting the status bar or leaving the status bar alone. The sidebar is auto-adjusting the status bar.
+
+The sidebar can be either far from the status line text or near the status line text.
+
+Before constructing the status line when the sidebar is auto-adjusting the status bar (this is the will the sidebar be too close to the status line text rule):
+	if the sidebar is g-unpresent:
+		now the sidebar is far from the status line text;
+	otherwise if the no status line option is active:
+		now the sidebar is far from the status line text;	
+	otherwise if the position of the sidebar is g-placeleft:
+		now the sidebar is near the status line text;
+	otherwise if the scoring option is active:
+		now the sidebar is near the status line text;
+	otherwise:
+		now the sidebar is far from the status line text.
+		
+Rule for constructing the status line when (the sidebar is auto-adjusting the status bar) and (the sidebar is near the status line text) (this is the center the status line text when it's too close to the sidebar rule):
+	center "[Player's surroundings][if the scoring option is active] ([score]/[turn count])[end if]" (A) at row 1.
+
+
+
+Part - Information for Players
+
+Chapter - Spatterlight Warning
+
+[If Spatterlight is detected, the player is warned to use another interpreter to avoid crashing. Flexible Windows and Spatterlight are, as far as I can tell, incompatible.]
+
+When play begins (this is the detect whether we're using Spatterlight rule):	
+	if the glk version is 1792:
+		unless Glulx character input is supported:
+			if Glulx mouse input is supported:
+				unless Glulx hyperlinks are supported:
+				[unique Spatterlight characteristics (i.e. not shared by Zoom and Mac IDE) end here]
+					if Glulx timekeeping is supported:
+						unless Glulx sound notification is supported:
+							if Glulx graphic-window mouse input is supported:
+								say "[bold type]Warning:[roman type] This story is not compatible with the Spatterlight interpreter. If you are using Spatterlight, please switch to a different interpreter to avoid crashing." (A);
+								wait for any key.
+
+
+Chapter - Suggesting the Sidebar after a Blank Command
+
+[If the player enters a blank command and the sidebar is not visible, the parser can, instead of saying "I beg your pardon?", remind the player how to access the sidebar.]
+
+The sidebar can be suggested following blank commands.
+
+Rule for printing a parser error when ((the latest parser error is the I beg your pardon error) and (the sidebar is suggested following blank commands) and (the sidebar is g-unpresent)) (this is the suggest the sidebar when the player enters a blank command rule):
+	say "If you're not sure what to do, type [if (the sidebar is allowing toggling) and (the main window is large enough to show the sidebar)]SIDEBAR ON[otherwise]COMMANDS[end if] to see some commands you can try." (A) instead.
+	
+	
 Chapter - Attribution
 
+[The Creative Commons license of the play IF postcard requires that it be attributed. Please do not remove.]
+
 Report requesting the story file version (this is the attribute the play IF postcard rule):
-	say "'How To Play Interactive Fiction: An entire strategy guide on a single postcard,' written by Andrew Plotkin and designed by Lea Albaugh, was the inspiration for the Common Commands Sidebar extension. The postcard, available at <http://pr-if.org/doc/play-if-card/>, is licensed under a CC BY SA 3.0 United States licen[if the American dialect option is active]s[otherwise]c[end if]e, available at <http://creativecommons.org/licenses/by-sa/3.0/us/>.  Content was adapted with permission. See the extension documentation for details." (A).
+	say "'How To Play Interactive Fiction: An entire strategy guide on a single postcard,' written by Andrew Plotkin and designed by Lea Albaugh, was the inspiration for the Common Commands Sidebar extension. The postcard, available at <http://pr-if.org/doc/play-if-card/>, is licensed under a CC BY SA 3.0 United States licen[if the American dialect option is active]s[otherwise]c[end if]e, available at <http://creativecommons.org/licenses/by-sa/3.0/us/>.  Content was adapted with permission. Please see the extension documentation for details." (A).
 
 
+Part - Setting the Built-in Options
+
+Chapter - Debugging
+
+Section - Enabling Debugging - Not For Release
+
+[In a non-release version of the story, debug messages are on by default. They may be turned off by setting CCS_debug to false.]
+
+CCS_debug is a truth state that varies. CCS_debug is usually true.
+
+To decide if CCS debugging is on:
+	if CCS_debug is true:
+		decide yes;
+	decide no.
+
+
+Section - Disabling Debugging - For Release Only
+
+[Debug messages are disabled in the release version.]
+
+CCS_debug is a truth state that varies. 
+
+To decide if CCS debugging is on:
+	decide no.
 	
+	
+Section - Sidebar Preparation Bugs
+
+[If the "prepare the command sidebar" phrase appears more than once in the source, the earlier settings are reset to their defaults before the later settings take effect, so we don't get a mix of old and new settings.]
+
+sidebar_prepared is a truth state that varies. sidebar_prepared is usually false.
+
+To reset the sidebar settings: 
+	now the sidebar is prompted automatically ;
+	now the position of the sidebar is g-placeleft;
+	now the sidebar lettering is "[roman type]";
+	now the sidebar is space-divided;
+	now the sidebar is not suggested following blank commands;
+	now the sidebar is allowing toggling;
+	now the sidebar is auto-adjusting the status bar.	
+
+
+[Debug messages will warn us if we've invoked "prepare the commands sidebar"  more than once, or if we've chosen mutually exclusive options in a single "prepare the commands sidebar" line. The story will compile regardless, but unless we fix the code, the options that take effect may not be the ones we were expecting.]
+
+sidebar_intro_setting_count is a number that varies.
+sidebar_position_setting_count is a number that varies.
+sidebar_text_setting_count is a number that varies.
+sidebar_divider_setting_count is a number that varies.
+
+To reset the sidebar setting counters:
+	now sidebar_intro_setting_count is 0;
+	now sidebar_position_setting_count is 0;
+	now sidebar_text_setting_count is 0;
+	now sidebar_divider_setting_count is 0.
+	
+To mention sidebar preparation bugs:
+	if sidebar_prepared is true:
+		say "CCS Debug Message #2: 'Prepare the command sidebar' has been invoked more than once in the code. This may result in unexpected sidebar settings, since later invocations will override earlier ones.[line break]";
+	if sidebar_intro_setting_count > 1:
+		say "CCS Debug Message #4: The sidebar introduction method (available choices are 'prompted automatically,' 'shown automatically,' and 'shown manually') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
+	if sidebar_position_setting_count > 1:
+		say "CCS Debug Message #6: The sidebar position (available choices are 'on the left' and 'on the right') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
+	if sidebar_text_setting_count > 1:
+		say "CCS Debug Message #8: The text style setting for the sidebar (available choices are 'with roman type,' 'with fixed letter spacing,' 'with italic type,' and 'with bold type') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one text style option can take effect.[line break]";
+	if sidebar_divider_setting_count > 1:
+		say "CCS Debug Message #10: The divider setting for the sidebar (built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one divider option can take effect.[line break]";
+	if (sidebar_divider_setting_count > 0) and (custom sidebar divider is not ""):
+		say "CCS Debug Message #12: The divider setting for the sidebar (available built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set in a 'Prepare the command sidebar' line, but a 'custom sidebar divider' has also been specified elsewhere. This may have unexpected results, since only one divider option can take effect.[line break]".
+		
+		
+Chapter - Phrases to Prepare the Commands Sidebar
+
+[The "To prepare..." phrase is provided for the conveniece of story authors, allowing them to set the majority of the sidebar options in a single line.]
+
+To prepare the/-- command/commands sidebar, prompted automatically, shown automatically, shown manually, on the left, on the right, with roman type, with fixed letter spacing, with italic type, with bold type, divided with space, divided with stars, not divided, suggested after blank commands, with toggling disabled, and/or without changing the status line:
+	if sidebar_prepared is true:
+		reset the sidebar settings;	
+		reset the sidebar setting counters;
+	if prompted automatically:
+		now the sidebar is prompted automatically;
+		increment sidebar_intro_setting_count;
+	if shown automatically:
+		now the sidebar is shown automatically;
+		increment sidebar_intro_setting_count;
+	if shown manually:
+		now the sidebar is shown manually;
+		increment sidebar_intro_setting_count;
+	if on the left:
+		now the position of the sidebar is g-placeleft;
+		increment sidebar_position_setting_count;
+	if on the right:
+		now the position of the sidebar is g-placeright;	
+		increment sidebar_position_setting_count;
+	if with roman type:
+		now sidebar lettering is "[roman type]";
+		increment sidebar_text_setting_count;
+	if with fixed letter spacing:
+		now sidebar lettering is "[fixed letter spacing]";
+		increment sidebar_text_setting_count;
+	if with italic type:
+		now sidebar lettering is "[italic type]";
+		increment sidebar_text_setting_count;
+	if with bold type:
+		now sidebar lettering is "[bold type]";
+		increment sidebar_text_setting_count;
+	if divided with space:
+		now the sidebar is space-divided;
+		increment sidebar_divider_setting_count;
+	if divided with stars:
+		now the sidebar is star-divided;
+		increment sidebar_divider_setting_count;
+	if not divided:
+		now the sidebar is undivided;
+		increment sidebar_divider_setting_count;
+	if suggested after blank commands:
+		now the sidebar is suggested following blank commands;
+	if with toggling disabled:
+		now the sidebar is disallowing toggling;
+	if without changing the status line:
+		now the sidebar is leaving the status bar alone;
+	if CCS debugging is on:
+		mention sidebar preparation bugs;
+	now sidebar_prepared is true.
+		
+
+[A few attributes are set just before opening the sidebar for the first time. It's done at this time to make sure the story author's relevant code runs first.]
+
+sidebar_attributes_finalized is a truth state that varies. sidebar_attributes_finalized is initially false.
+
+To finalize the sidebar attributes:
+	follow the set the sidebar text color rule; [This rule is in the "Text Appearance" section.]
+	if the custom sidebar divider is not "":
+		now the sidebar is custom-divided;
+	now sidebar_attributes_finalized is true.
+
 
 Common Commands Sidebar ends here.
 
@@ -817,6 +770,7 @@ Chapter: Using Different Text in the Sidebar
 
 If we don't want to use the default commands in the sidebar, there are several ways we can go about changing them. Note that changing the sidebar text will also change the list printed in the main window by the "listing the sidebar commands" action, so we may want to type COMMANDS to check that as well.
 
+
 Section: The "Cut and Paste" Method
 
 If we paste one of the templates below into our code to continue the (initially blank) Table of Custom Sidebar Commands, we can add, delete, cut, and paste rows to arrange the commands exactly how we want them. If we continue the Table of Custom Sidebar Commands in our code, our custom table will automatically be substituted for the default table in the sidebar (unless we specify otherwise).
@@ -934,8 +888,9 @@ We can swap in any table so long as it includes a column with the following head
 	*:
 	Displayed Command (a text)
 	
+(If we don't include this column, the sidebar will be blank.)
+	
 The "swap Table Name into the/-- sidebar" phrase can also be used to switch from one set of commands to another mid-story.
-
 
 	
 Section: Adjusting the Commands Listed in the Main Window
@@ -959,6 +914,7 @@ If we are using more than one table of commands during play, and if at least one
 			say "Driving Commands. Turn left. Turn right. Accelerate. Brake. Hint. Help. Quit.";
 		otherwise if the chosen table of commands is the Table of Pedestrian Commands:
 			say "Pedestrian Commands. Walk. Jog. Run. Hint. Help. Quit.".
+
 		
 Chapter: A Note to Extension Authors
 
@@ -976,7 +932,6 @@ Extensions intended to be compatible with Common Commands Sidebar should not mod
 
 
 
-
 Example: * The Absolute Minimum - Including the sidebar with a minimum of code.
 
 	*: "The Absolute Minimum"
@@ -986,8 +941,6 @@ Example: * The Absolute Minimum - Including the sidebar with a minimum of code.
 	Minimal Room is a room.
 	
 	Test me with "sidebar / sidebar / sidebar off / sidebar on / commands".
-	
-	
 	
 	
 Example: * Sidebar in Chocolate - A sidebar that makes use of presentation options and a custom command list.
@@ -1041,8 +994,6 @@ Example: * Sidebar in Chocolate - A sidebar that makes use of presentation optio
 	Test me with "sidebar / sidebar / sidebar off / sidebar on / commands".
 	
 	
-	
-	
 Example: * Lost in 'Lost Igpay' - A way to toggle the command sidebar from inside a full-screen menu using Emily Short's Menus extension.
 
 	*: "Lost in 'Lost Igpay'"
@@ -1062,7 +1013,7 @@ Example: * Lost in 'Lost Igpay' - A way to toggle the command sidebar from insid
 	Table of Options
 	title	subtable (table name)	description	toggle (a rule)
 	"How to Play"	--	"[How_to_Play]"	--
-	"Commands Sidebar (currently [if the sidebar is not flagged to appear later]hidden[otherwise]shown[end if])"	--	--	toggle sidebar from menu rule
+	"Commands Sidebar (currently [if the sidebar is not flagged to appear later]off[otherwise]on[end if])"	--	--	toggle sidebar from menu rule
 
 	To say How_to_Play:
 		say "Help Unkgray find the lost igpay! At the prompt ( > ), type short commands to tell him what to do.[paragraph break]To see a sidebar that lists the most common commands, toggle the COMMANDS SIDEBAR option on the top level of this menu. You can also type COMMANDS to list these commands in the main window.".
@@ -1083,4 +1034,3 @@ Example: * Lost in 'Lost Igpay' - A way to toggle the command sidebar from insid
 	Gretchen is a woman in At the Computer. "Gretchen stands at your shoulder, clasping her hands in gleeful anticipation.[first time][paragraph break]'Don't worry!' she says. 'There's a helpful sidebar that shows all the common commands! Type HELP to go to the menu. You can turn on the sidebar from there!'[only]".
 	
 	Test me with "help".
-
