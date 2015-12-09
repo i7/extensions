@@ -10,7 +10,7 @@ Version 1/151209 of Common Commands Sidebar (for Glulx only) by Alice Grove begi
 
 Part - Required Extensions
 
-Include version 15/150620 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
+Include version 15/151209 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
 Include Basic Screen Effects by Emily Short.
 
 
