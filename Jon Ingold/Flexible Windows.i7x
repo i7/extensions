@@ -1,4 +1,4 @@
-Version 15/150620 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/151209 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -195,6 +195,10 @@ To decide which number is the glk event window reference:
 
 To decide which number is the glk event val1:
 	(- ( gg_event-->2 ) -).
+	
+[ Fix spurious line breaks from being printed in the main window after running the refreshing activity ]
+To safely carry out the (A - activity on value of kind K) activity with (val - K):
+	(- @push say__p; @push say__pc; CarryOutActivity( {A}, {val} ); @pull say__pc; @pull say__p; -).
 
 
 
@@ -267,11 +271,11 @@ To calibrate windows:
 	while there is a not currently being processed g-unrequired g-present childless g-window (called win):
 		[ Only run each window once, even if we end up back in this loop (by open/close being called in a before rule), to prevent infinite loops ]
 		now win is currently being processed;
-		carry out the deconstructing activity with win;
+		safely carry out the deconstructing activity with win;
 		now win is not currently being processed;
 	while there is a not currently being processed g-required g-unpresent next-step g-window (called win):
 		now win is currently being processed;
-		carry out the constructing activity with win;
+		safely carry out the constructing activity with win;
 		now win is not currently being processed;
 
 
@@ -371,7 +375,7 @@ To clear (win - a g-window):
 	(- glk_window_clear( {win}.(+ ref number +) ); -).
 
 To refresh (win - a g-window):
-	carry out the refreshing activity with win;
+	safely carry out the refreshing activity with win;
 
 To refresh all/-- windows:
 	repeat with win running through g-present g-windows:
