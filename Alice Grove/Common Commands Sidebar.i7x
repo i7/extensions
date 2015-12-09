@@ -1,13 +1,11 @@
-Version 1/151118 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/151209 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. Requires version 6L of Inform 7."
 
 
 
 [CCS is in beta. Known issues:
-* In Gargoyle, the text color used in the sidebar will also be the color used for the cursor in the main window.
-* Refreshing the sidebar may result in an extra line break in the main window. For the moment I've tried to keep refreshing to a minimum.]
-
+* In Gargoyle, the text color used in the sidebar will also be the color used for the cursor in the main window.]
 
 
 Part - Required Extensions
@@ -336,8 +334,7 @@ To print the text in the sidebar:
 		print a table of commands in the sidebar.
 
 Rule for refreshing the sidebar (This is the refresh the sidebar commands rule):
-	print the text in the sidebar;
-	say "[run paragraph on]" (A). [an attempt to compensate for the line break otherwise printed when switching back to the main window]
+	print the text in the sidebar.
 		
 		
 Chapter - Action for Listing the Sidebar Commands in the Main Window
@@ -647,7 +644,7 @@ Section:  About the Required Extensions
 
 Common Commands Sidebar requires
 
-	Version 15/150620 of Flexible Windows (for Glulx only) by Jon Ingold
+	Version 15/151209 of Flexible Windows (for Glulx only) by Jon Ingold
 	
 	http://raw.githubusercontent.com/i7/extensions/master/Jon%20Ingold/Flexible%20Windows.i7x
 
