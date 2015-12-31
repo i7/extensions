@@ -1,4 +1,4 @@
-Version 6 of Object Response Tests by Juhana Leinonen begins here.
+Version 7 of Object Response Tests by Juhana Leinonen begins here.
 
 "A development tool for testing all actions on any given object - or one action on all objects - at once to see whether the game's responses are sensible."
 
@@ -7,10 +7,10 @@ Book 1 - Testing actor
 	
 The test-actor is a person that varies.
 
-This is the set testing actor rule:
+This is the set default testing actor rule:
 	now the test-actor is the player.
 
-The set testing actor rule is listed last in the when play begins rulebook.
+The set default testing actor rule is listed last in the when play begins rulebook.
 
 
 Book 2 - Testing rules
@@ -368,6 +368,7 @@ topic	testing rule
 
 Book 4 - Actions - Not for release
 
+
 Object-analyzing is an action applying to one visible thing.
 
 Understand "analyze [something]" as object-analyzing.
@@ -417,18 +418,13 @@ Carry out test-verb-trying (this is the repeat an action with all objects rule):
 				follow the testing rule entry.
 
 
-Test-actor changing is an action out of world applying to one visible thing.
+Changing the test actor is an action out of world applying to one visible thing.
 
-Understand "actor is [any person]" as test-actor changing.
+Understand "actor is [any person]" as changing the test actor.
 
-Carry out test-actor changing (this is the change testing actor rule):
+Carry out changing the test actor (this is the change testing actor rule):
 	now the test-actor is the noun;
 	say "Object Response Tests now uses [the noun] as the actor." (A).
-
-To remove the/-- (r - a rule) from object response tests:
-	choose row with testing rule of r in Table of analyzing actions;
-	blank out the whole row.
-
 
 
 Object Response Tests ends here.
@@ -455,11 +451,6 @@ Some games may disable some of the standard library actions. To avoid confusion 
 		remove the test burning rule;
 		remove the test pushing to rule.
 
-	When play begins:
-		remove the test burning rule from object response tests;
-		remove the test pushing to rule from object response tests.
-
-The rules have the same name as the action itself. The complete list can be seen in Book 2 of the extension's source text.
 
 Of course, most games have custom actions that are not defined in the standard library. They can be included in the tests by making testing rules for them and adding those rules in the Table of analyzing actions. They will then be available for both ANALYZE and TRY commands.
 
@@ -495,6 +486,12 @@ The extension automatically disables itself in release versions. Any abovementio
 
 Chapter: Version history
 
+Section: Version 7 (2015-12-31)
+
+ - updated to work with release 6M62 of Inform.
+ - renamed the 'set testing actor' rule to 'set default testing actor' for clarity.
+
+
 Section: Version 6 (2014-04-30)
 
  - updated to work with the new release of Inform 7.
@@ -511,31 +508,30 @@ Section: Version 5 (2013-10-26)
 
 Section: Version 4 (2010-06-14)
 
- 	- changed 'say test announcements for' to 'announce tests for' so that the extension would be compatibile with Inform build 6E59.
+ - changed 'say test announcements for' to 'announce tests for' so that the extension would be compatibile with Inform build 6E59.
 
 
 Section: Version 3 (2009-09-23)
 
-	- changed the hardcoded "[italic type]examining [the noun]: [roman type]" to a more flexible 'say test announcements for' phrase.
-	- changed the extension so that the table of analyzing actions is not for debug builds only, so that you can have continuations of that table in the game code and you don't have to delete them or have them in one "not for release"-chapter when a release version is compiled.
+ - changed the hardcoded "[italic type]examining [the noun]: [roman type]" to a more flexible 'say test announcements for' phrase.
+ - changed the extension so that the table of analyzing actions is not for debug builds only, so that you can have continuations of that table in the game code and you don't have to delete them or have them in one "not for release"-chapter when a release version is compiled.
 
 
 Section: Version 2 (2008-12-23)
 
-	- added the command TRY for testing a single verb with all items in the location (thanks to Taleslinger for the idea).
+ - added the command TRY for testing a single verb with all items in the location (thanks to Taleslinger for the idea).
 
-	- added the command ANALYZE ALL for running all tests on every single item in the location (thanks to Emily Short for the inspiration).
+ - added the command ANALYZE ALL for running all tests on every single item in the location (thanks to Emily Short for the inspiration).
 
-	- added the possibility to change the actor for the tests.
+ - added the possibility to change the actor for the tests.
 
-	 - changed the analyzing action's name to object-analyzing to avoid collisions with other code. It's likely that people might have an action called "analyzing" in their work.
+ - changed the analyzing action's name to object-analyzing to avoid collisions with other code. It's likely that people might have an action called "analyzing" in their work.
 
-	- added a not-for-release chapter heading to example B, just because that's what's recommended in the documentation (thanks to the person in ifMUD whose name I didn't write down and have blissfully forgotten).
+ - added a not-for-release chapter heading to example B, just because that's what's recommended in the documentation (thanks to the person in ifMUD whose name I didn't write down and have blissfully forgotten).
 
 
 Section: Version 1 (2008-11-18)
-
-	- initial release
+ - initial release
 
 
 Example: * Camp Fire - An example of basic use of the extension
@@ -555,31 +551,28 @@ Example: * Camp Fire - An example of basic use of the extension
 
 	Test me with "analyze bonfire/try touching/analyze nounless/actor is Alice/analyze bonfire".
 
-Running the tests shows that at least the response to "taste bonfire" should be changed to something more appropriate.
+When we run the test, we notice that at least the response to "taste bonfire" should be changed to something more appropriate.
 
 
 Example: ** Porcelain - Skipping tests that have destructive side effects
 
 Ignoring a verb in certain cases involves removing the existing rules and writing new ones that take special cases into account.
 
-The Ming vase will be broken if it's pushed or touched, so we'll remove those tests and replace them with new ones that do nothing if the target is the vase.
+	*: "Porcelain"
 
-
-	"Porcelain"
-	
 	Include Object Response Tests by Juhana Leinonen.
-	
-	The Porcelain shop is a room.
-	
+
+	The Porcelain shop is a room. 
+
 	The Ming dynasty vase is in the porcelain shop. The description is "It looks very delicate and fragile."
-	
+
 	Instead of taking the Ming dynasty vase:
 		say "You're afraid that you might drop it."
-	
+
 	After pushing or touching the Ming dynasty vase:
 		say "Whoops! The vase falls off its pedestal and shatters into thousand pieces.";
 		remove the Ming dynasty vase from play.
-	
+
 	Chapter Tests - Not for release
 
 	When play begins:
