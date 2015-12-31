@@ -1,4 +1,4 @@
-Version 1/150919 of Achievements by Juhana Leinonen begins here.
+Version 1/151231 of Achievements by Juhana Leinonen begins here.
 
 "A simple but flexible rule-based achievement system. Awarded achievements can optionally persist in external files after a restart."
 
@@ -227,6 +227,8 @@ Persistent achievements works only in Glulx.
 
 Example: * Another Day at the Office - Rule-based and manually awarded achievements
 
+	*: "Another Day at the Office"
+	
 	Include Achievements by Juhana Leinonen.
 
 	Office is a room. "It's another boring afternoon in the office."
