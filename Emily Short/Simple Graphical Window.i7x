@@ -1,4 +1,4 @@
-Version 9 of Simple Graphical Window (for Glulx only) by Emily Short begins here. 
+Version 9/160121 of Simple Graphical Window (for Glulx only) by Emily Short begins here. 
 
 "Provides a graphics window in one part of the screen, in which the author can place images; with provision for scaling, tiling, or centering images automatically, as well as setting a background color. Glulx only."
 
@@ -335,7 +335,7 @@ If we need to redraw the image in the window, we write
 For instance if we were adding an image to the screen every time the player moved, we might write something like
 
 	Carry out looking:
-		change currently shown picture to the room illustration of the location;
+		now the currently shown picture is the room illustration of the location;
 		follow the current graphics drawing rule.
 
 ...where the room illustration is defined for each room in the game. (The extension "Location Images" implements this idea in full.)
