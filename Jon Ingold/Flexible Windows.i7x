@@ -1,4 +1,4 @@
-Version 15/151209 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/160122 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -832,6 +832,13 @@ A glulx zeroing-reference rule (this is the set generic text styles rule):
 			set the relative size of wintype W for the style name entry to the relative size entry;
 		if there is a reversed entry:
 			set reversed of wintype W for the style name entry to the reversed entry;
+
+[ Gargoyle sets the cursor color to whatever the last text-buffer color hint was. We will reset it using a variable the story author can change.
+This is apparently by design, but seems unuseful and buggy to me. I raised the issue at https://groups.google.com/forum/#!topic/garglk-dev/DdqG0Ppt2lY ]
+
+The Gargoyle cursor color is initially "#000000".
+After constructing a textual g-window (this is the Gargoyle cursor color rule):
+	set the color of wintype 3 for normal-style to the Gargoyle cursor color;
 
 
 
