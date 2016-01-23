@@ -1,16 +1,14 @@
-Version 1/151209 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/160122 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
-"Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. Requires version 6L of Inform 7."
+"Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
 
 
-
-[CCS is in beta. Known issues:
-* In Gargoyle, the text color used in the sidebar will also be the color used for the cursor in the main window.]
+[CCS is in beta.]
 
 
 Part - Required Extensions
 
-Include version 15/151209 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
+Include version 15/160122 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
 Include Basic Screen Effects by Emily Short.
 
 
@@ -22,7 +20,7 @@ To decide what number is the glk version:
 	(- glk_gestalt( gestalt_Version, 0 ) -).
 	
 
-[Story authors may create their own tables of commands, and each table must include a particular column. The phrase below is used to guard against a run-time error in case the required column is missing or mislabled:]
+[Story authors may create their own tables of commands, so we need to guard against a run-time error in case a required column is missing or mislabled:]
 
 To decide whether the/-- column (C - table column) exists in (T - table name):
 	(- (TableFindCol({T}, {C}) ~= 0) -).
@@ -42,29 +40,49 @@ The rock of the sidebar is 225.  [For use in a CSS stylesheet.]
 The background color of the sidebar is usually "#F0E2C7". [beige]
 
 
+Part - Debug Settings
+
+[In a non-release version of the story, debug messages can be turned on or off, but they are disabled in the release version.]
+
+The sidebar can be either disabling debugging in the not-for-release version or enabling debugging in the not-for-release version. [The sequence here makes "enabling" the default.]
+
+Chapter - Enabling Debugging - Not For Release
+
+To decide if CCS debugging is on:
+	if the sidebar is enabling debugging in the not-for-release version:
+		decide yes;
+	decide no.
+
+
+Chapter - Disabling Debugging - For Release Only
+
+To decide if CCS debugging is on:
+	decide no.
+
 Part - Showing and Hiding the Sidebar
 
 Chapter - Showing the Sidebar
 
-The minimum window width for opening the sidebar is a number that varies. The minimum window width for opening the sidebar is usually 50.
+The sidebar has a number called minimum window width for opening. The minimum window width for opening of the sidebar is usually 50.
 
-The minimum window height for opening the sidebar is a number that varies. The minimum window height for opening the sidebar is usually 15.
+The sidebar has a number called minimum window height for opening. The minimum window height for opening of the sidebar is usually 15.
 
 To decide if the main window is large enough to show the sidebar:
-	if the width of the main window >= minimum window width for opening the sidebar:
-		if the height of the main window >= minimum window height for opening the sidebar:
+	if the width of the main window >= minimum window width for opening of the sidebar:
+		if the height of the main window >= minimum window height for opening of the sidebar:
 			decide yes;
 	decide no.
 	
 This is the can't open the sidebar for unknown reason rule:
 	say "The commands sidebar could not be opened. To list the commands in the main window instead, type COMMANDS." (A).
 	
-This is the can't open the sidebar when the main window is too small rule: [Also catches Parchment, which seems to fail the minimum size tests no matter what]
+This is the can't open the sidebar when the main window is too small rule:
+[Also catches Parchment, which seems to fail the minimum size tests no matter what]
 	say "The commands sidebar could not be opened. Either your interpreter does not support this feature, or the window is not large enough to conveniently display the sidebar. To list the commands in the main window instead, type COMMANDS." (A).
 	
 To show the command sidebar window:
-	if sidebar_attributes_finalized is false:
-		finalize the sidebar attributes;
+	if the sidebar is not finished setting the attributes:
+		set the final sidebar attributes;
 	if the main window is large enough to show the sidebar:
 		open the sidebar;
 		unless the sidebar is g-present:
@@ -77,12 +95,18 @@ Chapter - Introducing the Sidebar
 
 The sidebar can be prompted automatically, shown automatically, or shown manually (this is the sidebar introduction method). The sidebar is prompted automatically.
 
+[Keep track of whether we've introduced the sidebar so it doesn't get introduced again after the VERSION command:]
+
 The sidebar can be introduced already. The sidebar is not introduced already.
 
-This is the introduce the sidebar commands as a list rule: [a fallback in case the sidebar can't be shown]
+
+[Intoduce the sidebar commands as a list if for some reason the sidebar can't be shown:]
+
+This is the introduce the sidebar commands as a list rule:
 	say  "[italic type]This story offers a list of commands you may find useful. You can see this list at any time by typing COMMANDS." (A);
 	say "[roman type][line break]" (B);
 	now the sidebar is introduced already.
+	
 
 After printing the banner text when (the sidebar is prompted automatically) and (the sidebar is not introduced already) (this is the ask the player whether to show the command sidebar rule):
 	if the main window is large enough to show the sidebar:
@@ -114,10 +138,10 @@ After printing the banner text when (the sidebar is shown automatically) and (th
 
 Chapter - Temporarily Hiding the Sidebar When a Full-Screen Menu is Displayed
 
-[The sidebar is temporarily hidden when we open a full-screen menu with Emily Short's Menus extension or Wade Clarke's Menus extension.]
+[To avoid conflicts, we temporarily hide the sidebar when we open a full-screen menu with Dannii Willis's Menus extension, Emily Short's Menus extension, or Wade Clarke's Menus extension.]
 
 
-Section - Phrases for Temporary Hiding
+Section - Phrases for Temporarily Hiding the Sidebar
 
 The sidebar can be flagged to appear later. The sidebar is not flagged to appear later.
 		
@@ -130,7 +154,16 @@ To show the hidden sidebar if necessary:
 	If the sidebar is flagged to appear later:
 		show the command sidebar window;
 		now the sidebar is not flagged to appear later.
-		
+
+
+Section - Compatibility with Dannii Willis's Menus (for use with Menus by Dannii Willis)
+
+Before displaying (This is the hide the sidebar before opening a menu with Dannii Willis's Menus rule):
+	temporarily hide the sidebar if necessary.
+	
+After displaying (This is the show the hidden sidebar after closing a menu with Dannii Willis's Menus rule):
+	show the hidden sidebar if necessary.
+
 
 Section - Compatibility with Emily Short's Menus (for use with Menus by Emily Short)
 
@@ -148,6 +181,7 @@ Before displaying (This is the hide the sidebar before opening a menu with Wade 
 	
 After displaying (This is the show the hidden sidebar after closing a menu with Wade Clarke's Menus rule):
 	show the hidden sidebar if necessary.
+	
 		
 		
 Chapter - Actions for Turning the Sidebar On and Off
@@ -186,7 +220,7 @@ Part - Sidebar Text
 
 Chapter - Text Appearance
 
-The text color of the sidebar is a text that varies. The text color of the sidebar is usually "#363025". [dark brown]
+The sidebar has a text called the text color. The text color of the sidebar is usually "#363025". [dark brown]
 
 
 [The relative text size is set to 0 to reduce disparity between the results in Gargoyle and other interpreters. Otherwise a bold title may barely fit into the width of the sidebar in WinGluxe, while it looks relatively small in Gargoyle.]
@@ -203,20 +237,20 @@ This is the set the sidebar text color rule:
 		now the color corresponding to a window of sidebar in the Table of User Styles is the text color of the sidebar.
 
 
-The sidebar indent is a text that varies. The sidebar indent is usually "  ".
+The sidebar has some text called the indent. The indent of the sidebar is usually "  ".
 
-The sidebar lettering is some text that varies. The sidebar lettering is usually "[roman type]".
+The sidebar has some text called the lettering style. The lettering style of the sidebar is usually "[roman type]". [***rename this?]
 
 The sidebar can be space-divided, star-divided, undivided, or custom-divided (this is the sidebar divider type property). The sidebar is space-divided.
 
-The custom sidebar divider is some text that varies. The custom sidebar divider is usually "".
+The sidebar has some text called the custom divider. The custom divider of the sidebar is usually "".
 
 
 Chapter - Command Tables
 
 Table of Default Sidebar Commands
-Displayed Command (a text)
-"[bold type]Useful Commands"
+Displayed Command (a text)	Listed Command (a text)	Command Label (a command-label)	Command Visibility (a command-visibility)
+"[bold type]Useful Commands"	--	--	--
 " "
 "[fixed letter spacing]     N"
 "[fixed letter spacing]  NW   NE"
@@ -249,51 +283,159 @@ with 30 blank rows
 
 
 Table of Custom Sidebar Commands
-Displayed Command (a text)
---
+Displayed Command (a text)	Listed Command (a text)	Command Label (a command-label)	Command Visibility (a command-visibility)
+--	--	--	--
 
 
 Table of Extension-Provided Sidebar Commands
-Displayed Command (a text)
-"?"
+Displayed Command (a text)	Listed Command (a text)	Command Label (a command-label)	Command Visibility (a command-visibility)
+"?"	--	--	--
 
-	
+
 Chapter - Choosing a Table of Commands
 
-The chosen table of commands is a table name that varies. The chosen table of commands is usually the Table of Default Sidebar Commands.
+The sidebar has a table name called the chosen table. The chosen table of the sidebar is usually the Table of Default Sidebar Commands.
 
-commands_table_chosen is a truth state that varies. commands_table_chosen is usually false.
+The sidebar can be finished choosing a command table.
 
-When play begins (this is the choose the appropriate table of commands rule):
-	if commands_table_chosen is false: [if author has not already swapped in a table]
+When play begins (this is the choose the appropriate table of commands at the start of play rule):
+	if the sidebar is not finished choosing a command table: [i.e. if the story author has not already swapped in a table] [****REVISIT THIS]
 		if the Table of Custom Sidebar Commands is not empty:
-			now the chosen table of commands is the Table of Custom Sidebar Commands;
+			now the chosen table of the sidebar is the Table of Custom Sidebar Commands;
 		otherwise if the Table of Custom Sidebar Commands is empty:
-			now the chosen table of commands is the Table of Default Sidebar Commands;
-		now commands_table_chosen is true.
+			now the chosen table of the sidebar is the Table of Default Sidebar Commands;
+		now the sidebar is finished choosing a command table.
 
 
-[Swapping is provided for the story author's use:]
+[A phrase for the use of story authors when they want to swap tables.]
 		
 To swap (T - a table name) into the/-- sidebar:
-	now the chosen table of commands is T;
+	now the chosen table of the sidebar is T;
 	if the sidebar is g-present:
 		refresh the sidebar;
-	now commands_table_chosen is true.
+	now the sidebar is finished choosing a command table.
 		
 		
+Chapter - Showing and Hiding Individual Commands
+
+ To decide if (given table - a table name) has the necessary columns for hidden commands:
+	if the column Command Visibility exists in the given table:
+		if the column Command Label exists in the given table:
+			if the column Displayed Command exists in the given table:
+				decide yes;
+			otherwise if CCS debugging is on:
+				say "CCS Debug Message # 10: The [Given Table] does not have a Displayed Command column.";
+		otherwise if CCS debugging is on:
+			say "CCS Debug Message #12: The [Given Table] does not have a Command Label column.";
+	otherwise if CCS debugging is on:
+		say "CCS Debug Message #14: The [Given Table] does not have a Command Visibility column.";
+	decide no.
+ 
+ 
+
+ The sidebar can be either using phrases to control command visibility or not using phrases to control command visibility. [This sequence makes "not using" the default.]
+ 
+ command-visibility is a kind of value. The command-visibilities are c-shown, c-blank, c-hidden, and c-table-error.
+ 
+  A command-label is a kind of object.
+	
+To decide which command-visibility is the/-- command-visibility of (specified command - a command-label) in (given table - a table name):
+	if the sidebar is using phrases to control command visibility:
+		if the given table has the necessary columns for hidden commands:
+			if the specified command is a Command Label listed in the given table: [1st only revisit**]
+				if there is a Command Visibility entry:
+					decide on the Command Visibility entry;
+				otherwise:
+					decide on c-shown; [the default]
+			otherwise if CCS Debugging is on:
+				say "CCS Debug Message #20: Tried to determine the command-visibility of [specified command] in the [Given Table], but [specified command] was not found in the Command Label column.";
+				decide on c-table-error;
+		otherwise if CCS Debugging is on:
+			say "CCS Debug Message #22: Tried to determine the command visibility of [specified command] in the [Given Table], but the [Given Table] was missing a necessary column.";
+			decide on c-table-error;
+	decide on c-shown. [revisit this******]
+		
+	
+To decide which command-visibility is the/-- command-visibility of (the specified command - a command-label):
+	decide on the command-visibility of the specified command in the chosen table of the sidebar.
+
+To mark the/-- (designated command - a command-label) command/commands as (specified visibility - a command-visibility) in (given table - a table name):
+	if the sidebar is using phrases to control command visibility:
+		if the given table has the necessary columns for hidden commands:
+			if the designated command is a Command Label listed in the given table:
+				repeat through the given table: [to show all of them; there may be more than one]
+					if (there is a Command Label entry) and (the Command Label entry is the designated command):
+						now the Command Visibility entry is the specified visibility;
+			otherwise if CCS debugging is on:
+				say "CCS Debug Message #30: Tried to mark the [designated command] command(s) as [specified visibility] in the [Given Table], but [designated command] was not found in the Command Label column.";
+		otherwise if CCS debugging is on:
+			say "CCS Debug Message #32: Tried to mark the [designated command] command(s) as [specified visibility] in the [Given Table], but the [Given Table] was missing a necessary column.".
+			
+To show the/-- (C - a command-label) command/commands in (given table - a table name):
+	mark the C command as c-shown in the given table.
+	
+To show the/-- (C - a command-label) command/commands:
+	show the C command in the chosen table of the sidebar.	
+
+To hide the/-- (C - a command-label) command/commands in (given table - a table name):
+	mark the C command as c-hidden in the given table.
+	
+To hide the/-- (C - a command-label) command/commands:
+	hide the C command in the chosen table of the sidebar.
+	
+To blank the/-- (C - a command-label) command/commands in (given table - a table name):
+	mark the C command as c-blank in the given table.
+	
+To blank the/-- (C - a command-label) command/commands:
+	blank the C command in the chosen table of the sidebar.	
+
+
+	
 Chapter - Printing the Text in the Sidebar
 		
-The sidebar can be including extension-provided commands.		
-		
-The currently printing table of commands is a table name that varies. [Keep track of whether we are printing the author's chosen table of commands or the Table of Extension-Provided Sidebar Commands.]
+To decide if (current entry - a text) designates a/-- divider in the sidebar:
+	if the current entry is "?":
+		decide yes;
+	decide no.
+	
+To decide if (current entry - a text) designates an/-- empty space in the sidebar:
+	if the current entry is " ":
+		decide yes;
+	decide no.
+	
+To decide if (current entry - a text) designates an/-- ignorable entry in the sidebar:
+	if the current entry is "":
+		decide yes;
+	decide no.
 
-To indent the upcoming sidebar entry: [indent with fixed spacing, then return to appropriate typeface]
+To decide if (current entry - a text) designates an/-- actual command in the sidebar:
+	unless (the current entry designates a divider in the sidebar) or
+		   (the current entry designates an empty space in the sidebar) or
+	           (the current entry designates an ignorable entry in the sidebar):
+		decide yes;
+	decide no.
+	
+To decide if row (N - a number) of (given table - a table name) is effectively marked hidden or marked blank:
+	unless the sidebar is using phrases to control command visibility:
+		decide no;
+	if the column Command Visibility exists in the given table:
+		if there is a Command Visibility in row N of the given table:
+			if (the Command Visibility in row N of the given table is c-hidden) or
+			   (the Command Visibility in row N of the given table is c-blank):
+				decide yes;
+	decide no.
+	
+To indent the/-- upcoming sidebar entry:
 	say fixed letter spacing;
-	say sidebar indent;
-	say sidebar lettering.
+	say the indent of the sidebar;
+	say lettering style of the sidebar.
 
-To print an appropriate sidebar divider:
+To print the/-- command (current command - a text) in the sidebar:
+	say line break; [prints blank line before the first line of text as well]
+	indent the upcoming sidebar entry;
+	say current command.
+
+To print an/-- appropriate sidebar divider:
 	if the sidebar is space-divided:
 		say line break;
 	otherwise if the sidebar is undivided:
@@ -304,117 +446,128 @@ To print an appropriate sidebar divider:
 		if the sidebar is star-divided:
 			say "* * *";
 		otherwise if the sidebar is custom-divided:
-			say custom sidebar divider;
-		say line break. [blank line below divider symbols]
-		
-		
-[More than one table of commands may be printed in the sidebar; the following code block runs once per table:]
-		
-To print a table of commands in the sidebar: 
-	if the column Displayed Command exists in the currently printing table of commands:
-		repeat through the currently printing table of commands:
-			if there is a Displayed Command entry and the Displayed Command entry is not "": 
-				if the Displayed Command entry is " ":
-					say line break;
-				otherwise if the Displayed Command entry is "?":
-					print an appropriate sidebar divider;
-				otherwise: [if it's a regular command entry]
-					say line break; [prints blank line before the first line of text as well]
-					indent the upcoming sidebar entry;
-					say displayed command entry.
-					
-					
-[Print commands from the author's chosen table and, if applicable, the table of extension-provided commands:]
-						
-To print the text in the sidebar: 
-	now the currently printing table of commands is the chosen table of commands;
-	print a table of commands in the sidebar;
-	if the sidebar is including extension-provided commands:
-		now the currently printing table of commands is the table of extension-provided sidebar commands;
-		print a table of commands in the sidebar.
+			say custom divider of the sidebar;
+		say line break. [leave a blank line below divider symbols]
 
-Rule for refreshing the sidebar (This is the refresh the sidebar commands rule):
-	print the text in the sidebar.
+
+populating the sidebar using something is an activity on table names.
+
+Rule for populating the sidebar using a table name (called the current table) (this is the print the commands from a single command table in the sidebar rule): 
+	if the column Displayed Command exists in the current table:
+		repeat with N running from 1 to the number of rows in the current table:
+			choose row N in the current table;
+			if there is a Displayed Command entry:
+				unless row N of the current table is effectively marked hidden or marked blank:
+					if the Displayed Command entry designates an actual command in the sidebar:
+						print the command Displayed Command Entry in the sidebar;
+					otherwise if the Displayed Command entry designates a divider in the sidebar:
+						print an appropriate sidebar divider;
+					otherwise if the Displayed Command entry designates an empty space in the sidebar:
+						say line break;
+					otherwise if the Displayed Command entry designates an ignorable entry in the sidebar:
+						next;
+				otherwise if the Command Visibility entry is c-hidden:
+					next;
+				otherwise if the Command Visibility entry is c-blank:
+					say line break.
+
+					
+The sidebar can be including extension-provided commands.			
+
+[Print commands from the author's chosen table and, if applicable, commands provided by other extension authors:]
+
+Rule for refreshing the sidebar (This is the print the commands from the appropriate command tables in the sidebar rule):
+	carry out the Populating The Sidebar Using activity with the chosen table of the sidebar;
+	if the sidebar is including extension-provided commands:
+		carry out the Populating The Sidebar Using activity with the table of extension-provided sidebar commands.
 		
 		
 Chapter - Action for Listing the Sidebar Commands in the Main Window
 
-[The "Listing the Sidebar Commands" action lists the commands in the main window. This serves as an alternative to the sidebar when players use screenreaders or interpreters that don't support extra windows. The commands are converted into list form and the default compass rose, if present, is converted into words.]
+[Listing the sidebar commands in the main window serves as an alternative to the sidebar when players use screenreaders or interpreters that don't support extra windows. The commands are converted into list form, with the default compass rose, if present, being converted into words.]
 
-Listing the sidebar commands is an action out of world.
-Understand "commands" as listing the sidebar commands.
+To decide if a Listed Command has been provided in row (N - a number) of (given table - a table name):	
+	unless (the column Listed Command exists in the given table) and (there is a Listed Command in row N of the given table):
+		decide no;
+	decide yes.
+
+The sidebar has a list of texts called default compass rose entries.
+The default compass rose entries of the sidebar are  {"     N",
+											"  NW   NE",
+											"W    *    E", 
+											"  SW   SE", 
+											"     S"
+											}.
+
+To decide if (T - a text) resembles/-- a default compass rose entry:
+	repeat with compass-entry running through default compass rose entries of the sidebar:
+		if T is compass-entry:
+			decide yes;
+	decide no.
+
+To decide if (given table - a table name) uses the/-- default compass rose:
+	if the column Displayed Command exists in the given table:
+		repeat with compass-entry running through default compass rose entries of the sidebar:
+			if there is a Displayed Command of compass-entry in the given table:
+				next;
+			otherwise:
+				decide no;
+		decide yes;
+	otherwise:
+		decide no.
+		
+To decide if we're treating (the specified entry - a text) as a/-- compass rose entry in (given table - a table name):
+	unless (the specified entry resembles a default compass rose entry) and (the given table uses the default compass rose):
+		decide no;
+	decide yes.
+
+
+printing a list of commands from something is an activity on table names.	
+
+Rule for printing a list of commands from a table name (called the current table) (this is the list the commands from a single command table in the main window rule):
+	if the column Displayed Command exists in the current table:
+		let compass_rose_already_listed be a truth state;
+		now compass_rose_already_listed is false; 
+		repeat with N running from 1 to the number of rows in the current table:
+			choose row N in the current table;
+			if there is a Displayed Command entry:
+				unless row N of the current table is effectively marked hidden or marked blank:
+					unless a Listed Command has been provided in row N of the current table:
+						unless we're treating the Displayed Command entry as a compass rose entry in the current table:
+							if the Displayed Command entry designates an actual command in the sidebar:
+								say "[lettering style of the sidebar][Displayed Command entry]. " (A);
+							otherwise if (the Displayed Command entry designates a divider in the sidebar) or
+						                            (the Displayed Command entry designates an empty space in the sidebar) or
+						                            (the Displayed Command entry designates an ignorable entry in the sidebar):
+								next;
+						otherwise if we're treating the Displayed Command entry as a compass rose entry in the current table:
+							if compass_rose_already_listed is false:
+								say "[lettering style of the sidebar]North (N). South (S). East (E). West (W). Northeast (NE). Southeast (SE). Northwest (NW). Southwest (SW). " (B);
+								now compass_rose_already_listed is true;
+							otherwise if compass_rose_already_listed is true:
+								next;
+					otherwise if a Listed Command has been provided in row N of the current table:
+						say "[lettering style of the sidebar][Listed Command entry]. " (C).
+
+
+Listing the sidebar commands in the main window is an action out of world.
+Understand "commands" as listing the sidebar commands in the main window.
 Understand "commands [text]" as a mistake ("To list useful commands in the main window, type just COMMANDS[if the sidebar is allowing toggling].  Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it[end if].").
 
-Check listing the sidebar commands when commands_table_chosen is false (this is the select the appropriate table of commands before listing the commands rule):
-	follow the choose the appropriate table of commands rule.
+Check listing the sidebar commands in the main window when the sidebar is not finished choosing a command table (this is the select the appropriate table of commands before listing the commands in the main window rule):
+	follow the choose the appropriate table of commands at the start of play rule.
 	
-custom command list is some text that varies. custom command list is usually "".
+The sidebar has a text called the custom command list. The custom command list of the sidebar is usually "".
 
-To print a divider space in the command list:
-	if the sidebar is undivided:
-		do nothing; [if the sidebar is set to not use dividers, the list won't use them either]
-	otherwise:
-		say paragraph break.
-		
-compass_rose_already_listed is a truth state that varies.
-
-table_contains_default_compass_rose is a truth state that varies.
-
-To determine if (T - a table name) uses the default compass rose:
-	if there is a displayed command of "     N" in T:
-		if there is a displayed command of "  NW   NE" in T:
-			if there is a displayed command of "W    *    E" in T:
-				if there is a displayed command of "  SW   SE" in T:
-					if there is a displayed command of "     S" in T:
-						now table_contains_default_compass_rose is true;
-						stop;
-	now table_contains_default_compass_rose is false.
-
-To decide if (T - a text) is a default compass rose entry:
-	if T is "     N", yes;
-	if T is "  NW   NE", yes;
-	if T is "W    *    E", yes;
-	if T is "  SW   SE", yes;
-	if T is "     S", yes;
-	no.
-	
-	
-[Commands from more than one table may be listed together; the "print a table of commands as a list rule" runs once per table:]
-
-This is the print a table of commands as a list rule:
-	if the column Displayed Command exists in the currently printing table of commands:
-		now compass_rose_already_listed is false;
-		determine if the currently printing table of commands uses the default compass rose;
-		repeat through the currently printing table of commands:
-			if there is a Displayed Command entry:
-				if (the Displayed Command entry is "") or (the Displayed Command entry is " "):
-					do nothing;
-				otherwise if the Displayed Command entry is "?":
-					print a divider space in the command list;
-				otherwise if (table_contains_default_compass_rose is true) and (the Displayed Command entry is a default compass rose entry):
-					if compass_rose_already_listed is false:
-						say "[sidebar lettering]North (N). South (S). East (E). West (W). Northeast (NE). Southeast (SE). Northwest (NW). Southwest (SW). " (A);
-						now compass_rose_already_listed is true;
-					otherwise if compass_rose_already_listed is true:
-						do nothing;
-				otherwise: [if it's just a regular command]
-					say "[sidebar lettering][displayed command entry]. " (B).
-		
-
-[The carry out rule lists commands from the author's chosen table and, if applicable, the table of extension-provided commands:]		
-		
-Carry out listing the sidebar commands (this is the list the sidebar commands in the main window rule):
-	if the custom command list is not "":
-		say the custom command list;
-	otherwise:
-		now the currently printing table of commands is the chosen table of commands;
-		follow the print a table of commands as a list rule;
+Carry out listing the sidebar commands in the main window (this is the list the commands from the appropriate command tables in the main window rule):
+	if the custom command list of the sidebar is "":
+		carry out the Printing A List Of Commands From activity with the chosen table of the sidebar;
 		if the sidebar is including extension-provided commands:
-			now the currently printing table of commands is the Table of Extension-Provided Sidebar Commands;
 			say run paragraph on; [to avoid extra break between command tables]
-			follow the print a table of commands as a list rule;
-		say line break.
-			
+			carry out the Printing A List Of Commands From activity with the table of extension-provided sidebar commands;
+	otherwise:
+		say the custom command list of the sidebar.
+				
 			
 Part - Adjusting the Status Line
 
@@ -452,7 +605,7 @@ When play begins (this is the detect whether we're using Spatterlight rule):
 		unless Glulx character input is supported:
 			if Glulx mouse input is supported:
 				unless Glulx hyperlinks are supported:
-				[unique Spatterlight characteristics (i.e. not shared by Zoom and Mac IDE) end here]
+				[Spatterlight characteristics not shared by Zoom and Mac IDE end here; the rest is merely to minimize false positives]
 					if Glulx timekeeping is supported:
 						unless Glulx sound notification is supported:
 							if Glulx graphic-window mouse input is supported:
@@ -461,8 +614,6 @@ When play begins (this is the detect whether we're using Spatterlight rule):
 
 
 Chapter - Suggesting the Sidebar after a Blank Command
-
-[If the player enters a blank command and the sidebar is not visible, the parser can, instead of saying "I beg your pardon?", remind the player how to access the sidebar.]
 
 The sidebar can be suggested following blank commands.
 
@@ -480,38 +631,16 @@ Report requesting the story file version (this is the attribute the play IF post
 
 Part - Setting the Built-in Options
 
-Chapter - Debugging
-
-[In a non-release version of the story, debug messages can be turned on or off, but they are disabled in the release version.]
-
-Section - Enabling Debugging - Not For Release
-
-CCS_debug is a truth state that varies. CCS_debug is usually true.
-
-To decide if CCS debugging is on:
-	if CCS_debug is true:
-		decide yes;
-	decide no.
-
-
-Section - Disabling Debugging - For Release Only
-
-CCS_debug is a truth state that varies. 
-
-To decide if CCS debugging is on:
-	decide no.
-	
-	
-Section - Sidebar Preparation Bugs
+Chapter - Sidebar Preparation Bugs
 
 [If the "prepare the command sidebar" phrase appears more than once in the source, the earlier settings are reset to their defaults before the later settings take effect, so we don't get a mix of old and new settings:]
 
-sidebar_prepared is a truth state that varies. sidebar_prepared is usually false.
+The sidebar can be either prepared already or not prepared already. The sidebar is not prepared already.
 
 To reset the sidebar settings: 
 	now the sidebar is prompted automatically ;
 	now the position of the sidebar is g-placeleft;
-	now the sidebar lettering is "[roman type]";
+	now the lettering style of the sidebar is "[roman type]";
 	now the sidebar is space-divided;
 	now the sidebar is not suggested following blank commands;
 	now the sidebar is allowing toggling;
@@ -520,98 +649,108 @@ To reset the sidebar settings:
 
 [Debug messages will warn us if we've invoked "prepare the commands sidebar"  more than once, or if we've chosen mutually exclusive options in a single "prepare the commands sidebar" line. The story will compile regardless.]
 
-sidebar_intro_setting_count is a number that varies.
-sidebar_position_setting_count is a number that varies.
-sidebar_text_setting_count is a number that varies.
-sidebar_divider_setting_count is a number that varies.
+The sidebar has a number called the intro setting count.
+The sidebar has a number called the position setting count.
+The sidebar has a number called the lettering setting count.
+The sidebar has a number called the divider setting count.
 
 To reset the sidebar setting counters:
-	now sidebar_intro_setting_count is 0;
-	now sidebar_position_setting_count is 0;
-	now sidebar_text_setting_count is 0;
-	now sidebar_divider_setting_count is 0.
+	now the intro setting count of the sidebar is 0;
+	now the position setting count of the sidebar is 0;
+	now the lettering setting count of the sidebar is 0;
+	now the divider setting count of the sidebar is 0.
+	
 	
 To mention sidebar preparation bugs:
-	if sidebar_prepared is true:
-		say "CCS Debug Message #2: 'Prepare the command sidebar' has been invoked more than once in the code. This may result in unexpected sidebar settings, since later invocations will override earlier ones.[line break]";
-	if sidebar_intro_setting_count > 1:
-		say "CCS Debug Message #4: The sidebar introduction method (available choices are 'prompted automatically,' 'shown automatically,' and 'shown manually') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
-	if sidebar_position_setting_count > 1:
-		say "CCS Debug Message #6: The sidebar position (available choices are 'on the left' and 'on the right') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
-	if sidebar_text_setting_count > 1:
-		say "CCS Debug Message #8: The text style setting for the sidebar (available choices are 'with roman type,' 'with fixed letter spacing,' 'with italic type,' and 'with bold type') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one text style option can take effect.[line break]";
-	if sidebar_divider_setting_count > 1:
-		say "CCS Debug Message #10: The divider setting for the sidebar (built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one divider option can take effect.[line break]";
-	if (sidebar_divider_setting_count > 0) and (custom sidebar divider is not ""):
-		say "CCS Debug Message #12: The divider setting for the sidebar (available built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set in a 'Prepare the command sidebar' line, but a 'custom sidebar divider' has also been specified elsewhere. This may have unexpected results, since only one divider option can take effect.[line break]".
+	if the sidebar is prepared already:
+		say "CCS Debug Message #40: 'Prepare the command sidebar' has been invoked more than once in the code. This may result in unexpected sidebar settings, since later invocations will override earlier ones.[line break]";
+	if the intro setting count of the sidebar > 1:
+		say "CCS Debug Message #42: The sidebar introduction method (available choices are 'prompted automatically,' 'shown automatically,' and 'shown manually') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
+	if the position setting count of the sidebar > 1:
+		say "CCS Debug Message #44: The sidebar position (available choices are 'on the left' and 'on the right') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one of these options can take effect.[line break]";
+	if the lettering setting count of the sidebar > 1:
+		say "CCS Debug Message #46: The text style setting for the sidebar (available choices are 'with roman type,' 'with fixed letter spacing,' 'with italic type,' and 'with bold type') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one text style option can take effect.[line break]";
+	if the divider setting count of the sidebar > 1:
+		say "CCS Debug Message #48: The divider setting for the sidebar (built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set multiple times in one 'Prepare the command sidebar' line. This may have unexpected results, since only one divider option can take effect.[line break]";
+	if (the divider setting count of the sidebar > 0) and (custom divider of the sidebar is not ""):
+		say "CCS Debug Message #50: The divider setting for the sidebar (available built-in choices are 'divided with space,' 'divided with stars,' and 'not divided') has been set in a 'Prepare the command sidebar' line, but a 'custom sidebar divider' has also been specified elsewhere. This may have unexpected results, since only one divider option can take effect.[line break]".
 		
 		
 Chapter - Phrases to Prepare the Commands Sidebar
 
-[The "To prepare..." phrase is provided for the conveniece of story authors, allowing them to set most of the sidebar options in a single line:]
+[The "To prepare..." phrase is provided solely for the conveniece of story authors, allowing them to set most of the sidebar options in a single line instead of setting the variables one by one.]
 
 To prepare the/-- command/commands sidebar, prompted automatically, shown automatically, shown manually, on the left, on the right, with roman type, with fixed letter spacing, with italic type, with bold type, divided with space, divided with stars, not divided, including extension commands, suggested after blank commands, with toggling disabled, and/or without changing the status line:
-	if sidebar_prepared is true:
+	[Resets:]
+	if the sidebar is prepared already:
 		reset the sidebar settings;
 		reset the sidebar setting counters;
+	[Introduction methods:]
 	if prompted automatically:
 		now the sidebar is prompted automatically;
-		increment sidebar_intro_setting_count;
+		increment the intro setting count of the sidebar;
 	if shown automatically:
 		now the sidebar is shown automatically;
-		increment sidebar_intro_setting_count;
+		increment the intro setting count of the sidebar;
 	if shown manually:
 		now the sidebar is shown manually;
-		increment sidebar_intro_setting_count;
+		increment the intro setting count of the sidebar;
+	[Positions:]
 	if on the left:
 		now the position of the sidebar is g-placeleft;
-		increment sidebar_position_setting_count;
+		increment the position setting count of the sidebar;
 	if on the right:
 		now the position of the sidebar is g-placeright;	
-		increment sidebar_position_setting_count;
+		increment the position setting count of the sidebar;
+	[Lettering styles:]
 	if with roman type:
-		now sidebar lettering is "[roman type]";
-		increment sidebar_text_setting_count;
+		now lettering style of the sidebar is "[roman type]";
+		increment the lettering setting count of the sidebar;
 	if with fixed letter spacing:
-		now sidebar lettering is "[fixed letter spacing]";
-		increment sidebar_text_setting_count;
+		now the lettering style of the sidebar is "[fixed letter spacing]";
+		increment the lettering setting count of the sidebar;
 	if with italic type:
-		now sidebar lettering is "[italic type]";
-		increment sidebar_text_setting_count;
+		now the lettering style of the sidebar is "[italic type]";
+		increment the lettering setting count of the sidebar;
 	if with bold type:
-		now sidebar lettering is "[bold type]";
-		increment sidebar_text_setting_count;
+		now the lettering style of the sidebar is "[bold type]";
+		increment the lettering setting count of the sidebar;
+	[Dividers:]
 	if divided with space:
 		now the sidebar is space-divided;
-		increment sidebar_divider_setting_count;
+		increment the divider setting count of the sidebar;
 	if divided with stars:
 		now the sidebar is star-divided;
-		increment sidebar_divider_setting_count;
+		increment the divider setting count of the sidebar;
 	if not divided:
 		now the sidebar is undivided;
-		increment sidebar_divider_setting_count;
+		increment the divider setting count of the sidebar;
+	[Extension commands:]
 	if including extension commands:
 		now the sidebar is including extension-provided commands;
+	[Suggestion:]
 	if suggested after blank commands:
 		now the sidebar is suggested following blank commands;
+	[Toggling:]
 	if with toggling disabled:
 		now the sidebar is disallowing toggling;
+	[Status bar:]
 	if without changing the status line:
 		now the sidebar is leaving the status bar alone;
 	if CCS debugging is on:
 		mention sidebar preparation bugs;
-	now sidebar_prepared is true.
+	now the sidebar is prepared already.
 		
 
-[A few attributes are set just before opening the sidebar for the first time. It's done at this time to make sure the story author's relevant code runs first:]
+[A few attributes depend on values set previously by the story author. These attributes are set just before opening the sidebar for the first time, to make sure the story author's relevant code runs first:]
 
-sidebar_attributes_finalized is a truth state that varies. sidebar_attributes_finalized is initially false.
+The sidebar can be finished setting the attributes. The sidebar is not finished setting the attributes.
 
-To finalize the sidebar attributes:
+To set the/-- final sidebar attributes:
 	follow the set the sidebar text color rule; [This rule is in the "Text Appearance" section.]
-	if the custom sidebar divider is not "":
+	if the custom divider of the sidebar is not "":
 		now the sidebar is custom-divided;
-	now sidebar_attributes_finalized is true.
+	now the sidebar is finished setting the attributes.
 
 
 Common Commands Sidebar ends here.
@@ -644,7 +783,7 @@ Section:  About the Required Extensions
 
 Common Commands Sidebar requires
 
-	Version 15/151209 of Flexible Windows (for Glulx only) by Jon Ingold
+	Version 15/160122 of Flexible Windows (for Glulx only) by Jon Ingold
 	
 	http://raw.githubusercontent.com/i7/extensions/master/Jon%20Ingold/Flexible%20Windows.i7x
 
@@ -706,11 +845,9 @@ The sidebar can be introduced in one of three ways:
 	shown automatically
 	shown manually
 
-"Prompted automatically" prompts the player to choose whether or not to show the sidebar. This is the default setting.
-"Shown automatically" displays the sidebar without prompting the player to choose.
-"Shown manually" keeps the sidebar hidden until it is shown manually (for instance, if the player types SIDEBAR ON).
+"Prompted automatically," the default setting, prompts the player to choose whether or not to show the sidebar. "Shown automatically" displays the sidebar without giving the player a choice. "Shown manually" keeps the sidebar hidden until it is shown manually (for instance, if the player types SIDEBAR ON).
 
-The "prompted automatically" and "shown automatically" options include a brief explanation of the sidebar. But if we choose "shown manually," it will be up to us to inform the player that the sidebar is available. We may want to give instructions in our help text for turning the sidebar on and off (SIDEBAR ON and SIDEBAR OFF) and for listing the commands in the main window (COMMANDS) if a player's interpreter or screenreader doesn't support the sidebar. See also the section on toggling the sidebar from a menu.
+The "prompted automatically" and "shown automatically" options include a brief explanation of the sidebar. But if we choose "shown manually," it will be up to us to inform the player that the sidebar is available. We may want to give instructions in our help text for turning the sidebar on and off (SIDEBAR ON and SIDEBAR OFF), and for listing the commands in the main window (COMMANDS) if a player's interpreter or screenreader doesn't support the sidebar. See also the section on toggling the sidebar from a menu.
 	
 To position the sidebar (left is the default):
 
@@ -736,11 +873,11 @@ To visually divide the groups of commands (the default is "divided with space," 
 	
 This is not part of the "prepare the command sidebar" line.)
 
-To automatically add, at the end of the main list of commands, any additional commands that have been provided for this purpose by other extensions:
+To add, at the bottom of the sidebar, any additional commands that have been provided by compatible extensions (this option is off by default):
 
 	with extension commands
 	
-For example, an extension that creates a swimming action might add the command "Swim", and an invisibility extension might add "Turn invisible". If the extension authors have chosen to make their extensions compatible with Common Commands Sidebar, and if we've included both these extensions in our source after Common Commands Sidebar,  the "with extension commands" option will automatically add the commands "Swim" and "Turn invisible" to the end of the sidebar (after a divider).
+For example, a swimming extension might add a "Swim" command, and an invisibility extension might add a "Turn invisible" command. If the extension authors have made their extensions compatible with Common Commands Sidebar, and if we've included both these extensions in our source after Common Commands Sidebar,  the "with extension commands" option will add the commands "Swim" and "Turn invisible" to the end of the sidebar, after a divider. (If we want to fine-tune the sequence of commands, we should skip this option and arrange them by hand instead. See the "cut and paste method" in the chapter on changing the text in the sidebar.)
 
 To suggest to players who enter a blank command, and who do not have the sidebar visible, that they type SIDEBAR ON or COMMANDS to see some commands to try (this suggestion is disabled by default):
 
@@ -759,9 +896,9 @@ This extension assumes we are using Inform's default status line, with the playe
 
 Section: Debugging
 
-A built-in debugging feature will warn us if 'prepare the command sidebar' is invoked more than once in the code (in which case a later invocation will override an earlier one) or if mutually exclusive sidebar options have been chosen (in which case only one of the options will take effect). The debugging messages are disabled in the release version of the story. We can also turn off debugging manually by including
+A built-in debugging feature will warn us if 'prepare the command sidebar' is invoked more than once in the code (in which case a later invocation will override an earlier one) or if mutually exclusive sidebar options have been chosen (in which case only one of the options will take effect). The debugging messages are disabled in the release version of the story. We can also turn off debugging in the not-for-release version by including
 
-	CCS_debug is false.
+	The sidebar is disabling debugging in the not-for-release version.
 	
 in our code.
 	
@@ -776,30 +913,30 @@ To change the sidebar colors from the default brown text on a beige background, 
 
 Since not all interpreters support indentation, the left margin of the sidebar is created by printing fixed-width blank spaces at the beginning of each line. We can override this default indentation with our own, putting the desired number of spaces between the quotation marks:
 
-	*: The sidebar indent is "   ".
+	*: The indent of the sidebar is "   ".
 
 
 To set the sidebar width (in characters, not pixels), we could say
 	
 	*: The measurement of the sidebar is 28.	
 	
-The units used to measure text windows vary from one interpreter to another. Width in characters is an approximation. We'll want to check the results in interpreters that are used by players, because the sidebar may look very different in the Inform IDE.
+The units used to measure text windows vary in size from one interpreter to another--width in characters is an approximation. We'll want to check the results in interpreters that are used by players, because the sidebar may look very different in the Inform IDE.
  
  
  To set the minimum size that we want the main window to be (in approximate characters, rather than pixels) in order to allow the sidebar to be displayed, we can say, for instance,
 
 	*:
-	The minimum window width for opening the sidebar is 60.
-	The minimum window height for opening the sidebar is 20.
+	The minimum window width for opening of the sidebar is 60.
+	The minimum window height for opening of the sidebar is 20.
 
 If, at the start of play, the main window does not meet these minimums, and if the sidebar is set to be shown automatically or to show an opening prompt, the player will instead see an opening message about how to list the commands in the main window.
 
 
 Section: Colors, etc. in Quixe
 
-The Quixe interpreter will not automatically display the colors we have set in the source. To customize the colors, presence/absence of scroll bars, and various other elements as they appear in the Quixe interpreter, we can "Release along with an interpreter" (see "§25.11. A playable web page" in the Inform manual) and modify the glkote.css file found in the interpreter folder. Glkote.css is automatically generated on each release, so we'll want to keep a copy of the modified file where it won't be overwritten. (There's a bit about this in "§25.13. Website templates" in the manual.)
+The Quixe interpreter will not automatically display the colors we have set in the source. To customize the colors, presence/absence of scroll bars, and various other elements as they appear in the Quixe interpreter, we can "Release along with an interpreter" (see "25.11. A playable web page" in the Inform manual) and modify the glkote.css file found in the interpreter folder. Glkote.css is automatically generated on each release, so we'll want to keep a copy of the modified file where it won't be overwritten. (There's a bit about this in "25.13. Website templates" in the Inform manual.)
 
-The glkote.css file is written in a language called CSS. (More information about CSS is available with a web search). In glkote.css we should use ".WindowRock_225" to identify the sidebar.
+The glkote.css file is written in a language called CSS. In glkote.css we should use ".WindowRock_225" to identify the sidebar.
 
 An example: to set the sidebar's background color ("background") to light blue and its text color ("color") to dark blue using hex color codes, we could add the following to the CSS file. (Despite how the spacing may appear in this documentation, there should be no space between the period and the W.)
 
@@ -807,18 +944,20 @@ An example: to set the sidebar's background color ("background") to light blue a
 	  background: #BAF7F4;
 	  color: #070833;
 	}
-	
-There are some explanatory comments in the default glkote.css file, available at <http://eblong.com/zarf/glk/glkote/glkote.css> or in the interpreter folder, as mentioned. Further information can be found at <http://eblong.com/zarf/glk/glkote/docs.html#css>.
+
+More information about CSS is available with a web search. There are also some explanatory comments in the glkote.css file, available in the interpreter folder, as mentioned, or at <http://github.com/erkyrath/quixe/blob/master/media/i7-glkote.css>. Further information can be found at <http://eblong.com/zarf/glk/glkote/docs.html#css>.
 
   
-Chapter: Using Different Text in the Sidebar
+Chapter: Using Different Commands in the Sidebar
 
-If we don't want to use the default commands in the sidebar, there are several ways we can go about changing them. Note that changing the sidebar text will also change the list printed in the main window by the "listing the sidebar commands" action, so we may want to type COMMANDS to check that as well.
+If we don't want to use the default set of commands in the sidebar, there are several ways we can go about adjusting the commands. We can paste in and edit a provided template with the "Cut and Paste" method, or alter the default table using code with the "Add or Remove Rows in the Default Table" method, or swap entire sets of commands in and out during play with the "Swap in a Different Table" method.
+
+Note that when we tailor the commands in the sidebar, we are also affecting the list printed by the "listing the sidebar commands in the main window" action. After we've made changes to the sidebar commands, we should type COMMANDS to see how they look in list form. See also "Adjusting the Commands Listed in the Main Window."
 
 
 Section: The "Cut and Paste" Method
 
-If we paste one of the templates below into our code to continue the (initially blank) Table of Custom Sidebar Commands, we can add, delete, cut, and paste rows to arrange the commands exactly how we want them. If we continue the Table of Custom Sidebar Commands in our code, our custom table will automatically be substituted for the default table in the sidebar (unless we specify otherwise).
+The "Cut and Paste" method of tailoring the sidebar commands gives the most control for the least effort. If we paste one of the templates below into our code to continue the (initially blank) Table of Custom Sidebar Commands, we can edit, cut, and paste rows to arrange the commands exactly how we want them. What you see is basically what you get. If we continue the Table of Custom Sidebar Commands in our code, our custom table will automatically be substituted for the default table in the sidebar (unless we specify otherwise).
 
 The commands in this first template are identical to the commands in the default sidebar:
 	
@@ -906,7 +1045,7 @@ Below this, we list the sidebar title (if desired) and command entries in a sing
 
 Section: The "Add or Remove Rows in the Default Table" Method
 
-Another way to change the sidebar text is to use code to add or remove rows in the Table of Default Sidebar Commands, which is found in the extension source. Or we could continue this table to add new commands at the end, perhaps starting with a divider ("?") if we want to separate the new commands from the default meta commands:
+If we'd rather write traditional code than paste in a template, we can use code to add or remove rows in the Table of Default Sidebar Commands, which is found in the extension source. Or we could continue this table to add new commands at the end, perhaps starting with a divider ("?") if we want to separate the new commands from the default meta commands:
 
 	*:	
 	Table of Default Sidebar Commands (continued)
@@ -920,7 +1059,7 @@ For more information, see "16.9. Blank rows," "16.10: Adding and removing rows,"
 
 Section: The "Swap in a Different Table" Method
 
-Still another approach to changing the text in the sidebar is to designate a specific table (an additional table we have created, or one from an extension) as the table from which the sidebar commands should be drawn. To do this we use the phrase "swap Table Name into the/-- sidebar": 
+Still another approach to adjusting the commands in the sidebar is to designate a specific table (an additional table we have created, or one from an extension) as the table from which the sidebar commands should be drawn. To do this we use the phrase "swap Table Name into the/-- sidebar": 
 
 	*:
 	When play begins:
@@ -931,49 +1070,176 @@ We can swap in any table so long as it includes a column with the following head
 	*:
 	Displayed Command (a text)
 	
-(If we don't include this column, the commands will not show up in the sidebar.)
+If we don't include this column, the commands will not show up in the sidebar.
 	
 The "swap Table Name into the/-- sidebar" phrase can also be used to switch from one set of commands to another mid-story.
 
 	
-Section: Adjusting the Commands Listed in the Main Window
+Chapter: Adjusting the Commands Listed in the Main Window
 
-When the player types COMMANDS, the "listing the sidebar commands" action prints a list of the sidebar commands in the main window. This is intended for players using screenreader software, or devices with small screens, or interpreters that won't display the sidebar (e.g. Parchment). The list is automatically generated from our table of commands, so we may want to check that the results look reasonable, particularly if we've changed the sidebar text.
+When the player types COMMANDS, the "listing the sidebar commands in the main window" action prints the sidebar commands in the main window. This feature is intended for players using screenreader software, or devices with small screens, or interpreters that won't display the sidebar (e.g. Parchment). The list is automatically generated from our table of commands, so we'll probably may want to check that the results look reasonable, particularly if we've changed the sidebar text.
 
-If we want to adjust the results, and if we are using only one table of commands during play, we can create our own list as a string using the variable "custom command list", for instance
-
-	*:
-	The custom command list is "Useful Commands. North (N). South (S). East (E). West (W). Talk to someone. Help. Quit (Q)."
-	
-Our custom list will automatically be used instead of the auto-generated list. Alternatively, we can modify or replace the carry out rule for the "listing the sidebar commands" action.
-
-If we are using more than one table of commands during play, and if at least one of these tables requires a custom list, we'll probably want to write a new carry-out rule, arranging different results based on the value of the variable "chosen table of commands." For instance:
-
-
+If we want to adjust the results, and if the commands will not change during play, we can create our own list as a string called the "custom command list of the sidebar", for instance
 
 	*:
-	The list the sidebar commands in the main window rule does nothing.	
+	The custom command list of the sidebar is "Useful Commands. North (N). South (S). East (E). West (W). Talk to someone. Help. Quit (Q)."
 	
-	Carry out listing the sidebar commands (this is the brand new print the sidebar commands in the main window rule):
-		if the chosen table of commands is the Table of Driving Commands:
-			say "Driving Commands. Turn left. Turn right. Accelerate. Brake. Hint. Help. Quit.";
-		otherwise if the chosen table of commands is the Table of Pedestrian Commands:
-			say "Pedestrian Commands. Walk. Jog. Run. Hint. Help. Quit.".
+Our custom list will automatically be used instead of the auto-generated list.
 
+If we instead want to modify listed commands individually (for instance, if we're using phrases to show or hide commands during play, and a static list wouldn't work), we can use the column "Listed Command" in our command table to show how we want each command to appear in the list. When the commands are printed as a list in the main window, the Listed Command entry, if present, will automatically be printed instead of the Displayed Command entry. Each entry will be followed by a period when it's printed in the list, but if we need additional periods within an entry, we'll need to include those ourselves, as in the "West (W). East (E)" entry below.
+
+	Displayed Command	Listed Command
+	" N"	"North (N)"
+	"W E"	"West (W). East (E)"
+	" S"	"South (S)"
+	"In (I)/Out (O)"	--
+
+The commands in the above table will look like ths in listed form:
+
+North (N). West (W). East (E). South (S). In (I)/Out (O).
+
+
+Chapter: Showing and Hiding Individual Commands During Play
+
+If we want to hide or show individual commands during play, we can use conditions or phrases. Either way, we'll want to make sure to update the sidebar.
+
+
+Section: Updating the Sidebar During Play
+
+If the contents of the sidebar change during play, we can use the phrase "refresh the sidebar" inside a rule to keep the sidebar up to date, for instance:
+	
+	*:
+	Every turn:
+		refresh the sidebar.
+		
+Note that if we refresh often, we'll want to be extra careful about whether our sidebar commands fit into the height of the window.  If the list of commands is too long to fit in the window, an interpreter may show a "More" message at the bottom of the sidebar and require the player to press a key before continuing. This will happen every time the sidebar refreshes. To avoid making the player press an extra key every turn, we'll want to make sure our list of commands isn't overlong, and set the minimum window height to an adequate number. (See the "measurements" section.)
+
+
+Section: Showing and Hiding Using Conditions
+
+We can include conditions in the text of the displayed command entries to specify when to show them.
+	
+For example:
+	
+	Displayed Command (a text)
+	"[if the player wears the duck costume]Quack[end if]"
+	
+If we do this in such a way that the entry evaluates to "" when the command is hidden, subsequent commands in the sidebar will move up to close the gap.
+
+But if we want a blank line in the sidebar where the absent command belongs, we should instead arrange for the entry to evaluate to " ". (That's a single space. Using more than one space may lead to extra punctuation in the "listing the sidebar commands" action.)
+
+For example:
+	
+	Displayed Command (a text)
+	"[if the player wears the duck costume]Quack[end if] "
+	
+		
+For more complicated conditions, we can make the table more readable by putting the conditions in "to decide" phrases outside of the table:
+
+	To decide if quack is displayed:
+		if the player wears the duck costume, decide yes;
+		if the player is a duck, decide yes;
+		decide no.
+		
+	Displayed Command (a text)
+	"[if quack is displayed]Quack[end if]"
+	
+For more on "to decide" phrases, see "11.16. New conditions, new adjectives" in the Inform 7 manual.
+
+
+Section: Showing and Hiding Using Phrases
+
+If we want to use phrases to show or hide commands, we need to opt in by including the following line in our code:
+
+	*:
+	The sidebar is using phrases to control command visibility.
+
+We also need to declare a "command-label" for each command or group of commands that we want to show or hide during play. For instance:
+
+	turn_invisible is a command-label.
+	compass_direction is a command-label.
+	
+In our table of commands, we include the columns "Command Label" and "Command Visibility":
+
+	*:
+	Displayed Command (a text)	Command Label (a command-label)	Command Visibility (a command-visibility)
+
+In the "Command Label" column, we enter the command-label we want to use for the command in that row. If we have multiple commands that we want to treat as a single unit for showing and hiding purposes, we can list the same command-label in all the relevant rows.
+
+In the Command Visibility column, we can enter one of these options in each row:
+
+	c-shown
+	c-blank
+	c-hidden
+
+"C-shown" means the relevant command entry is displayed normally. "C-blank" means the relevant command entry is not visible, but a blank line appears in the sidebar where the command belongs. "C-hidden" means the relevant command entry is not visible, and subsequent commands in the sidebar are moved up to close the gap.
+
+Strictly speaking, we need only specify "c-blank" and "c-hidden," because any entries missing from the Command Visibility column will be treated as "c-shown".
+
+An example:
+
+	*:
+	Displayed Command (a text)	Command Label (a command-label)	Command Visibility (a command-visibility)
+	"North (N)"	compass_direction	c-blank
+	"South (S)"	compass_direction	c-blank
+	"East (E)"	compass_direction	c-blank
+	"West (W)"	compass_direction	c-blank
+	"Quack"	quack	c-hidden
+	"Turn invisible"	turn_invisible	c-shown
+	
+	
+
+To show, hide, or blank (that is, leave a blank space for the command in the sidebar) commands during play, we can use the following phrases, where X is the command-label:
+
+	*:
+	show the/--  X command/commands in Table Name
+	show the/--  X command/commands
+	hide the/-- X command/commands in Table Name
+	hide the/-- X command/commands
+	blank the/-- X command/commands in Table Name
+	blank the/-- X command/commands
+	
+The above phrases will show, hide, or blank all instances of X in the given table.  The choices "command" and "commands" are provided only so that the code can read naturally regardless of whether the command-label applies to one command, or several.
+		
+If we don't mention the table name, the extension will look for X in whichever table is currently designated as the source of sidebar commands. (That table name is held in the property "chosen table of the sidebar").
+
+If we are trying to show, hide, or blank a command, and the command-label is not found in the table, the attempt will either generate a debug message (if debugging is on) or be ignored (if debugging is off).
+
+Some examples:
+	
+	After wearing the duck costume:
+		show the quack command in the Table of Special Commands;
+		continue the action.
+		
+	After taking the ancient compass:
+		show the compass_direction commands;
+		continue the action.
+
+To find the Command Visibility entry for for a given command label, we can use the following phrases, where C is the command-label:
+
+	the/-- command-visibility of C in Table Name
+	the/-- command-visibility of C
+	
+These will check only the first instance of C in the table. And if we don't mention a table name, the extension will assume we mean the "chosen table of the sidebar." 
+
+If there a Command Visibility column but no Command Visibility entry in the given row, the command is treated as shown, and so these phrases will return the value "c-shown".
+
+But if there's something wrong with the table (for instance, if the command-label is not found in the given table), these phrases will return the value "c-table-error". If debugging is on, a debug message will be shown.
 		
 Chapter: A Note to Extension Authors
 
 If we've written an extension that creates a new command for the player, we can, in a section marked "(for use with Common Commands Sidebar by Alice Grove)," include the following table continuation:
 
-	*: Table of Extension-Provided Sidebar Commands (continued)
+	*:
+	Table of Extension-Provided Sidebar Commands (continued)
 	Displayed Command
 	"New command goes here"
 	
 By using this table, we make our extension compatible with other extensions adding their own sidebar commands. This way the story author can automatically add commands to the sidebar from multiple extensions at once, just by adding "with extension commands" to the "prepare the commands sidebar" line.
 
-If we want to provide a complete list of commands that can replace the default commands (for instance, if we're translating Common Commands Sidebar into another language), we can write a new extension to be used in place of Common Commands Sidebar, or we can write a compatible extension that provides a new table with a unique name. The commands should be listed in a column entitled "Displayed Command (a text)". The story author can then swap in the new table if desired.
+If we want to provide a complete list of commands that can replace the default commands (for instance, if we're translating Common Commands Sidebar into another language), we can write a new extension to be used in place of Common Commands Sidebar, or we can write a compatible extension that provides a new table with a unique name. In the new table, the commands should be listed in a column entitled "Displayed Command (a text)". The story author can then swap in the new table if desired.
 
-Extensions intended to be compatible with Common Commands Sidebar should not modify the Table of Default Sidebar Commands or the Table of Custom Sidebar Commands, as this would create obstacles for story authors who want to include only the original commands, or who want to create a custom list from scratch.
+Extensions intended to be compatible with Common Commands Sidebar should not modify the Table of Default Sidebar Commands or the Table of Custom Sidebar Commands, as this would create obstacles for story authors who want to include only the original commands, or who want to create a custom list from scratch. Compatible extensions should also avoid setting any of the built-in sidebar options without good reason, because if both the extension author and the story author include "Prepare the Commands Sidebar" lines, the extension will detect both lines and generate error messages.
 
 
 
@@ -1079,4 +1345,61 @@ Example: * Lost in 'Lost Igpay' - A way to toggle the command sidebar from insid
 	Gretchen is a woman in At the Computer. "Gretchen stands at your shoulder, clasping her hands in gleeful anticipation.[first time][paragraph break]'Don't worry!' she says. 'There's a helpful sidebar that shows all the common commands! Type HELP to go to the menu. You can turn on the sidebar from there!'[only]".
 	
 	Test me with "help".
+	
 
+
+Example: *** Dropping the Compass - Using phrases to blank out compass directions in the sidebar when the player drops the compass.
+
+	*: "Dropping the Compass"
+
+	Include Common Commands Sidebar by Alice Grove.
+
+	compass_direction is a command-label.
+
+	Table of Custom Sidebar Commands (continued)
+	Displayed Command	Command Label (a command-label)	Command visibility (a command-visibility)
+	"[bold type]Useful Commands"	--	--
+	" "	--	--
+	"[fixed letter spacing]     N"	compass_direction	c-shown
+	"[fixed letter spacing]  NW   NE"	compass_direction	c-shown
+	"[fixed letter spacing]W    *    E"	compass_direction	c-shown
+	"[fixed letter spacing]  SW   SE"	compass_direction	c-shown
+	"[fixed letter spacing]     S"	compass_direction	c-shown
+	" "
+	"Look (L)"
+	"Inventory (I)"
+	"Take/Drop something"
+	"Examine (X) it"
+	"Quit (Q)"
+
+	Shifting Cavern is a room. "Your usually excellect sense of direction fails you in this strange cavern. You feel vaguely dizzy."
+
+	A compass is a thing. The description of the compass is "They insisted that you bring it."
+	
+	The player carries the compass.
+
+	When play begins:
+		prepare the command sidebar, shown automatically.
+	
+	The sidebar is using phrases to control command visibility.
+	
+	Every turn:
+		refresh the sidebar.
+	
+	Every turn when the turn count is 1:
+		now the compass is in the location of the player;
+		blank the compass_direction commands;
+		say "Gravity shifts in the cave, sweeping the compass out of your grip. The instrument meanders sideways through the air, then loops overhead before crashing to the ground.[paragraph break]You no longer know which way is which."
+	
+	Instead of going a direction when the player does not carry the compass:
+		say "Without the compass you have no idea which way is which."	
+	
+	After taking the compass:
+		show the compass_direction commands;
+		say "Phew! Now you can orient yourself."
+	
+	After dropping the compass:
+		blank the compass_direction commands;
+		say "You drop the compass...and now you don't know which way is which."
+	
+	Test me with "commands / inventory / x compass / commands".
