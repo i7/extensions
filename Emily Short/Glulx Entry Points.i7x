@@ -1,8 +1,10 @@
-Version 10/150620 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/160128 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
 Use authorial modesty.
+
+Include version 1/160128 of Glk object recovery by Dannii Willis.
 
 Section - Use option
 
@@ -27,18 +29,9 @@ The glulx character input rules is a rulebook.
 The glulx line input rules is a rulebook.
 The glulx hyperlink rules is a rulebook.
 
-The glulx zeroing-reference rules is a rulebook.
-The glulx resetting-windows rules is a rulebook.
-The glulx resetting-streams rules is a rulebook.
-The glulx resetting-filerefs rules is a rulebook.
-The glulx resetting-channels rules is a rulebook.
-The glulx object-updating rules is a rulebook.
 
 
 Section - Global variables
-
-Current glulx rock is a number that varies.
-Current glulx rock-ref is a number that varies.
 
 Glulx replacement command is some indexed text that varies.
 
@@ -151,52 +144,6 @@ To decide whether glk/glulx sounds are fully supported:
 To decide whether glk/glulx resource streams supported:
 	(- glk_gestalt( gestalt_ResourceStream, 0 ) -).
 
-
-
-Section - IdentifyGlkObject routine
-
-Include (-
-
-[ IdentifyGlkObject phase type ref rock;
-	if ( phase == 0 )
-	{
-		! Zero out references to our objects.
-		if ( FollowRulebook( (+ glulx zeroing-reference rules +) ) && RulebookSucceeded() )
-		{
-			rtrue;
-		}
-	}
-
-	if ( phase == 1 )
-	{
-		! Reset our windows, streams and filerefs.
-		(+ current glulx rock +) = rock;
-		(+ current glulx rock-ref +) = ref;
-		switch (type)
-		{
-			0: ! it's a window 
-				FollowRulebook( (+ glulx resetting-windows rules +) );
-			1 : ! it's a stream
-				FollowRulebook( (+ glulx resetting-streams rules +) );
-			2 : ! it's a file reference
-				FollowRulebook( (+ glulx resetting-filerefs rules +) );
-			3 : ! it's a sound channel
-				FollowRulebook( (+ glulx resetting-channels rules +) );
-		}
-		return;
-	}
-
-	if ( phase == 2 )
-	{
-		! Update our objects.
-		if ( FollowRulebook( (+ glulx object-updating rules +) ) && RulebookSucceeded() )
-		{
-			rtrue;
-		}
-	}
-];
-
--) before "Glulx.i6t".
 
 
 Section - Event types
@@ -481,19 +428,6 @@ One of the things we may want to do -- especially with mouse input or hyperlinks
 
 Because the Glulx replacement command is indexed text, it is possible to build on to the string automatically, if for some reason we need to auto-generate our recommended commands. 
 
-
-Chapter: IdentifyGlkObject
-
-We also have a series of rulebooks for handling the stages of IdentifyGlkObject:
-	
-	The glulx zeroing-reference rules is a rulebook.
-	The glulx resetting-windows rules is a rulebook.
-	The glulx resetting-streams rules is a rulebook.
-	The glulx resetting-filerefs rules is a rulebook.
-	The glulx resetting-channels rules is a rulebook.
-	The glulx object-updating rules is a rulebook.
-
-Examples of the use of these can be seen in the extension Simple Graphics Windows. 
 
 
 Chapter: Checking on Feature Support (Glulx Gestalts)

@@ -1,4 +1,4 @@
-Version 15/160122 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/160128 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -23,6 +23,7 @@ input phrases
 Use authorial modesty.
 
 Include version 1/140512 of Alternative Startup Rules by Dannii Willis.
+Include version 1/160128 of Glk object recovery by Dannii Willis.
 Include version 10/150620 of Glulx Entry Points by Emily Short.
 Include version 5/140516 of Glulx Text Effects by Emily Short.
 
