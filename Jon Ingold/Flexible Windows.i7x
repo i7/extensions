@@ -398,9 +398,6 @@ The current focus window is a g-window variable.
 The acting main window is a g-window variable.
 The acting main window is the main window.
 
-The current input window is a g-window variable.
-The current input window is the main window.
-
 To focus (win - a g-window):
 	if win is g-present:
 		now the current focus window is win;
@@ -408,7 +405,6 @@ To focus (win - a g-window):
 
 To set (win - a g-present textual g-window) as the acting main window:
 	now the acting main window is win;
-	now the current input window is win;
 	now gg_mainwin is the ref number of win;
 	focus win;
 	let the status window state be whether or not the status window is g-present;
@@ -416,11 +412,6 @@ To set (win - a g-present textual g-window) as the acting main window:
 	now the status window is spawned by win;
 	if the status window state is true:
 		open the status window;
-
-[ Not strictly needed, but to allow FW to be controlled solely through phrases rather than variables ]
-To set (win - a g-window) as the current input window:
-	if win is g-present:
-		now the current input window is win;
 
 
 
@@ -506,8 +497,6 @@ Before deconstructing a textual g-window (called win) (this is the fix the curre
 		set parent as the acting main window;
 	if win is the current focus window:
 		focus parent;
-	if win is the current input window:
-		set the acting main window as the current input window;
 
 After deconstructing a textual g-window (called win) (this is the clear the I6 window variables rule):
 	[ The fix the current windows rule could have changed the acting main window to something other than win, so we don't check for win. ]
