@@ -20,7 +20,7 @@ model the quote window too?
 Use authorial modesty.
 
 Include version 1/140512 of Alternative Startup Rules by Dannii Willis.
-Include version 1/160128 of Glk object recovery by Dannii Willis.
+Include version 1/160129 of Glk object recovery by Dannii Willis.
 Include version 10/150620 of Glulx Entry Points by Emily Short.
 Include version 5/140516 of Glulx Text Effects by Emily Short.
 
@@ -467,26 +467,21 @@ A glulx zeroing-reference rule (this is the reset window properties rule):
 		now win is g-unpresent;
 		now win is not currently being processed;
 
-[ Find all present windows, mark them as present and store their ref numbers. Note this will not run for the built in windows. ]
+[ Find all present windows, mark them as present and store their ref numbers. ]
+The identify built in windows rule is not listed in the glulx resetting-windows rules.
 A glulx resetting-windows rule (this is the find existing windows rule):
 	let win be the window with rock current glulx rock;
 	if win is not the invalid window:
 		now the ref number of win is the current glulx rock-ref;
 		now win is g-present;
+		if win is the acting main window:
+			now gg_mainwin is the current glulx rock-ref;
+		if win is the status window:
+			now gg_statuswin is the current glulx rock-ref;
 
 A first glulx object-updating rule (this is the recalibrate windows rule):
-	[ I used to think it wasn't safe to call the calibrate windows phrase here, but I can't really think why now ]
 	calibrate windows;
 	focus the current focus window;
-
-A first glulx object-updating rule (this is the find the built in windows rule):
-	if gg_mainwin is not 0:
-		now the ref number of the main window is gg_mainwin;
-		now the main window is g-present;
-		now gg_mainwin is the ref number of the acting main window;
-	if gg_statuswin is not 0:
-		now the ref number of the status window is gg_statuswin;
-		now the status window is g-present;
 
 
 
