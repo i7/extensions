@@ -1,9 +1,11 @@
-Version 1/160122 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 1/160128 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
 
 
 [CCS is in beta.]
+
+
 
 
 Part - Required Extensions
@@ -181,7 +183,6 @@ Before displaying (This is the hide the sidebar before opening a menu with Wade 
 	
 After displaying (This is the show the hidden sidebar after closing a menu with Wade Clarke's Menus rule):
 	show the hidden sidebar if necessary.
-	
 		
 		
 Chapter - Actions for Turning the Sidebar On and Off
@@ -452,7 +453,7 @@ To print an/-- appropriate sidebar divider:
 
 populating the sidebar using something is an activity on table names.
 
-Rule for populating the sidebar using a table name (called the current table) (this is the print the commands from a single command table in the sidebar rule): 
+Rule for populating the sidebar using a table name (called the current table) (this is the print commands in the sidebar from a single table rule): 
 	if the column Displayed Command exists in the current table:
 		repeat with N running from 1 to the number of rows in the current table:
 			choose row N in the current table;
@@ -464,7 +465,7 @@ Rule for populating the sidebar using a table name (called the current table) (t
 						print an appropriate sidebar divider;
 					otherwise if the Displayed Command entry designates an empty space in the sidebar:
 						say line break;
-					otherwise if the Displayed Command entry designates an ignorable entry in the sidebar:
+					otherwise: [if the Displayed Command entry designates an ignorable entry in the sidebar]
 						next;
 				otherwise if the Command Visibility entry is c-hidden:
 					next;
@@ -476,15 +477,15 @@ The sidebar can be including extension-provided commands.
 
 [Print commands from the author's chosen table and, if applicable, commands provided by other extension authors:]
 
-Rule for refreshing the sidebar (This is the print the commands from the appropriate command tables in the sidebar rule):
+Rule for refreshing the sidebar (This is the print commands in the sidebar from the relevant tables rule):
 	carry out the Populating The Sidebar Using activity with the chosen table of the sidebar;
 	if the sidebar is including extension-provided commands:
-		carry out the Populating The Sidebar Using activity with the table of extension-provided sidebar commands.
+		carry out the Populating The Sidebar Using activity with the Table of Extension-Provided Sidebar Commands.
 		
 		
 Chapter - Action for Listing the Sidebar Commands in the Main Window
 
-[Listing the sidebar commands in the main window serves as an alternative to the sidebar when players use screenreaders or interpreters that don't support extra windows. The commands are converted into list form, with the default compass rose, if present, being converted into words.]
+[Listing the sidebar commands in the main window serves as an alternative to the sidebar when players use screenreaders or interpreters that don't support extra windows. The commands are converted into list form. Under certain conditions, the default compass rose, if present, is automatically converted into words.]
 
 To decide if a Listed Command has been provided in row (N - a number) of (given table - a table name):	
 	unless (the column Listed Command exists in the given table) and (there is a Listed Command in row N of the given table):
@@ -499,54 +500,58 @@ The default compass rose entries of the sidebar are  {"     N",
 											"     S"
 											}.
 
-To decide if (T - a text) resembles/-- a default compass rose entry:
-	repeat with compass-entry running through default compass rose entries of the sidebar:
-		if T is compass-entry:
+	
+To decide if (given table - a table name) uses the default compass rose:
+	unless the sidebar is using phrases to control command visibility:
+		if the column Displayed Command exists in the given table:
+			repeat with compass-entry running through the default compass rose entries of the sidebar:
+				if the compass-entry is a Displayed Command listed in the given table:
+					unless ((the column Listed Command exists in the given table) and (there is a Listed Command entry)):
+						next;
+					[if there's a corresponding Listed Command entry, don't try to automatically translate the compass rose into words:]
+					otherwise: 
+						decide no;
+				otherwise:
+					decide no;
 			decide yes;
-	decide no.
-
-To decide if (given table - a table name) uses the/-- default compass rose:
-	if the column Displayed Command exists in the given table:
-		repeat with compass-entry running through default compass rose entries of the sidebar:
-			if there is a Displayed Command of compass-entry in the given table:
-				next;
-			otherwise:
-				decide no;
-		decide yes;
+		otherwise: 
+			decide no;
+	[if the sidebar is using phrases to control command visibility, don't try to automatically translate the compass rose into words:]
 	otherwise:
 		decide no.
 		
-To decide if we're treating (the specified entry - a text) as a/-- compass rose entry in (given table - a table name):
-	unless (the specified entry resembles a default compass rose entry) and (the given table uses the default compass rose):
+		
+To decide if (given entry - a text) counts as a compass rose entry when the compass rose's presence is (relevant truth state - a truth state):
+	if the relevant truth state is false:
 		decide no;
-	decide yes.
-
+	otherwise if the given entry is listed in the default compass rose entries of the sidebar:
+		decide yes;
+	decide no.
+		
 
 printing a list of commands from something is an activity on table names.	
 
-Rule for printing a list of commands from a table name (called the current table) (this is the list the commands from a single command table in the main window rule):
+Rule for printing a list of commands from a table name (called the current table) (this is the list commands in the main window from a single table rule):
 	if the column Displayed Command exists in the current table:
-		let compass_rose_already_listed be a truth state;
-		now compass_rose_already_listed is false; 
+		let compass_rose_present be whether or not the current table uses the default compass rose;
+		let compass_rose_already_listed be false;
 		repeat with N running from 1 to the number of rows in the current table:
 			choose row N in the current table;
 			if there is a Displayed Command entry:
 				unless row N of the current table is effectively marked hidden or marked blank:
 					unless a Listed Command has been provided in row N of the current table:
-						unless we're treating the Displayed Command entry as a compass rose entry in the current table:
+						unless the Displayed Command entry counts as a compass rose entry when the compass rose's presence is compass_rose_present:
 							if the Displayed Command entry designates an actual command in the sidebar:
 								say "[lettering style of the sidebar][Displayed Command entry]. " (A);
-							otherwise if (the Displayed Command entry designates a divider in the sidebar) or
-						                            (the Displayed Command entry designates an empty space in the sidebar) or
-						                            (the Displayed Command entry designates an ignorable entry in the sidebar):
+							otherwise: [if it designates a divider, empty space, or ignorable entry]
 								next;
-						otherwise if we're treating the Displayed Command entry as a compass rose entry in the current table:
+						otherwise: [if we're treating the Displayed Command as a compass rose entry]
 							if compass_rose_already_listed is false:
 								say "[lettering style of the sidebar]North (N). South (S). East (E). West (W). Northeast (NE). Southeast (SE). Northwest (NW). Southwest (SW). " (B);
 								now compass_rose_already_listed is true;
-							otherwise if compass_rose_already_listed is true:
+							otherwise: [if compass_rose_already_listed is true]
 								next;
-					otherwise if a Listed Command has been provided in row N of the current table:
+					otherwise: [if a Listed Command has been provided]
 						say "[lettering style of the sidebar][Listed Command entry]. " (C).
 
 
@@ -559,12 +564,12 @@ Check listing the sidebar commands in the main window when the sidebar is not fi
 	
 The sidebar has a text called the custom command list. The custom command list of the sidebar is usually "".
 
-Carry out listing the sidebar commands in the main window (this is the list the commands from the appropriate command tables in the main window rule):
+Carry out listing the sidebar commands in the main window (this is the list commands in the main window from the relevant tables rule):
 	if the custom command list of the sidebar is "":
 		carry out the Printing A List Of Commands From activity with the chosen table of the sidebar;
 		if the sidebar is including extension-provided commands:
 			say run paragraph on; [to avoid extra break between command tables]
-			carry out the Printing A List Of Commands From activity with the table of extension-provided sidebar commands;
+			carry out the Printing A List Of Commands From activity with the Table of Extension-Provided Sidebar Commands;
 	otherwise:
 		say the custom command list of the sidebar.
 				
@@ -1077,7 +1082,9 @@ The "swap Table Name into the/-- sidebar" phrase can also be used to switch from
 	
 Chapter: Adjusting the Commands Listed in the Main Window
 
-When the player types COMMANDS, the "listing the sidebar commands in the main window" action prints the sidebar commands in the main window. This feature is intended for players using screenreader software, or devices with small screens, or interpreters that won't display the sidebar (e.g. Parchment). The list is automatically generated from our table of commands, so we'll probably may want to check that the results look reasonable, particularly if we've changed the sidebar text.
+When the player types COMMANDS, the "listing the sidebar commands in the main window" action prints the sidebar commands in the main window. This feature is intended for players using screenreader software, or devices with small screens, or interpreters that won't display the sidebar (e.g. Parchment).
+
+ The list is automatically generated from our table of commands, so we'll probably want to check that the results look reasonable, especially if we've changed the sidebar text or if we're controlling command visibility with phrases.
 
 If we want to adjust the results, and if the commands will not change during play, we can create our own list as a string called the "custom command list of the sidebar", for instance
 
@@ -1086,7 +1093,7 @@ If we want to adjust the results, and if the commands will not change during pla
 	
 Our custom list will automatically be used instead of the auto-generated list.
 
-If we instead want to modify listed commands individually (for instance, if we're using phrases to show or hide commands during play, and a static list wouldn't work), we can use the column "Listed Command" in our command table to show how we want each command to appear in the list. When the commands are printed as a list in the main window, the Listed Command entry, if present, will automatically be printed instead of the Displayed Command entry. Each entry will be followed by a period when it's printed in the list, but if we need additional periods within an entry, we'll need to include those ourselves, as in the "West (W). East (E)" entry below.
+If we instead want to modify listed commands individually (for instance, if we're using phrases to show or hide commands during play, and so the list needs to change during play), we can use the column "Listed Command" in our command table to show how we want each command to appear in the list. When the commands are printed as a list in the main window, the Listed Command entry, if present, will automatically be printed instead of the Displayed Command entry. Each entry will be followed by a period when it's printed in the list, but if we need additional periods within an entry, we'll need to include those ourselves, as in the "West (W). East (E)" entry below.
 
 	Displayed Command	Listed Command
 	" N"	"North (N)"
