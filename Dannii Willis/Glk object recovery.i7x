@@ -1,4 +1,4 @@
-Version 1/160129 of Glk object recovery (for Glulx only) by Dannii Willis begins here.
+Version 1/160227 of Glk object recovery (for Glulx only) by Dannii Willis begins here.
 
 "A low level utility library for managing Glk references after restarting or restoring"
 
@@ -37,21 +37,21 @@ Include (-
 	FollowRulebook( (+ glulx zeroing-reference rules +) );
 	
 	! Iterate through each of the windows, streams, file refs and sound channels
-	while ( ref = glk_window_iterate( id, gg_arguments ) )
+	while ( ref = glk_window_iterate( ref, gg_arguments ) )
 	{
 		(+ current glulx rock +) = gg_arguments-->0;
 		(+ current glulx rock-ref +) = ref;
 		FollowRulebook( (+ glulx resetting-windows rules +) );
 	}
 	ref = 0;
-	while ( ref = glk_stream_iterate( id, gg_arguments ) )
+	while ( ref = glk_stream_iterate( ref, gg_arguments ) )
 	{
 		(+ current glulx rock +) = gg_arguments-->0;
 		(+ current glulx rock-ref +) = ref;
 		FollowRulebook( (+ glulx resetting-streams rules +) );
 	}
 	ref = 0;
-	while ( ref = glk_fileref_iterate( id, gg_arguments ) )
+	while ( ref = glk_fileref_iterate( ref, gg_arguments ) )
 	{
 		(+ current glulx rock +) = gg_arguments-->0;
 		(+ current glulx rock-ref +) = ref;
@@ -60,7 +60,7 @@ Include (-
 	if ( glk_gestalt( gestalt_Sound, 0 ) )
 	{
 		ref = 0;
-		while ( ref = glk_schannel_iterate( id, gg_arguments ) )
+		while ( ref = glk_schannel_iterate( ref, gg_arguments ) )
 		{
 			(+ current glulx rock +) = gg_arguments-->0;
 			(+ current glulx rock-ref +) = ref;
