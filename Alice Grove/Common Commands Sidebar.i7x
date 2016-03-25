@@ -1,11 +1,6 @@
-Version 1/160128 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 2/160322 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
-
-
-[CCS is in beta.]
-
-
 
 
 Part - Required Extensions
@@ -193,7 +188,7 @@ The sidebar can be either allowing toggling or disallowing toggling. The sidebar
 Turning on the commands sidebar is an action out of world.
 Understand "sidebar on" as turning on the commands sidebar when the sidebar is allowing toggling.
 Understand "sidebar" as turning on the commands sidebar when the sidebar is allowing toggling and the sidebar is g-unpresent.
-Understand "sidebar [text]" as a mistake ("Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.") when the sidebar is allowing toggling.
+
 
 Carry out turning on the commands sidebar (this is the turn on the commands sidebar rule):
 	if sidebar is g-unpresent:
@@ -216,6 +211,10 @@ Carry out turning off the commands sidebar (this is the turn off the commands si
 	otherwise:
 		say "The commands sidebar is already hidden[if the sidebar is allowing toggling]. To show it, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B).
 		
+
+The sidebar has a text called the sidebar instructions. The sidebar instructions of the sidebar are usually "Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.".
+Understand "sidebar [text]" as a mistake ("[sidebar instructions of the sidebar]") when the sidebar is allowing toggling.
+
 
 Part - Sidebar Text
 
@@ -240,7 +239,7 @@ This is the set the sidebar text color rule:
 
 The sidebar has some text called the indent. The indent of the sidebar is usually "  ".
 
-The sidebar has some text called the lettering style. The lettering style of the sidebar is usually "[roman type]". [***rename this?]
+The sidebar has some text called the lettering style. The lettering style of the sidebar is usually "[roman type]". 
 
 The sidebar can be space-divided, star-divided, undivided, or custom-divided (this is the sidebar divider type property). The sidebar is space-divided.
 
@@ -300,7 +299,7 @@ The sidebar has a table name called the chosen table. The chosen table of the si
 The sidebar can be finished choosing a command table.
 
 When play begins (this is the choose the appropriate table of commands at the start of play rule):
-	if the sidebar is not finished choosing a command table: [i.e. if the story author has not already swapped in a table] [****REVISIT THIS]
+	if the sidebar is not finished choosing a command table: [i.e. if the story author has not already swapped in a table]
 		if the Table of Custom Sidebar Commands is not empty:
 			now the chosen table of the sidebar is the Table of Custom Sidebar Commands;
 		otherwise if the Table of Custom Sidebar Commands is empty:
@@ -354,7 +353,7 @@ To decide which command-visibility is the/-- command-visibility of (specified co
 		otherwise if CCS Debugging is on:
 			say "CCS Debug Message #22: Tried to determine the command visibility of [specified command] in the [Given Table], but the [Given Table] was missing a necessary column.";
 			decide on c-table-error;
-	decide on c-shown. [revisit this******]
+	decide on c-shown.
 		
 	
 To decide which command-visibility is the/-- command-visibility of (the specified command - a command-label):
@@ -1299,7 +1298,7 @@ Example: * Sidebar in Chocolate - A sidebar that makes use of presentation optio
 	
 	The background color of the sidebar is "#542c03".
 	The text color of the sidebar is "#faf0e6".
-	The custom sidebar divider is "+ + +".
+	The custom divider of the sidebar is "+ + +".
 		
 	When play begins:
 		prepare the command sidebar, shown automatically, with italic type.
