@@ -1,4 +1,4 @@
-Version 6 of Questions (for Glulx only) by Michael Callaghan begins here.
+Version 5/150418 of Questions (for Glulx only) by Michael Callaghan begins here.
 
 "An extension to allow us to suspend normal parser input to receive and respond to answers to questions."
 
