@@ -1,4 +1,4 @@
-Version 2/160322 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 2/160404 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
 
@@ -211,9 +211,9 @@ Carry out turning off the commands sidebar (this is the turn off the commands si
 	otherwise:
 		say "The commands sidebar is already hidden[if the sidebar is allowing toggling]. To show it, type SIDEBAR ON[end if]. To list the commands in the main window, type COMMANDS." (B).
 		
-
-The sidebar has a text called the sidebar instructions. The sidebar instructions of the sidebar are usually "Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.".
-Understand "sidebar [text]" as a mistake ("[sidebar instructions of the sidebar]") when the sidebar is allowing toggling.
+		
+The sidebar has some text called the sidebar instructions. The sidebar instructions of the sidebar are usually "Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it. To list the commands in the main window, type COMMANDS.".
+Understand "sidebar [text]" as a mistake ("[SIDEBAR instructions of the sidebar]") when the sidebar is allowing toggling.
 
 
 Part - Sidebar Text
@@ -342,7 +342,7 @@ Chapter - Showing and Hiding Individual Commands
 To decide which command-visibility is the/-- command-visibility of (specified command - a command-label) in (given table - a table name):
 	if the sidebar is using phrases to control command visibility:
 		if the given table has the necessary columns for hidden commands:
-			if the specified command is a Command Label listed in the given table: [1st only revisit**]
+			if the specified command is a Command Label listed in the given table: 
 				if there is a Command Visibility entry:
 					decide on the Command Visibility entry;
 				otherwise:
@@ -556,7 +556,9 @@ Rule for printing a list of commands from a table name (called the current table
 
 Listing the sidebar commands in the main window is an action out of world.
 Understand "commands" as listing the sidebar commands in the main window.
-Understand "commands [text]" as a mistake ("To list useful commands in the main window, type just COMMANDS[if the sidebar is allowing toggling].  Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it[end if].").
+
+The sidebar has some text called the COMMANDS instructions. The COMMANDS instructions of the sidebar are usually "To list useful commands in the main window, type just COMMANDS[if the sidebar is allowing toggling].  Use SIDEBAR ON and SIDEBAR OFF to turn the sidebar on and off, or SIDEBAR to toggle it[end if].".
+Understand "commands [text]" as a mistake ("[COMMANDS instructions of the sidebar]").
 
 Check listing the sidebar commands in the main window when the sidebar is not finished choosing a command table (this is the select the appropriate table of commands before listing the commands in the main window rule):
 	follow the choose the appropriate table of commands at the start of play rule.
@@ -1244,6 +1246,12 @@ If we've written an extension that creates a new command for the player, we can,
 By using this table, we make our extension compatible with other extensions adding their own sidebar commands. This way the story author can automatically add commands to the sidebar from multiple extensions at once, just by adding "with extension commands" to the "prepare the commands sidebar" line.
 
 If we want to provide a complete list of commands that can replace the default commands (for instance, if we're translating Common Commands Sidebar into another language), we can write a new extension to be used in place of Common Commands Sidebar, or we can write a compatible extension that provides a new table with a unique name. In the new table, the commands should be listed in a column entitled "Displayed Command (a text)". The story author can then swap in the new table if desired.
+
+Most of the responses visible to players can be changed according to "14.11. Changing the text of responses" in the Inform manual, but there are two exceptions: the responses shown when players mistakenly type "sidebar [text]" or "commands [text]." These can be changed as follows:
+
+	*:
+	The SIDEBAR instructions of the sidebar are "New response here.".
+	The COMMANDS instructions of the sidebar are "New response here.".
 
 Extensions intended to be compatible with Common Commands Sidebar should not modify the Table of Default Sidebar Commands or the Table of Custom Sidebar Commands, as this would create obstacles for story authors who want to include only the original commands, or who want to create a custom list from scratch. Compatible extensions should also avoid setting any of the built-in sidebar options without good reason, because if both the extension author and the story author include "Prepare the Commands Sidebar" lines, the extension will detect both lines and generate error messages.
 
