@@ -1,4 +1,4 @@
-Version 1/140320 of Ultra Undo (for Glulx only) by Dannii Willis begins here.
+Version 1/160501 of Ultra Undo (for Glulx only) by Dannii Willis begins here.
 
 "Handles undo using external files for very big story files"
 
@@ -84,7 +84,7 @@ Global ultra_undo_needed = 0;
 	glk_stream_close( gg_savestr, 0 );
 	gg_savestr = 0;
 	.RFailed;
-	ultra_undo_counter = 0;
+	Ultra_Undo_Delete_All();
 	return 0;
 ];
 
@@ -111,8 +111,6 @@ Global ultra_undo_needed = 0;
 	}
 	glk_stream_close( gg_savestr, 0 ); ! stream_close
 	gg_savestr = 0;
-	! Delete an old save file
-	Ultra_Undo_Delete( ultra_undo_counter - ULTRA_UNDO_MAX_COUNT );
 	if ( res == 0 ) return 1;
 	.SFailed;
 	ultra_undo_counter--;
@@ -125,10 +123,11 @@ Global ultra_undo_needed = 0;
 	{
 		print (char) UUID_ARRAY->ix;
 	}
-	print "-", ultra_undo_counter;
+	! Take the mod of ultra_undo_counter to keep the number of files to ULTRA_UNDO_MAX_COUNT
+	print "-", ( ultra_undo_counter % ULTRA_UNDO_MAX_COUNT );
 ];
 
-[ Ultra_Undo_Delete val	fref exists;
+[ Ultra_Undo_Delete val fref exists;
 	@push ultra_undo_counter;
 	ultra_undo_counter = val;
 	fref = glk_fileref_create_by_name( fileusage_SavedGame + fileusage_BinaryMode, Glulx_ChangeAnyToCString( Ultra_Undo_Filename ), 0 );
@@ -148,12 +147,13 @@ Global ultra_undo_needed = 0;
 	}
 ];
 
-[ Ultra_Undo_Delete_All;
-	while ( ultra_undo_counter > 0 )
+[ Ultra_Undo_Delete_All ix;
+	for (ix=1 : ix <= ULTRA_UNDO_MAX_COUNT : ix++)
 	{
-		Ultra_Undo_Delete( ultra_undo_counter );
-		ultra_undo_counter--;
+		Ultra_Undo_Delete( ix );
+
 	}
+	ultra_undo_counter = 0;
 ];
 
 -) instead of "Undo" in "Glulx.i6t".
@@ -209,7 +209,7 @@ Include (-
 
 Section - Cleaning up
 
-[ Clean up after ourselves when the player quits or restarts - delete all the external files ]
+[ Clean up after ourselves when the player quits - delete all the external files ]
 
 Include (-
 
@@ -225,20 +225,10 @@ Include (-
 
 -) instead of "Quit The Game Rule" in "Glulx.i6t".
 
-Include (-
+[ Clean up when the game first starts ]
 
-[ RESTART_THE_GAME_R;
-	if (actor ~= player) rfalse;
-	GL__M(##Restart, 1);
-	if ( YesOrNo() ~= 0 )
-	{
-		Ultra_Undo_Delete_All();
-		@restart;
-		GL__M( ##Restart, 2 );
-	}
-];
-
--) instead of "Restart The Game Rule" in "Glulx.i6t".
+The delete Ultra Undo savefiles rule is listed in the after starting the virtual machine rules.
+The delete Ultra Undo savefiles rule translates into I6 as "Ultra_Undo_Delete_All".
 
 
 
