@@ -56,18 +56,18 @@ Section - Stopping Spelling Action
 Stopping spelling is an action applying to one visible thing.
 Understand "stop spelling [thing]" as stopping spelling.
 
-Check stopping spelling (this is the make sure spelling-mode is on before we stop spelling something rule):
+Check stopping spelling (this is the make sure spelling-mode is on before we stop spelling a given word rule):
 	if spelling-mode is false:
 		say "You seem to want to stop spelling something, but spelling mode is not currently on. To toggle spelling mode, type 'spelling.'" (A) instead.
 
-Check stopping spelling (this is the make sure the noun is currently spelled before we stop spelling it rule):		
+Check stopping spelling (this is the make sure a word is currently spelled before we stop spelling it rule):		
 	if (the noun is not spellable) or (the noun is not spelled in spelling mode):
 		say "You seem to want to stop spelling something, but '[noun]' is not currently being spelled." (A) instead.
 		
-Carry out stopping spelling:
+Carry out stopping spelling (this is the stop spelling a word rule):
 	now the noun is unspelled in spelling mode.
 	
-Report stopping spelling (this is the tell the player we will stop spelling a word rule):
+Report stopping spelling (this is the tell the player we will stop spelling the word rule):
 	say "Now '[noun]' will no longer be spelled." (A).
 	
 	
@@ -76,16 +76,16 @@ Section - Spelling All Action
 Spelling all is an action out of world.
 Understand "spell all" as spelling all.
 
-Check spelling all (this is the make sure spelling-mode is on before spelling all rule):
+Check spelling all (this is the make sure spelling-mode is on before spelling all spellable words rule):
 	if the spelling-mode is false:
 		say "You seem to want to turn on spelling for all unusual words, but spelling mode is not currently on. To toggle spelling mode, type 'SPELLING.'" (A) instead.
 
-Carry out spelling all:
+Carry out spelling all (this is the spell all the spellable words rule):
 	repeat with item running through spellable things:
 		if item is unspelled in spelling mode:
 			now item is spelled in spelling mode.
 			
-Report spelling all (this is the tell the player we will now spelling all unusual words rule):
+Report spelling all (this is the tell the player we will now spell all unusual words rule):
 	say "Now all unusual words will be spelled." (A).
 
 
