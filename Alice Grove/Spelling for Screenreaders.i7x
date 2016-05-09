@@ -105,11 +105,11 @@ Report asking for spelling help (this is the give the player spelling instructio
 Section - Command List (for use with Common Commands Sidebar by Alice Grove)
 
 Table of Extension-Provided Sidebar Commands (continued)
-	Displayed Command
-	"Spelling"
-	"Stop spelling it"
-	"Spell all"
-	"Spelling help"
+Displayed Command
+"Spelling"
+"Stop spelling it"
+"Spell all"
+"Spelling help"
 	
 
 Spelling for Screenreaders ends here.
