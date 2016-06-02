@@ -12,9 +12,7 @@ When play begins (this is the introduce the spelling feature rule):
 		say "Are you using a screen reader? (Y/N)>[run paragraph on]";
 		if player consents:
 			say "[line break]This story allows you to request the spelling of visible things. Please type the word SPELL for a list of visible items to spell. Each time you do this, a new list will be generated.[paragraph break]To spell the name of an item, please type the word SPELL followed by its number in the list." (A);
-		[otherwise:]
 		say line break.
-
 
 
 Section - Spelling Reference Number Property
