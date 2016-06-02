@@ -121,7 +121,7 @@ Example: * Simple Spelling Lab - A room with a few spellable items and character
 
 	A table is a supporter in Spelling Lab. A hmzerizer is on the table.
 
-	The player carries a glass of goat's milk.
+	The player carries a glass of goats' milk.
 	
 
 	Test me with "spell / spell 1 / spell 2 / spell 3 / spell 4 / spell 5".
