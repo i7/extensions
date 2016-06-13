@@ -1,13 +1,13 @@
 Version 1/160603 of Simple Spelling by Alice Grove begins here.
 
-"Allows players using screen readers to request the spelling of any visible thing."
+"Simple Spelling aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
 
 
 Section - Introduction
 
 introduce simple spelling features is a truth state that varies. introduce simple spelling features is usually true. 
 
-When play begins (this is the introduce the spelling feature rule):
+When play begins (this is the introduce the simple spelling features rule):
 	if introduce simple spelling features is true:
 		say "Are you using a screen reader? (Y/N)>[run paragraph on]";
 		if player consents:
@@ -20,8 +20,12 @@ Section - Spelling Reference Number Property
 A thing has a number called a spelling reference number.
 
 
-Section - Making a New Spelling List
+Section - Phrases for Making a New Spelling List
 
+To clear all spelling reference numbers:
+	repeat with item running through things:
+		now the spelling reference number of item is 0.
+		
 inspect simple spelling list for duplicates is a truth state that varies. Inspect simple spelling list for duplicates is usually true.
 
 To decide which list of things is the new spelling list:
@@ -44,11 +48,12 @@ Section - Listing Visible Items
 Listing visible items for spelling is an action out of world.
 Understand "spell" as listing visible items for spelling.
 
-Check listing visible items for spelling (this is the clear all spelling reference numbers before assigning new ones rule):
-	repeat with item running through things:
-		now the spelling reference number of item is 0.
+Check listing visible items for spelling (this is the make sure there is at least one visible item to put on the spelling list rule):
+	if the number of visible things < 1:
+		say "There are no visible items to spell." (A) instead.
 
 Carry out listing visible items for spelling (this is the list the visible items and their spelling reference numbers rule):
+	clear all spelling reference numbers;
 	let spelling list be the new spelling list;
 	if the number of entries in spelling list > 1:
 		say "To spell the name of something, please type the word SPELL followed by a number from 1 to [number of entries in spelling list]." (A);
@@ -62,9 +67,7 @@ Carry out listing visible items for spelling (this is the list the visible items
 		let lone item be entry 1 in spelling list;
 		now the spelling reference number of lone item is 1;
 		say "You can see only [printed name of lone item]." (C);
-		try spelling the numbered word 1;
-	otherwise:
-		say "There are no visible items to spell." (D).
+		try spelling the numbered word 1.
 		
 
 Section - Spelling a Word
@@ -112,11 +115,15 @@ Simple Spelling ends here.
 
 ---- DOCUMENTATION ---- 
 
+Thanks to Neil Butters for the code feedback!
+
 Section: Basic Use
+
+Punctuation, words that sound like other words, and made-up words aren't always clear when spoken by a screenreader. Nevertheless, parser IF requires players to spell the names of things in order to refer to them. This extension aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing.
 
 This extension adds two actions:  "listing visible items for spelling" and "spelling the numbered word."
 
-The command SPELL leads to the "listing visible items for spelling" action. This action will automatically make a list of visible things, numbering them for the player's reference. This list is made only after clearing any numbers that have previously been assigned to things in the story.
+The command SPELL leads to the "listing visible items for spelling" action. This action will automatically display a list of visible things, numbering them for the player's reference. This list is made only after clearing any numbers that have previously been assigned to things in the story.
 
 To request the spelling of an item, the player can then type SPELL followed by the item's number on the list.
 
@@ -141,15 +148,13 @@ Example: * Simple Spelling Lab - A room with some spellable items and characters
 			
 	A dictionary is a kind of thing.
 	
-	
 	Spelling Lab is a room.
 
-	Donna Hopkins-Brown is a woman in Spelling Lab. Donna Hopkins-Brown carries 7 dictionaries.
+	Donna Hopkins-Brown is a woman in Spelling Lab. Donna Hopkins-Brown carries 4 dictionaries.
 
-	An inspection table is a supporter in Spelling Lab. A hmzerizer is on the inspection table. A perse purse is on the inspection table. A withe is on the inspection table.
+	An inspection table is a supporter in Spelling Lab. A perse purse is on the inspection table. A pale pail is on the inspection table. A piece of Pete's pizza is on the inspection table.
+	
+	The player carries a xyzzifier.
 	
 	
-	The player carries a glass of goats' milk.
-	
-
 	Test me with "spell / spell 1 / spell 2 / spell 3 / spell 4 / spell 5 / spell 6 / spell 7 / spell 8".
