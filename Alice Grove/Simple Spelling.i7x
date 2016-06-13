@@ -1,4 +1,4 @@
-Version 1/160603 of Simple Spelling by Alice Grove begins here.
+Version 1/160613 of Simple Spelling by Alice Grove begins here.
 
 "Simple Spelling aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
 
