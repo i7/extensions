@@ -1,4 +1,4 @@
-Version 1/160613 of Simple Spelling by Alice Grove begins here.
+Version 1/160619 of Simple Spelling by Alice Grove begins here.
 
 "Simple Spelling aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
 
@@ -130,11 +130,18 @@ To request the spelling of an item, the player can then type SPELL followed by t
 
 Section: Options
 
-By default, players will be asked at the start of play if they are using a screen reader. Then if the player answers "yes," the spelling features will be briefly explained. To turn off this opening question and introduction (for instance, if we want to introduce the spelling features elsewhere) we can include this line in our code:
+By default, players will be asked at the start of play if they are using a screen reader. Then if the player answers "yes," the spelling features will be briefly explained. To turn off this opening question and introduction (for instance, if we want to introduce the spelling features elsewhere) we can set "introduce simple spelling features" to "false":
 
 	*: introduce simple spelling features is false.
 	
-By default, this extension will check for duplicates when making a spelling list so as not to include the same entry twice. This is helpful if we have duplicate items in our story and want to avoid, for instance, listing twenty identical coins as twenty separate items in the list. If we want to skip the check-for-duplicates step, we can add the following line to our code:
+If we do want the question and introduction, but only in a released version of the story, we can put the above code in a section marked "Not for release":
+
+	*:
+	Section - Introducing spelling features - Not for release
+	
+	introduce simple spelling features is false.
+
+By default, this extension will check for duplicates when making a spelling list so as not to include the same entry twice. This is helpful if we have duplicate items in our story and want to avoid, for instance, listing twenty identical coins as twenty separate items in the list. If we want to skip the check-for-duplicates step, we can set "inspect simple spelling list for duplicates" to "false":
 
 	*: inspect simple spelling list for duplicates is false.
 
@@ -145,7 +152,7 @@ Example: * Simple Spelling Lab - A room with some spellable items and characters
 	
 	Include Simple Spelling by Alice Grove.
 	
-			
+	
 	A dictionary is a kind of thing.
 	
 	Spelling Lab is a room.
