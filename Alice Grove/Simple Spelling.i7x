@@ -1,6 +1,6 @@
-Version 1/160619 of Simple Spelling by Alice Grove begins here.
+Version 2/160619 of Simple Spelling by Alice Grove begins here.
 
-"Simple Spelling aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
+"Simple Spelling aims to make stories more screen-reader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
 
 
 Section - Introduction
@@ -9,9 +9,9 @@ introduce simple spelling features is a truth state that varies. introduce simpl
 
 When play begins (this is the introduce the simple spelling features rule):
 	if introduce simple spelling features is true:
-		say "Are you using a screen reader? (Y/N)>[run paragraph on]";
+		say "Are you using a screen reader? (Y/N)>[run paragraph on]" (A);
 		if player consents:
-			say "[line break]This story allows you to request the spelling of visible things. Please type the word SPELL for a list of visible items to spell. Each time you do this, a new list will be generated.[paragraph break]To spell the name of an item, please type the word SPELL followed by its number in the list." (A);
+			say "[line break]This story allows you to request the spelling of nearby things. For a list of nearby items that can be spelled, please type the word SPELL. Each time you do this, a new numbered list will be generated.[paragraph break]To request the spelling of an item, please type the word SPELL followed by the item's number on the list." (B);
 		say line break.
 
 
@@ -50,7 +50,7 @@ Understand "spell" as listing visible items for spelling.
 
 Check listing visible items for spelling (this is the make sure there is at least one visible item to put on the spelling list rule):
 	if the number of visible things < 1:
-		say "There are no visible items to spell." (A) instead.
+		say "There are no nearby items to spell." (A) instead.
 
 Carry out listing visible items for spelling (this is the list the visible items and their spelling reference numbers rule):
 	clear all spelling reference numbers;
@@ -79,27 +79,27 @@ Check spelling the numbered word (this is the make sure there is a visible item 
 	repeat with visible item running through visible things:
 		if the spelling reference number of the visible item is the number understood:
 			continue the action;
-	say "There are no visible things assigned the number [number understood]. To list visible things and their numbers, please type the word SPELL." (A) instead.
+	say "There are no nearby things assigned the number [number understood]. To list nearby things and their numbers, please type the word SPELL." (A) instead.
 
 Carry out spelling the numbered word (this is the spell the word that has the given spelling number rule):
 	repeat with visible item running through visible things:
 		if the spelling reference number of the visible item is the number understood:
 			let current name be the printed name of the visible item;
-			say "[Current name in upper case] is spelled[run paragraph on]" (B);
+			say "[Current name in upper case] is spelled[run paragraph on]" (A);
 			repeat with N running from 1 to  the number of characters in current name:
-				say " " (C);
+				say " " (B);
 				let current letter be character number N in current name;
 				if current letter is " ":
-					say "space" (D);
+					say "space" (C);
 				otherwise if current letter is "-":
-					say "hyphen" (E);
+					say "hyphen" (D);
 				otherwise if current letter is "[']":
-					say "apostrophe" (F);
+					say "apostrophe" (E);
 				otherwise if current letter is ".":
-					say "[if American dialect option is active]period[otherwise]full stop[end if]" (G);
+					say "[if American dialect option is active]period[otherwise]full stop[end if]" (F);
 				otherwise:
 					say current letter in upper case;
-			say "." (H).
+			say "." (G).
 			
 			
 Section - Command List (for use with Common Commands Sidebar by Alice Grove)
@@ -119,7 +119,7 @@ Thanks to Neil Butters for the code feedback!
 
 Section: Basic Use
 
-Punctuation, words that sound like other words, and made-up words aren't always clear when spoken by a screenreader. Nevertheless, parser IF requires players to spell the names of things in order to refer to them. This extension aims to make stories more screenreader-friendly by allowing players to request the spelling of any visible thing.
+Punctuation, words that sound like other words, and made-up words aren't always clear when spoken by a screen reader. Nevertheless, parser IF requires players to spell the names of things in order to refer to them. This extension aims to make stories more screen-reader-friendly by allowing players to request the spelling of any visible thing.
 
 This extension adds two actions:  "listing visible items for spelling" and "spelling the numbered word."
 
@@ -141,7 +141,7 @@ If we do want the question and introduction, but only in a released version of t
 	
 	introduce simple spelling features is false.
 
-By default, this extension will check for duplicates when making a spelling list so as not to include the same entry twice. This is helpful if we have duplicate items in our story and want to avoid, for instance, listing twenty identical coins as twenty separate items in the list. If we want to skip the check-for-duplicates step, we can set "inspect simple spelling list for duplicates" to "false":
+By default, this extension will check for duplicates when making a spelling list so as not to include the same entry twice. This is helpful if we have duplicate items in our story and want to avoid, for instance, listing twenty identical coins as twenty separate items on the list. If we want to skip the check-for-duplicates step, we can set "inspect simple spelling list for duplicates" to "false":
 
 	*: inspect simple spelling list for duplicates is false.
 
