@@ -1,4 +1,4 @@
-Version 15/160129 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/160609 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -11,15 +11,11 @@ Version 15/160129 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 - The hyperlink processing rules have been turned into the processing hyperlinks activity.
 ]
 
-[ TODO:
-model the quote window too?
-]
-
 
 
 Use authorial modesty.
 
-Include version 1/140512 of Alternative Startup Rules by Dannii Willis.
+Include version 1/140516 of Alternative Startup Rules by Dannii Willis.
 Include version 1/160129 of Glk object recovery by Dannii Willis.
 Include version 10/150620 of Glulx Entry Points by Emily Short.
 Include version 5/140516 of Glulx Text Effects by Emily Short.
@@ -114,11 +110,8 @@ The scale method of the status window is g-fixed-size.
 The measurement of the status window is 1.
 
 Use no status line translates as (- Constant USE_NO_STATUS_LINE 1; -).
-[Include (-
-#ifndef USE_NO_STATUS_LINE;
-Constant USE_NO_STATUS_LINE 0;
-#endif;
--).]
+
+The quote window is a g-window spawned by the main window.
 
 
 
@@ -146,6 +139,7 @@ This is the open the built-in windows using Flexible Windows rule:
 		close the status window;
 	otherwise:
 		open the status window;
+	close the quote window;
 	continue the activity;
 
 
@@ -193,6 +187,7 @@ To safely carry out the (A - activity on value of kind K) activity with (val - K
 
 Section - And some phrases to find windows - unindexed
 
+[ This may be a non-existent window, or one which was created in I6 but has no corresponding g-window ]
 To decide which g-window is the invalid window:
 	(- ( nothing ) -).
 
@@ -410,6 +405,8 @@ To set (win - a g-present textual g-window) as the acting main window:
 	let the status window state be whether or not the status window is g-present;
 	close the status window;
 	now the status window is spawned by win;
+	close the quote window;
+	now the quote window is spawned by win;
 	if the status window state is true:
 		open the status window;
 
@@ -446,6 +443,7 @@ A glulx zeroing-reference rule (this is the set g-window rocks rule):
 	if the rock of the main window is 0:
 		now the rock of the main window is GG_MAINWIN_ROCK;
 		now the rock of the status window is GG_STATUSWIN_ROCK;
+		now the rock of the quote window is GG_QUOTEWIN_ROCK;
 		let i be 1000;
 		repeat with win running through g-windows:
 			if the rock of win is 0:
@@ -469,6 +467,8 @@ A glulx resetting-windows rule (this is the find existing windows rule):
 			now gg_mainwin is the current glulx rock-ref;
 		if win is the status window:
 			now gg_statuswin is the current glulx rock-ref;
+		if win is the quote window:
+			now gg_quotewin is the current glulx rock-ref;
 
 A first glulx object-updating rule (this is the recalibrate windows rule):
 	calibrate windows;
@@ -488,6 +488,8 @@ After constructing a textual g-window (called win) (this is the update the I6 wi
 	if win is the status window:
 		now gg_statuswin is the ref number of win;
 		[ statuswin_cursize/statuswin_size? - make a rule for deconstructing too? ]
+	if win is the quote window:
+		now gg_quotewin is the ref number of win;
 
 Before deconstructing a textual g-window (called win) (this is the fix the current windows rule):
 	let parent be the parent of win;
@@ -504,12 +506,14 @@ After deconstructing a textual g-window (called win) (this is the clear the I6 w
 		now gg_mainwin is 0;
 	if win is the status window:
 		now gg_statuswin is 0;
+	if win is the quote window:
+		now gg_quotewin is 0;
 
 
 
 Chapter - Interjecting for windows we don't control - unindexed
 
-[ To account for the template code which creates and destroys windows we will high-jack the I6 glk functions and take over if possible ]
+[ To account for the template code which creates and destroys windows we will hijack the I6 glk functions and take over if possible ]
 
 Include (-
 Replace glk_window_open;
