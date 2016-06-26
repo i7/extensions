@@ -1,12 +1,14 @@
-Version 2/130516 of Glimmr Drawing Commands (for Glulx only) by Erik Temple begins here.
+Version 3/160626 of Glimmr Drawing Commands (for Glulx only) by Erik Temple begins here.
 
 "Provides commands for displaying images, shape primitives (such as rectangles, boxes, and lines), user-specified bitmap drawings, image maps, and for text-painting using 'fonts' with glyphs composed of either bitmaps or image files."
 
+[ Version 3 was updated for Inform 6M62 by Dannii Willis ]
 
 Part - Inclusions
 
-Include version 9 of Flexible Windows by Jon Ingold.
-Include version 5 of Fixed Point Maths by Michael Callaghan.
+Include version 5/150123 of Glulx Text Effects by Emily Short.
+Include version 15/160609 of Flexible Windows by Jon Ingold.
+
 
 
 Part - Use options
@@ -16,6 +18,7 @@ Use MAX_STATIC_DATA of 500000.
 
 
 Part - Console settings
+
 [This is a macro that allows the extension to identify itself in the Glimmr console window with fewer keystrokes on my part.]
 
 To say DC:
@@ -63,8 +66,8 @@ To rect/rectangle (coord1 - a list of numbers) size (width - a number) by/x (hei
 Include (-
 
 [ DrawDimRect hue win x1 y1 width height ;
-	if (win.ref_number) {
-		glk_window_fill_rect(win.ref_number, hue, x1, y1, width, height);
+	if (win.(+ ref number +)) {
+		glk_window_fill_rect(win.(+ ref number +), hue, x1, y1, width, height);
 	}
 ];
 
@@ -102,8 +105,8 @@ To rect/rectangle (coord1 - a list of numbers) to (coord2 - a list of numbers):
 Include (-
 
 [ DrawRect hue win x1 y1 x2 y2 ;
-	if (win.ref_number) {
-		glk_window_fill_rect(win.ref_number, hue, x1, y1, x2 - x1, y2 - y1 );
+	if (win.(+ ref number +)) {
+		glk_window_fill_rect(win.(+ ref number +), hue, x1, y1, x2 - x1, y2 - y1 );
 	}
 ];
 
@@ -163,24 +166,24 @@ Include (-
 
 [ DrawBox hue wgt win x1 y1 x2 y2 outline_opt ;
 ! Draws four rectangles that outline the coordinates given as input on the I7 level.
-	if (win.ref_number) {
+	if (win.(+ ref number +)) {
 		if (outline_opt & 2) {
-			glk_window_fill_rect(win.ref_number, hue, x1, y1, x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x2 - wgt, y1, wgt, y2 - y1);
-			glk_window_fill_rect(win.ref_number, hue, x1, y2 - wgt, x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x1, y1, wgt, y2 - y1);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1, y1, x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x2 - wgt, y1, wgt, y2 - y1);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1, y2 - wgt, x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1, y1, wgt, y2 - y1);
 		}
 		if (outline_opt & 1) {
-			glk_window_fill_rect(win.ref_number, hue, x1 - wgt, y1 - wgt, wgt + x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x2, y1 - wgt, wgt, wgt + y2 - y1);
-			glk_window_fill_rect(win.ref_number, hue, x1 - wgt, y2, wgt + wgt + x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x1 - wgt, y1 - wgt, wgt, wgt + y2 - y1);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - wgt, y1 - wgt, wgt + x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x2, y1 - wgt, wgt, wgt + y2 - y1);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - wgt, y2, wgt + wgt + x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - wgt, y1 - wgt, wgt, wgt + y2 - y1);
 		}
 		if (~~outline_opt) {
-			glk_window_fill_rect(win.ref_number, hue, x1 - (wgt / 2), y1 - (wgt / 2), x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x2 - (wgt / 2), y1 - (wgt / 2), wgt, (y2 - y1) + wgt);
-			glk_window_fill_rect(win.ref_number, hue, x1 - (wgt / 2), y2 - (wgt / 2), x2 - x1, wgt);
-			glk_window_fill_rect(win.ref_number, hue, x1 - (wgt / 2), y1 - (wgt / 2), wgt, y2 - y1);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - (wgt / 2), y1 - (wgt / 2), x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x2 - (wgt / 2), y1 - (wgt / 2), wgt, (y2 - y1) + wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - (wgt / 2), y2 - (wgt / 2), x2 - x1, wgt);
+			glk_window_fill_rect(win.(+ ref number +), hue, x1 - (wgt / 2), y1 - (wgt / 2), wgt, y2 - y1);
 		}
 	}
 ];
@@ -221,9 +224,9 @@ To stroked/str/stroke rect/rectangle (coord1 - a list of numbers) to (coord2 - a
 Include (-
 
 [ DrawStrokedRect hue wgt win x1 y1 x2 y2 color;
-	if (win.ref_number) {
-		glk_window_fill_rect(win.ref_number, color, x1, y1, x2 - x1, y2 - y1 );
-		glk_window_fill_rect(win.ref_number, hue, x1 + wgt, y1 + wgt, (x2 - x1) - (wgt * 2), (y2 - y1) - (wgt * 2) );
+	if (win.(+ ref number +)) {
+		glk_window_fill_rect(win.(+ ref number +), color, x1, y1, x2 - x1, y2 - y1 );
+		glk_window_fill_rect(win.(+ ref number +), hue, x1 + wgt, y1 + wgt, (x2 - x1) - (wgt * 2), (y2 - y1) - (wgt * 2) );
 	}
 ];
 
@@ -322,9 +325,9 @@ To line (coord1 - a list of numbers) to (coord2 - a list of numbers) at (wgt - a
 
 Section - Line using angle + distance
 
-To draw a line (hue - a number) in (win - a g-window) from (x1 - a number) by (y1 - a number) measuring/of (distance - a number) pixel/pixels/px/-- long/-- at (angle - a number) deg/degree/degrees/-- angle/-- with (wgt - a number) pixel/pixels/px/-- line-weight/stroke:
-	let xx be (sine of angle) * distance as an integer;
-	let yy be (cosine of angle) * distance as an integer;
+To draw a line (hue - a number) in (win - a g-window) from (x1 - a number) by (y1 - a number) measuring/of (distance - a number) pixel/pixels/px/-- long/-- at (angle - a real number) angle/-- with (wgt - a number) pixel/pixels/px/-- line-weight/stroke:
+	let xx be (sine of angle) * distance to the nearest whole number;
+	let yy be (cosine of angle) * distance to the nearest whole number;
 	let x2 be x1 + xx;	
 	let y2 be y1 - yy;
 	#if utilizing Glimmr debugging;
@@ -332,12 +335,12 @@ To draw a line (hue - a number) in (win - a g-window) from (x1 - a number) by (y
 	#end if;
 	Draw a line (hue) in (win) from (x1) by (y1) to (x2) by (y2) with (wgt) pixel line-weight.
 	
-To draw a line (hue - a number) in (win - a g-window) from (coord1 - a list of numbers) measuring (distance - a number) pixels/pixel/-- long/-- at (angle - a number) deg/degree/degrees/-- angle/-- with (wgt - a number) pixel/pixels/px/-- line-weight/stroke:
+To draw a line (hue - a number) in (win - a g-window) from (coord1 - a list of numbers) measuring (distance - a number) pixels/pixel/-- long/-- at (angle - a real number) angle/-- with (wgt - a number) pixel/pixels/px/-- line-weight/stroke:
 	let x1 be entry 1 of coord1;
 	let y1 be entry 2 of coord1;
 	Draw a line (hue) in (win) from (x1) by (y1) measuring (distance) pixels at (angle) with (wgt) pixel line-weight.
 
-To line (coord1 - a list of numbers) dist/distance (distance - a number) px/pixels/pixel (angle - a number) deg/degree/degrees/-- angle/at (wgt - a number) px/pixels/pixel wgt/wt/weight/--:
+To line (coord1 - a list of numbers) dist/distance (distance - a number) px/pixels/pixel (angle - a real number) angle/at (wgt - a number) px/pixels/pixel wgt/wt/weight/--:
 	if the type of the current graphics window is not g-graphics:
 		say "*** Error: Short-form line-drawing directive ignored. The current graphics window global was not correctly specified.";
 		rule fails;
@@ -345,8 +348,6 @@ To line (coord1 - a list of numbers) dist/distance (distance - a number) px/pixe
 	let y1 be entry 2 of coord1;
 	Draw a line (current foreground-color) in (current graphics window) from (x1) by (y1) measuring (distance) pixels at (angle) with (wgt) pixel line-weight.
 
-To decide what number is (rad - a real number) rad/radians:
-	decide on rad in degrees as an integer.
 
 
 Chapter - Images
@@ -382,8 +383,8 @@ To image (ID - a figure name) at (coord1 - a list of numbers):
 Include (-
 
 [DrawImage ID win x y ;
-	if (win.ref_number) {
-		glk_image_draw(win.ref_number, ResourceIDsOfFigures-->ID, x, y);
+	if (win.(+ ref number +)) {
+		glk_image_draw(win.(+ ref number +), ResourceIDsOfFigures-->ID, x, y);
 	}
 ];  
 
@@ -421,8 +422,8 @@ To image (ID - a figure name) at (coord1 - a list of numbers) size (width - a nu
 Include (-
 
 [DrawImageScaled ID win x y image_x image_y ;
-	if (win.ref_number) {
-		glk_image_draw_scaled(win.ref_number, ResourceIDsOfFigures-->ID, x, y, image_x, image_y);
+	if (win.(+ ref number +)) {
+		glk_image_draw_scaled(win.(+ ref number +), ResourceIDsOfFigures-->ID, x, y, image_x, image_y);
 	}
 ];  
 
@@ -430,6 +431,7 @@ Include (-
 
 
 Part - Drawing bitmaps
+
 [Bitmaps are drawn by coloring individual pixels (or pixels in groups), and are specified by the user using an I7 list. Since they are drawn by setting pixels, they cannot be scaled as PNG or JPEG images can.]
 
 Chapter - Monochrome bitmaps
@@ -574,8 +576,8 @@ To polychrome/poly bitmap/bmp (BIT_MAP - a list of lists of numbers) at (COORD1 
 		display a polychrome bitmap in (current graphics window) at (X1) by (Y1) using (BIT_MAP) with dot size (WGT) px.
 
 
-Chapter - Fonts
 
+Chapter - Fonts
 
 Section - The font base class
 
@@ -586,6 +588,7 @@ A font has some text called the colophon. The colophon is usually "".
 
 
 Section - Private naming of fonts
+
 [Replace this section if you need the player to be able to refer to fonts.]
 
 A font is usually privately-named.
@@ -598,14 +601,14 @@ A bitmap font has a list of numbers called the glyph map. The glyph map is usual
 
 
 Section - Dummy bitmap typeface
+
 [Inform requires that there be at least one font in the world. Here we include a dummy font object, which can also be used as a null-object should we need it.]
 
 Null-bitmap-typeface is a bitmap font. 
 The font table of a bitmap font is usually the Table of Null Bitmap Font Parameters.
 
 Table of Null Bitmap Font Parameters
-glyph	char	index	width	height	yoffset	advance
-indexed text	number	number	number	number	number	number
+glyph (indexed text)	char (number)	index (number)	width (number)	height (number)	yoffset (number)	advance (number)
 with 1 blank row
 
 
@@ -619,26 +622,27 @@ An image-based font has a number called the background-margin. The background-ma
 
 
 Section - Null image typeface
+
 [Inform requires that there be at least one font in the world. Here we include a dummy font object, which can also be used as a null-object should we need it.]
 
 Null-image-typeface is an image-based font.
 The font table of an image-based font is usually the Table of Null Image Font Parameters.
 
 Table of Null Image Font Parameters
-glyph	char	glyph-ref	yoffset	advance
-indexed text	number	figure name	number	number
+glyph (indexed text)	char (number)	glyph-ref (figure name)	yoffset (number)	advance (number)
 with 1 blank row
 
 
 Section - Crediting fonts
 
 Report requesting the story file version (this is the announce colophon rule):
-	repeat with typeface running through the list of fonts:
+	repeat with typeface running through fonts:
 		unless the colophon of the typeface is "":
 			say "[one of]Typefaces used include:[line break][or][stopping][italic type][typeface]:[roman type] [colophon of the typeface][line break]"
 
 
 Section - Globals
+
 [These globals are needed to steer around Inform's aggressive cap on the number of temp variables.]
 
 g-LEN is a number variable.
@@ -646,8 +650,9 @@ column-index is a number variable.
 char_code is a number variable.
 g-scan is a number variable.
 
-Chapter - Text-painting with bitmap fonts
 
+
+Chapter - Text-painting with bitmap fonts
 
 Section - Bitmap strings with a background color
 
@@ -795,7 +800,8 @@ To bitmap/bmp text/txt (STR - indexed text) at (COORD1 - a list of numbers) size
 		rule succeeds;
 	otherwise:
 		paint a bitmap text (current foreground-color) of (STR) in (current graphics window) at (X1) by (Y1) using (current font) with dot size (WGT).
-		
+
+
 
 Chapter - Text-painting with image-based fonts
 
@@ -804,14 +810,14 @@ Section - Text-painting with a background color
 To paintimgtext of/-- (STR - indexed text) in (win - a g-window) at (X1 - a number) by/x (Y1 - a number) using font/-- (TYPF - a font) scaled at (SCF - a real number) with background (BKGD - a number) and margin of/-- (MARGIN - a number) pixel/pixels/px/--, center-aligned or right-aligned:
 	unless STR is "":
 		now g-LEN is the length of STR set in TYPF;
-		now g-LEN is g-LEN real times SCF as an integer;
+		now g-LEN is g-LEN times SCF to the nearest whole number;
 		if right-aligned:
 			let X1 be X1 - g-LEN;
 			let X1 be X1 - (g-LEN / 2);
 		now current g-row is Y1;
 		now current g-column is X1;
-		[let vertical-size be font-height of TYPF real times SCF as an integer;]
-		dimrectdraw (BKGD) in (WIN) at (current g-column - MARGIN) by (current g-row - MARGIN) with size (the length of STR set in TYPF real times SCF as an integer + MARGIN + MARGIN) by (font-height of TYPF real times SCF as an integer + MARGIN + MARGIN);
+		[let vertical-size be font-height of TYPF times SCF as an integer;]
+		dimrectdraw (BKGD) in (WIN) at (current g-column - MARGIN) by (current g-row - MARGIN) with size (the length of STR set in TYPF times SCF to the nearest whole number + MARGIN + MARGIN) by (font-height of TYPF times SCF to the nearest whole number + MARGIN + MARGIN);
 		repeat with N running from 1 to the number of characters in STR:
 			now char_code is the character code of position N of STR;
 			if there is a char of char_code in the font table of TYPF:
@@ -819,13 +825,13 @@ To paintimgtext of/-- (STR - indexed text) in (win - a g-window) at (X1 - a numb
 			otherwise:
 				choose row with a char of 32 in the font table of TYPF;
 			let the chosen glyph be glyph-ref entry;
-			let the yoffset be yoffset entry real times SCF as an integer;
+			let the yoffset be yoffset entry times SCF to the nearest whole number;
 			now g-imgwidth is the image-width of chosen glyph;
 			now g-imgheight is the image-height of chosen glyph;
-			now g-imgwidth is g-imgwidth real times SCF as an integer;
-			now g-imgheight is g-imgheight real times SCF as an integer;
+			now g-imgwidth is g-imgwidth times SCF to the nearest whole number;
+			now g-imgheight is g-imgheight times SCF to the nearest whole number;
 			drscimage (chosen glyph) in (WIN) at (current g-column) by (current g-row + yoffset) with dimensions (g-imgwidth) by (g-imgheight);
-			increase current g-column by the advance entry real times SCF as an integer;
+			increase current g-column by the advance entry times SCF to the nearest whole number;
 
 To paint/display an/-- image-based text of/-- (STR - indexed text) in (win - a g-window) at (X1 - a number) by/x (Y1 - a number) using font/-- (TYPF - a font) scaled at (SCF - a real number) with background (BKGD - a number) and margin of/-- (MARGIN - a number) pixel/pixels/px/--, center-aligned or right-aligned:
 	#if utilizing Glimmr debugging;
@@ -854,14 +860,14 @@ Section - Text-painting without a background color
 To paintimgtext of/-- (STR - indexed text) in (win - a g-window) at (X1 - a number) by/x (Y1 - a number) using font/-- (TYPF - a font) scaled at (SCF - a real number), center-aligned or right-aligned:
 	unless STR is "":
 		now g-LEN is the length of STR set in TYPF;
-		now g-LEN is g-LEN real times SCF as an integer;
+		now g-LEN is g-LEN times SCF to the nearest whole number;
 		if right-aligned:
 			let X1 be X1 - g-LEN;
 		if center-aligned:
 			let X1 be X1 - (g-LEN / 2);
 		now current g-row is Y1;
 		now current g-column is X1;
-		let vertical-size be font-height of TYPF real times SCF as an integer;
+		let vertical-size be font-height of TYPF times SCF to the nearest whole number;
 		repeat with N running from 1 to the number of characters in STR:
 			let V be the character code of position N of STR;
 			if there is a char of V in the font table of TYPF:
@@ -869,13 +875,13 @@ To paintimgtext of/-- (STR - indexed text) in (win - a g-window) at (X1 - a numb
 			otherwise:
 				choose row with a char of 32 in the font table of TYPF;
 			let the chosen glyph be glyph-ref entry;
-			let the yoffset be yoffset entry real times SCF as an integer;
+			let the y offset be yoffset entry times SCF to the nearest whole number;
 			now g-imgwidth is the image-width of chosen glyph;
 			now g-imgheight is the image-height of chosen glyph;
-			now g-imgwidth is g-imgwidth real times SCF as an integer;
-			now g-imgheight is g-imgheight real times SCF as an integer;
-			drscimage (chosen glyph) in (WIN) at (current g-column) by (current g-row + yoffset) with dimensions (g-imgwidth) by (g-imgheight);
-			increase current g-column by the advance entry real times SCF as an integer;
+			now g-imgwidth is g-imgwidth times SCF to the nearest whole number;
+			now g-imgheight is g-imgheight times SCF to the nearest whole number;
+			drscimage (chosen glyph) in (WIN) at (current g-column) by (current g-row + y offset) with dimensions (g-imgwidth) by (g-imgheight);
+			increase current g-column by the advance entry times SCF to the nearest whole number;
 
 To paint/display an/-- image-based text of/-- (STR - indexed text) in (win - a g-window) at (X1 - a number) by/x (Y1 - a number) using font/-- (TYPF - a font) scaled at (SCF - a real number), center-aligned or right-aligned:
 	#if utilizing Glimmr debugging;
@@ -957,8 +963,7 @@ Section - Null tileset
 The null tileset is a tileset. The translation-table is Table of Null Tilesetting.
 
 Table of Null Tilesetting
-Char	Tile
-number	figure name
+Char (number)	Tile (figure name)
 1	Figure of Null
 
 
@@ -1121,12 +1126,6 @@ To decide what number is the length of (STR - indexed text) set in (TYPF - a fon
 
 Part - Routines for color specification
 
-Chapter - Get color from lookup table (by name)
-
-To decide which number is color/colour (hue - a glulx color value):
-	(- ColVal({hue}) -)
-
-
 Chapter - Specifying color using RGB formula
 
 
@@ -1142,9 +1141,9 @@ Section - RGB specified as a percentage
 
 To decide which number is r%/R% --/= (R - a number) g%/G% --/= (G - a number) b%/B% --/= (B - a number):
 	unless R < 0 or R > 100 or G < 0 or G > 100 or B < 0 or B > 100:
-		let R be R real times 2.5500 as an integer;
-		let G be G real times 2.5500 as an integer;
-		let B be B real times 2.5500 as an integer;
+		let R be R times 2.5500 to the nearest whole number;
+		let G be G times 2.5500 to the nearest whole number;
+		let B be B times 2.5500 to the nearest whole number;
 		decide on (R * 65536) + (G * 256) + B;
 	decide on 0;
 
@@ -1152,38 +1151,19 @@ To decide which number is r%/R% --/= (R - a number) g%/G% --/= (G - a number) b%
 Section - RGB specified as a fixed point percentage
 
 To decide which number is r%/R% --/= (R - a real number) g%/G% --/= (G - a real number) b%/B% --/= (B - a real number):
-	unless R is real less than 0 or R is real greater than 100.0000 or G is real less than 0 or G is real greater than 100.0000 or B is real less than 0 or B is real greater than 100.0000:
-		let R1 be R real times 2.5500 as an integer;
-		let G1 be G real times 2.5500 as an integer;
-		let B1 be B real times 2.5500 as an integer;
+	unless R is less than 0 or R is greater than 100.0000 or G is less than 0 or G is greater than 100.0000 or B is less than 0 or B is greater than 100.0000:
+		let R1 be R times 2.5500 to the nearest whole number;
+		let G1 be G times 2.5500 to the nearest whole number;
+		let B1 be B times 2.5500 to the nearest whole number;
 		decide on (R1 * 65536) + (G1 * 256) + B1;
 	decide on 0;
 
 
 Chapter - Color specified as a hexadecimal
 
-To decide which number is hex (hex - indexed text):
-	let curval be a number;
-	let hex be hex in upper case;
-	replace the regular expression "\$|\#|0x" in hex with "";
-	let len be the number of characters in hex;
-	let total be 0;
-	let multiplier be 1;
-	repeat with index running from 1 to len:
-		let N be (len - index) + 1;
-		let V be the character code of position N of hex;
-		unless V < 48 or V > 70 or ( V > 57 and V < 65):
-			if V > 64:
-				let curval be V - 55;
-			otherwise if V < 58:
-				let curval be V - 48;
-		otherwise:
-			let total be 0;
-			break;
-		let curval be curval * multiplier;
-		increase total by curval;
-		let multiplier be multiplier * 16;
-	decide on total.
+To decide which number is hex/color/colour (hex - indexed text):
+	(- GTE_ConvertColour( {hex} ) -).
+
 
 
 Part - Other functions
@@ -1231,15 +1211,21 @@ To decide what number is ABS/absolute value/-- of/-- (N - a number):
 Chapter - Look up the char number from a text-string
 
 To decide which number is the character code of position (N - a number) of (T - an indexed text):
-	(- ParseStringToChar({N}, {T}); -)
+	decide on the character code of character number N in T;
+
+To decide which number is the character code of (T - a text):
+	(- FirstCharCode( {T} ) -).
 
 Include (-
 
-[ ParseStringToChar pos txb len ch;
-	len = BlkValueExtent(txb);
-	pos = pos - 1;
-	ch = BlkValueRead(txb, pos);
-	return ch;
+[ FirstCharCode txt p1 cp1 res;
+	! Transmute the text
+	cp1 = txt-->0;
+	p1 = TEXT_TY_Temporarily_Transmute( txt );
+	res = BlkValueRead( txt, 0 );
+	! Clean up and return
+	TEXT_TY_Untransmute( txt, p1, cp1 );
+	return res;
 ];
 
 -).
@@ -1360,26 +1346,28 @@ The console output window is a g-window variable.
 
 Section - Assign the default debugging window (for use without Glimmr Debugging Console by Erik Temple)
 
-The console output window is usually the main-window.
+The console output window is usually the main window.
 
 
 Section - Logging to the transcript
 
-Use Glimmr console transcript logging translates as (- Constant GLIMMR_CONSOLE_TRANSCRIPT_ON; -)
+[ TODO: add back when transcript support is added ]
+
+[Use Glimmr console transcript logging translates as (- Constant GLIMMR_CONSOLE_TRANSCRIPT_ON; -)
 
 Report switching the story transcript on when the Glimmr console transcript logging option is active:[we use "report" only because "after" doesn't exist for out-of-world actions.]
-	if the console output window is the main-window:
+	if the console output window is the main window:
 		continue the action;
 	if we are writing to the transcript and the console output window is g-present:
 		echo the text stream of the console output window to the transcript;
-	continue the action.
+	continue the action;
 
 After constructing the console output window when the Glimmr console transcript logging option is active:
-	if the console output window is the main-window:
+	if the console output window is the main window:
 		continue the action;
 	if we are writing to the transcript and the console output window is g-present:
 		echo the text stream of the console output window to the transcript;
-		continue the action.
+	continue the action;]
 
 
 Chapter - Abbreviations
@@ -1431,20 +1419,22 @@ Chapter - Text substitutions for logging console messages
 Note that, like all "to" phrases in Inform, these can be "overloaded". To do something different with them, rewrite the phrase in your story file, beneath the include line for Glimmr Drawing Commands.]
 
 To say >console:
-	(- if ( (+ console output window +) has g_present) { glk_set_window( (+ console output window +).ref_number); -).
+	(- if ( GetEitherOrProperty( (+ console output window +), (+ g-present +) ) ) { glk_set_window( (+ console output window +).(+ ref number +)); -).
  
 To say <:
 	(-   glk_set_window( gg_mainwin ); } RunParagraphOn(); -).
 
+	
 
 Glimmr Drawing Commands ends here.
+
 
 
 ---- DOCUMENTATION ----
 
 Glimmr Drawing Commands (GDC) is the most basic of the Glimmr extensions, and is required by (nearly) all others. It exposes the three basic Glulx drawing commands at the I7 level, enabling authors to write their own drawing rules without using any I6 code. Glimmr Drawing Commands also adds a number of "derived" commands--commands that use the basic commands to do new things. These include everything from drawing a line to connect any two points on the screen, to "painting" text to the screen, to drawing a grid of images.
 
-Glimmr Drawing Commands requires Jon Ingold's Flexible Windows as well as Michael Callaghan's Fixed Point Maths. For those familiar with I6, the three infglk functions that GDC implements are glk_image_draw, glk_image_draw_scaled, and glk_window_fill_rect. It does not implement the glk_window_erase_rect command, since this is easily imitated by drawing a rectangle in the background color of the window (Flexible Windows's "back-colour" g-window property).
+Glimmr Drawing Commands requires Jon Ingold's Flexible Windows as well as Michael Callaghan's Fixed Point Maths. For those familiar with I6, the three infglk functions that GDC implements are glk_image_draw, glk_image_draw_scaled, and glk_window_fill_rect. It does not implement the glk_window_erase_rect command, since this is easily imitated by drawing a rectangle in the background color of the window (Flexible Windows's "background color" g-window property).
 
 A note on what GDC will *not* do: It does not:
 
@@ -2463,18 +2453,20 @@ Each command in GDC also has a special phrasing that does not produce a console 
 
 Chapter: Contact info
 
-If you have comments about the extension, please feel free to contact me directly at ek.temple@gmail.com.
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
-Please report bugs on the Google Code project page, at http://code.google.com/p/glimmr-i7x/issues/list.
+For questions about Glimmr, please consider posting to either the rec.arts.int-fiction newsgroup or at the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others.
 
-For questions about Glimmr, please consider posting to either the rec.arts.int-fiction newsgroup or at the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others. If you prefer not to use either of these forums, please contact me directly via email (ek.temple@gmail.com).
 
 
 Chapter: Change Log
 
+Version 3: Updated for 6M62 by Dannii Willis
+
 Version 2: Updated for 6F95 (thanks to Harold Gates!). Now uses no deprecated features.
 
 Version 1: Initial release.
+
 
 
 Example: * Retro Drawing - This example presents a good cross-section of the graphics commands provided by GDC. Note that none of the drawing here uses image files--everything is done with "primitives", painted text, and bitmaps.
@@ -2489,15 +2481,18 @@ Note the window-drawing rule provided does not scale, center, or otherwise vary 
 
 	Arcade is a room. "Nothing at all to do here."
 
-	The graphics-window is a graphics g-window spawned by the main-window.	The position is g-placeabove.
-
+	The graphics-window is a graphics g-window spawned by the main window.	The position is g-placeabove.
+	
+	G-White is always "#FFFFFF".
+	G-Yellow is always "#FFEE00".
+	
 	When play begins:
 		open up the graphics-window.
 	
 	After printing the banner text:
 		say "[line break]This example for the Glimmr Drawing Commands extension doesn't do much. It demonstrates a few of the drawing commands, and uses no external resources. Everything is drawn by directly coloring individual pixels. Key: [paragraph break]Ms. Pac-Man: polychrome bitmap.[line break]Maze outlines: line primitives.[line break]Lunch dots: rectangle primitives.[line break]Text box: stroked rectangle primitive.[line break]Text: bitmap-rendered text.[paragraph break]".
 
-	Window-drawing rule for the graphics-window:
+	Rule for refreshing the graphics-window:
 		clear the graphics-window;
 		display a polychrome bitmap in the graphics-window at { 30, 30 } using the Pac-Lady with dot size 1 pixel;
 		draw a line (r 13 g 47 b 232) in the graphics-window from { 20, 23 } to { 120, 23 } with 3 pixel line-weight;
