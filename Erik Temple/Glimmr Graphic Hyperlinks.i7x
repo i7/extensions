@@ -1,4 +1,4 @@
-Version 1/130420 of Glimmr Graphic Hyperlinks (for Glulx only) by Erik Temple begins here.
+Version 2/160626 of Glimmr Graphic Hyperlinks (for Glulx only) by Erik Temple begins here.
 
 "Allows us to identify any number of rectangular areas of a Glulx graphic window as 'hotlinked'. When the player clicks within one of these zones, a command will be entered on behalf of the player, or we can specify some appropriate response of our own."
 
@@ -7,7 +7,7 @@ Version 1/130420 of Glimmr Graphic Hyperlinks (for Glulx only) by Erik Temple be
 
 Part 1 - Initialization
 
-Include version 9 of Flexible Windows by Jon Ingold.
+Include version 15/160609 of Flexible Windows by Jon Ingold.
 
 
 Chapter 1.1 - Glulx gestalts
@@ -48,7 +48,7 @@ To decide which number is the clicked window reference:
 The first glulx mouse input rule (this is the identify window rule):
 	now glulx replacement command is "";
 	Repeat with item running through g-graphlinked g-windows:
-		if the ref-number of item is the clicked window reference:
+		if the ref number of item is the clicked window reference:
 			now the current graphlink window is item.
 			
 A glulx mouse input rule (this is the default graphlink setting rule):
@@ -76,14 +76,14 @@ Include (-
 ];
 
 [ SetGraphLink g;
-	if (g.ref_number) {
-	            if (glk_gestalt(gestalt_MouseInput, winType_Graphics)) glk_request_mouse_event(g.ref_number);
+	if (g.(+ ref number +)) {
+	            if (glk_gestalt(gestalt_MouseInput, winType_Graphics)) glk_request_mouse_event(g.(+ ref number +));
 	}
 ];
 
 [ IgnoreLinks g;
-	if (g.ref_number) {
-	            if (glk_gestalt(gestalt_MouseInput, winType_Graphics)) glk_cancel_mouse_event(g.ref_number);
+	if (g.(+ ref number +)) {
+	            if (glk_gestalt(gestalt_MouseInput, winType_Graphics)) glk_cancel_mouse_event(g.(+ ref number +));
 	}
 ];
 
@@ -552,11 +552,15 @@ Another debugging command available to us is the GRAPHLINKS command. This will p
 	Last window to be clicked: graphics-window
 
 
+Chapter: Change Log
+
+Version 2: Updated for 6M62 by Dannii Willis
+
+Version 1: Initial release.
+
+	
 Section: Contact info
 
-If you have comments about the extension, please feel free to contact me directly at ek.temple@gmail.com.
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
 
-Please report bugs on the Google Code project page, at http://code.google.com/p/glimmr-i7x/issues/list.
-
-For questions about Glimmr, please consider posting to either the rec.arts.int-fiction newsgroup or at the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others. If you prefer not to use either of these forums, please contact me directly via email (ek.temple@gmail.com).
-
+For questions about Glimmr, please consider posting to either the rec.arts.int-fiction newsgroup or at the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others.
