@@ -13,7 +13,7 @@ Include (-
 To (R - rule) never:
 	(- ClearTimedEvent({-mark-event-used:R}); -).
 
-Clear Events ends here.
+Cleared Events ends here.
 
 ---- DOCUMENTATION ----
 This is a very simple extension, adding only a single phrase.
