@@ -1,4 +1,4 @@
-Version 1/111030 of Glimmr Canvas Animation (for Glulx only) by Erik Temple begins here.
+Version 2/160627 of Glimmr Canvas Animation (for Glulx only) by Erik Temple begins here.
 
 "Provides a 'track'-based system for independent animation of graphic elements, canvases, and windows. Features animation presets, automated easing/tweening, and a detailed debugging log."
 
@@ -34,45 +34,14 @@ Chapter - Useful phrases
 
 Section - Mathematical functions
 
-To decide what number is ABS/absolute value/-- of/-- (N - a number):
-	if N < 0, decide on 0 - N;
-	decide on N.
-
 [Greatest common divisor function from Ben Cressey: http://www.intfiction.org/forum/viewtopic.php?f=7&t=3424]
 To decide what number is the greatest common divisor of (A - a number) and (B - a number):
 	if b is 0, decide on A;
 	decide on the greatest common divisor of B and the remainder after dividing A by B.
 
 
-Section - Shortcuts for fixed point maths
-[The doubled symbols are used when we need to perform an operation on one number and one "real number" or two "real numbers"; we must use standard symbols to operate on two numbers. The use of the doubled symbols improves readability with easing equations, which often need to use fractional values.]
-
-To decide which real number is (A - value) ++ (B - value):
-	decide on A real plus B.
-	
-To decide which real number is (A - value) -- (B - value):
-	decide on A real minus B.
-	
-To decide which real number is (A - value) ** (B - a value):
-	decide on A real times B.
-	
-To decide which real number is (A - value) // (B - a value):
-	decide on A real divided by B.
-	
-To decide whether (A - a value) << (B - a value):
-	if A is real less than B, decide yes.
-
-To decide whether (A - a value) >> (B - a value):
-	if A is real greater than B, decide yes.
-	
-To decide which real number is (A - value) ^^ (B - value):
-	decide on A to the power B.
-
-To decide which real number is sqrt (A - a value):
-	decide on the real square root of A.
-
-
 Section - Greasing the wheels for callbacks
+
 [From John Clemens: http://www.math.psu.edu/clemens/IF/I7tricks.html#command]
 
  To say perform/@ (ph - phrase): (- if (0==0) {ph} -).
@@ -246,12 +215,12 @@ To start a/-- Glulx timer of (T - a number) millisecond/milliseconds:
 		#if utilizing animation debugging;
 		say "[>console][CA]Global timer interval of [N] ms selected as greatest common divisor of the specified interval and the existing timer interval of [global timer interval] ms.[<]";
 		#end if;
-		let standardizer be N as a fixed point number real divided by global timer interval;
+		let standardizer be (N plus 0.0) divided by global timer interval;
 		repeat with track running through animation-active animation tracks:
 			if the timer frame-multiple of the track is 0, now the timer frame-multiple of the track is 1;[prevents division errors]
 			now the timer count of the track is the remainder after dividing the timer count of the track by the timer frame-multiple of the track;
-			unless standardizer real equals 1.0000:
-				now the timer count of the track is the timer count of the track multiplied by the standardizer as an integer;
+			unless standardizer is 1.0000:
+				now the timer count of the track is the timer count of the track multiplied by the standardizer to the nearest whole number;
 			now the timer frame-multiple of the track is the timer interval of the track divided by N;
 			#if utilizing animation debugging;
 			say "[>console][CA]Track [i][track][/i] will fire every [timer frame-multiple of the track] tick(s) of the timer. Current offset: [timer count of the track] frames.[<]";
@@ -283,22 +252,22 @@ First report restoring the game:
 
 
 Section - Restart the timer after undoing
+
 [The state of the timer is not automatically saved with the game state, so we must start a timer after undoing at the same speed it was running when the game state was saved.]
 
-Include Undo Output Control by Erik Temple.
+The immediately undo rule response (E) is "[@ reset the Glulx timer][bracket]Previous turn undone.[close bracket]".
 
-After undoing an action:
-	reset the Glulx timer.
-
-
+To decide what number is glk event handled in (ev - a g-event) context:
+	(- HandleGlkEvent(gg_event, {ev}, gg_arguments) -)
+	
 Section - Glk events (for use without Glulx Input Loops by Erik Temple)
 [This section provides definitions and phrase wrappers that allow us to write I7 code for handling raw input. This code comes from the Glulx Input Loops extensions, so we include it only if that extension is not also present.]
 
 A g-event is a kind of value. The g-events are timer-event, char-event, line-event, mouse-event, arrange-event, redraw-event, sound-notify-event, and hyperlink-event.
 
-Definition: A g-event is window-dependent if the g-event is not timer-event or the g-event is not sound-notify-event or the g-event is not arrange-event or the g-event is not redraw-event.
+Definition: A g-event is window-independent rather than window-dependent if it is timer-event or it is sound-notify-event or it is arrange-event or it is redraw-event.
 
-Definition: A g-event is glk-initiated if the g-event is timer-event or the g-event is sound-notify-event or the g-event is arrange-event or the g-event is not redraw-event.
+Definition: A g-event is glk-initiated if it is timer-event or it is sound-notify-event or it is arrange-event or it is not redraw-event.
 
 
 To decide which g-event is null-event: (- 0 -)
@@ -315,8 +284,7 @@ To decide which number is the window of the current glk event:
 To decide what number is the character code returned:
 	(- gg_event-->2 -)
 
-To decide what number is glk event handled in (ev - a g-event) context:
-	(- HandleGlkEvent(gg_event, {ev}, gg_arguments) -)
+
 
 
 Chapter - Delaying the player's input
@@ -327,10 +295,11 @@ To delay input until all animations are complete:
 	#if utilizing animation debugging;
 	say "[>console][CA]Input delayed while all running animation tracks complete.[<]";
 	#end if;
+	let event-outcome be a number;
 	while animation is queued:
 		wait for glk input;
 		if the current glk event is glk-initiated:
-			let event-outcome be glk event handled in null-event context;[Handles the event; we'll just ignore the outcome since it doesn't stem from player input.]
+			now event-outcome is glk event handled in null-event context;[Handles the event; we'll just ignore the outcome since it doesn't stem from player input.]
 			
 
 Section - Delaying input until just one animation has ended
@@ -339,10 +308,11 @@ To delay input until (track - an animation track) is complete:
 	#if utilizing animation debugging;
 	say "[>console][CA]Input delayed while the animation track [i][track][/i] completes.[<]";
 	#end if;
+	let event-outcome be a number;
 	while track is animation-active:
 		wait for glk input;
 		if the current glk event is glk-initiated:
-			let event-outcome be glk event handled in null-event context;[Handles the event; we'll just ignore the outcome since it doesn't stem from player input.]
+			now event-outcome is glk event handled in null-event context;[Handles the event; we'll just ignore the outcome since it doesn't stem from player input.]
 
 
 Part - Animation dispatch and handling
@@ -368,7 +338,7 @@ Updating graphics windows for animation is an activity.
 	
 For updating graphics windows for animation (this is the animation window-updating rule):
 	repeat with win running through g-present graphics g-windows:
-		follow the window-drawing rules for win.
+		carry out the refreshing activity with win;
 
 
 Chapter - Common code for animation rules
@@ -377,7 +347,7 @@ Last animation rule for an animation track (called the track):
 	advance the track.
 
 To advance (track - an animation track):
-	increment current-frame;
+	increment current-frame of the track;
 	[say "current frame: [current-frame]; cycles completed: [cycles completed of the track].";]
 	if the track is cycling:
 		let cyclic-frame be current-frame of the track - (cycle-length of the track * cycles completed of the track);
@@ -437,7 +407,7 @@ Section - Animation rule for custom preset
 
 Animation rule for a custom animation track (called the track) (this is the minimal custom animation rule):
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b] of [i][track][/i] as a custom animation track.[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b] of [i][track][/i] as a custom animation track.[<]";
 	#end if
 
 
@@ -494,7 +464,7 @@ First animation rule for a reel animation track (called the track) (this is the 
 	otherwise if the animation-target of the track is a graphics g-window:
 		now the background image of the associated canvas of the animation-target of the track is img;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a reel track targeting [the animation-target of the track]. Image displayed: [img] (entry [x] of the reel)[if the cycle-length of the track is not the number of entries of the image-reel of the track], selected using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[end if].[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a reel track targeting [the animation-target of the track]. Image displayed: [img] (entry [x] of the reel)[if the cycle-length of the track is not the number of entries of the image-reel of the track], selected using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[end if].[<]";
 	#end if.	
 	
 
@@ -556,7 +526,7 @@ First animation rule for a motion animation track (called the track) (this is th
 		now entry 1 of the endpoint of the animation-target of the track is entry 1 of the origin of the animation-target of the track + xx;
 		now entry 2 of the endpoint of the animation-target of the track is entry 2 of the origin of the animation-target of the track + yy;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a motion track targeting [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if]. Origin: {[entry 1 of the origin of the animation-target of the track], [entry 2 of the origin of the animation-target of the track]}.[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a motion track targeting [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if]. Origin: {[entry 1 of the origin of the animation-target of the track], [entry 2 of the origin of the animation-target of the track]}.[<]";
 	#end if.
 
 
@@ -580,7 +550,7 @@ To animate (track - an animation track) as a motion animation targeting (targ - 
 	animate the track at interv[ ms per frame].
 	
 [Specify movement by points, average velocity, and timer.]
-To animate (track - an animation track) as a motion animation targeting (targ - an object) and ending at (end pt - a list of numbers) at (interv - a number) with a/-- velocity of/-- (V - a number) --/unit/units, cycling:
+To animate (track - an animation track) as a motion animation targeting (targ - an object) and ending at (end pt - a list of numbers) at (interv - a number) with a/-- velocity of/-- (V - a number) -/unit/units, cycling:
 	if cycling:
 		now the track is cycling;
 	otherwise:
@@ -621,9 +591,9 @@ First animation rule for a zooming animation track (called the track) (this is t
 			let Yy be the easing applied to the cyclic-frame and the cycle-length of the track and the start-y of the track and the delta-y of the track;
 	otherwise:
 		let Xx be the easing of the track applied to the cyclic-frame and the cycle-length of the track and the start-x of the track and the delta-x of the track;
-	let X be (Xx // 10000.0000);[the easing equations give us a number; we need to translate it into a real number to use as a scaling factor]
+	let X be (Xx / 10000.0000);[the easing equations give us a number; we need to translate it into a real number to use as a scaling factor]
 	if the targ is a g-element and the asymmetrical scaling option is active:
-		let Y be (Yy // 10000.0000);
+		let Y be (Yy / 10000.0000);
 		now the x-scaling factor of the targ is X;
 		now the y-scaling factor of the targ is Y;
 	otherwise if the targ is a g-element:
@@ -635,7 +605,7 @@ First animation rule for a zooming animation track (called the track) (this is t
 			if the targ is the associated canvas of win:
 				now the arbitrary scaling factor of win is X;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a zooming track targeting [the targ], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if]. [if the asymmetrical scaling option is not active or the targ is a g-canvas]Scaling factor: [scaling factor of the targ][otherwise]X-scaling factor: [x-scaling factor of the targ]; y-scaling factor: [y-scaling factor of the targ][end if].[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a zooming track targeting [the targ], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if]. [if the asymmetrical scaling option is not active or the targ is a g-canvas]Scaling factor: [scaling factor of the targ][otherwise]X-scaling factor: [x-scaling factor of the targ]; y-scaling factor: [y-scaling factor of the targ][end if].[<]";
 	#end if.
 
 
@@ -663,10 +633,10 @@ To animate (track - an animation track) as a zooming animation targeting (targ -
 				now the x-start is the arbitrary scaling factor of win;
 	if the targ is a g-window:
 		let x-start be the scaling factor of targ;
-	now the start-x of the track is (x-start ** 10000) as an integer;
-	now the delta-x of the track is ( (x-end -- x-start) ** 10000) as an integer;
+	now the start-x of the track is (x-start * 10000) to the nearest whole number;
+	now the delta-x of the track is ( (x-end - x-start) * 10000) to the nearest whole number;
 	if the targ is a g-element and the asymmetrical scaling option is active:
-		now the start-y of the track is (y-start ** 10000) as an integer;
+		now the start-y of the track is (y-start * 10000) to the nearest whole number;
 		now the delta-y of the track is the delta-x of the track;	
 	[say "start-x: [start-x of the track]; delta-x: [delta-x of the track].";]
 	now the cycle-length of the track is len;
@@ -688,7 +658,7 @@ First animation rule for a flicker animation track (called the track) (this is t
 		toggle animation-target of the track for the track;
 		let g-toggled be true;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [current-frame of the track - (cycles completed of the track * cycle-length of the track)] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a flicker track targeting [the animation-target of the track] (display status [if g-toggled is true]toggled[otherwise]unchanged[end if]).[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [current-frame of the track - (cycles completed of the track * cycle-length of the track)] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a flicker track targeting [the animation-target of the track] (display status [if g-toggled is true]toggled[otherwise]unchanged[end if]).[<]";
 	#end if.
 	
 To toggle (O - an object) for (track - an animation track):
@@ -741,7 +711,7 @@ To animate (track - an animation track) as a flicker animation targeting (targ -
 		now the track is animation-randomized;
 	otherwise:
 		now the track is not animation-randomized;
-	now the track is cycling;[Notice that, with no duration specified, the animation is always a cycling one--otherwise, we'd have only a single frame of flicker]
+	now the track is cycling;[Notice that, with no duration specified, the animation is always a cycling one-otherwise, we'd have only a single frame of flicker]
 	now the cycle-length of the track is 1;
 	animate the track at interv[ ms per frame].
 	
@@ -796,6 +766,7 @@ The linked replacement-command of a fader overlay is "".
 
 
 Section - Null-fader
+
 [There must be at least one fader in the world, so we define this one.]
 
 The null-fader is a fader overlay.
@@ -853,8 +824,8 @@ To update (fade-reel - a list of figure names) to (next-fade - a number) for (an
 	draw (entry next-fade of the fade-reel) in (win) at (win-x of anim-target - dot-size of anim-target) by (win-y of anim-target - dot-size of anim-target) with dimensions ((length of the anim-target * dot-size of anim-target) + dot-size of anim-target) by ((dot-size of anim-target * font-height of the associated font of anim-target) + dot-size of anim-target).
 	
 To update (fade-reel - a list of figure names) to (next-fade - a number) for (anim-target - an image-rendered string) in (win - a g-window):
-	let margin be background-margin of the associated font of the anim-target real times the calculated scaling factor of the anim-target as an integer;
-	let vertical-size be font-height of the associated font of the anim-target real times the calculated scaling factor of the anim-target as an integer;
+	let margin be background-margin of the associated font of the anim-target times the calculated scaling factor of the anim-target to the nearest whole number;
+	let vertical-size be font-height of the associated font of the anim-target times the calculated scaling factor of the anim-target to the nearest whole number;
 	draw (entry next-fade of the fade-reel) in (win) at (win-x of anim-target - margin) by (win-y of anim-target - margin) with dimensions (length of the anim-target + margin + margin) by (vertical-size + margin + margin).
 	
 To update (fade-reel - a list of figure names) to (next-fade - a number) for (anim-target - a bitmap) in (win - a g-window):
@@ -870,7 +841,7 @@ Section - Temporalizing animation rule
 
 First animation rule for a temporalizing animation track (called the track) (this is the default temporalizing animation rule):
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [(current-frame of the track) - (cycles completed of the track * cycle-length of the track)] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a temporalizing track.[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [(current-frame of the track) - (cycles completed of the track * cycle-length of the track)] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a temporalizing track.[<]";
 	#end if.
 
 
@@ -932,7 +903,7 @@ Section - Phrases for typecasting access to properties
 
 To decide what number is (P - a property) converted to a number: (- {P} -).
 
-To decide whether (O - an object) has property number (P - a number): (- WhetherProvides({O},({P}<attributed_property_offsets_SIZE)&&((attributed_property_offsets-->{P})~=-1),{P}) -).
+To decide whether (O - an object) has property number (P - a number): (- WhetherProvides({O},({P}<attributed_property_offsets_SIZE)&&((attributed_property_offsets->{P})~=-1),{P}) -).
 
 To store non-block value (V - a value) as property number (P - a number) in (O - an object): (- {O}.{P}={V}; -).
 
@@ -962,7 +933,7 @@ Section - Animation track properties for reel animations
 An animation track has a number called property-storage.
 An animation track has a text called the property-name-storage.
 
-An animation track has a list of glulx color values called the color-reel.
+An animation track has a list of texts called the color-reel.
 An animation track has a list of lists of numbers called the coordinates-reel.
 An animation track has a list of numbers called the numerical-reel.
 An animation track has a list of indexed texts called the indexed-text-reel.
@@ -1006,7 +977,7 @@ First animation rule for a parameterized reel animation track (called the track)
 	if T is "figure-array":
 		store block value at entry N of the image-array-reel of the track as property number (property-storage of the track) in the animation-target of the track;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized reel track targeting the [T] of [the animation-target of the track]. Entry [N] of the reel displayed[if the cycle-length of the track is not max-frames], selected using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[end if].[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized reel track targeting the [T] of [the animation-target of the track]. Entry [N] of the reel displayed[if the cycle-length of the track is not max-frames], selected using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[end if].[<]";
 	#end if.
 	
 
@@ -1099,7 +1070,7 @@ First animation rule for a parameterized motion animation track (called the trac
 		if the property-name-storage of the track is "endpoint":
 			now entry 2 of the endpoint of the animation-target of the track is yy;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized motion track targeting the [property-name-storage] of [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if].[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized motion track targeting the [property-name-storage] of [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track])[if the secondary easing of the track is not the null easing rule] and the [secondary easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-y of the track], c: [delta-y of the track])[end if].[<]";
 	#end if.
 	
 
@@ -1129,7 +1100,7 @@ To animate (track - an animation track) as a parameterized motion animation targ
 	
 
 [Specify movement by points, average velocity, and timer.]
-To animate (track - an animation track) as a parameterized motion animation targeting (P - a value of kind K valued property) of (targ - an object) and ending at (end pt - a number) at (interv - a number) with a/-- velocity of/-- (V - a number) --/unit/units, cycling:
+To animate (track - an animation track) as a parameterized motion animation targeting (P - a value of kind K valued property) of (targ - an object) and ending at (end pt - a number) at (interv - a number) with a/-- velocity of/-- (V - a number) -/unit/units, cycling:
 	let P1 be P converted to a number;
 	now the animation-target of the track is targ;
 	if targ has property number P1:
@@ -1180,7 +1151,7 @@ To animate (track - an animation track) as a parameterized motion animation targ
 	set up track as parameterized motion with duration len;
 	animate the track at interv[ ms per frame].
 
-To animate (track - an animation track) as a parameterized motion animation targeting (P - a value of kind K valued property) of (targ - an object) and ending at (end pt - a list of numbers) at (interv - a number) with a/-- velocity of/-- (V - a number) --/unit/units, cycling:
+To animate (track - an animation track) as a parameterized motion animation targeting (P - a value of kind K valued property) of (targ - an object) and ending at (end pt - a list of numbers) at (interv - a number) with a/-- velocity of/-- (V - a number) -/unit/units, cycling:
 	let P1 be P converted to a number;
 	now the animation-target of the track is targ;
 	if targ has property number P1:
@@ -1216,10 +1187,10 @@ First animation rule for a parameterized zooming animation track (called the tra
 	let cyclic-frame be current-frame of the track - (cycles completed of the track * cycle-length of the track);
 	let P be the property-storage of the track;
 	let Zz be the easing of the track applied to the cyclic-frame and the cycle-length of the track and the start-x of the track and the delta-x of the track;
-	let Z be (Zz // 10000.0000);[the easing equations give us a number; we need to translate it into a real number to use as a scaling factor]
+	let Z be (Zz / 10000.0000);[the easing equations give us a number; we need to translate it into a real number to use as a scaling factor]
 	store non-block value (Z) as property number (P) in the animation-target of the track;
 	#if utilizing animation debugging;
-	say "[>console][CA]Processed frame [b][current-frame][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized zooming track targeting the [property P] of [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track]): [Z].[<]";
+	say "[>console][CA]Processed frame [b][current-frame of the track][/b][if track is cycling] (frame [cyclic-frame] of cycle [cycles completed of the track + 1])[end if] of [i][track][/i] as a parameterized zooming track targeting the [property P] of [the animation-target of the track], using the [easing of the track] (t: [cyclic-frame], d: [cycle-length of the track], b: [start-x of the track], c: [delta-x of the track]): [Z].[<]";
 	#end if.
 
 
@@ -1237,8 +1208,8 @@ To animate (track - an animation track) as a parameterized zooming animation tar
 	if the targ provides the property display status:
 		now the display status of the targ is g-active;
 	let zfrom be the value stored in property number P1 of targ;
-	now the start-x of the track is (zfrom ** 10000) as an integer;
-	now the delta-x of the track is ( (zto -- zfrom) ** 10000) as an integer;
+	now the start-x of the track is (zfrom * 10000) to the nearest whole number;
+	now the delta-x of the track is ( (zto - zfrom) * 10000) to the nearest whole number;
 	[say "start-x: [start-x of the track]; delta-x: [delta-x of the track].";]
 	now the cycle-length of the track is len;
 	set up track as parameterized zooming with duration len;
@@ -1262,7 +1233,7 @@ http://jqueryui.com/demos/effect/easing.html
 
 To decide what N is (function - phrase (value of kind K, value of kind L, value of kind M, value of kind O) -> value of kind N)
 	applied to (input - K) and (second input - L) and (third input - M) and (fourth input - O):
-	(- {-function-application} -).
+	(- {-primitive-definition:function-application} -).
 
 
 Chapter - Easing equations
@@ -1274,6 +1245,7 @@ To decide what number is null easing for time (t - a number) duration (d - a num
 
 
 Section - Linear easing
+
 [Equation adapted from http://www.gizma.com/easing/, by Robert Penner]
 
 To decide what number is linear easing for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the linear easing rule):
@@ -1281,65 +1253,69 @@ To decide what number is linear easing for time (t - a number) duration (d - a n
 	
 
 Section - Quadratic easing
+
 [Equations adapted from http://www.gizma.com/easing/, by Robert Penner]
 
 To decide what number is quadratic easing in for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the quadratic easing in rule):
-	let t1 be (t as a fixed point number) // d;
-	decide on (c ** t1 ** t1) ++ b as an integer.
+	let t1 be (t plus 0.0) / d;
+	decide on (c * t1 * t1) + b to the nearest whole number.
 
 To decide what number is quadratic easing out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the quadratic easing out rule):
-	let t1 be (t as a fixed point number) // d;
-	decide on ( (0 - c) ** t1 ** (t1 -- 2) ) ++ b as an integer.
+	let t1 be (t plus 0.0) / d;
+	decide on ( (0 - c) * t1 * (t1 - 2) ) + b to the nearest whole number.
 	
 To decide what number is quadratic easing in-out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the quadratic easing in-out rule):
-	let t1 be (t as a fixed point number) // (d / 2);
-	if t1 << 1:
-		decide on ((c / 2) ** t1 ** t1) ++ b as an integer;
-	let t1 be t1 -- 1;
-	decide on (((0 - c) / 2) ** ((t1 ** (t1 -- 2)) -- 1)) ++ b as an integer.
+	let t1 be (t plus 0.0) / (d / 2);
+	if t1 < 1:
+		decide on ((c / 2) * t1 * t1) + b to the nearest whole number;
+	let t1 be t1 - 1;
+	decide on (((0 - c) / 2) * ((t1 * (t1 - 2)) - 1)) + b to the nearest whole number.
 
 
 Section - Cubic easing
+
 [Equations adapted from http://www.gizma.com/easing/, by Robert Penner]
 
 To decide what number is cubic easing in for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the cubic easing in rule):
-	let t1 be (t as a fixed point number) // d;
-	decide on ( (c ** t1 ** t1 ** t1) ++ b ) as an integer.
+	let t1 be (t plus 0.0) / d;
+	decide on ( (c * t1 * t1 * t1) + b ) to the nearest whole number.
 	
 To decide what number is cubic easing out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the cubic easing out rule):
-	let t1 be (t as a fixed point number) // d;
-	let t1 be t1 -- 1;
-	decide on ((c ** ((t1 ** t1 ** t1) ++ 1) ) as an integer ) + b.
+	let t1 be (t plus 0.0) / d;
+	let t1 be t1 - 1;
+	decide on ((c * ((t1 * t1 * t1) + 1) ) to the nearest whole number ) + b.
 	
 To decide what number is cubic easing in-out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the cubic easing in-out rule):
-	let t1 be (t as a fixed point number) // (d / 2);
-	if t1 << 1.0000:
-		decide on ( (c / 2) ** (t1 ** t1 ** t1) ) ++ b as an integer;
-	let t1 be t1 -- 2;
-	decide on (( c / 2 ) ** ( (t1 ** t1 ** t1) ++ 2 )) ++ b as an integer.
+	let t1 be (t plus 0.0) / (d / 2);
+	if t1 < 1.0000:
+		decide on ( (c / 2) * (t1 * t1 * t1) ) + b to the nearest whole number;
+	let t1 be t1 - 2;
+	decide on (( c / 2 ) * ( (t1 * t1 * t1) + 2 )) + b to the nearest whole number.
 
 
 Section - Circular easing
+
 [Equations adapted from http://www.gizma.com/easing/, by Robert Penner]
 
 To decide what number is circular easing in for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the circular easing in rule):
-	let t1 be (t as a fixed point number) // d;
-	decide on ((0 - c) ** (sqrt (1 -- (t1 ** t1)) -- 1)) ++ b as an integer.
+	let t1 be (t plus 0.0) / d;
+	decide on ((0 - c) * (real square of (1 - (t1 * t1)) - 1)) + b to the nearest whole number.
 
 To decide what number is circular easing out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the circular easing out rule):
-	let t1 be ( (t as a fixed point number) / d ) -- 1;
-	decide on (c ** (sqrt (1 -- (t1 ** t1)))) ++ b as an integer.
+	let t1 be ( (t plus 0.0) / d ) - 1;
+	decide on (c * (real square of (1 - (t1 * t1)))) + b to the nearest whole number.
 
 To decide what number is circular easing in-out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the circular easing in-out rule):
-	let t1 be (t as a fixed point number) // ((d as a fixed point number) / 2);
-	if t1 << 1:
-		decide on ( (0 -- (c as a fixed point number // 2)) ** (sqrt (1 -- (t1 ** t1)) -- 1) ) ++ b as an integer;
+	let t1 be (t plus 0.0) / ((d plus 0.0) / 2);
+	if t1 < 1:
+		decide on ( (0 - (c plus 0.0 / 2)) * (real square of (1 - (t1 * t1)) - 1) ) + b to the nearest whole number;
 	else:
-		let t2 be t1 -- 2;
-		decide on ( ((c as a fixed point number // 2)) ** (sqrt (1 -- (t2 ** t2)) ++ 1) ) ++ b as an integer.
+		let t2 be t1 - 2;
+		decide on ( ((c plus 0.0 / 2)) * (real square of (1 - (t2 * t2)) + 1) ) + b to the nearest whole number.
 
 
 Section - Back easing (cubic)
+
 [Equations adapted from http://snippets.dzone.com/posts/show/4005, by Robert Penner]
 
 [We define a "constant" to determine how far back we should go before going forward. The smaller the number, the less the backward motion.]
@@ -1351,8 +1327,8 @@ To decide what number is cubic back easing in for time (t - a number) duration (
 	let b1 be b;
 	say "[>console][CA]Cubic back easing in: using custom parameter of [param] (change the global variable 'back easing parameter' to adjust).[<]";
 	#end if;
-	let t1 be (t as a fixed point number) // d;
-	decide on (c ** t1 ** t1 ** (((param ++ 1) ** t1 ) -- param)) ++ b as an integer.
+	let t1 be (t plus 0.0) / d;
+	decide on (c * t1 * t1 * (((param + 1) * t1 ) - param)) + b to the nearest whole number.
 	
 To decide what number is cubic back easing out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the cubic back easing out rule):
 	let param be the back easing parameter;
@@ -1360,49 +1336,50 @@ To decide what number is cubic back easing out for time (t - a number) duration 
 	let b1 be b;
 	say "[>console][CA]Cubic back easing in: using custom parameter of [param] (change the global variable 'back easing parameter' to adjust).[<]";
 	#end if;
-	let t1 be  ((t as a fixed point number) // d ) -- 1;
-	decide on (c ** (1 ++ ( (t1 ** t1) ** ((param ** t1) ++ t1 ++ param) ))) ++ b as an integer.
+	let t1 be  ((t plus 0.0) / d ) - 1;
+	decide on (c * (1 + ( (t1 * t1) * ((param * t1) + t1 + param) ))) + b to the nearest whole number.
 
 To decide what number is cubic back easing in-out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the cubic back easing in-out rule):
 	#if utilizing animation debugging;
 	let b1 be b;
 	say "[>console][CA]Cubic back easing in-out: using custom parameter of [back easing parameter] (change the global variable 'back easing parameter' to adjust).[<]";
 	#end if;
-	let t1 be  ( (t as a fixed point number) // ( (d as a fixed point number) // 2 ) );
-	let param1 be the back easing parameter ** 1.5250;
-	[if t1 << 1:
-		decide on ((((c as a fixed point number) // 2) ** t) ** t ** (((param1 ++ 1) ** t) -- param1) ) ++ b as an integer;]
-	if t1 << 1:
-		decide on ( (2 * b) ++ ((c ** t1 ** t1) ** ((param1 ** ( t1 -- 1)) ++ t1) )) // 2 as an integer;
+	let t1 be  ( (t plus 0.0) / ( (d plus 0.0) / 2 ) );
+	let param1 be the back easing parameter * 1.5250;
+	[if t1 < 1:
+		decide on ((((c plus 0.0) / 2) * t) * t * (((param1 + 1) * t) - param1) ) + b to the nearest whole number;]
+	if t1 < 1:
+		decide on ( (2 * b) + ((c * t1 * t1) * ((param1 * ( t1 - 1)) + t1) )) / 2 to the nearest whole number;
 	else:
-		let t2 be t1 -- 2;
-		decide on b ++ ((c ** (2 ++ ((t2 ** t2) ** (param1 ++ t2 ++ (param1 ** t2))))) // 2) as an integer.
+		let t2 be t1 - 2;
+		decide on b + ((c * (2 + ((t2 * t2) * (param1 + t2 + (param1 * t2))))) / 2) to the nearest whole number.
 
 
 Section - Parabolic bounce easing
+
 [Equations adapted from http://snippets.dzone.com/posts/show/4005, by Robert Penner]
 
 To decide what number is bounce easing out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the bounce easing out rule):
-	let t1 be (t as a fixed point number) // d;
-	if t1 << 0.3636:
-		decide on ( ( c ** (7.5625 ** t1 ** t1) ) ++ b ) as an integer;
-	if t1 << 0.7272:
-		let t1 be t1 -- 0.5454;
-		decide on ( c ** ((7.5625 ** t1 ** t1) ++ 0.7500) as an integer ) + b;
-	if t1 << 0.9090:
-		let t1 be t1 -- 0.8181;
-		decide on ( c ** ((7.5625 ** t1 ** t1) ++ 0.9375) as an integer) + b;
-	let t1 be t1 -- 0.9545; 
-	decide on ( c ** ((7.5625 ** t1 ** t1) ++ 0.9844) as an integer) + b.
+	let t1 be (t plus 0.0) / d;
+	if t1 < 0.3636:
+		decide on ( ( c * (7.5625 * t1 * t1) ) + b ) to the nearest whole number;
+	if t1 < 0.7272:
+		let t1 be t1 - 0.5454;
+		decide on ( c * ((7.5625 * t1 * t1) + 0.7500) to the nearest whole number ) + b;
+	if t1 < 0.9090:
+		let t1 be t1 - 0.8181;
+		decide on ( c * ((7.5625 * t1 * t1) + 0.9375) to the nearest whole number) + b;
+	let t1 be t1 - 0.9545; 
+	decide on ( c * ((7.5625 * t1 * t1) + 0.9844) to the nearest whole number) + b.
 	
 To decide what number is bounce easing in for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the bounce easing in rule):
 	decide on c - (bounce easing out for time (d - t) duration (d) beginning (0) change (c) ) + b.
 	
 To decide what number is bounce easing in-out for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the bounce easing in-out rule):
 	if t < (d / 2):
-		decide on (((bounce easing in for time (t * 2) duration (d) beginning (0) change (c) ) ** 0.5000 ) as an integer) + b;
+		decide on (((bounce easing in for time (t * 2) duration (d) beginning (0) change (c) ) * 0.5000 ) to the nearest whole number) + b;
 	otherwise:
-		decide on ((((bounce easing out for time ((t * 2) - d) duration (d) beginning (0) change (c) ) ** 0.5000) ++ (c ** 0.5000) ) as an integer) + b.
+		decide on ((((bounce easing out for time ((t * 2) - d) duration (d) beginning (0) change (c) ) * 0.5000) + (c * 0.5000) ) to the nearest whole number) + b.
 
 
 Glimmr Canvas Animation ends here.
@@ -1420,16 +1397,16 @@ Moreover, the Glulx timer is explicitly not intended to be perfectly reliable. S
 
 Finally, many standard graphical effects are not provided in Glulx. Glulx does allow for images to be scaled, but we cannot dynamically rotate a sprite, for example, nor can we affect the opacity of an image. There are labor-intensive ways to at least partially get around these (basically, create multiple versions of each sprite, at different opacities or rotations), but they are limiting. 
 
-Despite all this, animation in Glulx can still work pretty well, as long as we keep things simple and don't expect *too* much from the system. We will also want to test our game on a few different interpreters and systems before releasing it to the world--if it works better in some 'terps than others, we want to be able to communicate that to players.
+Despite all this, animation in Glulx can still work pretty well, as long as we keep things simple and don't expect *too* much from the system. We will also want to test our game on a few different interpreters and systems before releasing it to the world-if it works better in some 'terps than others, we want to be able to communicate that to players.
 
 The timer approach to animation makes simple animations fairly easy to write, especially when combined with the object-oriented approach taken by Glimmr Canvas-Based Drawing. For example, even without this Canvas Animation extension, we would be able to animate "zooming in" on an image with just a few lines. GCA, however, leverages Glimmr Canvas-Based Drawing to provide a number of different animation presets, so that something like this can be invoked with just a single line of code. GCA also provides the ability to use "easing" equations to influence the time-curve of animated movement. GCA's concept of the "animation track" allows you to write your own animation rules, and even to animate text or game events rather than graphics.
 
 
 Chapter: Including Glimmr Canvas Animation in a project
 
-Inform remains fairly unsophisticated in its mechanisms for organizing included extensions. When we are dealing with a complex system of modular extensions such as Glimmr, it is very easy to trip it up, and the result is usually a list of unhelpful errors. For this reason, each Glimmr extension includes a section--such as this one--about how to include it, particularly in relation to other extensions.
+Inform remains fairly unsophisticated in its mechanisms for organizing included extensions. When we are dealing with a complex system of modular extensions such as Glimmr, it is very easy to trip it up, and the result is usually a list of unhelpful errors. For this reason, each Glimmr extension includes a section-such as this one-about how to include it, particularly in relation to other extensions.
 
-Glimmr Canvas Animation automatically includes Glimmr Canvas-Based Drawing, Glimmr Drawing Commands, Flexible Windows, Fixed Point Maths, Undo Output Control, and their dependencies. You do not need to include any of these extensions explicitly in your story file; GCA will include them automatically (provided they are installed with your copy of Inform, of course).
+Glimmr Canvas Animation automatically includes Glimmr Canvas-Based Drawing, Glimmr Drawing Commands, Flexible Windows, and their dependencies. You do not need to include any of these extensions explicitly in your story file; GCA will include them automatically (provided they are installed with your copy of Inform, of course).
 
 If you are using Glimmr Graphic Hyperlinks you MUST include it before Glimmr Canvas Animation. Conversely, you must include any Glimmr font, tileset, or fader extensions after GCA. For example:
 
@@ -1447,7 +1424,7 @@ Chapter: Getting started with Glimmr Canvas Animation
 
 Before you can do any work with Glimmr Canvas Animation, you will need to set up at least one graphics window in your project. Please refer to the documentation for Jon Ingold's Flexible Windows extension for more information. You can also copy the window-related code from the examples in GCA if you just want to get started quickly.
 
-Once you have a graphics window, you will also need to set up a Glimmr canvas and add some graphics elements--that way you'll have something to animate! See the Glimmr Canvas-Based Drawing extension for instructions and a number of examples. Of course, you can also just plunder the examples in GCA if you just want to get a feel for how things work.
+Once you have a graphics window, you will also need to set up a Glimmr canvas and add some graphics elements-that way you'll have something to animate! See the Glimmr Canvas-Based Drawing extension for instructions and a number of examples. Of course, you can also just plunder the examples in GCA if you just want to get a feel for how things work.
 
 Next, you will create one or more "animation tracks". Each track controls a single animation effect acting on a single graphics object (either a single sprite, a canvas, or an entire window's display). Multiple tracks can run at the same time; for example, one track might move an image across the screen, while the other makes it smaller and smaller until it disappears. Creating a track is as simple as:
 
@@ -1476,7 +1453,7 @@ See the appropriate sections below for more information on animation tracks, the
 
 Chapter: Animation and the timer
 
-Animations are controlled by the Glulx virtual machine's timer functionality. The Glulx timer is global--there is only one "ticker"--but GCA uses "virtual timers" to allow simultaneous animations to run at different speeds. 
+Animations are controlled by the Glulx virtual machine's timer functionality. The Glulx timer is global-there is only one "ticker"-but GCA uses "virtual timers" to allow simultaneous animations to run at different speeds. 
 
 When only one animation is running, or when all running animations are running at the same rate, then each tick of the global timer represents one "frame" of animation. When we specify multiple rates of animation, however, GCA works out how to subdivide the timer interval so that each animation fires at the requested rate. For example, if we trigger Animation A at 80 milliseconds per frame, and Animation B at 160 milliseconds per frame, then the timer will fire at 80 milliseconds per frame, with Animation A firing every frame, and Animation B every 2 frames.
 
@@ -1488,9 +1465,9 @@ The "global timer interval" variable is dynamic: it only contains a value when t
 
 	start a Glulx timer of 200 milliseconds
 
-Any time we start a new timer, GCA will look at any animations that may be running and adjust the rate we've requested to maintain their rates. It is probably best never to set the timer directly when animations are involved--just use the "animate..." phrases, detailed below, to trigger animations.
+Any time we start a new timer, GCA will look at any animations that may be running and adjust the rate we've requested to maintain their rates. It is probably best never to set the timer directly when animations are involved-just use the "animate..." phrases, detailed below, to trigger animations.
 		
-The timer can, of course, run independently of animations. If we want to use the timer for some other purpose in our game, we are welcome to simply start the timer using the same phrase, without using an animation preset. Animations are not activated unless we specifically start them with an animation phrase. It is not a good idea to try to use timed events for other purposes while animations are running--when animations are running, the virtual timer system is invoked, which may cause unpredictability in timed behaviors that don't take that system into account. You can study the source code to see how you might take the system into account, but the easiest way to deal with the situation is to use custom animation tracks--see the chapter on custom animation below--to control all of your non-graphical timed events. This will allow them to use the virtual timer system.
+The timer can, of course, run independently of animations. If we want to use the timer for some other purpose in our game, we are welcome to simply start the timer using the same phrase, without using an animation preset. Animations are not activated unless we specifically start them with an animation phrase. It is not a good idea to try to use timed events for other purposes while animations are running-when animations are running, the virtual timer system is invoked, which may cause unpredictability in timed behaviors that don't take that system into account. You can study the source code to see how you might take the system into account, but the easiest way to deal with the situation is to use custom animation tracks-see the chapter on custom animation below-to control all of your non-graphical timed events. This will allow them to use the virtual timer system.
 
 To stop *all* running timers, use:
 
@@ -1518,18 +1495,10 @@ Implementation note:
 
 The Glulx virtual machine does not store the state of the timer when saving the state of the game. That means that we need to do that ourselves in order to properly restore the game or undo a previous turn. GCA takes care of this for us by storing the timer interval in a global variable, and then either triggering the timer at the appropriate speed or turning it off as appropriate immediatedly after restoring or undoing. If we are making changing to save/restore, the after restoring the game rules, or undo code, we should be sure that we don't break this functionality.
 
-Glimmr Canvas Animation uses the Undo Output Control extension to manage the timer after UNDO. If you are using Ron Newcomb's Custom Library Messages or Default Messages extensions, however, you can simply include "[@ reset the Glulx timer]" in the text of your undo report message to manage the same thing. If you'd rather do this, include the following code block in your game, and you won't need Undo Output Control.
-
-	*: Section - Reset timer after UNDO (in place of Section - Restart the timer after undoing in Glimmr Canvas Animation by Erik Temple)
-
-	table of custom library messages (continued)
-	library-action (action-name) 	library-message-id (number)	library-message-text (text)
-	--		13	"[@ reset the Glulx timer][bracket]Previous turn undone.[close bracket]"
-
 
 Chapter: Animation tracks
 
-GCA simplifies the specification of animations through the concept of the "animation track". An animation track handles one and only one kind of animation effect for one and only one graphic element. However, tracks are "stackable"--you can run multiple tracks simultaneously--so you can build up very complex animations. To display a person walking, for example, you might have two tracks running simultaneously, one responsible for the motion of the sprite from point A to B, and the other for cycling the image used to represent the sprite.
+GCA simplifies the specification of animations through the concept of the "animation track". An animation track handles one and only one kind of animation effect for one and only one graphic element. However, tracks are "stackable"-you can run multiple tracks simultaneously-so you can build up very complex animations. To display a person walking, for example, you might have two tracks running simultaneously, one responsible for the motion of the sprite from point A to B, and the other for cycling the image used to represent the sprite.
 
 Animation tracks can also do such things as increase or decrease the scaling factor of an element ("zooming" it), fade an element or the entire canvas out to a background color, or simply mark time. 
 
@@ -1545,7 +1514,7 @@ Rather than requiring us to set each of the relevant properties individually, GC
 	animate the movement track as a motion animation targeting the Walker and ending at {300, 100} at 12 fps with duration of 24 frames;
 	animate the walking track as a reel animation targeting the Walker at 12 fps with duration of 24 frames, cycling.
 
-Note the reference to "motion" and "reel"--these are two of the types of animation preset provided by GCA. Motion tracks animate the movement of an element across the canvas/window, while reel tracks change the image used to display the element. See the sections that detail the different presets below. 
+Note the reference to "motion" and "reel"-these are two of the types of animation preset provided by GCA. Motion tracks animate the movement of an element across the canvas/window, while reel tracks change the image used to display the element. See the sections that detail the different presets below. 
 
 Some circumstances will require us to manually set properties of the track in addition to the command. For example, all reel tracks require us to specify the list of images that make up the "reel" that will be displayed. Here is the full code required to set up a reel animation:
 
@@ -1604,7 +1573,7 @@ Note that we are bound by the usual restrictions on the content of text substitu
 
 Section: Delaying input until animations finish
 
-By default, animations will continue to run while other game functions are operating--the player will be free to continue typing commands and so on while animation in underway. Sometimes, though, we may want to pause the textual part of our game while an animation plays out. We can do this with one of two different commands:
+By default, animations will continue to run while other game functions are operating-the player will be free to continue typing commands and so on while animation in underway. Sometimes, though, we may want to pause the textual part of our game while an animation plays out. We can do this with one of two different commands:
 
 	delay input until all animations are complete
 	delay input until <track> is complete
@@ -1656,7 +1625,7 @@ Another useful phrase is "cease animating <track>", which like "deactivate <trac
 
 Section: Changing track modalities
 
-We can force a track into cycling or randomizing--or stop either of those modalities--once the animation is already running. Most often, we will do this via a callback routine, though we could also do it in response to player input. For example, we could cycle one animation until another animation completes. The second animation would then send a callback to the first to tell it to stop cycling.
+We can force a track into cycling or randomizing-or stop either of those modalities-once the animation is already running. Most often, we will do this via a callback routine, though we could also do it in response to player input. For example, we could cycle one animation until another animation completes. The second animation would then send a callback to the first to tell it to stop cycling.
 
 The phrases required are straightforward:
 
@@ -1800,7 +1769,7 @@ Section: Motion animation tracks
 
 (We can, of course, create our own kind of object, and as long as it has the "origin" property, we will be able to animate it with a motion animation track.)
 
-When a g-element that has an endpoint (boxes, rectangles, lines) is animated using the motion animation phrase, the endpoint will be changed along with the origin, so that the shape will move as a unit. If we want to do more complex effects--such as moving the endpoint without moving the origin, or vice versa--then we should use the "parameterized motion" preset (see below).
+When a g-element that has an endpoint (boxes, rectangles, lines) is animated using the motion animation phrase, the endpoint will be changed along with the origin, so that the shape will move as a unit. If we want to do more complex effects-such as moving the endpoint without moving the origin, or vice versa-then we should use the "parameterized motion" preset (see below).
 
 When a graphics g-window is targeted by the motion animation phrase, then the framing of the canvas in the window is changed. See Glimmr Canvas-Based Drawing for an explanation of the origin coordinate of windows vis-a-vis their canvases.
 
@@ -1856,7 +1825,7 @@ Section: Zooming animation tracks
 	g-elements
 	graphics g-windows
 
-When targeting a g-element, a zooming animation affects the "scaling factor" property of the element. The effect this has depends on the type of g-element; only the line-weight of primitives is affected by the scaling factor, and the scaling factor of bitmaps is much more coarsely realized than that of images. See the docs for Glimmr Canvas-Based Drawing for more information. (Note that if you are using asymmetrically scaling, the zooming track will nevertheless scale symmetrically. Use the "parameterized zooming" preset--see below--to scale axes independently.)
+When targeting a g-element, a zooming animation affects the "scaling factor" property of the element. The effect this has depends on the type of g-element; only the line-weight of primitives is affected by the scaling factor, and the scaling factor of bitmaps is much more coarsely realized than that of images. See the docs for Glimmr Canvas-Based Drawing for more information. (Note that if you are using asymmetrically scaling, the zooming track will nevertheless scale symmetrically. Use the "parameterized zooming" preset-see below-to scale axes independently.)
 
 When targeting a graphics window, the property affected is the "arbitrary scaling factor" of the window. This forces manual scaling of the window (see Glimmr Canvas-Based Drawing), so if we wish to return to automatic scaling after completing the animation, we will need to reset the arbitrary scaling factor and trigger a redraw, e.g.:
 
@@ -2007,7 +1976,7 @@ To invoke a temporalizing preset animation, we can either specify a length or no
 
 	animate <track> as a temporalizing animation at <interval>, <cycling>
 
-Note that temporalizing animations have no target object--since they don't produce any visual effect, they don't need one. When the "cycling" option is set, a temporalizing animation will continue to cycle until stopped by some outside event, e.g. a callback.
+Note that temporalizing animations have no target object-since they don't produce any visual effect, they don't need one. When the "cycling" option is set, a temporalizing animation will continue to cycle until stopped by some outside event, e.g. a callback.
 
 Usage example:
 
@@ -2027,7 +1996,7 @@ A sprite moves right, then pauses a bit, then moves back to the left. The tempor
 
 Chapter: Parameterized animation tracks
 
-A "parameterized" track is one to which the author must supply the parameter on which the track will act--generally a property of the targeted g-element, canvas, or window. Whereas a reel animation track, for example, works only on the image-ID of a sprite or the background image of a canvas, a parameterized reel track can affect pretty much any visually significant property.
+A "parameterized" track is one to which the author must supply the parameter on which the track will act-generally a property of the targeted g-element, canvas, or window. Whereas a reel animation track, for example, works only on the image-ID of a sprite or the background image of a canvas, a parameterized reel track can affect pretty much any visually significant property.
 
 A parameterized track can work on only one property of one object at a time.
 
@@ -2041,7 +2010,6 @@ Section: Parameterized reel animation tracks
 A parameterized reel animation loops through a list of values and assigns those in turn to the chosen parameter. The types of values that can be passed as a parameters are given below; these include more or less all of the visually significant properties provided by Glimmr extensions.
 
 	figure names
-	glulx color values
 	lists of numbers
 	numbers
 	indexed texts
@@ -2050,10 +2018,10 @@ A parameterized reel animation loops through a list of values and assigns those 
 	objects
 	real numbers
 
-To set up a parameterized reel, we must supply a list of values (the "reel") of the same type as the chosen parameter. For example, a reel of figure names targeting the image-ID property of a sprite will produce a result nearly identical to that of using a standard reel animation--a flipbook-like sequence of images. Our reel must be one of the predefined list properties of our track. Here are the names of those list properties, followed by the type of value associated with each.
+To set up a parameterized reel, we must supply a list of values (the "reel") of the same type as the chosen parameter. For example, a reel of figure names targeting the image-ID property of a sprite will produce a result nearly identical to that of using a standard reel animation-a flipbook-like sequence of images. Our reel must be one of the predefined list properties of our track. Here are the names of those list properties, followed by the type of value associated with each.
 
 	image-reel - figure names
-	color-reel - glulx color values
+	color-reel - texts
 	coordinates-reel - lists of numbers
 	numerical-reel - numbers
 	indexed-text-reel - indexed texts
@@ -2304,7 +2272,7 @@ Most of the included equations are available in three flavors each. “Easing ou
 
 Here are the names of the built-in equations:
 
-	linear easing (constant speed--the default, not really "eased" at all)
+	linear easing (constant speed-the default, not really "eased" at all)
 	
 	quadratic easing in
 	quadratic easing out
@@ -2373,17 +2341,13 @@ Adding new easing equations is both easy and difficult. It is easy in that there
 
 Now on to what's hard about writing new equations. First, coming up with them in the first place. GCA borrows equations from various places around the web (see the resources listed above and in the comments to the extension's source code). There are certainly other equations out there, and the easiest thing will be to borrow those.
 
-The next difficult thing is dealing with Inform's limited math capabilities. Inform does not follow the standard rules for precedence in mathematical operations, so we need to be very liberal in using parentheses to spell out for Inform which operations should be grouped together. Inform also does not allow fractions, so if our equation depends on fractional multipliers or divisors, we will need to use the functionality provided by Michael Callaghan's Fixed Point Maths (FPM) extension. GCA provides some short cuts for making FPM code a bit more readable: we can double the main mathematical operators to replace the "real number" operations provided by FPM. For example,
-
-	(120 ** 2) ++ 17	would be equivalent to
-
-	(120 real times 2) real plus 17	in FPM's notation
+The next difficult thing is dealing with Inform's limited math capabilities. Inform does not follow the standard rules for precedence in mathematical operations, so we need to be very liberal in using parentheses to spell out for Inform which operations should be grouped together.
 
 Here's an example of a relatively simple equation from those included with GCA:
 
 	To decide what number is QUADRATIC EASING IN for time (t - a number) duration (d - a number) beginning (b - a number) change (c - a number ) (this is the QUADRATIC EASING IN rule):
-		let t1 be (t as a fixed point number) // d;
-		decide on (c ** t1 ** t1) ++ b as an integer.
+		let t1 be (t plus 0.0) / d;
+		decide on (c * t1 * t1) + b to the nearest whole number.
 
 Once we've completed our equation, we can refer to it just as if it were one of the built-in equations; no additional steps are needed:
 
@@ -2436,13 +2400,20 @@ Chapter: Performance Tips
 	6. If you have multiple animations running at once, see whether you get better performance by running them at the same rate. If you have animations running at different rates, make one a (preferably low) multiple of the other, e.g. 100 ms per frame and 200 ms per frame. This will mean fewer timer ticks where nothing meaningful takes place.	
 
 
+
 Chapter: Contact info
 
-If you have comments about the extension, please feel free to contact me directly at ek.temple@gmail.com.
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https:/github.com/i7/extensions/issues>.
 
-Please report bugs on the Google Code project page, at http://code.google.com/p/glimmr-i7x/issues/list.
+For questions about Glimmr, please consider posting to either the rec.arts.int-fiction newsgroup or at the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others.
 
-For questions about Glimmr, please consider posting to the intfiction forum (http://www.intfiction.org/forum/). This allows questions to be public, where the answers can also benefit others. If you prefer not to use this forum, please contact me directly via email (ek.temple@gmail.com).
+
+Chapter: Change Log
+
+Version 2: Updated for 6M62 by Dannii Willis
+
+Version 1: Initial release.
+
 
 
 Example: * Animation Rule Variations - This simple example shows how we can vary preset animations by adding rules to the animation rulebook. We'll have four variations on a simple horizontal motion animation. The "player" can choose from among these variation via a keypress menu. The chosen animation will play immediately, and once it finishes s/he will have a chance to choose another.
@@ -2516,7 +2487,7 @@ The after printing the banner text rule contains the entire flow of the "game": 
 				now the destination is the secondary position;
 			otherwise:
 				now the destination is the initial position;
-		say "*** User exited demonstration ***";
+		say "** User exited demonstration **";
 		follow the immediately quit rule.	
 
 The "key-option" variable, which contains the number of the menu that the player selected, is now used to decide which subsidiary animation to use. We don't need to run a second rule if the player pressed 1, since that corresponds to the unadorned movement invoked by the "animate..." phrase. The subsidiary rules run *after* the built-in preset animation rule, so they tweak the outcomes of that rule. (If we wanted our animation rules to run before the preset rule, we could make them "first" rules.)
@@ -2549,9 +2520,9 @@ Option 4 actually changes the rate of the animation itself. Once we're about 1/3
 
 
 
-Example: ** Maps of Murder - The user interface is an ideal place to experiment with animation effects. Here, we sketch a kind of image browser for an IF game. Four thumbnail versions (the map illustrations from Dell Map-Back murder mysteries) are displayed in a grid. We can click on any one of them to maximize it; we use two animation tracks to animate the maximization, scaling the image to full size while moving it to the center of the window. Click on the cover again to return it to the original thumbnail size and location.
+Example: * Maps of Murder - The user interface is an ideal place to experiment with animation effects. Here, we sketch a kind of image browser for an IF game. Four thumbnail versions (the map illustrations from Dell Map-Back murder mysteries) are displayed in a grid. We can click on any one of them to maximize it; we use two animation tracks to animate the maximization, scaling the image to full size while moving it to the center of the window. Click on the cover again to return it to the original thumbnail size and location.
 
-This example illustrates the "stacking" of animation tracks to achieve more complex effects; in this case we are stacking motion and scaling animations, with an easing effect lending a subtle arc to things. The example also demonstrates how we can test the animation state of an object so as to modify behavior appropriately, and more generally it shows how to write generalized code--we could add 20 more covers without changing any of the core code.
+This example illustrates the "stacking" of animation tracks to achieve more complex effects; in this case we are stacking motion and scaling animations, with an easing effect lending a subtle arc to things. The example also demonstrates how we can test the animation state of an object so as to modify behavior appropriately, and more generally it shows how to write generalized code-we could add 20 more covers without changing any of the core code.
 
 	*: "Maps of Murder"
 
@@ -2569,7 +2540,7 @@ This example illustrates the "stacking" of animation tracks to achieve more comp
 	There is a room.
 
 
-	[-------------------------------]
+	[----------------]
 
 	Figure of Whos Calling is the file "WhosCalling.png".
 	Figure of Feathered Serpent is the file "FeatheredSerpent.png".
@@ -2578,7 +2549,7 @@ This example illustrates the "stacking" of animation tracks to achieve more comp
 
 	Figure of Transparent Overlay is the file "Overlay.png".
 
-	[-------------------------------]
+	[----------------]
 
 We create a new kind of sprite, the "cover-image", and give it a new coordinate property, the "rightful position". This is the position to which the cover should return after it has been maximized. Note that we are showing the covers at half size initially; they will be shown at full size on maximization.
 
@@ -2602,13 +2573,13 @@ When a cover has been maximized, we place a semi-transparent overlay over the ot
 
 	The transparent overlay is a sprite. The image-ID is Figure of Transparent Overlay. The origin is {0, 0}. The display status is g-inactive. The display-layer is 2.
 
-	[-------------------------------]
+	[----------------]
 
 	A cover-image can be maximized.
 
 We define four tracks. Why four? It will be possible to click on another cover to maximize it while we have another cover already enlarged; we have four tracks so that both can move at the same time (using two tracks each). The primary tracks maximize, while the secondary tracks minimize the cover back to the grid.
 
-Note that the primary zooming track has an easing equation (cubic easing out) applied. Combined with the motion, this creates a rather subtle to the overall motion of maximization. We don't apply the easing to the secondary track--it's a bit too distracting for the return journey, which is after all about minimization.
+Note that the primary zooming track has an easing equation (cubic easing out) applied. Combined with the motion, this creates a rather subtle to the overall motion of maximization. We don't apply the easing to the secondary track-it's a bit too distracting for the return journey, which is after all about minimization.
 
 Also note the callback on the secondary zooming track. This moves the cover back to display layer 1 once it has finished moving back to its original position in the grid. By waiting until the end to move it to layer 1, we avoid seeing it move behind the semitransparent overlay. This is the last stage in a series of layer manipulations; see the carry out toggling rule below for the other layering logic.
 
@@ -2625,7 +2596,7 @@ Also note the callback on the secondary zooming track. This moves the cover back
 
 All of the animation action takes place in the carry out toggling rule. We first check to see whether the secondary zooming track is active; if it is, that means that the sprite that was clicked on was already returning to the original grid position, and we need to deactivate that animation so that we can maximize it again (later on in the same rule).
 
-Next we check to see whether there is already an image in the central position. If so, we need to start reducing it. We change its display layer so that it is above the semitransparent overlay, but below whichever sprite is actually the target of the player's click (which will be the noun supplied to the toggling action), then we animate it using the secondary tracks to return it to its original position and size. If this happens to be the image that we clicked on, we stop the action--we don't need to do any more, since clicking on an maximized image just toggles it back to the grid.
+Next we check to see whether there is already an image in the central position. If so, we need to start reducing it. We change its display layer so that it is above the semitransparent overlay, but below whichever sprite is actually the target of the player's click (which will be the noun supplied to the toggling action), then we animate it using the secondary tracks to return it to its original position and size. If this happens to be the image that we clicked on, we stop the action-we don't need to do any more, since clicking on an maximized image just toggles it back to the grid.
 
 Finally, we deal with the case in which a small sprite is clicked on. We first move it to the uppermost layer so it overlays everything else, then we activate the semitransparent overlay and animate the primary tracks to maximize the sprite that was clicked.
 
@@ -2669,7 +2640,7 @@ Note that the implementation of this as a standard action, particularly with the
 	Carry out toggling something:[line break]     if the animation-flag of the secondary zooming track is g-active:[line break]          [i][bracket]the sprite we clicked on is already reducing; stop that motion so we can maximize again[close bracket][/i][line break]          deactivate the secondary zooming track;[line break]          deactivate the secondary motion track;[line break]     if there is an maximized cover-image:[line break]          [i][bracket]There is already a maximized sprite; we need to minimize it[close bracket][/i][line break]          let item be a random maximized cover-image;[line break]          now item is not maximized;[line break]          now the display-layer of item is 3;[line break]          animate the secondary zooming track as a zooming animation targeting the item and ending at the resting scaling ratio at 24 fps with duration of 8 frames;[line break]          animate the secondary motion track as a motion animation targeting the item and ending at the rightful position of the item at 24 fps with duration of 6 frames;[line break]          now the display status of the transparent overlay is g-inactive;[line break]          if item is the noun, stop the action;[i][bracket]We clicked on the maximized image, so we don't need to enlarge it; the reduction motion we've already set in motion is sufficient.[close bracket][/i][line break]     now the display-layer of the noun is 4;[line break]     now the noun is maximized;[line break]     now the display status of the transparent overlay is g-active;[line break]     animate the primary zooming track as a zooming animation targeting the noun and ending at the display scaling ratio at 24 fps with duration of 8 frames;[line break]     animate the primary motion track as a motion animation targeting the noun and ending at the display position at 24 fps with duration of 6 frames.").]
 
 
-Example: ** Eased Movements - This example is primarily a demo of the available easing equations. The animation itself is handled in only a single line, whereas most of the code is devoted to user input, particularly the selection of primary and secondary easing via hyperlinks. The example does however illustrate the use of a number of features that are rarely demoed and which may be of interest to those interested in animation, including mouse input and hyperlink input.
+Example: * Eased Movements - This example is primarily a demo of the available easing equations. The animation itself is handled in only a single line, whereas most of the code is devoted to user input, particularly the selection of primary and secondary easing via hyperlinks. The example does however illustrate the use of a number of features that are rarely demoed and which may be of interest to those interested in animation, including mouse input and hyperlink input.
 
 There is only a single animation track, the movement track. We initialize both its primary and secondary easing to "linear easing" (i.e., default movement, no real easing to speak of).
 
@@ -2760,7 +2731,7 @@ There is only a single animation track, the movement track. We initialize both i
 		say "On the next screen, you will be able to assign easing equations to the movement of a ball.[line break]Click on one of the links in the left column to assign the easing for the x-axis of movement, and on the right to assign the easing for the y-axis.[line break]Then just click somewhere in the black part of the screen to move the ball to that point.[paragraph break]Depending on the way in which you have paired the easing equations, different effects will be generated:[paragraph break][b]1. [/b]If the easing of the two axes is the same, the ball will move in a straight line, but its acceleration will change to reflect the non-linear easing used.[line break][b]2. [/b]If linear easing on one axis is paired with nonlinear easing on the other, then requesting the ball to move diagonally will produce a motion similar to the graph shown for the nonlinear easing.[line break][b]3. [/b]If you have nonlinear easing on both axes, there will be plenty of potential for unpredictable movement, especially on the diagonal.[paragraph break]Typically, you will see more variation in the path of the ball if you request a destination diagonal from the ball's current position. Horizontally or vertically, most of the variation will tend to be in ball's acceleration patterns.[paragraph break]Maximize your window now, then [b]press any key to start experimenting![/b][paragraph break]"
 	
 	To display (F - a figure name) in (win - a g-window), one time only:
-		(-  DisplayFigureWin({win}, ResourceIDsOfFigures-->{F}); -) .
+		(-  DisplayFigureWin({win}, ResourceIDsOfFigures->{F}); -) .
 	
 	Include (-  	
 		[ DisplayFigureWin win resource_ID one_time;
@@ -2818,15 +2789,15 @@ Finally, the "clicking graphlink" rule fires when the player clicks on the graph
 		rule succeeds.
 	
 	First clicking graphlink rule:
-		let graph-x be current graphlink x as a fixed point number;
-		let graph-y be current graphlink y as a fixed point number;
-		now entry 1 of the motion target is ((graph-x real minus the x-offset of the current graphlink window) real divided by the scaling factor of the current graphlink window) as an integer;
-		now entry 2 of the motion target is ((graph-y real minus the y-offset of the current graphlink window) real divided by the scaling factor of the current graphlink window) as an integer;
+		let graph-x be current graphlink x plus 0.0;
+		let graph-y be current graphlink y plus 0.0;
+		now entry 1 of the motion target is ((graph-x real minus the x-offset of the current graphlink window) real divided by the scaling factor of the current graphlink window) to the nearest whole number;
+		now entry 2 of the motion target is ((graph-y real minus the y-offset of the current graphlink window) real divided by the scaling factor of the current graphlink window) to the nearest whole number;
 		animate the movement track as a motion animation targeting the Ball and ending at the motion target at frame-rate fps with velocity of ball-speed;
 		rule succeeds.
 
 
-Example: **** Scourge of the Vampyr - This example combines a number of different animation presets to create walking (reel + motion) and torchlight (flicker + fade) animations. Fade and zooming effects are also employed to animate the player character's entrance into and exit from the crypt. The example also exploits Glimmr's ability to move the framing of the window on the canvas to keep the player's avatar at the center of the window, so that the rest of the room seems to move around little Pelón. 
+Example: ** Scourge of the Vampyr - This example combines a number of different animation presets to create walking (reel + motion) and torchlight (flicker + fade) animations. Fade and zooming effects are also employed to animate the player character's entrance into and exit from the crypt. The example also exploits Glimmr's ability to move the framing of the window on the canvas to keep the player's avatar at the center of the window, so that the rest of the room seems to move around little Pelón. 
 
 	*: "Scourge of the Vampyr"
 
@@ -3013,7 +2984,7 @@ Example: **** Scourge of the Vampyr - This example combines a number of differen
 	Entrance complete is a truth state variable. 
 
 	When play begins:
-		say "You are Pelón, vampire hunter manqué.[paragraph break]You stand at the entrance to a foul fiend's crypt. Fingering your sharpened stake, you admire its pointy shadow it casts in the morning sun. Today is the day you take up the mantle you were destined to wear--Scourge of the Vampyr![paragraph break]Press any key to descend into the crypt.";
+		say "You are Pelón, vampire hunter manqué.[paragraph break]You stand at the entrance to a foul fiend's crypt. Fingering your sharpened stake, you admire its pointy shadow it casts in the morning sun. Today is the day you take up the mantle you were destined to wear-Scourge of the Vampyr![paragraph break]Press any key to descend into the crypt.";
 		wait for any key in the main-window;
 		say "You step down into the cool damp of the staircase...";
 		animate the default track as a zooming animation targeting the player-sprite and ending at 1.0000 at 8 fps with duration 4 frames;
