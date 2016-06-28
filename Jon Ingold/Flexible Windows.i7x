@@ -1,4 +1,4 @@
-Version 15/160609 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/160628 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -895,11 +895,18 @@ After constructing a graphical g-window (called win) (this is the set the backgr
 [ As explained by Ben Cressey (http://groups.google.com/group/rec.arts.int-fiction/msg/b88316e2dcf1bb6b)
 Gargoyle sets the colour of its window padding based on the last background colour style hint given to the normal style. So after clearing all the background colours and styles, we set it based on the background color of the main window, or just set white if it isn't set. ]
 
+[ This phrase is made available in case you want to set the colour at some other time (such as when opening a pop-over window) ]
+To set the Gargoyle window padding to (T - a text):
+	set the background color of wintype 3 for normal-style to T;
+
+To set the Gargoyle background color to the color (T - a text) (deprecated):
+	set the background color of wintype 3 for normal-style to T;
+
 After constructing a textual g-window (this is the Gargoyle window padding rule):
 	let T be the background color of the acting main window;
 	if T is empty:
 		let T be "#FFFFFF";
-	set the background color of wintype 3 for normal-style to T;
+	set the Gargoyle window padding to T;
 
 
 
