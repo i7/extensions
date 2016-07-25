@@ -1,4 +1,4 @@
-Version 1/150128 of Menus by Dannii Willis begins here.
+Version 1/160725 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -363,9 +363,10 @@ To end menu hyperlink:
 A glulx input handling rule for a hyperlink-event while displaying (this is the intercept menu hyperlinks rule):
 	if enable menu hyperlinks is true:
 		convert the hyperlink code to the character code;
+		cancel character input in the main window;
 		request hyperlink input again;
 		replace player input;
-
+		
 [ gg_arguments-->0 will be used as the character code selected, so set it to the hyperlink code ]
 To convert the hyperlink code to the character code:
 	(- gg_arguments-->0 = gg_event-->2; -).
