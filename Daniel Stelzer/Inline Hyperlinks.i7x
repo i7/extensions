@@ -9,7 +9,7 @@ Chapter 0 - Inclusions
 Include Glulx Entry Points by Emily Short.
 Include Text Capture by Eric Eve.
 
-Chapter 1 - Basic hyperlink control (for use without Flexible Windows by Jon Ingold)
+Chapter 1 - Basic hyperlink control
 
 Section - Initiation
 
@@ -108,55 +108,6 @@ The current hyperlink ID is a number that varies.
 
 
 Section - Selecting replacement command
-
-A hyperlink processing rule (this is the default command replacement by hyperlinks rule):  
-	now the glulx replacement command is entry (current hyperlink ID) of the hyperlink list;
-	rule succeeds.
-
-
-Chapter 2 - Replace Flexible Windows hyperlink handling if necessary (for use with Flexible Windows by Jon Ingold)
-
-Section - Code for placing links (replaces Section - Placing hyperlinks in  Flexible Windows by Jon Ingold)
-
-The hyperlink list is a list of indexed texts variable.
-
-The hyperlinked text is an indexed text variable. The hyperlinked text is "".
-The hyperlinked command is an indexed text variable. The hyperlinked command is "".
-
-To say link -- beginning say_link -- running on:
-	now the hyperlinked text is "";
-	now the hyperlinked command is "";
-	start capturing text.
-	
-To say as -- continuing say_link -- running on:
-	stop capturing text;
-	now the hyperlinked text is the substituted form of "[captured text]";
-	start capturing text;
-	
-To say end link -- ending say_link -- running on:
-	let hyperlink index be a number;
-	stop capturing text;
-	if the hyperlinked text is empty:
-		now the hyperlinked text is the substituted form of "[captured text]";
-	now the hyperlinked command is the substituted form of "[captured text]";
-	let the hyperlink index be zero;
-	repeat with the count running from 1 to the number of entries in the hyperlink list:
-		if the hyperlinked command exactly matches the text entry (count) of the hyperlink list:
-			let the hyperlink index be count;
-			break;
-	if the hyperlink index is zero and the hyperlinked command is not empty:
-		add hyperlinked command to hyperlink list;
-		let hyperlink index be the number of entries of hyperlink list;
-	say "[set link (hyperlink index)][hyperlinked text][terminate link]";
-	
-To say set link (N - a number):
-	(-  if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_set_hyperlink({N}); -)
-
-To say terminate link:
-	(-  if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_set_hyperlink(0); -)
-
-
-Section - Code for selecting the replacement command (replaces Section - Selecting the replacement command in Flexible Windows by Jon Ingold)
 
 A hyperlink processing rule (this is the default command replacement by hyperlinks rule):  
 	now the glulx replacement command is entry (current hyperlink ID) of the hyperlink list;
