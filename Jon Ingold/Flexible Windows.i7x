@@ -923,12 +923,14 @@ Although Flexible Windows does not supply any rules for using graphical windows 
 
 Flexible Windows requires Glulx Entry Points by Emily Short.
 
+Note that Flexible Windows uses the container relation for windows. We'll need to keep this in mind if we iterate through all containers.
+
 
 Chapter: Window Types, Properties, and Styles
 
 Section: Window Type
 
-Each window is a thing of the kind g-window. There are three types of Glulx window, text buffer, text grid and graphics. A text buffer is a teletype-style stream of text (akin to the main window), a graphics screen cannot accept text but can render images, and a text grid (akin to the status window) allows for flexible positioning of text characters (for instance, centering text). 
+Each window is a thing of the kind g-window. There are three types of Glulx window: text buffer, text grid and graphics. A text buffer is a teletype-style stream of text (akin to the main window), a graphics screen cannot accept text but can render images, and a text grid (akin to the status bar) allows for flexible positioning of text characters (for instance, centering text). 
 
 There are two potential ways to define a window's type. One is to declare it to be of the appropriate kind:
 
@@ -946,15 +948,15 @@ The other way is to set the "type" property to one of g-text-buffer, g-text-grid
 	
 Section: Window Position
 	
-All games start, by default, with a status bar along the top of the screen, and the main window below. Glulx windows are formed from the main window by carving off segments using either horizontal or vertical strokes, with each stroke creating one new window, from which further windows can be cut. This automatically creates a tree-structure for windows, with each new window being sliced from one that came before. The extension refers to this process as "spawning", and you set up your layout of windows by telling the game which window spawns which. 
+All games start, by default, with a status bar along the top of the screen, and the main window below.
 
-One g-window object is created by default. It is called main window, and its purpose is to spawn other windows.
+Glulx windows are formed from the main window by carving off segments using either horizontal or vertical strokes, with each stroke creating one new window, from which further windows can be cut. This automatically creates a tree-structure for windows, with each new window being sliced from one that came before. The extension refers to this process as "spawning", and you set up your layout of windows by telling the game which window spawns which. 
 
 The position of each new window is specified using one of four positions, g-placeabove, g-placebelow, g-placeleft and g-placeright. Note, these indicate where the new window will be, rather than the direction of the slice taken.
 
-So for example, to creating a banner between the main screen and the status, we would write
+So for example, to create a banner between the main screen and the status, we would write
 
-	*: The banner window is a g-window. The main window spawns the banner-window. The position of the banner window is g-placeabove.
+	*: The banner window is a g-window. The main window spawns the banner window. The position of the banner window is g-placeabove.
 
 For a more complicated layout, akin to a standard email client, with folder list, contacts, preview and files windows, we would write
 
@@ -967,7 +969,7 @@ For a more complicated layout, akin to a standard email client, with folder list
 
 Section: Window Size
 
-Once the rough positions of the windows has been decided, the next thing to allocate is their size. This can be done two ways, either by taking a proportional of the window being spawned from (so a 40% slice or a 15% slice), or taking a window of fixed size (in pixels for graphics windows, and in columns/rows for text windows). The proportion to take, or the width of a fixed size side window (equivalently, the height of a top or bottom window) is set using the "measurement" property of the g-window. So we could write
+Once the rough positions of the windows have been decided, the next thing to allocate is their size. This can be done two ways: either by taking a proportional of the window being spawned from (so a 40% slice or a 15% slice), or taking a window of fixed size (in pixels for graphics windows, and in columns/rows for text windows). The proportion to take, or the width of a fixed size side window (equivalently, the height of a top or bottom window) is set using the "measurement" property of the g-window. So we could write
 
 	*:
 	The scale method of the side window is g-proportional. The measurement of the side window is 25.
@@ -984,13 +986,13 @@ Flexible Windows adds a "window" column to the Table of User Styles found in the
 	Table of User Styles (continued)
 	window (a g-window)	style name (a glulx text style)	background color (a text)	color (a text)	first line indentation (a number)	fixed width (a truth state)	font weight (a font weight)	indentation (a number)	italic (a truth state)	justification (a text justification)	relative size (a number)	reversed (a truth state)
 
-Note that the "background color" column is for the background color of the text only; not the background color of the entire window.
+Note that the "background color" column is for the background color of the text only, not the background color of the entire window.
 
-To color the background of the entire window, we instead set the g-window property "background color" with a six-digit web color code (with or without the # symbol):
+To color the background of the entire window, we instead set the g-window property "background color" to a six-digit web color code (with or without the # symbol):
 
 	*: The background color of the side window is "#CCCCFF".
 
-If the story is running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Values" section for how to refer to a particular window in CSS.
+If the story is running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Value" section for how to refer to a particular window in CSS.
 
 
 Section: Rock Value
@@ -1017,7 +1019,7 @@ This extension provides little in the way of support for graphics windows or tex
 
 Section: Opening a Window
 
-To open a window:
+To open a window (for instance, our example window named "side window"):
 
 	*: open side window
 
@@ -1025,6 +1027,8 @@ The only point to note is that the "open" command will, if necessary, also open 
 
 
 Section: Closing a Window
+
+To close the window:
 	
 	*: close side window
 
@@ -1033,15 +1037,15 @@ The point above applies here, in reverse: shutting a window will also shut all s
 
 Section: Refreshing a Window
 
-The refreshing activity is for redrawing windows. We can invoke the refreshing activity with the phrase
+The refreshing activity is for redrawing windows. We can invoke the refreshing activity like this:
 
 	*: refresh side window
 
-To refresh all the windows, we can use the phrase
+To refresh all the windows:
 
 	*: refresh all windows
 	
-The refreshing activity will automatically first check if the window is present, focus the window, and clear the window, so we usually won't need to do these things manually. Rules for the refreshing activity should (ideally) be able to reconstruct entirely the contents of the window (otherwise, after an UNDO or a RESTORE, information will be lost):
+The refreshing activity will automatically first check if the window is present, focus the window, and clear the window, so we usually won't need to do those things manually. Rules for the refreshing activity should (ideally) be able to reconstruct entirely the contents of the window (otherwise, after an UNDO or a RESTORE, information will be lost):
 
 	*:
 	Rule for refreshing the side window (this is the display inventory in side window rule):
@@ -1050,25 +1054,31 @@ The refreshing activity will automatically first check if the window is present,
 		
 Section: Checking if a Window is Present		
 		
-To check the existence of a window at any time, we can test for the g-present property (This is done automatically when we refresh a window):
+To check the existence of a window at any time, we can test for the g-present property:
 
 	*:
 	if side window is g-present
 	if side window is g-unpresent
+	
+When we refresh a window, this will be done automatically.
 
 
 Section: Focusing a Window
 
-To manually move the focus to a particular window (This is usually not necessary, as focusing is done automatically when we refresh a window):
+To manually move the focus to a particular window:
 
 	*: focus side window
+	
+This is usually not necessary, as focusing is done automatically when we refresh a window.
 
 
 Section: Clearing a Window
 
-To manually clear a window (This is usually not necessary, as clearing is done automatically when we refresh a window):
+To manually clear a window:
 
 	*: clear side window
+	
+ This is usually not necessary, as clearing is done automatically when we refresh a window.
 	
 	
 Section: Checking Which Window is in Focus
@@ -1103,7 +1113,7 @@ Example: * Inventory Window - A simple example showing how to place an side wind
 	When play begins:
 		open the side window.
 	
-	Every turn when the side window is g-present:
+	Every turn:
 		refresh the side window.
 	
 	The Study is a room. In the study is an old oak desk. On the desk is a Parker pen, a letter, an envelope and twenty dollars.
