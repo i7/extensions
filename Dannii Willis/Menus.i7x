@@ -1,4 +1,4 @@
-Version 1/160725 of Menus by Dannii Willis begins here.
+Version 1/160728 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 
@@ -171,7 +171,7 @@ Displaying a menu rule (this is the main menu display rule):
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
 		[ Skip hidden rows]
-		if there is a hidden-row entry:
+		if there is a hidden-row entry and the hidden-row entry is true:
 			next;
 		say line break;
 		[ Blank rows are okay! ]
@@ -213,7 +213,7 @@ To decide whether processing menu option (x - a number) is valid:
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
 		[ Skip hidden rows]
-		if there is a hidden-row entry:
+		if there is a hidden-row entry and the hidden-row entry is true:
 			next;
 		if there is no title entry or the title entry is "":
 			next;
@@ -322,7 +322,7 @@ Displaying a menu rule (this is the main menu display with hyperlinks rule):
 	let my menu be the submenu in row menu depth of Table of Menu history;
 	repeat through my menu:
 		[ Skip hidden rows]
-		if there is a hidden-row entry:
+		if there is a hidden-row entry and the hidden-row entry is true:
 			next;
 		say line break;
 		[ Blank rows are okay! ]
