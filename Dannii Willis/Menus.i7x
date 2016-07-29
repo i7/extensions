@@ -4,12 +4,9 @@ Version 1/160728 of Menus by Dannii Willis begins here.
 
 Use authorial modesty.
 
+Part - Included Extensions
+
 Include Basic Screen Effects by Emily Short.
-
-Section (for Glulx only)
-
-Include version 10/150126 of Glulx Entry Points by Emily Short.
-Include version 1/150128 of Flexible Windows by Jon Ingold.
 
 
 
@@ -268,16 +265,11 @@ To leave the current menu:
 
 
 
-Book - Glulx interface effects (for Glulx only)
+Part - Glulx interface effects (for Glulx only)
 
-Part - Glulx Menu options
+Chapter - Popover menu window (for use with Flexible Windows by Jon Ingold)
 
 disable the popover menu window is a truth state variable. [ False by default - i.e. the popover window will be used ]
-enable menu hyperlinks is a truth state variable. [ False by default ]
-
-
-
-Chapter - Popover menu window
 
 The popover menu window is a text buffer g-window spawned by the main window.
 The position of the popover menu window is g-placeabove.
@@ -294,7 +286,7 @@ Last after displaying rule (this is the switch back to the main-window rule):
 
 
 
-Chapter - Open the status window if required - unindexed
+Chapter - Open the status window if required - unindexed (for use with Flexible Windows by Jon Ingold)
 
 The old status window presence is a truth state variable.
 
@@ -309,7 +301,9 @@ Last after displaying rule (this is the close the status window if required rule
 
 
 
-Chapter - Menu hyperlinks - unindexed
+Chapter - Menu hyperlinks - unindexed (for use with Glulx Entry Points by Emily Short)
+
+enable menu hyperlinks is a truth state variable. [ False by default ]
 
 After starting the virtual machine (this is the check if menus can use hyperlinks rule):
 	unless glk hyperlinks are supported:
@@ -380,3 +374,4 @@ Last after displaying rule (this is the cancel character input if we left by cli
 
 
 Menus ends here.
+
