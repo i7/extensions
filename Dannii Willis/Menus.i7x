@@ -498,10 +498,13 @@ For instance our Table of Options might look like this:
 	Asking for help is an action out of world.
 	
 	Carry out asking for help:
+		display the Table of Options menu with title "Instructions".
+		
+[ Is any of this stuff still necessary?
 		now the current menu is the Table of Options; 
 		carry out the displaying activity;
 		clear the screen;
-		try looking.
+		try looking.]
 		
 	The Cranial Capacity Calculation Chamber is a room. Leaky is a man in the Chamber. Leaky wears a pair of overalls and some muddy boots. He is carrying a fishing rod.
 
