@@ -81,7 +81,7 @@ Understand "spell [number]" as spelling the numbered word.
 
 [When the player generates a numbered list of nearby things, that list will always begin with the number 1. The number 0 is used internally only; it designates items that are not on the list. So the command SPELL 0 would likely only be entered by mistake. Rather than confusing the player by spelling a series of items assigned the number 0, we block the action.]
 Check spelling the numbered word when the number understood is 0 (this is the can't spell words with a spelling number of zero rule):
-	say "The number 0 is not a valid option in the list of nearby things. To list nearby things and their numbers, please type the word SPELL." (A) instead.
+	say "The number 0 is not one of the options on the list of nearby things. To list nearby things and their numbers, please type the word SPELL." (A) instead.
 
 Check spelling the numbered word (this is the make sure there is a visible item with the given spelling number rule):
 	repeat with visible item running through visible things:
