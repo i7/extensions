@@ -1,4 +1,4 @@
-Version 2/160619 of Simple Spelling by Alice Grove begins here.
+Version 2/160807 of Simple Spelling by Alice Grove begins here.
 
 "Simple Spelling aims to make stories more screen-reader-friendly by allowing players to request the spelling of any visible thing. This extension adds two actions: 'listing visible items for spelling' and 'spelling the numbered word.'"
 
@@ -24,7 +24,8 @@ Section - Phrases for Making a New Spelling List
 
 To clear all spelling reference numbers:
 	repeat with item running through things:
-		now the spelling reference number of item is 0.
+		now the spelling reference number of the item is 0.
+
 		
 inspect simple spelling list for duplicates is a truth state that varies. Inspect simple spelling list for duplicates is usually true.
 
@@ -33,14 +34,14 @@ To decide which list of things is the new spelling list:
 	if inspect simple spelling list for duplicates is true:
 		let unique item names be a list of texts;
 		repeat with current item running through visible things:
-			let current name be the printed name of current item;
-			if current name is not listed in unique item names:
-				add current item to brand-new spelling list;
-				add current name to unique item names;
+			let current name be the printed name of the current item;
+			if the current name is not listed in the unique item names:
+				add the current item to the brand-new spelling list;
+				add the current name to the unique item names;
 	otherwise:
 		repeat with current item running through visible things:
-			add current item to brand-new spelling list;
-	decide on brand-new spelling list.
+			add the current item to the brand-new spelling list;
+	decide on the brand-new spelling list.
 
 
 Section - Listing Visible Items
@@ -49,31 +50,38 @@ Listing visible items for spelling is an action out of world.
 Understand "spell" as listing visible items for spelling.
 
 Check listing visible items for spelling (this is the make sure there is at least one visible item to put on the spelling list rule):
-	if the number of visible things < 1:
+	if there is a visible thing:
+		continue the action;
+	otherwise:
 		say "There are no nearby items to spell." (A) instead.
 
 Carry out listing visible items for spelling (this is the list the visible items and their spelling reference numbers rule):
 	clear all spelling reference numbers;
 	let spelling list be the new spelling list;
-	if the number of entries in spelling list > 1:
-		say "To spell the name of something, please type the word SPELL followed by a number from 1 to [number of entries in spelling list]." (A);
+	let total spelling entries be the number of entries in the spelling list;
+	if the total spelling entries > 1:
+		say "To spell the name of something, please type the word SPELL followed by a number from 1 to [total spelling entries]." (A);
 		let N be 0;
 		repeat with item running through spelling list:
 			increment N;
 			now the spelling reference number of item is N;
 			let current name be the printed name of item;
 			say "To spell [current name in upper case], type [spelling reference number of item]." (B);
-	otherwise if the number of entries in spelling list is 1:
-		let lone item be entry 1 in spelling list;
-		now the spelling reference number of lone item is 1;
+	otherwise if the total spelling entries is 1:
+		let lone item be entry 1 in the spelling list;
+		now the spelling reference number of the lone item is 1;
 		say "You can see only [printed name of lone item]." (C);
 		try spelling the numbered word 1.
 		
 
 Section - Spelling a Word
 
-Spelling the numbered word is an action applying to one number.
+Spelling the numbered word is an action out of world applying to one number.
 Understand "spell [number]" as spelling the numbered word.
+
+[When the player generates a numbered list of nearby things, that list will always begin with the number 1. The number 0 is used internally only; it designates items that are not on the list. So the command SPELL 0 would likely only be entered by mistake. Rather than confusing the player by spelling a series of items assigned the number 0, we block the action.]
+Check spelling the numbered word when the number understood is 0 (this is the can't spell words with a spelling number of zero rule):
+	say "The number 0 is not a valid option in the list of nearby things. To list nearby things and their numbers, please type the word SPELL." (A) instead.
 
 Check spelling the numbered word (this is the make sure there is a visible item with the given spelling number rule):
 	repeat with visible item running through visible things:
@@ -89,16 +97,16 @@ Carry out spelling the numbered word (this is the spell the word that has the gi
 			repeat with N running from 1 to  the number of characters in current name:
 				say " " (B);
 				let current letter be character number N in current name;
-				if current letter is " ":
+				if the current letter is " ":
 					say "space" (C);
-				otherwise if current letter is "-":
+				otherwise if the current letter is "-":
 					say "hyphen" (D);
-				otherwise if current letter is "[']":
+				otherwise if the current letter is "[']":
 					say "apostrophe" (E);
-				otherwise if current letter is ".":
+				otherwise if the current letter is ".":
 					say "[if American dialect option is active]period[otherwise]full stop[end if]" (F);
 				otherwise:
-					say current letter in upper case;
+					say the current letter in upper case;
 			say "." (G).
 			
 			
@@ -130,7 +138,7 @@ To request the spelling of an item, the player can then type SPELL followed by t
 
 Section: Options
 
-By default, players will be asked at the start of play if they are using a screen reader. Then if the player answers "yes," the spelling features will be briefly explained. To turn off this opening question and introduction (for instance, if we want to introduce the spelling features elsewhere) we can set "introduce simple spelling features" to "false":
+By default, players will be asked at the start of play if they are using a screen reader. Then if the player answers YES, the spelling features will be briefly explained. To turn off this opening question and introduction (for instance, if we want to introduce the spelling features elsewhere) we can set "introduce simple spelling features" to "false":
 
 	*: introduce simple spelling features is false.
 	
