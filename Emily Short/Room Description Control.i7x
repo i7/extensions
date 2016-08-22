@@ -5,7 +5,7 @@ Version 13/160517 of Room Description Control by Emily Short begins here.
 
 Section 1 - Priority and Concealment Rules
 
-Include Complex Listing by Emily Short. [Include version 4 of Plurality by Emily Short.]
+Include Complex Listing by Emily Short.
 
 The new object description rule is listed instead of the room description paragraphs about objects rule in the carry out looking rules.
 
