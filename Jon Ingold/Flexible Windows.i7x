@@ -1,4 +1,4 @@
-Version 15/160727 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/160919 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -16,8 +16,7 @@ Version 15/160727 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 Use authorial modesty.
 
 Include version 1/140516 of Alternative Startup Rules by Dannii Willis.
-Include version 1/160129 of Glk object recovery by Dannii Willis.
-Include version 10/150620 of Glulx Entry Points by Emily Short.
+Include version 10/160919 of Glulx Entry Points by Emily Short.
 Include version 5/140516 of Glulx Text Effects by Emily Short.
 
 
@@ -44,6 +43,7 @@ The g-window types are g-text-buffer, g-text-grid and g-graphics.
 The specification of a g-window type is "Glk windows are one of these three types."
 A g-window has a g-window type called type.
 Definition: a g-window is graphical rather than textual if the type of it is g-graphics.
+Definition: a g-window is buffering rather than non-buffering if the type of it is g-text-buffer.
 
 A graphics g-window is a kind of g-window.
 The type of a graphics g-window is g-graphics.
@@ -352,7 +352,7 @@ To refresh (win - a g-window):
 	safely carry out the refreshing activity with win;
 
 To refresh all/-- windows:
-	repeat with win running through g-present g-windows:
+	repeat with win running through g-present non-buffering g-windows:
 		refresh win;
 
 Refreshing something is an activity on g-windows.
@@ -521,6 +521,7 @@ Replace glk_window_close;
 -) before "Glulx.i6t".
 
 Include (-
+! Replacement functions from Flexible Windows by Jon Ingold
 [ glk_window_open parent method size type rock result;
 	result = ( (+ handling an unscheduled construction +)-->1 )( parent, method, size, type, rock );
 	if ( result == 0 )
@@ -534,7 +535,7 @@ Include (-
 	( (+ handling an unscheduled deconstruction +)-->1 )( ref );
 	return 0;
 ];
--) after "Glulx.i6t".
+-) after "Infglk" in "Glulx.i6t".
 
 To decide which number is the result from handling an unscheduled construction from (parent - a number) with method (method - a number) and size (size - a number) and type (type - a number) and rock (rock - a number) (this is handling an unscheduled construction):
 	let parent win be the window with ref parent;

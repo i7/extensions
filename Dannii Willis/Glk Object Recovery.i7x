@@ -1,4 +1,4 @@
-Version 1/160603 of Glk object recovery (for Glulx only) by Dannii Willis begins here.
+Version 1/160919 of Glk Object Recovery (for Glulx only) by Dannii Willis begins here.
 
 "A low level utility library for managing Glk references after restarting or restoring"
 
@@ -72,7 +72,7 @@ Include (-
 	FollowRulebook( (+ glulx object-updating rules +) );
 	rfalse;
 ];
--) after "Glulx.i6t".
+-) after "Starting Up" in "Glulx.i6t".
 
 
 
@@ -178,7 +178,7 @@ Include (-
 
 
 
-Glk object recovery ends here.
+Glk Object Recovery ends here.
 
 ---- Documentation ----
 
@@ -192,4 +192,4 @@ This extension is a low level utility library for managing Glk references. When 
 
 See the extension Flexible Windows by Jon Ingold for a practical demonstration of how these rulebooks are used.
 
-The latest version of this extension can be found at <https://github.com/i7/extensions>. This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.

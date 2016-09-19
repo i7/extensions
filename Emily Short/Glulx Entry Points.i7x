@@ -1,10 +1,14 @@
-Version 10/160128 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/160919 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
 Use authorial modesty.
 
-Include version 1/160128 of Glk object recovery by Dannii Willis.
+Include version 1/160919 of Glulx Definitions by Dannii Willis.
+Include version 1/160919 of Glk Object Recovery by Dannii Willis.
+Include version 1/160919 of Glk Events by Dannii Willis.
+
+
 
 Section - Use option
 
@@ -17,19 +21,6 @@ This use option disables the old rulebooks, and should be used only when we know
 Use direct event handling translates as (- Constant DIRECT_GLK_EVENT_HANDLING; -).
 
 
-Section - New rulebooks
-
-[This first set of rulebooks--the event-handling rulebooks--are now deprecated in favor of the "glulx input handling rulebook".]
-The glulx timed activity rules is a rulebook.
-The glulx redrawing rules is a rulebook.
-The glulx arranging rules is a rulebook.
-The glulx sound notification rules is a rulebook.
-The glulx mouse input rules is a rulebook.
-The glulx character input rules is a rulebook.
-The glulx line input rules is a rulebook.
-The glulx hyperlink rules is a rulebook.
-
-
 
 Section - Global variables
 
@@ -38,154 +29,38 @@ Glulx replacement command is some indexed text that varies.
 Library input context is a number variable. [This describes the event context in which input was received, e.g. whether the Inform library was awaiting line input or char input. If 0, the library was awaiting line input, if 1, char input. This is not as useful as an event-typed value would be; with such a value, we could detect any input context--e.g., we are waiting for hyperlink input. Perhaps a future version of Glulx Entry Points will discard the old convention in favor of a more expansive system.]
 
 
-Section - Gestalts
-
-Include (-
-
-[ GEP_GlulxGestalt sel arg res;
-	@gestalt sel arg res;
-	return res;
-];
--).
-
-To decide what number is the glulx version:
-	(- GEP_GlulxGestalt( 0 ) -).
-
-To decide what number is the interpreter version:
-	(- GEP_GlulxGestalt( 1 ) -).
-
-To decide whether glulx memory resizing is supported:
-	(- GEP_GlulxGestalt( 2 ) -).
-
-To decide whether glulx undo is supported:
-	(- GEP_GlulxGestalt( 3 ) -).
-
-To decide whether glulx memory copying is supported:
-	(- GEP_GlulxGestalt( 6 ) -).
-
-To decide whether glulx malloc is supported:
-	(- GEP_GlulxGestalt( 7 ) -).
-
-To decide whether glulx function acceleration is supported:
-	(- GEP_GlulxGestalt( 9 ) -).
-
-To decide whether glulx real numbers are supported:
-	(- GEP_GlulxGestalt( 11 ) -).
-
-To decide what number is the glk version:
-	(- glk_gestalt( gestalt_Version, 0 ) -).
-
-To decide whether glk/glulx character input is supported:
-	(- glk_gestalt( gestalt_CharInput, 0 ) -).
-
-To decide whether glk/glulx line input is supported:
-	(- glk_gestalt( gestalt_LineInput, 0 ) -).
-
-To decide whether glk/glulx mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, 0 ) -).
-
-To decide whether glk/glulx graphic-window mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_Graphics ) -).
-
-To decide whether glk/glulx text-grid mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_TextGrid ) -).
-
-To decide whether glk/glulx timekeeping is supported:
-	(- glk_gestalt( gestalt_Timer, 0 ) -).
-
-To decide whether glk/glulx graphics are/is supported:
-	(- glk_gestalt( gestalt_Graphics, 0 ) -).
-
-To decide whether glk/glulx text-buffer graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_TextBuffer ) -).
-
-To decide whether glk/glulx graphic-window graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_Graphics ) -).
-
-To decide whether glk/glulx basic/-- sounds/sound are/is supported:
-	(- glk_gestalt( gestalt_Sound, 0 ) -).
-
-To decide whether glk/glulx sound volume is supported:
-	(- glk_gestalt( gestalt_SoundVolume, 0 ) -).
-
-To decide whether glk/glulx sound notification is supported:
-	(- glk_gestalt( gestalt_SoundNotify, 0 ) -).
-
-To decide whether glk/glulx hyperlinks are supported:
-	(- glk_gestalt( gestalt_Hyperlinks, 0 ) -).
-
-To decide whether glk/glulx hyperlink input is supported:
-	(- glk_gestalt( gestalt_HyperlinkInput, 0 ) -).
-
-To decide whether glk/glulx mod sound is supported:
-	(- glk_gestalt( gestalt_SoundMusic, 0 ) -).
-
-To decide whether glk/glulx PNG transparency is supported:
-	(- glk_gestalt( gestalt_GraphicsTransparency, 0 ) -).
-
-To decide whether glk/glulx unicode is supported:
-	(- glk_gestalt( gestalt_Unicode, 0 ) -).
-
-To decide whether glk/glulx unicode normalization is supported:
-	(- glk_gestalt( gestalt_UnicodeNorm, 0 ) -).
-
-To decide whether glk/glulx line input echo suppression is supported:
-	(- glk_gestalt( gestalt_LineInputEcho, 0 ) -).
-
-To decide whether glk/glulx line input terminators are supported:
-	(- glk_gestalt( gestalt_LineTerminators, 0 ) -).
-
-To decide whether the/-- glk/glulx system clock is supported:
-	(- glk_gestalt( gestalt_DateTime, 0 ) -).
-
-To decide whether glk/glulx sounds are fully supported:
-	(- glk_gestalt( gestalt_Sound2, 0 ) -).
-
-To decide whether glk/glulx resource streams supported:
-	(- glk_gestalt( gestalt_ResourceStream, 0 ) -).
-
-
-
-Section - Event types
-
-A g-event is a kind of value. The g-events are timer-event, char-event, line-event, mouse-event, arrange-event, redraw-event, sound-notify-event, and hyperlink-event.
-
-To decide which g-event is null-event: (- 0 -)
-
-
-Section - Events dependent on the player
-
-Definition: A g-event is independent of the player rather than dependent on the player if it is timer-event or it is sound-notify-event or it is arrange-event or it is redraw-event.
-
 
 Section - Wrappers for event structure, return values, etc
 
 To wait for glk input:
 	(- glk_select(gg_event); -)
 
-To decide whether the current input context is line input:
+To decide whether the current input context is line input (deprecated):
 	(- ( (+ library input context +) == 0 ) -)
 
-To decide whether the current input context is char/character input:
+To decide whether the current input context is char/character input (deprecated):
 	(- ( (+ library input context +) == 1 ) -)
 	
-To decide which g-event is the current glk event:
-	(- evGlobal-->0 -)
+To decide which g-event is the current glk event (deprecated):
+	(- GE_Event_Struct_type -)
 	
-To decide what number is the window of the current glk event:
-	(- evGlobal-->1 -)
+To decide what number is the window of the current glk event (deprecated):
+	(- GE_Event_Struct_win -)
 	
-To decide what number is the character code returned:
-	(- evGlobal-->2 -)
+To decide what number is the character code returned (deprecated):
+	(- GE_Event_Struct_val1 -)
 
-To decide what number is input replacement:
+To decide what number is input replacement (deprecated):
 	(- 2 -)
 
-To decide what number is input continuation:
+To decide what number is input continuation (deprecated):
 	(- 1 -)
 
 
 Section - Event Handling
+
+
+The glulx input handling rules have outcomes replace player input (success) and require input to continue (success).
 
 [This is an I7 version of the event handling that was included in the I6 HandleGlkEvent routine in previous versions of Glulx Entry Points, with minor changes to allow any event type to provide a replacement command. Converted to I7 code in version 10.]
 
@@ -209,7 +84,7 @@ Section - HandleGlkEvent routine
 
 Include (- Array evGlobal --> 4; -) before "Glulx.i6t".
 
-Include (- 
+[Include (- 
 
   [ HandleGlkEvent ev context abortres newcmd cmdlen i ;
       for (i=0:i<3:i++) evGlobal-->i = ev-->i;
@@ -217,7 +92,7 @@ Include (-
       return (+ value returned by glk event handling +) ;
   ];
 
--) before "Glulx.i6t".
+-) before "Glulx.i6t".]
 
 
 Section - Useful function wrappers
@@ -229,11 +104,19 @@ To print prompt:
 	(- PrintPrompt(); -)
 
 
-Section - The glulx input handling rulebook
 
-[These rules route input to the separate event-handling rulebooks originally used by older versions of Glulx Entry Points. They do nothing if we have activated the direct event handling use option.]
+Section - Legacy rulebooks
 
-The glulx input handling rules are a g-event based rulebook. The glulx input handling rules have outcomes replace player input (success) and require input to continue (success).
+The glulx timed activity rules is a rulebook.
+The glulx redrawing rules is a rulebook.
+The glulx arranging rules is a rulebook.
+The glulx sound notification rules is a rulebook.
+The glulx mouse input rules is a rulebook.
+The glulx character input rules is a rulebook.
+The glulx line input rules is a rulebook.
+The glulx hyperlink rules is a rulebook.
+
+[ These rules route input to the separate event-handling rulebooks originally used by older versions of Glulx Entry Points. They do nothing if we have activated the direct event handling use option. ]
 
 Last glulx input handling rule for a timer-event when the direct event handling option is not active (this is the redirect to GEP timed activity rule):
 	abide by the glulx timed activity rules.
@@ -267,7 +150,7 @@ Section - Debounce arrange events - unindexed
 
 [ Gargoyle sends an arrange event while the user is dragging the window borders, but we really only want one event at the end. Debounce the arrange event to ignore the earlier ones. ]
 
-Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
+[Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
 
 First glulx input handling rule for an arrange-event while arranging now in GEP is false (this is the debounce arrange event rule):
 	let i be 0; [ for the I6 polling code to use ]
@@ -314,7 +197,7 @@ To decide what number is the current event number in GEP:
 	(- evGlobal-->0 -).
 
 To set the current glk event in GEP to (ev - a g-event):
-	(- evGlobal-->0 = {ev}; -).
+	(- evGlobal-->0 = {ev}; -).]
 
 
 
@@ -428,39 +311,6 @@ One of the things we may want to do -- especially with mouse input or hyperlinks
 
 Because the Glulx replacement command is indexed text, it is possible to build on to the string automatically, if for some reason we need to auto-generate our recommended commands. 
 
-
-
-Chapter: Checking on Feature Support (Glulx Gestalts)
-
-We can test whether the player's interpreter is prepared to support various multimedia features using the following phrases from Glulx Entry Points:
-	
-	if glulx character input is supported...
-	if glulx mouse input is supported...
-	if glulx graphic-window mouse input is supported...
-	if glulx text-grid mouse input is supported...
-	if glulx timekeeping is supported...
-	if glulx graphics is supported...
-	if glulx text-buffer graphics is supported...
-	if glulx graphic-window graphics is supported...
-	if glulx PNG transparency is supported...
-	if glulx sound is supported...
-	if glulx mod sound is supported...
-	if glulx sound volume is supported...
-	if glulx sound notification is supported...
-	if glulx hyperlinks are supported...
-
-Of these:
-	"mouse input" refers to our ability to detect clicks at all
-	"timekeeping" to the ability to use a real-time timer
-	"graphics" to the ability to use any graphics
-	"text-buffer" and "graphic-window" graphics to the ability to use graphics specifically in the main window or in a window specially created for graphics
-	"PNG transparency" to whether it will be possible to layer PNG images with transparent alpha channels (this is very useful for manipulating sprites)
-	"sound" to playing any sound, and "mod sound" to sounds specifically in MOD format
-	"sound volume" to the ability to control the volume
-	"sound notification" to detecting when a sound finishes playing
-	"hyperlinks" to the ability to insert mouseclick-sensitive links in the main body of text
-
-These can be used during play to avoid using Glulx features that aren't supported, or at the start of play to warn the player that the chosen interpreter is unable to present the full experience intended by the author.
 
 
 Section: A Note on Sound Support
