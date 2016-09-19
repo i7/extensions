@@ -117,6 +117,34 @@ To decide whether glk/glulx graphics window character input is supported:
 
 
 
+Chapter - Glulx and Glk kinds
+
+Section - Events
+
+A g-event is a kind of value.
+The specification of a g-event is "The interpreter sends player actions as events".
+The g-events are timer-event,
+	char-event,
+	line-event,
+	mouse-event,
+	arrange-event,
+	redraw-event,
+	sound-notify-event,
+	hyperlink-event,
+	volume-event.
+
+[ Events which occur due to player actions are dependent on the player; all others are independent ]
+Definition: a g-event is dependent on the player rather than independent of the player if
+	it is char-event or
+	it is line-event or
+	it is mouse-event or
+	it is hyperlink-event.
+
+To decide which g-event is null-event:
+	(- 0 -).
+
+
+
 Glulx Definitions ends here.
 
 

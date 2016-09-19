@@ -6,6 +6,7 @@ Use authorial modesty.
 
 Include version 1/160919 of Glulx Definitions by Dannii Willis.
 Include version 1/160919 of Glk Object Recovery by Dannii Willis.
+Include version 1/160919 of Glk Events by Dannii Willis.
 
 
 
@@ -20,19 +21,6 @@ This use option disables the old rulebooks, and should be used only when we know
 Use direct event handling translates as (- Constant DIRECT_GLK_EVENT_HANDLING; -).
 
 
-Section - New rulebooks
-
-[This first set of rulebooks--the event-handling rulebooks--are now deprecated in favor of the "glulx input handling rulebook".]
-The glulx timed activity rules is a rulebook.
-The glulx redrawing rules is a rulebook.
-The glulx arranging rules is a rulebook.
-The glulx sound notification rules is a rulebook.
-The glulx mouse input rules is a rulebook.
-The glulx character input rules is a rulebook.
-The glulx line input rules is a rulebook.
-The glulx hyperlink rules is a rulebook.
-
-
 
 Section - Global variables
 
@@ -42,46 +30,37 @@ Library input context is a number variable. [This describes the event context in
 
 
 
-Section - Event types
-
-A g-event is a kind of value. The g-events are timer-event, char-event, line-event, mouse-event, arrange-event, redraw-event, sound-notify-event, and hyperlink-event.
-
-To decide which g-event is null-event: (- 0 -)
-
-
-Section - Events dependent on the player
-
-Definition: A g-event is independent of the player rather than dependent on the player if it is timer-event or it is sound-notify-event or it is arrange-event or it is redraw-event.
-
-
 Section - Wrappers for event structure, return values, etc
 
 To wait for glk input:
 	(- glk_select(gg_event); -)
 
-To decide whether the current input context is line input:
+To decide whether the current input context is line input (deprecated):
 	(- ( (+ library input context +) == 0 ) -)
 
-To decide whether the current input context is char/character input:
+To decide whether the current input context is char/character input (deprecated):
 	(- ( (+ library input context +) == 1 ) -)
 	
-To decide which g-event is the current glk event:
-	(- evGlobal-->0 -)
+To decide which g-event is the current glk event (deprecated):
+	(- GE_Event_Struct_type -)
 	
-To decide what number is the window of the current glk event:
-	(- evGlobal-->1 -)
+To decide what number is the window of the current glk event (deprecated):
+	(- GE_Event_Struct_win -)
 	
-To decide what number is the character code returned:
-	(- evGlobal-->2 -)
+To decide what number is the character code returned (deprecated):
+	(- GE_Event_Struct_val1 -)
 
-To decide what number is input replacement:
+To decide what number is input replacement (deprecated):
 	(- 2 -)
 
-To decide what number is input continuation:
+To decide what number is input continuation (deprecated):
 	(- 1 -)
 
 
 Section - Event Handling
+
+
+The glulx input handling rules have outcomes replace player input (success) and require input to continue (success).
 
 [This is an I7 version of the event handling that was included in the I6 HandleGlkEvent routine in previous versions of Glulx Entry Points, with minor changes to allow any event type to provide a replacement command. Converted to I7 code in version 10.]
 
@@ -105,7 +84,7 @@ Section - HandleGlkEvent routine
 
 Include (- Array evGlobal --> 4; -) before "Glulx.i6t".
 
-Include (- 
+[Include (- 
 
   [ HandleGlkEvent ev context abortres newcmd cmdlen i ;
       for (i=0:i<3:i++) evGlobal-->i = ev-->i;
@@ -113,7 +92,7 @@ Include (-
       return (+ value returned by glk event handling +) ;
   ];
 
--) before "Glulx.i6t".
+-) before "Glulx.i6t".]
 
 
 Section - Useful function wrappers
@@ -125,11 +104,19 @@ To print prompt:
 	(- PrintPrompt(); -)
 
 
-Section - The glulx input handling rulebook
 
-[These rules route input to the separate event-handling rulebooks originally used by older versions of Glulx Entry Points. They do nothing if we have activated the direct event handling use option.]
+Section - Legacy rulebooks
 
-The glulx input handling rules are a g-event based rulebook. The glulx input handling rules have outcomes replace player input (success) and require input to continue (success).
+The glulx timed activity rules is a rulebook.
+The glulx redrawing rules is a rulebook.
+The glulx arranging rules is a rulebook.
+The glulx sound notification rules is a rulebook.
+The glulx mouse input rules is a rulebook.
+The glulx character input rules is a rulebook.
+The glulx line input rules is a rulebook.
+The glulx hyperlink rules is a rulebook.
+
+[ These rules route input to the separate event-handling rulebooks originally used by older versions of Glulx Entry Points. They do nothing if we have activated the direct event handling use option. ]
 
 Last glulx input handling rule for a timer-event when the direct event handling option is not active (this is the redirect to GEP timed activity rule):
 	abide by the glulx timed activity rules.
@@ -163,7 +150,7 @@ Section - Debounce arrange events - unindexed
 
 [ Gargoyle sends an arrange event while the user is dragging the window borders, but we really only want one event at the end. Debounce the arrange event to ignore the earlier ones. ]
 
-Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
+[Arranging now in GEP is a truth state variable. Arranging now in GEP is false.
 
 First glulx input handling rule for an arrange-event while arranging now in GEP is false (this is the debounce arrange event rule):
 	let i be 0; [ for the I6 polling code to use ]
@@ -210,7 +197,7 @@ To decide what number is the current event number in GEP:
 	(- evGlobal-->0 -).
 
 To set the current glk event in GEP to (ev - a g-event):
-	(- evGlobal-->0 = {ev}; -).
+	(- evGlobal-->0 = {ev}; -).]
 
 
 
