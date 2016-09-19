@@ -1,4 +1,4 @@
-Version 1/160603 of Glk object recovery (for Glulx only) by Dannii Willis begins here.
+Version 1/160919 of Glk Object Recovery (for Glulx only) by Dannii Willis begins here.
 
 "A low level utility library for managing Glk references after restarting or restoring"
 

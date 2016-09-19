@@ -1,10 +1,13 @@
-Version 10/160128 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/160919 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
 Use authorial modesty.
 
-Include version 1/160128 of Glk object recovery by Dannii Willis.
+Include version 1/160919 of Glulx Definitions by Dannii Willis.
+Include version 1/160919 of Glk Object Recovery by Dannii Willis.
+
+
 
 Section - Use option
 
@@ -36,113 +39,6 @@ Section - Global variables
 Glulx replacement command is some indexed text that varies.
 
 Library input context is a number variable. [This describes the event context in which input was received, e.g. whether the Inform library was awaiting line input or char input. If 0, the library was awaiting line input, if 1, char input. This is not as useful as an event-typed value would be; with such a value, we could detect any input context--e.g., we are waiting for hyperlink input. Perhaps a future version of Glulx Entry Points will discard the old convention in favor of a more expansive system.]
-
-
-Section - Gestalts
-
-Include (-
-
-[ GEP_GlulxGestalt sel arg res;
-	@gestalt sel arg res;
-	return res;
-];
--).
-
-To decide what number is the glulx version:
-	(- GEP_GlulxGestalt( 0 ) -).
-
-To decide what number is the interpreter version:
-	(- GEP_GlulxGestalt( 1 ) -).
-
-To decide whether glulx memory resizing is supported:
-	(- GEP_GlulxGestalt( 2 ) -).
-
-To decide whether glulx undo is supported:
-	(- GEP_GlulxGestalt( 3 ) -).
-
-To decide whether glulx memory copying is supported:
-	(- GEP_GlulxGestalt( 6 ) -).
-
-To decide whether glulx malloc is supported:
-	(- GEP_GlulxGestalt( 7 ) -).
-
-To decide whether glulx function acceleration is supported:
-	(- GEP_GlulxGestalt( 9 ) -).
-
-To decide whether glulx real numbers are supported:
-	(- GEP_GlulxGestalt( 11 ) -).
-
-To decide what number is the glk version:
-	(- glk_gestalt( gestalt_Version, 0 ) -).
-
-To decide whether glk/glulx character input is supported:
-	(- glk_gestalt( gestalt_CharInput, 0 ) -).
-
-To decide whether glk/glulx line input is supported:
-	(- glk_gestalt( gestalt_LineInput, 0 ) -).
-
-To decide whether glk/glulx mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, 0 ) -).
-
-To decide whether glk/glulx graphic-window mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_Graphics ) -).
-
-To decide whether glk/glulx text-grid mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_TextGrid ) -).
-
-To decide whether glk/glulx timekeeping is supported:
-	(- glk_gestalt( gestalt_Timer, 0 ) -).
-
-To decide whether glk/glulx graphics are/is supported:
-	(- glk_gestalt( gestalt_Graphics, 0 ) -).
-
-To decide whether glk/glulx text-buffer graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_TextBuffer ) -).
-
-To decide whether glk/glulx graphic-window graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_Graphics ) -).
-
-To decide whether glk/glulx basic/-- sounds/sound are/is supported:
-	(- glk_gestalt( gestalt_Sound, 0 ) -).
-
-To decide whether glk/glulx sound volume is supported:
-	(- glk_gestalt( gestalt_SoundVolume, 0 ) -).
-
-To decide whether glk/glulx sound notification is supported:
-	(- glk_gestalt( gestalt_SoundNotify, 0 ) -).
-
-To decide whether glk/glulx hyperlinks are supported:
-	(- glk_gestalt( gestalt_Hyperlinks, 0 ) -).
-
-To decide whether glk/glulx hyperlink input is supported:
-	(- glk_gestalt( gestalt_HyperlinkInput, 0 ) -).
-
-To decide whether glk/glulx mod sound is supported:
-	(- glk_gestalt( gestalt_SoundMusic, 0 ) -).
-
-To decide whether glk/glulx PNG transparency is supported:
-	(- glk_gestalt( gestalt_GraphicsTransparency, 0 ) -).
-
-To decide whether glk/glulx unicode is supported:
-	(- glk_gestalt( gestalt_Unicode, 0 ) -).
-
-To decide whether glk/glulx unicode normalization is supported:
-	(- glk_gestalt( gestalt_UnicodeNorm, 0 ) -).
-
-To decide whether glk/glulx line input echo suppression is supported:
-	(- glk_gestalt( gestalt_LineInputEcho, 0 ) -).
-
-To decide whether glk/glulx line input terminators are supported:
-	(- glk_gestalt( gestalt_LineTerminators, 0 ) -).
-
-To decide whether the/-- glk/glulx system clock is supported:
-	(- glk_gestalt( gestalt_DateTime, 0 ) -).
-
-To decide whether glk/glulx sounds are fully supported:
-	(- glk_gestalt( gestalt_Sound2, 0 ) -).
-
-To decide whether glk/glulx resource streams supported:
-	(- glk_gestalt( gestalt_ResourceStream, 0 ) -).
 
 
 
@@ -428,39 +324,6 @@ One of the things we may want to do -- especially with mouse input or hyperlinks
 
 Because the Glulx replacement command is indexed text, it is possible to build on to the string automatically, if for some reason we need to auto-generate our recommended commands. 
 
-
-
-Chapter: Checking on Feature Support (Glulx Gestalts)
-
-We can test whether the player's interpreter is prepared to support various multimedia features using the following phrases from Glulx Entry Points:
-	
-	if glulx character input is supported...
-	if glulx mouse input is supported...
-	if glulx graphic-window mouse input is supported...
-	if glulx text-grid mouse input is supported...
-	if glulx timekeeping is supported...
-	if glulx graphics is supported...
-	if glulx text-buffer graphics is supported...
-	if glulx graphic-window graphics is supported...
-	if glulx PNG transparency is supported...
-	if glulx sound is supported...
-	if glulx mod sound is supported...
-	if glulx sound volume is supported...
-	if glulx sound notification is supported...
-	if glulx hyperlinks are supported...
-
-Of these:
-	"mouse input" refers to our ability to detect clicks at all
-	"timekeeping" to the ability to use a real-time timer
-	"graphics" to the ability to use any graphics
-	"text-buffer" and "graphic-window" graphics to the ability to use graphics specifically in the main window or in a window specially created for graphics
-	"PNG transparency" to whether it will be possible to layer PNG images with transparent alpha channels (this is very useful for manipulating sprites)
-	"sound" to playing any sound, and "mod sound" to sounds specifically in MOD format
-	"sound volume" to the ability to control the volume
-	"sound notification" to detecting when a sound finishes playing
-	"hyperlinks" to the ability to insert mouseclick-sensitive links in the main body of text
-
-These can be used during play to avoid using Glulx features that aren't supported, or at the start of play to warn the player that the chosen interpreter is unable to present the full experience intended by the author.
 
 
 Section: A Note on Sound Support
