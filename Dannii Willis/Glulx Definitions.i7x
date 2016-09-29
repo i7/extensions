@@ -2,6 +2,8 @@ Version 1/160919 of Glulx Definitions (for Glulx only) by Dannii Willis begins h
 
 "Core definitions which other Glulx/Glk extensions depend on"
 
+Use authorial modesty.
+
 
 
 Chapter - Testing interpreter features (gestalts)

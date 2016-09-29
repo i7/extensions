@@ -2,6 +2,8 @@ Version 1/160919 of Glk Events (for Glulx only) by Dannii Willis begins here.
 
 "A low level event handling system"
 
+Use authorial modesty.
+
 Include version 1/160919 of Glulx Definitions by Dannii Willis.
 
 
