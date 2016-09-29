@@ -923,9 +923,9 @@ Chapter: Introduction
 	
 Flexible Windows allows the Glulx author to construct and fill a series of multiple windows, which can be created and destroyed safely during the course of play. Restarts and restores are all handled properly. Windows can be graphical, text-buffers (like the main window is) or text-grids (in which case, glk calls can be used to place characters anywhere within them).
 
-Although Flexible Windows does not supply any rules for using graphical windows beyond the most basic, several can be found in Emily Short's Simple Graphical Window extension. However, Flexible Windows is not compatible with Simple Graphical Window.
+Although Flexible Windows does not supply any rules for using graphical windows beyond the most basic, several can be found in Emily Short's Simple Graphical Window extension. Version 15/160929 of Flexible Windows is compatible with version 10/160929 of Simple Graphical Window. Older versions of these two extensions are not compatible with each other.
 
-Flexible Windows requires Glulx Entry Points by Emily Short.
+Flexible Windows requires Alternative Startup Rules by Dannii Willis, Glulx Entry Points by Emily Short, and Glulx Text Effects by Emily Short.
 
 Note that Flexible Windows uses the container relation for windows. We'll need to keep this in mind if we iterate through all containers.
 
@@ -954,7 +954,7 @@ All games start, by default, with a status bar along the top of the screen, and 
 
 Glulx windows are formed from the main window by carving off segments using either horizontal or vertical strokes, with each stroke creating one new window, from which further windows can be cut. This automatically creates a tree-structure for windows, with each new window being sliced from one that came before. The extension refers to this process as "spawning", and you set up your layout of windows by telling the game which window spawns which. 
 
-The position of each new window is specified using one of four positions, g-placeabove, g-placebelow, g-placeleft and g-placeright. Note, these indicate where the new window will be, rather than the direction of the slice taken.
+The position of each new window is specified using one of four positions: g-placeabove, g-placebelow, g-placeleft and g-placeright. Note that these indicate where the new window will be, rather than the direction of the slice taken.
 
 So for example, to create a banner between the main screen and the status, we would write
 
@@ -980,7 +980,7 @@ Finally, if we are using proportional windows, we can optionally set a "minimum 
 
 Section: Text Style and Background Color
 
-Flexible Windows adds a "window" column to the Table of User Styles found in the Glulx Text Effects extension. We can specify styles for specific windows by continuing the table. The "window" column is for the name of the window; the rest of the columns are described in the Glulx Text Effects documentation.
+Flexible Windows adds a "window" column to the Table of User Styles found in the Glulx Text Effects extension. We can specify styles for individual windows by continuing the table. The "window" column is for the name of the window; the rest of the columns are described in the Glulx Text Effects documentation.
 
 	Table of User Styles (continued)
 	window (a g-window)	style name (a glulx text style)	background color (a text)	color (a text)	first line indentation (a number)	fixed width (a truth state)	font weight (a font weight)	indentation (a number)	italic (a truth state)	justification (a text justification)	relative size (a number)	reversed (a truth state)
@@ -991,7 +991,7 @@ To color the background of the entire window, we instead set the g-window proper
 
 	The background color of the side window is "#CCCCFF".
 
-If the story is running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Value" section for how to refer to a particular window in CSS.
+If the story will be running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Value" section for how to refer to a particular window in CSS.
 
 
 Section: Rock Value
@@ -1044,7 +1044,9 @@ To refresh all the windows:
 
 	refresh all windows
 	
-The refreshing activity will automatically first check if the window is present, focus the window, and clear the window, so we usually won't need to do those things manually. Rules for the refreshing activity should (ideally) be able to reconstruct entirely the contents of the window (otherwise, after an UNDO or a RESTORE, information will be lost):
+The refreshing activity will automatically first check if the window is present, focus the window, and clear the window, so we usually won't need to do those things manually.
+
+Rules for the refreshing activity should (ideally) be able to reconstruct entirely the contents of the window (otherwise, after an UNDO or a RESTORE, information will be lost):
 
 	Rule for refreshing the side window (this is the display inventory in side window rule):
 		try taking inventory;
@@ -1086,14 +1088,14 @@ To find out which window is currently in focus, we can check the variable "curre
 		say "The Meteor, the Stone (etc.)" instead.
 		
 		
- Section: Turning Off the Status Line
+Section: Turning Off the Status Line
 
 By default, Glulx games will incorporate a status line. To turn this off quickly, a use option is provided:
 
 	Use no status line.
 
 
-Example: * Inventory Window - A simple example showing how to place an side window displaying the player's inventory.
+Example: * Inventory Window - A simple example showing how to place a side window displaying the player's inventory.
 
 	*: "Inventory Window"
 
