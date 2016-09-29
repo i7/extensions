@@ -149,7 +149,7 @@ If we need to redraw the image in the window, we can write
 For instance if we were adding an image to the screen every time the player moved, we might write something like
 
 	Carry out looking:
-		change currently shown picture to the room illustration of the location;
+		now currently shown picture is the room illustration of the location;
 		follow the current graphics drawing rule;
 
 ... where the room illustration is defined for each room in the game. (The extension "Location Images" implements this idea in full.)
