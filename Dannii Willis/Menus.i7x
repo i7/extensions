@@ -379,6 +379,8 @@ Menus ends here.
 
 ---- Documentation ----
 
+Section: Basic Use
+
 "Menus" provides a table-based way to display menus to the player. The menu takes over the main screen of the game and prevents parser input while it is active. 
 
 "Menus" is not suitable for contexts where we want the player to be able to choose a numbered option during regular play (such as a menu of conversation choices when talking to another character). It is intended rather for situations where we wish to give the player optional instructions or hints separated from the main game.
@@ -418,6 +420,30 @@ The "rule" column contains the rule carried out when this option is chosen. In t
 It is only useful for a given option to have one of these three features -- text or a submenu or a rule. In the event that more than one column is filled out, the game will obey the rule in preference to creating a submenu, and create a submenu in preference to displaying text. 
 
 The "hidden-row" column can be used if we want to hide a given option. To hide the menu option, we mark this column "true". If we want the option visible, we can either leave the column empty, or mark it "false".
+
+To display our menu to the player, we can write
+
+	display the Table of Options menu with title "Instructions"
+
+where "Table of Options" is the name of our table, and "Instructions" is the heading we'd like to appear above the menu.
+
+Section: Optional Glulx Features
+
+This extension offers a few additional features for Glulx projects: a popover window, and menu hyperlinks.
+
+A popover window will temporarily hide (rather than permanently clear) the visible story text when the player opens a menu. When players exit the menu, they will be able to see their previous actions in scrollback.
+
+The popover window feature requires the extension Flexible Windows by Jon Ingold. We will need to include Flexible Windows before Menus in our project. So long as we do this, the popover window will be used by default.
+
+If we've included Flexible Windows but don't want the popover window, we can disable this feature as follows:
+
+	disable the popover menu window is true
+	
+Menu hyperlinks require the extension Glulx Entry Points by Emily Short, which must be included before Menus.
+
+Menu hyperlinks are disabled by default. We can enable them as follows:
+
+	enable menu hyperlinks is true
 
 
 Example: * Tabulation - A simple table of hints and help (see also Basic Help Menu).
@@ -507,5 +533,5 @@ For instance our Table of Options might look like this:
 		try looking.]
 		
 	The Cranial Capacity Calculation Chamber is a room. Leaky is a man in the Chamber. Leaky wears a pair of overalls and some muddy boots. He is carrying a fishing rod.
-
-The displaying activity displays whatever is set as the current menu, so we must set the current menu before activating the activity. Afterward it is a good idea to clear the screen before returning to regular play.
+[Is this still necessary?
+The displaying activity displays whatever is set as the current menu, so we must set the current menu before activating the activity. Afterward it is a good idea to clear the screen before returning to regular play.]
