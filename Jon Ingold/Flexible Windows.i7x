@@ -1,4 +1,4 @@
-Version 15/160929 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/161003 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -68,7 +68,7 @@ The measurement of a g-window is usually 40.
 
 A g-window has a number called minimum size.
 
-A g-window has a number called the rock.
+A g-window has a number called the rock number.
 
 A g-window has a number called ref number.
 
@@ -209,7 +209,7 @@ To decide which g-window is the window with ref (ref - a number):
 To decide which g-window is the window with rock (rock - a number):
 	if rock is not 0:
 		repeat with win running through g-windows:
-			if the rock of win is rock:
+			if the rock number of win is rock:
 				decide on win;
 	decide on the invalid window;
 
@@ -315,7 +315,7 @@ Include (-
 		}
 	}
 	type = win.(+ type +) + 2;
-	rock = win.(+ rock +);
+	rock = win.(+ rock number +);
 	win.(+ ref number +) = FW_glk_window_open( parentwin, method, size, type, rock );
 	rfalse;
 ];
@@ -446,14 +446,14 @@ Chapter - Handling GGRecoverObjects()
 
 [ First ensure that window rocks are assigned ]
 A glulx zeroing-reference rule (this is the set g-window rocks rule):
-	if the rock of the main window is 0:
-		now the rock of the main window is GG_MAINWIN_ROCK;
-		now the rock of the status window is GG_STATUSWIN_ROCK;
-		now the rock of the quote window is GG_QUOTEWIN_ROCK;
+	if the rock number of the main window is 0:
+		now the rock number of the main window is GG_MAINWIN_ROCK;
+		now the rock number of the status window is GG_STATUSWIN_ROCK;
+		now the rock number of the quote window is GG_QUOTEWIN_ROCK;
 		let i be 1000;
 		repeat with win running through g-windows:
-			if the rock of win is 0:
-				now the rock of win is i;
+			if the rock number of win is 0:
+				now the rock number of win is i;
 				increase i by 10;
 
 A glulx zeroing-reference rule (this is the reset window properties rule):
@@ -998,13 +998,13 @@ Section: Rock Value
 
 Internally, Glulx windows are dynamic objects, created as they are opened. Our g-windows, on the other hand, are static objects. When Flexible Windows opens a window, it gives the window a number, called the "rock." This rock value serves to identify the dynamic Glk/Glulx window object as the current instantiation of the static g-window object that shares the same rock.
 
-Normally, Flexible Windows will set the rock values for all g-windows automatically, and the whole process occurs behind the scenes. There may be times, however, when we want to set a g-window's rock to a particular value. For example, Quixe, the javascript Glulx interpreter, uses rock values to identify windows for styling with CSS. In that system, the CSS for a window with rock value 210 might look like this:
+Normally, Flexible Windows will set the rock values for all g-windows automatically, and the whole process occurs behind the scenes. There may be times, however, when we want to set a g-window's rock to a particular value. For example, Quixe, the javascript Glulx interpreter, uses rock values to identify windows for styling with CSS. In that system, the CSS for a window with rock value 1010 might look like this:
 
-	.WindowRock_210 { background-color: blue; }
+	.WindowRock_1010 { background-color: blue; }
 
-Rocks should be numbered 200 and above. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 200, 210, and 220. In fact, this is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock value, we can set it like so:
+Rocks should be numbered 200 and above. This extension starts numbering them from 1000. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 1000, 1010, and 1020. In fact, this is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock value, we can set it like so:
 
-	The rock of the side window is 245.
+	The rock number of the side window is 245.
 
 If we set numbers ending in 5 for our manual rocks, we will never conflict with the automated numbering.
 
@@ -1077,7 +1077,7 @@ To manually clear a window:
 
 	clear side window
 	
- This is usually not necessary, as clearing is done automatically when we refresh a window.
+This is usually not necessary, as clearing is done automatically when we refresh a window.
 	
 	
 Section: Checking Which Window is in Focus

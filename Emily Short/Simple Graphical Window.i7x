@@ -1,4 +1,4 @@
-Version 10/160929 of Simple Graphical Window (for Glulx only) by Emily Short begins here. 
+Version 10/161003 of Simple Graphical Window (for Glulx only) by Emily Short begins here.
 
 "Provides a graphics window in one part of the screen, in which the author can place images; with provision for scaling, tiling, or centering images automatically. Glulx only."
 
@@ -31,6 +31,7 @@ The current graphics drawing rule is the bland graphics drawing rule.
 
 The currently shown picture is a figure-name variable.
 
+[ These two rules fill with the background color ]
 This is the bland graphics drawing rule:
 	clear the graphics window;
 
@@ -38,10 +39,13 @@ This is the standard placement rule:
 	clear the graphics window;
 	draw the currently shown picture in the graphics window;
 
+[ Don't fill the window, potentially overlapping previous images ]
 This is the centered scaled drawing rule:
 	draw the currently shown picture in the graphics window;
 
+[ These two rules clear the window for the sake of performance ]
 This is the fully scaled drawing rule:
+	clear the graphics window;
 	draw the currently shown picture in the graphics window, fully scaled;
 
 This is the tiled drawing rule:
@@ -90,6 +94,8 @@ To draw (image - a figure-name) in (win - a graphics g-window), fully scaled:
 	draw image in win at x x offset and y y offset scaled to width final width and height final height;
 
 To tile (image - a figure-name) in (win - a graphics g-window):
+	[ Clear the window for performance sake ]
+	clear the graphics window;
 	[ Measure the image]
 	let image height be the height of image;
 	let image width be the width of image;
@@ -110,6 +116,19 @@ To draw (image - a figure-name) in (win - a graphics g-window) at x (x - a numbe
 
 To draw (image - a figure-name) in (win - a graphics g-window) at x (x - a number) and y (y - a number) scaled to width (width - a number) and height (height - a number):
 	(- glk_image_draw_scaled( {win}.(+ ref number +), ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
+
+
+
+Chapter - Some deprecated phrases
+
+To decide what number is current graphics window height (deprecated):
+	decide on the height of the graphics window;
+
+To decide what number is current graphics window width (deprecated):
+	decide on the width of the graphics window;
+
+To draw (image - a figure-name) from (x - a number) by (y - a number) to (width - a number) by (height - a number) (deprecated):
+	(- glk_image_draw_scaled( (+ graphics window +).(+ ref number +), ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
 
 
 
