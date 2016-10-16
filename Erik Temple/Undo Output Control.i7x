@@ -49,22 +49,22 @@ The report undo saving suspended rules are a rulebook.
 
 Section - Word constants
 
-To decide which value is undo word #1:
+To decide which text is undo word #1:
 	(- 'undo' -)
 	
-To decide which value is undo word #2:
+To decide which text is undo word #2:
 	(- 'undo' -)
 	
-To decide which value is undo word #3:
+To decide which text is undo word #3:
 	(- 'undo' -)
 	
-To decide which value is oops word #1:
+To decide which text is oops word #1:
 	(- 'oops' -)
 
-To decide which value is oops word #2:
+To decide which text is oops word #2:
 	(- 'o//' -)
 	
-To decide which value is oops word #3:
+To decide which text is oops word #3:
 	(- 'oops' -)
 
 
@@ -111,7 +111,9 @@ Include (-
 			@push etype; etype = BLANKLINE_PE;
 			players_command = 100;
 			BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) L__M(##Miscellany,10);
+			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
+				PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+			}
 			EndActivity(PRINTING_A_PARSER_ERROR_ACT);
 			@pull etype;
 			continue;
@@ -122,9 +124,9 @@ Include (-
 	
 		w = a_table-->1;
 		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
-			if (oops_from == 0) { L__M(##Miscellany, 14); continue; }
-			if (nw == 1) { L__M(##Miscellany, 15); continue; }
-			if (nw > 2) { L__M(##Miscellany, 16); continue; }
+			if (oops_from == 0) { PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
+			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
+			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
 		
 			! So now we know: there was a previous mistake, and the player has
 			! attempted to correct a single word of it.
@@ -199,7 +201,7 @@ Include (-
 				SL_Location(); print "^";
 				! print (name) location, "^";
 				VM_Style(NORMAL_VMSTY);
-				L__M(##Miscellany, 13);
+				IMMEDIATELY_UNDO_RM('E'); new_line;
 			}
 			FollowRulebook( (+ after undoing an action rules +) );
 			continue;
@@ -214,14 +216,14 @@ Include (-
 [ Perform_Undo;
 	#ifdef PREVENT_UNDO; 
 	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
-		L__M(##Miscellany, 70); 
+		IMMEDIATELY_UNDO_RM('A'); new_line;
 		}
 	return; 
 	#endif;
 	if (turns == 1) { 
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 11);
+			IMMEDIATELY_UNDO_RM('B'); new_line; return;
 		}
 		FollowRulebook ( (+ after nothing to be undone failure rules +) );
 		return; 
@@ -229,7 +231,7 @@ Include (-
 	if (undo_flag == 0) { 
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 6); 
+			IMMEDIATELY_UNDO_RM('C'); new_line; return;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
@@ -237,7 +239,7 @@ Include (-
 	if (undo_flag == 1) { 
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 7); 
+			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 		return; 
@@ -246,7 +248,7 @@ Include (-
 	if (VM_Undo() == 0) {
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-		L__M(##Miscellany, 7); 
+		IMMEDIATELY_UNDO_RM('F'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 	}
@@ -284,7 +286,9 @@ Include (-
 			@push etype; etype = BLANKLINE_PE;
 			players_command = 100;
 			BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) L__M(##Miscellany,10);
+			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) {
+				PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+			}
 			EndActivity(PRINTING_A_PARSER_ERROR_ACT);
 			@pull etype;
 			continue;
@@ -295,9 +299,9 @@ Include (-
 	
 		w = a_table-->1;
 		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
-			if (oops_from == 0) { L__M(##Miscellany, 14); continue; }
-			if (nw == 1) { L__M(##Miscellany, 15); continue; }
-			if (nw > 2) { L__M(##Miscellany, 16); continue; }
+			if (oops_from == 0) {PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
+			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
+			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
 		
 			! So now we know: there was a previous mistake, and the player has
 			! attempted to correct a single word of it.
@@ -374,7 +378,7 @@ Include (-
 				SL_Location(); print "^";
 				! print (name) location, "^";
 				VM_Style(NORMAL_VMSTY);
-				L__M(##Miscellany, 13);
+				IMMEDIATELY_UNDO_RM('E'); new_line;
 			}
 			FollowRulebook( (+ after undoing an action rules +) );
 			continue;
@@ -388,14 +392,14 @@ Include (-
 [ Perform_Undo;
 	#ifdef PREVENT_UNDO; 
 	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
-		L__M(##Miscellany, 70); 
+		IMMEDIATELY_UNDO_RM('A'); new_line;
 		}
 	return; 
 	#endif;
 	if (turns == 1) { 
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 11);
+			IMMEDIATELY_UNDO_RM('B'); new_line; return;
 		}
 		FollowRulebook ( (+ after nothing to be undone failure rules +) );
 		return; 
@@ -403,7 +407,7 @@ Include (-
 	if (undo_flag == 0) { 
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 6); 
+			IMMEDIATELY_UNDO_RM('C'); new_line; return;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
@@ -411,7 +415,7 @@ Include (-
 	if (undo_flag == 1) { 
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-			L__M(##Miscellany, 7); 
+			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 		return; 
@@ -420,7 +424,7 @@ Include (-
 	if (VM_Undo() == 0) {
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-		L__M(##Miscellany, 7); 
+		IMMEDIATELY_UNDO_RM('F'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 	}
