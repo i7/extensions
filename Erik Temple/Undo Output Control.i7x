@@ -1,4 +1,4 @@
-Version 3/131031 of Undo Output Control by Erik Temple begins here.
+Version 4/161016 of Undo Output Control by Erik Temple begins here.
 
 "In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to."
 
