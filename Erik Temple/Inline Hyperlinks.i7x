@@ -1,4 +1,4 @@
-Version 2/150305 of Inline Hyperlinks (for Glulx only) by Erik Temple begins here.
+Version 3/161018 of Inline Hyperlinks (for Glulx only) by Erik Temple begins here.
 
 "Provides a simple, HTML-inspired syntax for adding hyperlinks within say phrases. No manual management of hyperlinks required. Requires Text Capture by Eric Eve. Works seamlessly with, but does not require, Flexible Windows."
 
@@ -117,7 +117,7 @@ To say link:
 	
 To say as:
 	stop capturing text;
-	now the hyperlinked text is "[captured text]";
+	now the hyperlinked text is the substituted form of "[captured text]";
 	start capturing text;
 	
 To say end link:
@@ -261,6 +261,8 @@ If we are testing the game in the Inform IDE, or if we have included the Extende
 
 
 Section: Change Log
+
+Version 3: Updated for 6M62.
 
 Version 2: Updated for 6F95. Now uses no deprecated features.
 
