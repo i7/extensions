@@ -1,11 +1,11 @@
-Version 2/160404 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 2/161024 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
 "Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
 
 
 Part - Required Extensions
 
-Include version 15/160122 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
+Include version 15/161003 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
 Include Basic Screen Effects by Emily Short.
 
 
@@ -33,7 +33,7 @@ The main window spawns the sidebar.
 The position of the sidebar is usually g-placeleft.
 The scale method of the sidebar is g-fixed-size.
 The measurement of the sidebar is usually 30.
-The rock of the sidebar is 225.  [For use in a CSS stylesheet.]
+The rock number of the sidebar is 225.  [For use in a CSS stylesheet.]
 The background color of the sidebar is usually "#F0E2C7". [beige]
 
 
@@ -789,21 +789,11 @@ Section:  About the Required Extensions
 
 Common Commands Sidebar requires
 
-	Version 15/160122 of Flexible Windows (for Glulx only) by Jon Ingold
+	Version 15/161003 of Flexible Windows (for Glulx only) by Jon Ingold
 	
 	http://raw.githubusercontent.com/i7/extensions/master/Jon%20Ingold/Flexible%20Windows.i7x
 
-which in turn requires
-
-	Version 10/150620 of Glulx Entry Points (for Glulx only) by Emily Short
-	
-	http://raw.githubusercontent.com/i7/extensions/master/Emily%20Short/Glulx%20Entry%20Points.i7x
-
-and 
-
-	Version 1/140516 of Alternative Startup Rules (for Glulx only) by Dannii Willis
-	
-	http://raw.githubusercontent.com/i7/extensions/master/Dannii%20Willis/Alternative%20Startup%20Rules.i7x
+which in turn requires various other extensions that can be found at https://github.com/i7/extensions. See Flexible Windows for the version numbers required.
 	
 (Basic Screen Effects is also required, but any relatively recent version will do.)
 
