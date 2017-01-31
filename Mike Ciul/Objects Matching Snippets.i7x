@@ -1,111 +1,48 @@
-Version 2 of Objects Matching Snippets by Mike Ciul begins here.
+Objects Matching Snippets by Mike Ciul begins here.
 
-"Provides phrases and relations for checking whether objects are named in snippets. Also provides a rulebook for disambinguating objects outside of an action context."
+Section - The Item to Match
 
-"based on ideas in Original Parser by Ron Newcomb and I6 advice from Andrew Plotkin"
+The item to match is a object that varies.
+Definition: A thing is matchable if it is the item to match.
+Definition: An room is matchable if it is the item to match.
+Definition: A direction is matchable if it is the item to match.
+Definition: A region is matchable if it is the item to match.
 
-Section - Turn Sequence Hacking
+Section - Snippet-matching
 
-A meta-command state is a kind of value. Out-of-world is a meta-command state.
-To decide which meta-command state is in-world: (- 0 -)
+Does the object match is a snippet based rulebook. The does the object match rulebook has outcomes it does (success) and it does not (failure).
 
-The current meta-command state is a meta-command state that varies.
-The current meta-command state variable translates into I6 as "meta".
+Does the object match a snippet (called S):
+	if the item to match is a thing and S matches "[any matchable thing]", it does;
+	if the item to match is a room and S matches "[any matchable room]", it does;
+	if the item to match is a direction and S matches "[any matchable direction]", it does;
+	if the item to match is a region and S matches "[any matchable region]", it does;
+	it does not.
 
-[
-Setting "meta" allows us to skip Before, Instead, After and Every Turn rules... hopefully it skips scene changes too.
-
-But that's not enough. In order for the turn to resume again properly, we have to read the command at the right time. When the disambiguation prompt appears, and the player types a new command, we must abort the turn that was still proceeding and start a new one. That means skipping the next "reading a command" activity.
-]
-
-[We need to know whether "meta" is set because we're aborting a turn, or whether there was a real meta-action.]
-Aborting the turn sequence is a truth state that varies.
-To abort the turn sequence:
-	now aborting the turn sequence is true;
-	now the current meta-command state is out-of-world.
-
-Interrupting the turn sequence for disambiguation is a truth state that varies.
-
-Disambiguation behavior is a kind of value. Some disambiguation behaviors are reject the ambiguous command, choose only the most likely object, and choose the first match.
-
-Disambiguation state is a kind of value. Some disambiguation states are expect command disambiguation only, anticipate snippet disambiguation, and handle snippet disambiguation.
-
-The disambiguation mode is a disambiguation behavior that varies.
-The current disambiguation state is a disambiguation state that varies.
- 
-To prepare for disambiguation:
-	Prepare to reject the ambiguous command if disambiguation is triggered;
-
-To prepare to (M - a disambiguation behavior) if disambiguation is triggered:
-	Now the disambiguation mode is M;
-	Now the current disambiguation state is anticipate snippet disambiguation.
-
-To decide whether a disambiguation prompt interrupted the turn sequence:
-	Decide on whether or not the current disambiguation state is handle snippet disambiguation;
-
-Before asking which do you mean when the current disambiguation state is anticipate snippet disambiguation:
-	Now the current disambiguation state is handle snippet disambiguation.
-
-After reading a command:
-	unless a disambiguation prompt interrupted the turn sequence:
-		Now aborting the turn sequence is false;
-	Now the current disambiguation state is expect command disambiguation only;
-
-To decide whether the player's input has not been parsed as a command yet:
-	Decide on whether or not aborting the turn sequence is true;
-
-For reading a command when the player's input has not been parsed as a command yet:
-	do nothing;
+To decide whether (candidate - an object) matches (S - a snippet):
+	Now the item to match is candidate;
+	follow the does the object match rules for S;
+	decide on whether or not the outcome of the rulebook is the it does outcome;
 	
-Section - Low-Level Phrases
+Snippet-matching relates an object (called candidate) to a snippet (called S) when candidate matches S. The verb to be identified with implies the snippet-matching relation.
 
-To loop over the match list with (func - phrase thing -> nothing): (- LoopOverMatchList({func}); -);
+Section - Snippet-inclusion
 
-Include (-
-[ LoopOverMatchList func i;
-	for (i = 0; i < number_matched; i++) {
-		indirect(func-->1, match_list-->i);
-	}
-];
+Does the object's name appear in is a snippet based rulebook. The does the object's name appear in rulebook has outcomes it does (success) and it does not (failure).
 
--)
+Does the object's name appear in a snippet (called S):
+	if the item to match is a thing and S includes "[any matchable thing]", it does;
+	if the item to match is a room and S includes "[any matchable room]", it does;
+	if the item to match is a direction and S includes "[any matchable direction]", it does;
+	if the item to match is a region and S includes "[any matchable region]", it does;
+	it does not.
 
-To decide which object is the first match: (- FirstMatch() -)
-
-Include (-
-[ FirstMatch;
-	if (number_matched < 1) {
-		print "PROGRAMMING ERROR: No matches^";
-		return 0;
-	}
-	return match_list-->0;
-];
--)
-
-Section - High-Level Phrases
-
-The match handler is a phrase thing -> nothing that varies;
-
-To handle the single best match between (T - a topic) and (snip - a snippet) with (func - phrase thing -> nothing):
-	prepare for disambiguation;
-	now the disambiguation mode is choose only the most likely object;
-	now the match handler is func;
-	if snip matches T, apply func to the first match;
-	[at this point we may be returning from a disambiguation prompt, and we need to abort the rest of the turn]
-
-For asking which do	you mean when a disambiguation prompt interrupted the turn sequence:
-	Let the item be nothing;
-	if the disambiguation mode is:
-		-- choose the first match:
-			Now item is the first match;
-		-- choose only the most likely object:
-			Now item is the most likely match;
-	If the item is nothing:
-		carry out the printing a disambiguation refusal activity;
-	otherwise:
-		apply the match handler to the item;	
-	[somehow stop disambiguation from inserting words into the existing command]
-	abort the turn sequence; [only takes effect after the disambiguation prompt] 
+To decide whether the name of (candidate - an object) appears in (S - a snippet):
+	Now the item to match is candidate;
+	follow the does the object's name appear in rules for S;
+	decide on whether or not the outcome of the rulebook is the it does outcome;
+	
+Snippet-inclusion relates an object (called candidate) to a snippet (called S) when the name of candidate appears in S. The verb to be named in implies the snippet-inclusion relation.
 
 Section - Did the Player Choose
 
@@ -123,7 +60,11 @@ To decide which number is the/-- match score for (item - an object):
 	decide on 2;
 
 The best match score is a number that varies.
-The already matched item is an object that varies.
+
+Definition: A thing is likeliest if the match score for it is the best match score;
+Definition: A room is likeliest if the match score for it is the best match score;
+Definition: A direction is likeliest if the match score for it is the best match score;
+Definition: A region is likeliest if the match score for it is the best match score;
 
 Section - Choosing the Most Likely Object
 
@@ -133,37 +74,28 @@ To decide whether nothing matched:
 To decide whether something matched:
 	decide on whether or not the best match score is at least 0;
 
-To decide which object is the/-- most likely match:
+To decide which object is the/-- most likely (O - description of objects):
 	Let the already matched item be nothing;
 	Now the best match score is -1;
-	Loop over the match list with match-likeliness checking;
-	Decide on the already matched item;
-
-To check whether (the candidate - an object) is the most likely match so far (this is match-likeliness checking):
-	Let the current match score be the match score for the candidate;
-	If the current match score is less than the best match score, stop;
-	If the current match score is the best match score:
-		now the already matched item is nothing;
-		stop;
-	Now the already matched item is the candidate;
-	Now the best match score is the current match score;
-
-Section - Refusing to Disambiguate
-
-Printing a disambiguation refusal is an activity.
-
-For printing a disambiguation refusal:
-	say "You must be more specific.";
+	Repeat with the candidate running through the list of O:
+		Let the current match score be the match score for the candidate;
+		If the current match score is less than the best match score, next;
+		If the current match score is the best match score:
+			now the already matched item is nothing;
+			next;
+		Now the already matched item is the candidate;
+		Now the best match score is the current match score;
+	Decide on the already matched item.
 
 Section - Testing Commands - Not for Release
 
-[match-checking is an action out of world applying to one topic. Understand "objmatch [text]" as match-checking.
+match-checking is an action applying to one topic. Understand "objmatch [text]" as match-checking.
 
 Report match-checking:
 	showme the list of things identified with the topic understood;
 	showme the list of rooms identified with the topic understood;
 	showme the list of directions identified with the topic understood;
-	showme the list of regions identified with the topic understood;]
+	showme the list of regions identified with the topic understood;
 
 Objects Matching Snippets ends here.
 
