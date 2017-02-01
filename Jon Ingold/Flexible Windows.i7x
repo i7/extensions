@@ -1,4 +1,4 @@
-Version 15/161003 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/170131 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -8,7 +8,8 @@ Version 15/161003 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 - Many kinds, properties and the main/status windows have lost their hyphens
 - Colours/styles updated to match GTE
 - The window-drawing rules have been turned into the refreshing activity. It is no longer necessary to focus or clear the window
-- Hyperlink-related code has been removed entirely.
+- Hyperlink-related code has been removed entirely
+- "Rock" has become "rock number"
 ]
 
 
@@ -991,22 +992,22 @@ To color the background of the entire window, we instead set the g-window proper
 
 	The background color of the side window is "#CCCCFF".
 
-If the story will be running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Value" section for how to refer to a particular window in CSS.
+If the story will be running in a browser, we'll need to use CSS to set custom colors or styles. See the "Rock Number" section for how to refer to a particular window in CSS.
 
 
-Section: Rock Value
+Section: Rock Number
 
-Internally, Glulx windows are dynamic objects, created as they are opened. Our g-windows, on the other hand, are static objects. When Flexible Windows opens a window, it gives the window a number, called the "rock." This rock value serves to identify the dynamic Glk/Glulx window object as the current instantiation of the static g-window object that shares the same rock.
+Internally, Glulx windows are dynamic objects, created as they are opened. Our g-windows, on the other hand, are static objects. When Flexible Windows opens a window, it gives the window a number, called the "rock number." This rock number serves to identify the dynamic Glk/Glulx window object as the current instantiation of the static g-window object that shares the same rock number.
 
-Normally, Flexible Windows will set the rock values for all g-windows automatically, and the whole process occurs behind the scenes. There may be times, however, when we want to set a g-window's rock to a particular value. For example, Quixe, the javascript Glulx interpreter, uses rock values to identify windows for styling with CSS. In that system, the CSS for a window with rock value 1010 might look like this:
+Normally, Flexible Windows will set the rock numbers for all g-windows automatically, and the whole process occurs behind the scenes. There may be times, however, when we want to set a g-window's rock number to a particular value. For example, Quixe, the javascript Glulx interpreter, uses rock numbers to identify windows for styling with CSS. In that system, the CSS for a window with rock number 1010 might look like this:
 
 	.WindowRock_1010 { background-color: blue; }
 
-Rocks should be numbered 200 and above. This extension starts numbering them from 1000. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 1000, 1010, and 1020. In fact, this is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock value, we can set it like so:
+Rocks should be numbered 200 and above. This extension starts numbering them from 1000. It is customary, though not necessary, to skip 10 when adding a new window; that is, for three windows, we'd have 1000, 1010, and 1020. In fact, this is how Flexible Windows will assign them if we don't intervene. To ensure that a g-window gets a particular rock number, we can set it like so:
 
 	The rock number of the side window is 245.
 
-If we set numbers ending in 5 for our manual rocks, we will never conflict with the automated numbering.
+If we set numbers ending in 5 for our manual rock numbers, we will never conflict with the automated numbering.
 
 
 Chapter: Using Windows
