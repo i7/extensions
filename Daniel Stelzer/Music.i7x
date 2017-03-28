@@ -40,11 +40,11 @@ To loop (SFX - sound name) on (ground - sound channel):
 
 To play (SFX - sound name) repeating (N - number) time/times:
 	now the sound channel of the SFX is the foreground;
-	internally play the SFX on the foreground repeating -1 times.
+	internally play the SFX on the foreground repeating N times.
 
 To play (SFX - sound name) on (ground - sound channel) repeating (N - number) time/times:
 	now the sound channel of the SFX is the ground;
-	internally play the SFX on the ground repeating -1 times.
+	internally play the SFX on the ground repeating N times.
 
 To play (SFX - sound name) on (ground - sound channel):
 	now the sound channel of the SFX is the ground;
