@@ -1,4 +1,4 @@
-Version 10/171416 of Disambiguation Control by Jon Ingold begins here.
+Version 10/170416 of Disambiguation Control by Jon Ingold begins here.
 
 "Allows finer control over the disambiguation process used by Inform to decide what the player was referring to. Less guesswork, more questions asking for more input. Also removes the multiple-object-rejection in favour of asking for more information."
 
