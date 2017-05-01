@@ -1,4 +1,4 @@
-Version 5/140601 of Threaded Conversation by Chris Conley begins here.
+Version 5/150117 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -597,6 +597,12 @@ Does the player mean discussing something listed-plausible (this is the plausibl
 	
 Does the player mean discussing something flagged-ready (this is the available quips are probably intended rule):
 	it is likely.
+	
+Does the player mean discussing something unlisted-plausible (this is the implausible quips are probably not intended rule):
+	it is unlikely.
+	
+Does the player mean doing something with a flagged-unready quip (this is the unavailable quips are probably not intended rule):
+	it is very unlikely.
 
 
 Book VI - Clarifying the Parser's Choice
@@ -627,9 +633,6 @@ Chapter 1 - Understanding and basic definitions
 Understand the commands "ask", "tell", "say",  "discuss", "answer", "a", "t" as something new.
 	
 To say regarding it: now the prior named object is nothing. [A useful shorthand.]
-	
-[Check saying hello to the player (this is the can't greet yourself rule):
-	say "Talking to [yourself] [regarding it][are] unrewarding." (A) instead;]
 
 Definition: a quip is typable if it is listed-plausible or it is flagged-ready.
 
@@ -713,18 +716,24 @@ Chapter 3 - Tailored error messages
 	
 Discussing is verbalizing. Discussing something with is verbalizing.
 	
-Instead of doing something with a quip (this is the quips are not tangible rule):
-	unless we are verbalizing, say "I didn't understand that sentence." (A) instead;
+Before doing something with a quip (this is the quips are not tangible rule):
+	unless we are verbalizing, say "[text of  parser error internal rule response (A)][line break]" (A) instead; ['I didn't understand that sentence.']
 	continue the action.
 
-Rule for printing a parser error when the latest parser error is the can't see any such thing error or the latest parser error is the noun did not make sense in that context error (this is the quips are not visible rule):
-	if the player's command includes "say/ask/answer/discuss/tell/a/t" or the player's command includes "[a quip]":
+Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the quips are not visible rule):
+	if the player's command includes "say/ask/answer/discuss/tell/a/t" or the player's command includes "[any quip]":
 		if the current interlocutor is a person and tc reparse flag is false:
 			say "That doesn't seem to be a topic of conversation at the moment." (A) instead;
 		otherwise:
-			say "[text of implicit-conversing needs current interlocutor rule response (D)][line break]" instead; ['You aren't talking to anyone.']
+			say "[text of implicit-conversing needs current interlocutor rule response (D)][line break]" (B) instead; ['You aren't talking to anyone.']
 	otherwise:
 		make no decision.	
+		
+Rule for printing a parser error when the latest parser error is the noun did not make sense in that context error (this is the prevent context error rule):
+	if the player's command includes "say/ask/answer/discuss/tell/a/t" or the player's command includes "[any quip]" or the current interlocutor is not a person:
+		say "[text of parser error internal rule response (N)][line break]" (A) instead; ['Not a verb I recognize.']
+	otherwise:
+		make no decision.
 		
 
 Chapter 4 - The Player Discussing
@@ -1118,7 +1127,23 @@ The last for beat-producing rule (this is the default beat rule):
 
 VOLUME FIVE - CONVERSATIONAL PRAGMATICS
 
-Book I - Ignorance 
+Book I - Asking An NPC To Discuss 
+
+Before asking someone to try verbalizing (this is the correct indirect instructions rule):
+	if the current interlocutor is not the person asked, implicitly greet the person asked;
+	try discussing the noun instead.
+		
+[Before answering someone that something (this is the convert indirect instructions to discussing rule):
+	if the noun is not the current interlocutor, implicitly greet the noun;
+	if the noun is the current interlocutor:
+		follow the relabel available quips rule;
+		now tc reparse flag is true;
+		if the topic understood matches "[a typable quip]":
+			try discussing Q instead;
+	otherwise:
+		say "[text of implicit-conversing needs current interlocutor rule response (D)][line break]" (A) ['you aren't talking to anyone'];]
+
+Book II - Ignorance 
 
 Expressing ignorance by something is an activity.
 
@@ -1138,15 +1163,12 @@ Check telling someone about something (this is the catch fall-throughs of tellin
 	carry out the expressing ignorance by activity with the player;
 	say paragraph break instead.
 
-Check answering someone that something (this is the catch fall-throughs of answering rule):
+[Check answering someone that something (this is the catch fall-throughs of answering rule):
 	carry out the expressing ignorance by activity with the player;
-	say paragraph break instead.
-
-Check asking someone to try discussing something (this is the correct indirect instructions rule):
-	try discussing the noun. 
+	say paragraph break instead.]
 
 
-Book II - Changing The Subject
+Book III - Changing The Subject
 
 [	Here we give the player a chance to get hints about other directions for the conversation if he doesn't like any of the currently suggested options.	]
 [	This is not quite identical to TADS 3's topics list, but the idea is similar.	]
@@ -1161,7 +1183,7 @@ Carry out changing the subject (this is the standard report other subjects rule)
 	carry out the listing peripheral quips activity.
 
 
-Book III - Starting A Conversation
+Book IV - Starting A Conversation
 
 tc reparse flag is a truth state that varies. [True if we need to reparse the command after implicitly greeting someone and resetting quips' availability.]
 
@@ -1180,7 +1202,7 @@ Rule for reading a command when tc reparse flag is true (this is the reset after
 	now tc reparse flag is false;
 [	showme the current action;]
 
-Book IV - Conversing With No One
+Book V - Conversing With No One
 
 Non-speaking is an action applying to one visible thing.  
 
@@ -1211,6 +1233,14 @@ Threaded Conversation ends here.
 ---- Documentation ----
 
 NOTE: This extension depends upon the extension Conversation Framework by Eric Eve. The latest version should be available for download from the Inform website.
+
+Chapter: What's new in Version 5
+
+The only change authors should need to make for their old games to be compatible with this version is to replace all instances of the word "response" with "reply". I apologize, but 6L02 introduced a lot of new syntax, and 'responses' are a new central feature of the language. Otherwise:
+	
+	Compatibility with I7 6L02 (and 6L38)
+	Responses made adaptive
+	Cleaned up extensions, main code
 
 Chapter: Introduction to Conversation in Interactive Fiction
 
@@ -1907,22 +1937,23 @@ Rebuilding needs to happen every time we add new quips or change the way quips r
 
 Chapter: Release Notes
 
-Section: Version 4 preliminary
+Section: Versions 4/5
 	
-	Compatibility with I7 6L02
-	Responses made adaptive
-	Cleaned up extensions, main code
+	Compatibility with I7 6L02 (and 6L38)
+		'response' of quips renamed to 'reply', to avoid collision with the new I7 responses system
+	TC responses are now adaptive
+	Cleaned up extensions and main code
 
-Section: Version 3/140107
+Section: Version 3
 
 	Minor comment cleanup and clarification throughout
 
-Section: Version 2/131025
+Section: Version 2
 
 	Backdrops no longer trigger the "X is a subject." notification at startup
 	Corrected a syntax error in a rule name preventing compilation (oops!)
 
-Section: Version 1/131010
+Section: Version 1
 
 	Implicit greeting finally fully functional
 	Documentation reworked
@@ -2155,9 +2186,9 @@ Here we're going to let the player ask the wanderer the same question several ti
 	
 	Test me with "talk to the wanderer / ask him about the rumors / ask what he knows / g / g / g / ask whether I may see the miniature".
 
-Notice that we are allowed to ask the "what he knows" quip a number of times, but that after the first time of asking, it stops being suggested to the player: the "you could ask..." sentence only suggests things that the player hasn't tried yet. This is one of several reasons why we shouldn't hide new information in the later stages of the same quip. If we want to give the player more information about a subject, we should make separate quips. Having a repeatable quip is useful mostly in that it lets the player hear again information that he might have forgotten and that is vital to the progress of the game.
+Notice that we are allowed to ask the "what he knows" quip a number of times, but that after the first time of asking, it stops being suggested to the player: the "you could ask..." sentence does not suggest things that the player has already tried. This is one of several reasons why we shouldn't hide new information in the later stages of the same quip. If we want to give the player more information about a subject, we should make separate quips. Having a repeatable quip is useful mostly in that it lets the player again hear information that he might have forgotten and that is vital to the progress of the game.
 
-Note also that "whether you may see the miniature" becomes available after the first time we use the repeatable quip. "Indirectly-follows" (or its more fussy relative, "directly-follows") only require that the prerequisite quip be used once, not that all of its text variations are exhausted.
+Note also that "whether you may see the miniature" becomes available after the first time we use the repeatable quip. "Indirectly-follows" (or its more fussy relative, "directly-follows") only require that the prerequisite quip has been used once, not that all of its text variations have been exhausted.
 
 Example: ** The King of Everything - An example in which the player can re-ask all questions, but on the second and subsequent askings, the game replays the literal text of the first question.
 
@@ -2202,7 +2233,7 @@ Example: ** Conferences - An example in which eavesdropping third parties will r
 
 To keep this example simple, we will have just one piece of information that could be upsetting to the third-party listener, but we want him to react to it immediately, regardless of whether it is revealed by the player's speech or by the current interlocutor's reply.
 
-To do this, we add a "characters think rule", which we call once before the active conversation rule (that is, before the current interlocutor has a chance to respond to us) and once at the end of the conversation-reply rules (after the current interlocutor has said anything she is going to say). We could write any amount of reasoning into the characters think rule, even allowing them to draw complicated conclusions from facts.
+To do this, we add a "characters think rule", which we call once before the active conversation rule (that is, before the current interlocutor has a chance to respond to us), and once at the end of the conversation-reply rules (after the current interlocutor has said anything she is going to say). We could write any amount of reasoning into the characters think rule, even allowing them to infer complex conclusions from facts.
 
 The specific quips are once again generated by Conversation Builder.
 	
@@ -2348,7 +2379,7 @@ Character conversation queueuing and intentional conversation is also displayed,
 	So you weren't surprised when the Chief called you in to his office first thing Monday morning."
 
 	After saying hello to Chief:
-		we stock Chief's queue in 0 turns from now; [We want the player to have a chance to say something, if desired]
+		we stock Chief's queue in 0 turns from now; [We want the player to have a chance to say something at the start, if desired]
 		continue the action.
 		
 	At the time when we stock Chief's queue:
@@ -2359,7 +2390,7 @@ Character conversation queueuing and intentional conversation is also displayed,
 		now the current interlocutor is Chief;
 		queue second spiel;
 		queue first spiel.
-		[The standard queue behavior is first in, last out.]
+		[The default queue behavior is actually first in, last out.]
 				
 	Endgame is a scene. Endgame begins when the player recollects second spiel.
 		

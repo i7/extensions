@@ -1,14 +1,14 @@
-Version 2/140602 of Conversation Builder (for glulx only) by Chris Conley begins here. 
+Version 3/170420 of Conversation Builder (for glulx only) by Chris Conley begins here. 
 
 "An interactive question-and-answer system for building conversations."
 
-"an expansion of the original extension by Emily Short to use indexed text, now 6L02-compatible"
+"an expansion of the original extension by Emily Short, now 6M62-compatible"
 
 [TODO: get filter to work so that it's easy to add automatic understanding features to quips as we design them.]
 
 Book I - Settings
 
-Include Threaded Conversation by Chris Conley.
+Include version 5 of Threaded Conversation by Chris Conley.
 
 Use suppressed subject list translates as (- Constant NO_SUBJECT_LIST; -). 
 
@@ -636,7 +636,7 @@ A quip-building rule (this is the making remark distantly follow the last quip r
 		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It indirectly-follows [the true-name of the current quip]" (B);
 		close file ["NewConversation"] for writing;
-		end new quip line;.
+		end new quip line.
 
 A quip-building rule (this is the making remark follow the previously defined quip rule):
 	if the last-designed-quip is "", make no decision;
@@ -648,7 +648,7 @@ A quip-building rule (this is the making remark follow the previously defined qu
 		now the currently open reference is the reference resulting from opening file ["NewConversation"] for writing;
 		say "	It directly-follows [the last-designed-quip]" (B);
 		close file ["NewConversation"] for writing;
-		end new quip line;.
+		end new quip line.
 
 A quip-building rule (this is the making remark distantly follow the previously defined quip rule):
 	if the last-designed-quip is "", make no decision;
@@ -881,6 +881,11 @@ Finally, when working on our own, we usually do not want the NewConversation fil
 
 Chapter: Changelog
 
+Section: Version 3
+
+	Removed ;. from two lines, which was preventing compilation. Stricter parsing rules in 6M62?
+
 Section: Version 2
 
+	Updated version dependency to require 6L02-compliant version of TC
 	Adapted to Inform 7 build 6L02
