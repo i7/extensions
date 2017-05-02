@@ -1,4 +1,4 @@
-Version 1/161017 of Infra Undo (for Glulx only) by Dannii Willis begins here.
+Version 1/170502 of Infra Undo (for Glulx only) by Dannii Willis begins here.
 
 "Handles undo using external files for very big story files"
 
