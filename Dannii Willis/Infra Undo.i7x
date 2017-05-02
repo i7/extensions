@@ -350,9 +350,22 @@ Infra Undo ends here.
 
 ---- DOCUMENTATION ----
 
+This is Ultra Undo by Dannii Willis modified to use temporary files rather than standard external files. The reason for this is to avoid cluttering up the game directory with lots of undo files.
+
+A problem with this approach is that on interpreters that automatically save the game state on exit, the undo files might all be gone (along with all other temporary files) when the game state is restored at a later point, particularly after a system restart. We should at least add a proper error message for these situations.
+
+Some interpreters, like Lectrote, will hide away all external files in a special directory. Others, like the browser-based Quixe, will write temporary files, standard save files and other external files all to the same directory. On those, this extension will not do much good.
+
+There is definitely more of Danni Willis's code than mine in here. It was written for Counterfeit Monkey, but is not used there at present.
+
+
+ORIGINAL DOCUMENTATION FOR ULTRA UNDO
+
 Some interpreters have limitations which mean that for very large story files the Undo function stops working. So far the only known example of this is Emily Short's Counterfeit Monkey, for which this extension was written. Infra Undo will keep Undo working when the interpreter cannot, by using external files. You do not need to do anything other than include the extension - it will take care of everything for you, including cleaning up after itself (i.e., deleting those files when the player quits or restarts.)
 
-There is a use option "maximum file based undo count" which controls how many how many turns can be undone using external files. By default that number is 10.
+There is a use option "maximum file based undo count" which controls how many how many turns can be undone using external files. By default that number is 5.
+
+The use option "file based undo" will switch on file based undo permanently, bypassing the standard memory based undo entirely. This can be used to lower the memory footprint of a game, and is also useful for testing.
 
 This extension is compatible with Conditional Undo by Jesse McGrew and Undo Output Control by Erik Temple.
 
