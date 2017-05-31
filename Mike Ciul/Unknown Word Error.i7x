@@ -1,4 +1,4 @@
-Version 2/110923 of Unknown Word Error by Mike Ciul begins here.
+Version 2/170531 of Unknown Word Error by Mike Ciul begins here.
 
 "Provides Infocom-style parser messages such as 'I don't know the word 'kludge'.'"
 
@@ -50,11 +50,17 @@ To say the/-- word at position/-- (N - a number): (-
 	PrintToken({N});
 -)
 
+[ The default error message printing for this in Parser.i6t does this. ]
+To restore oops from: (-
+	oops_from=saved_oops;
+-)
+
 Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the don't know that word rule):
 	Let N be the position of non-dictionary word;
 	if N is zero:
 		make no decision;
 	say "I don't know the word '[word at position N]'.";
+	restore oops from;
 
 Unknown Word Error ends here.
 
@@ -97,4 +103,17 @@ Example: * Ignorance is Bliss - A brief test of this extension.
 	The Conference Chamber is a room. In the Conference Chamber is a table. On the table is a treaty.
 
 	Test me with "examine non-proliferation treaty".
+
+Example: ** Oops - Regression test for interaction between this extension and parser oops.
+
+	*: "Oops"
+
+	Include Unknown Word Error by Mike Ciul.
+
+	The Conference Chamber is a room. In the Conference Chamber is a table. On the table is a treaty.
+
+	Understand "put [something preferably held] on top of [something]" as putting it on.
+
+	[ Without "restore oops from" above, this oops would result in "put table on tabl" and get the same error message a second time because of some parsing weirdness. ]
+	Test me with "put treaty on tabl / oops table".
 
