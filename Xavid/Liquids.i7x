@@ -1,4 +1,4 @@
-Liquids by Xavid begins here.
+Version 1/170531 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
 
@@ -138,6 +138,20 @@ Report an actor emptying something (this is the report emptying rule):
 		say "[The actor] [dump] out the [former contents] as well as [the list of marked for listing things] from [the noun].";
 	now every thing is unmarked for listing.
 
+Emptying it from is an action applying to one liquid and one carried thing.
+Understand "empty [a liquid] from [a held nonempty water-tight thing]" as emptying it from.
+Understand "empty [a liquid] from [something preferably held]" as emptying it from.
+Understand "remove [a liquid] from [a held nonempty water-tight thing]" as emptying it from.
+Understand "remove [a liquid] from [something preferably held]" as emptying it from.
+
+Check an actor emptying a liquid (called L) from something:
+	if the contained liquid of the second noun is L:
+		instead try the actor emptying the second noun;
+	else if the contained liquid of the second noun is emptiness:
+		instead say "[The second noun] [don't] have any [L] in [them] to pour out.";
+	else:
+		instead say "[The second noun] [are] full of [the contained liquid of the second noun], not [L]."
+
 Section 3 - Pouring Onto
 
 Pouring it onto is an action applying to one carried thing and one thing.
@@ -145,6 +159,9 @@ Understand "empty [a held nonempty water-tight thing] on/onto [something]" as po
 Understand "empty [something preferably held] on/onto [something]" as pouring it onto.
 Understand "pour out/-- [a held nonempty water-tight thing] out/-- on/onto [something]" as pouring it onto.
 Understand "pour out/-- [something preferably held] out/-- on/onto [something]" as pouring it onto.
+Understand "douse [something] with [a held nonempty water-tight thing]" as pouring it onto (with nouns reversed).
+Understand "douse [something] with [something preferably held]" as pouring it onto (with nouns reversed).
+Understand the command "dump" as "pour".
 
 Check an actor pouring something onto something (this is the can't pour something empty onto rule):
 	if the noun is not a nonempty water-tight thing:
@@ -289,6 +306,8 @@ Example: ** Unit Tests
 	
 	A vessel called a cup is here. The contained liquid is juice.
 	
+	An animal called a weasel is here.
+
 	Unit test:
 		start test "implicit taking";
 		assert that "fill mug from jug" produces "(first taking the big jug)[line break](first taking the mug)[line break]You pour some milk from the big jug into the mug.";
@@ -300,6 +319,12 @@ Example: ** Unit Tests
 		assert that "drink juice" produces "(first taking the mug)[line break]You drink the juice from the mug.";
 		do "drop all";
 		assert that "fill cup from sink" produces "(first taking the cup)[line break]You fill the cup with water from the sink.";	
-		assert that "put water in mug" produces "(first taking the mug)[line break]You pour the water from the cup into the mug.";	
+		assert that "put water in mug" produces "(first taking the mug)[line break]You pour the water from the cup into the mug.";
+		assert that "douse weasel" produces "(with the mug)[line break]Drenching the weasel in water doesn't seem like it would improve the situation.";
+		assert that "dump mug on weasel" produces "Drenching the weasel in water doesn't seem like it would improve the situation.";
+		assert that "dump cup on weasel" produces "The cup doesn't have anything in it to pour out.";
+		assert that "empty juice from mug" produces "The mug is full of water, not juice.";
+		assert that "empty water from mug" produces "You pour out the water from the mug.";
+		assert that "remove juice from mug" produces "The mug doesn't have any juice in it to pour out.";
 	
 	Test me with "unit".
