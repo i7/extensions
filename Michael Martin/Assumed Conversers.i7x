@@ -1,7 +1,8 @@
-Version 2/140513 of Assumed Conversers by Michael Martin begins here.
+Version 3/170621 of Assumed Conversers by Michael Martin begins here.
 
 "A minimal extension that makes the NPC optional in ASK NPC ABOUT TOPIC and TELL NPC ABOUT TOPIC commands."
 
+[Version 3: Changed "try asking the default converser about" to "try asking the default converser about the topic understood" for 6M62 compatibility. --Matt Weiner]
 [Version 2: Workaround for bizarre action redirection bug in 5T18. Fixed problems where the default converser won't reassign sensibly when going.]
 
 Use authorial modesty.
@@ -23,13 +24,13 @@ Check asking generically (This is the check for sensible converser rule):
   if the default converser is not visible, say "[The default converser] [aren't] [here] anymore." instead.
 
 Check asking generically (This is the convert to asking it about rule):
-	try asking the default converser about instead.
+	try asking the default converser about the topic understood instead.
 
 The check for only one sensible converser rule is listed in the check telling generically rules.
 The check for sensible converser rule is listed in the check telling generically rules.
 
 Check telling generically (this is the convert to telling it about rule):
-	try telling the default converser about instead.
+	try telling the default converser about the topic understood instead.
 
 The convert to asking it about rule is listed last in the check asking generically rules.
 The convert to telling it about rule is listed last in the check telling generically rules.
@@ -53,3 +54,7 @@ Section: 6L02 Compatibility Update
 This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
 
 This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+
+Section: 6M62 Compability Update
+
+Again, this extension differs from the author's original version, as above. See the comments in the source code for the change.
