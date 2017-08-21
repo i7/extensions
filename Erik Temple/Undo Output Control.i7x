@@ -196,7 +196,12 @@ Include (-
 			continue;
 		}
 		if ( (+ temporary undo suspension +) ) { return; }
-		i = VM_Save_Undo();
+
+		if (+ save undo state +) {
+			i = VM_Save_Undo();
+		}
+		else { i = -2; }
+
 		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
 		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
 		
@@ -385,7 +390,12 @@ Include (-
 			continue;
 		}
 		if ( (+ prevent undo flag +) ) {return;}
-		i = VM_Save_Undo();
+
+		if (+ save undo state +) {
+			i = VM_Save_Undo();
+		}
+		else { i = -2; }
+
 		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
 		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
 
@@ -461,44 +471,6 @@ Include (-
 	}
 ];
 -) instead of "Perform Undo" in "OutOfWorld.i6t".
-
-
-Section - Undo save control
-
-Include (-
-[ VM_Undo result_code;
-	@restoreundo result_code;
-	return (~~result_code);
-];
-
-[ VM_Save_Undo result_code;
-    if (+ save undo state +) {
-       @saveundo result_code;
-       if (result_code == -1) { GGRecoverObjects(); return 2; }
-       return (~~result_code);
-   }
-   else { return -2 ; }
-];
--) instead of "Undo" in "Glulx.i6t".
-
-
-Include (-
-
-[ VM_Undo result_code;
-	@restore_undo result_code;
-	  return result_code;
-];
-
-[ VM_Save_Undo result_code;
-    if (+ save undo state +) {
-       @save_undo result_code;
-	return result_code;
-    }
-    else { return -2; }
-];
-
--) instead of "Undo" in "ZMachine.i6t".
-
 
 Undo Output Control ends here.
 
