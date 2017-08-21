@@ -84,8 +84,8 @@ To decide whether undo is suspended: decide on temporary undo suspension.
 
 The report attempt to undo-while-disabled rules are a rulebook.
 
-The last report attempt to undo-while-disabled rule:
-	say "That action cannot be undone.";
+The last report attempt to undo-while-disabled rule (this is the undoing is disabled rule):
+	say "That action cannot be undone." (A);
 	rule succeeds;
 
 Include (-
