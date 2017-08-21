@@ -234,7 +234,7 @@ Include (-
 		}
 	return; 
 	#endif;
-	if (turns == 1) { 
+	if (IterationsOfTurnSequence == 0) {
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
 			IMMEDIATELY_UNDO_RM('B'); new_line; return;
@@ -423,7 +423,7 @@ Include (-
 		}
 	return; 
 	#endif;
-	if (turns == 1) { 
+	if (IterationsOfTurnSequence == 0) {
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
 			IMMEDIATELY_UNDO_RM('B'); new_line; return;
