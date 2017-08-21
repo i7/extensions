@@ -245,18 +245,22 @@ Include (-
 		return; 
 	}
 	if (undo_flag == 1) { 
-		FollowRulebook ( (+ before interpreter undo failure rules +) );
-		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
+		! Undo failed because the interpreter did not save a game when it was supposed to.
+		! This happens rarely under Z-Machine but may be thrown by a Glulx interpreter which can't save.
+		! For clarity of error message, this should be treated as an interpreter incapacity, not interpreter failure.
+		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
+		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
 			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
 		}
-		FollowRulebook ( (+ after interpreter undo failure rules +) );
+		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
 	}
 	if ( (+ temporary undo suspension +) ) {FollowRulebook ( (+ report attempt to undo-while-disabled rules +) ); return;}
 	if (VM_Undo() == 0) {
+		! Undo failed because the interpreter failed to restore, probably because the undo limit was exceeded.
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-		IMMEDIATELY_UNDO_RM('F'); new_line;
+			IMMEDIATELY_UNDO_RM('F'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 	}
@@ -421,18 +425,22 @@ Include (-
 		return; 
 	}
 	if (undo_flag == 1) { 
-		FollowRulebook ( (+ before interpreter undo failure rules +) );
-		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
+		! Undo failed because the interpreter did not save a game when it was supposed to.
+		! This happens rarely under Z-Machine but may be thrown by a Glulx interpreter which can't save.
+		! For clarity of error message, this should be treated as an interpreter incapacity, not interpreter failure.
+		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
+		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
 			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
 		}
-		FollowRulebook ( (+ after interpreter undo failure rules +) );
+		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
 	}
 	if (~~AllowUndo()) return;
 	if (VM_Undo() == 0) {
+		! Undo failed because the interpreter failed to restore, probably because the undo limit was exceeded.
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
 		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-		IMMEDIATELY_UNDO_RM('F'); new_line;
+			IMMEDIATELY_UNDO_RM('F'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 	}
