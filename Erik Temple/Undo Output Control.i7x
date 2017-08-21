@@ -89,6 +89,11 @@ The last report attempt to undo-while-disabled rule:
 	rule succeeds;
 
 Include (-
+
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Undo Output Control replacement for Parser.i6t: Reading the Command
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+
 [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
 	sline1 = score; sline2 = turns;
 
@@ -217,6 +222,11 @@ Include (-
 
 
 Include (-
+
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Undo Output Control replacement for OutOfWorld.i6t: Perform Undo
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+
 [ Perform_Undo;
 	#ifdef PREVENT_UNDO; 
 	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
@@ -267,6 +277,11 @@ Include (-
 Section - Patches (for use with Conditional Undo by Jesse McGrew)
 
 Include (-
+
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Undo Output Control replacement for Parser.i6t: Reading the Command
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+
 [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
 	sline1 = score; sline2 = turns;
 
@@ -396,6 +411,11 @@ Include (-
 -) instead of "Reading the Command" in "Parser.i6t".
 
 Include (-
+
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Undo Output Control replacement for OutOfWorld.i6t: Perform Undo
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+
 [ Perform_Undo;
 	#ifdef PREVENT_UNDO; 
 	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
