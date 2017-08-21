@@ -1,6 +1,6 @@
 Version 4/161016 of Undo Output Control by Erik Temple begins here.
 
-"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to."
+"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS.  Updated to Inform 6M62."
 
 Section - Rulebooks
 
@@ -581,10 +581,15 @@ As was mentioned above, UNDO is not an action. Along with OOPS, it is handled be
 
 Undo Output Control makes providing new vocabulary for UNDO and OOPS a bit easier. Each command has three "words" associated with it. These are, with their initial values:
 
-	UNDO					OOPS
-	undo word #1 "undo"		oops word #1 "oops"
-	undo word #2	"undo"		oops word #2 "o//"
-	undo word #3	"undo"		oops word #3 "oops"
+	UNDO
+	undo word #1	"undo"
+	undo word #2	"undo"
+	undo word #3	"undo"
+	
+	OOPS
+	oops word #1 "oops"
+	oops word #2 "o//"
+	oops word #3 "oops"
 
 We can thus add up to two vocabulary words for each command, in addition to the standard "oops" and "undo", or we can replace all three slots for each word if we like. Note that oops word #2 is a single-letter abbreviation; two forward slashes are required after single-letter words for Inform to understand them.
 
@@ -595,8 +600,13 @@ To change one of these vocabulary words, we need to define a phrase. For example
 
 The word must be placed within single quotes, and only a single word can be matched. If your text contains a space, it will never be matched.
 
+To eliminate the "o" synonym for oops:
+	To decide which value is oops word #2:
+		(- 'oops' -)
 
 Section - Change log
+
+	v4 - Substantial updates by Nathanael Nerode.  Update to 6M62.  Fix bugs. Improve documentation.
 
 	v3 - Removed unnecessary check of the "before undoing an action" rulebook at the end of the game. This caused an UNDO typed at the end of the game to fail silently.
 
