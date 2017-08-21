@@ -52,9 +52,6 @@ Save undo state is a truth state that varies. Save undo state is usually true.
 To disable saving of/-- undo state: now save undo state is false.
 To enable saving of/-- undo state: now save undo state is true.
 
-The report undo saving suspended rules are a rulebook.
-
-
 Section - Word constants
 
 To decide which text is undo word #1:
@@ -198,7 +195,6 @@ Include (-
 		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
 		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
 		
-		if ((+ save undo state +)) FollowRulebook( (+ report undo saving suspended rules +) );
 		if (i == -1) undo_flag = 0;
 		if (i == 0) undo_flag = 1;
 		if (i == 2) {
@@ -378,7 +374,6 @@ Include (-
 		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
 		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
 
-		if ((+ save undo state +)) FollowRulebook( (+ report undo saving suspended rules +) );
 		if (i == -1) undo_flag = 0;
 		if (i == 0) undo_flag = 1;
 		if (i == 2) {
