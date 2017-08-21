@@ -1,6 +1,6 @@
-Version 4/161016 of Undo Output Control by Erik Temple begins here.
+Version 5/170820 of Undo Output Control by Erik Temple begins here.
 
-"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS.  Updated to Inform 6M62."
+"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS.  Updated to Inform 6M62."
 
 Section - Rulebooks
 
@@ -72,6 +72,10 @@ To decide which text is oops word #2:
 To decide which text is oops word #3:
 	(- 'oops' -)
 
+Section - Invoking Undo
+
+to undo the current turn:
+	(- Perform_Undo(); -).
 
 Section - Patches and Undo Suspension (for use without Conditional Undo by Jesse McGrew)
 
@@ -587,9 +591,9 @@ Undo Output Control makes providing new vocabulary for UNDO and OOPS a bit easie
 	undo word #3	"undo"
 	
 	OOPS
-	oops word #1 "oops"
-	oops word #2 "o//"
-	oops word #3 "oops"
+	oops word #1	"oops"
+	oops word #2	"o//"
+	oops word #3	"oops"
 
 We can thus add up to two vocabulary words for each command, in addition to the standard "oops" and "undo", or we can replace all three slots for each word if we like. Note that oops word #2 is a single-letter abbreviation; two forward slashes are required after single-letter words for Inform to understand them.
 
@@ -603,8 +607,20 @@ The word must be placed within single quotes, and only a single word can be matc
 To eliminate the "o" synonym for oops:
 	To decide which value is oops word #2:
 		(- 'oops' -)
+		
+Section - Undoing the current turn
+
+While UNDO is not an action, it is possible to trigger undo from an action.  Under the hood, Inform saves the game after reading a command but before parsing it.  UNDO then restores to this point, with a signal to read a new command.  Inform must do the save very early in the command processing cycle in order to avoid any accidental side-effects in author-written parsing or action processing routines.  However,  UNDO (and OOPS) have to be processed before this save; otherwise they will restore to just before the player typed "UNDO", rather than before the previous command!
+
+However, you can use this to your advantage.  If at the end of a very long and complicated turn which changed a lot of world state, you decide the player probably shouldn't have done that, you can issue an undo order and restore the game to just before the player issued that command.  This will undo the current turn -- not the previous turn.
+
+	undo the current turn;
+
+This can be combined with "disable saving of undo state", as demonstrated in "Purgatory II".
 
 Section - Change log
+
+	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)
 
 	v4 - Substantial updates by Nathanael Nerode.  Update to 6M62.  Fix bugs. Improve documentation.
 
@@ -720,8 +736,6 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 			say "He looks at each of the glass containers in turn, then smiles when he realizes that you managed to stay in here alone for five whole minutes without breaking a single one.";
 			end the story finally saying "You have made your father proud"
 
-
-
 Example: ** Purgatory - Illustrates how to suspend and reinstate the saving of undo states. The player is presented with a bottle of poison. If she drinks it, she will die within a certain number of turns. We suspend saving of the undo state on the drinking of the bottle, though, so that the player need type UNDO only once to return to the turn before drinking the poison, no matter how many turns have passed since.
 
 Note that we warn the player before allowing her to save during this purgatorial period--restoring the game would discard the saved undo state and effectively doom the PC to death.
@@ -762,4 +776,50 @@ Note that we warn the player before allowing her to save during this purgatorial
 			continue the action;
 		otherwise:
 			rule fails.
+			
+Example: ** Purgatory II - As an additional enhancement, we make an automatic undo attempt after the player has died.
+
+	*: "Purgatory II"
+
+	Include version 5 of Undo Output Control by Erik Temple.
+	
+	The release number is 2.
+	
+	Black Room is a room. There is a bottle of poison in Black Room.
+	
+	Instead of drinking the bottle of poison:
+		now the printed name of the bottle is "empty bottle";
+		say "You drink down the poison in a single draught! That probably wasn't very smart.";
+		disable saving of undo state.
+	
+	Every turn when the printed name of the bottle is "empty bottle":
+		say "[one of]Your cheeks burn.[or]Your teeth hurt.[or]Your belly twists.[or]Your vision fades.[the end][stopping]"
+	
+	To say the end:
+		say "You have died.";
+		say "[bracket]...maybe you shouldn't have drunk the poison.  Attempting to undo to the moment just before you drank the poison.[close bracket][paragraph break]";
+		undo the current turn;
+		say "[bracket] Well, I guess that didn't work. [close bracket][paragraph break]";
+		end the story saying "You have died".
+	
+	Before undoing an action when save undo state is false:
+		say "[bracket]Attempting to undo to the moment just before you drank the poison.[close bracket][paragraph break]";
+		rule succeeds.
+	
+	Report undoing an action:
+		say "[bold type]";
+		say "[Location]" in title case;
+		say "[roman type]";
+		say "[line break]";
+		say "[bracket]Undone.[close bracket][line break]";
+		enable saving of undo state;
+		rule succeeds.
+		
+	Check saving the game when save undo state is false:
+		say "Maybe it would be best to UNDO your terrible mistake before saving. Are you sure you want to save now, while you're dying? ";
+		if the player consents:
+			continue the action;
+		otherwise:
+			rule fails.
+
 
