@@ -242,7 +242,7 @@ Include (-
 	if (IterationsOfTurnSequence == 0) {
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('B'); new_line; return;
+			IMMEDIATELY_UNDO_RM('B'); new_line;
 		}
 		FollowRulebook ( (+ after nothing to be undone failure rules +) );
 		return; 
@@ -250,7 +250,7 @@ Include (-
 	if (undo_flag == 0) { 
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('C'); new_line; return;
+			IMMEDIATELY_UNDO_RM('C'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
@@ -261,7 +261,7 @@ Include (-
 		! For clarity of error message, this should be treated as an interpreter incapacity, not interpreter failure.
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
+			IMMEDIATELY_UNDO_RM('D'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
@@ -436,7 +436,7 @@ Include (-
 	if (IterationsOfTurnSequence == 0) {
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('B'); new_line; return;
+			IMMEDIATELY_UNDO_RM('B'); new_line;
 		}
 		FollowRulebook ( (+ after nothing to be undone failure rules +) );
 		return; 
@@ -444,7 +444,7 @@ Include (-
 	if (undo_flag == 0) { 
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('C'); new_line; return;
+			IMMEDIATELY_UNDO_RM('C'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
@@ -455,7 +455,7 @@ Include (-
 		! For clarity of error message, this should be treated as an interpreter incapacity, not interpreter failure.
 		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
 		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('D'); new_line; return; 
+			IMMEDIATELY_UNDO_RM('D'); new_line;
 		}
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
