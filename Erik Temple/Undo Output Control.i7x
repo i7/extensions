@@ -618,6 +618,8 @@ However, you can use this to your advantage.  If at the end of a very long and c
 
 This can be combined with "disable saving of undo state", as demonstrated in "Purgatory II".
 
+You can also prevent the player from undoing and still use this in your code.
+
 Section - Change log
 
 	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)
