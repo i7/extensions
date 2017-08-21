@@ -24,16 +24,24 @@ The before nothing to be undone failure rules are a rulebook.
 The report nothing to be undone failure rules are a rulebook.
 The after nothing to be undone failure rules are a rulebook.
 
-The last report undoing an action rule:
+The default report undoing an action rule is listed last in the report undoing an action rules.
+This is the default report undoing an action rule:
 	rule fails.
 
-The last report prevented undo rule:
+The default report prevented undo rule is listed last in the report prevented undo rules.
+This is the default report prevented undo rule:
 	rule fails.
 
-The last report interpreter undo failure rule:
+The default report interpreter-undo-incapacity rule is listed last in the report interpreter-undo-incapacity rules.
+This is the default report interpreter-undo-incapacity rule:
 	rule fails.
 
-The last report nothing to be undone failure rule:
+The default report interpreter undo failure rule is listed last in the report interpreter undo failure rules.
+This is the default report interpreter undo failure rule:
+	rule fails.
+
+The default report nothing to be undone failure rule is listed last in the report nothing to be undone failure rules.
+This is the default report nothing to be undone failure rule:
 	rule fails.
 
 
