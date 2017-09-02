@@ -1,6 +1,6 @@
-Version 5/170820 of Undo Output Control by Erik Temple begins here.
+Version 5/170902 of Undo Output Control by Erik Temple begins here.
 
-"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS.  Updated to Inform 6M62."
+"In addition to allowing control over UNDO default messages, provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 6M62."
 
 Section - Rulebooks
 
@@ -77,6 +77,10 @@ Section - Invoking Undo
 to undo the current turn:
 	(- Perform_Undo(); -).
 
+Section - Empty Command Handling
+
+Repairing an empty command is an activity.
+
 Section - Patches and Undo Suspension (for use without Conditional Undo by Jesse McGrew)
 
 Temporary undo suspension is a truth state that varies. Temporary undo suspension is usually false.
@@ -120,20 +124,28 @@ Include (-
 		! Set nw to the number of words
 		#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
 	
-		! If the line was blank, get a fresh line
+		! If the line was blank, ask the game to fill it in.  If it doesn't, get a fresh line.
 		if (nw == 0) {
-			@push etype; etype = BLANKLINE_PE;
-			players_command = 100;
-			BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
-				PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+			x2 = false; ! repurposing local variable as a flag
+
+			BeginActivity( (+ repairing an empty command +) );
+			if ( ForActivity( (+ repairing an empty command +) ) == false) {
+				@push etype; etype = BLANKLINE_PE;
+				players_command = 100;
+				BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
+				if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
+					PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+				}
+				EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+				@pull etype;
+				x2 = true;
 			}
-			EndActivity(PRINTING_A_PARSER_ERROR_ACT);
-			@pull etype;
-			continue;
+
+			EndActivity( + repairing an empty command +) );
+			if (x2) continue; ! if the activity wasn't handled, get new command
 		}
 	
-		! Unless the opening word was OOPS, return
+		! Unless the opening word was OOPS or UNDO, return
 		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
 	
 		w = a_table-->1;
@@ -313,20 +325,28 @@ Include (-
 		! Set nw to the number of words
 		#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
 	
-		! If the line was blank, get a fresh line
+		! If the line was blank, ask the game to fill it in.  If it doesn't, get a fresh line.
 		if (nw == 0) {
-			@push etype; etype = BLANKLINE_PE;
-			players_command = 100;
-			BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-			if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) {
-				PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+			x2 = false; ! repurposing local variable as a flag
+
+			BeginActivity( (+ repairing an empty command +) );
+			if ( ForActivity( (+ repairing an empty command +) ) == false) {
+				@push etype; etype = BLANKLINE_PE;
+				players_command = 100;
+				BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
+				if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
+					PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
+				}
+				EndActivity(PRINTING_A_PARSER_ERROR_ACT);
+				@pull etype;
+				x2 = true;
 			}
-			EndActivity(PRINTING_A_PARSER_ERROR_ACT);
-			@pull etype;
-			continue;
+
+			EndActivity( + repairing an empty command +) );
+			if (x2) continue; ! if the activity wasn't handled, get new command
 		}
-	
-		! Unless the opening word was OOPS, return
+
+		! Unless the opening word was OOPS or UNDO, return
 		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
 	
 		w = a_table-->1;
@@ -620,9 +640,21 @@ This can be combined with "disable saving of undo state", as demonstrated in "Pu
 
 You can also prevent the player from undoing and still use this in your code.
 
+Section - Repairing an empty command
+
+This version integrates he extension Empty Command Handling by Daniel Stelzer, based on code by Matt Weiner.  Because Empty Command Handling replaces the same underlying library code as Undo Output Control, it cannot be used with Empty Command Handling; so the entirety of the extension has been integrated.
+
+This extension adds a new activity, "repairing an empty command". When the player presses ENTER at the prompt, without typing anything, the "repairing an empty command" activity will be run before showing the parser error. This can be used to give better responses to empty input without hacking into the response system.
+
+For instance:
+
+  Rule for repairing an empty command: change the text of the player's command to "look".
+
+This happens early enough in parsing that even special commands like "undo" and "oops", or a sequence of commands separated by periods, can be inserted.
+
 Section - Change log
 
-	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)
+	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)  Integrate Empty Command Handling by Daniel Stelzer.
 
 	v4 - Substantial updates by Nathanael Nerode.  Update to 6M62.  Fix bugs. Improve documentation.
 
