@@ -1,9 +1,11 @@
-Version 1/170820 of Title Case for Headings by Nathanael Nerode begins here.
+Version 1/170902 of Title Case for Headings by Nathanael Nerode begins here.
 
-"Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 6M62.  Requires Undo Output Control by Erik Temple to handle the case of room name printing after UNDO."
+"Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 6M62.  Requires Undo Output Control by Erik Temple or by Nathanael Nerode to handle the case of room name printing after UNDO."
 
 [Distinguish printing the *title* of a room in a heading, which should be titlecased, from printing the *name* of a room under other circumstances, which should not.  This allows more coherent use of room names like "a meadow".
 There are two "heading" usages in the Standard Rules: the room description heading, and the status line.  There is also a subtle third usage when the room name is printed after "undo".]
+
+Chapter 1 - Title Case for Headings
 
 Section 0 - New activities
 
@@ -83,7 +85,7 @@ Rule for printing the name of an object (called item) while constructing the sta
 	carry out the printing the name activity with the item;
 	end the printing a heading activity.
 
-Section 5 - Undo Fix (for use with Undo Output Control by Erik Temple)
+Section 5 - Undo Fix
 
 [ Oh, good grief.  We have to dig into Inform 6 again.
 UNDO calls SL_Location in order to print its location.  We have to get a hook into the code in the parser
@@ -101,6 +103,18 @@ The report undo successful rule is listed in the report undoing an action rules.
 A report undoing an action rule (this is the report undo successful rule):
 	say "[text of the immediately undo rule response (E)][line break]";
 	rule succeeds.
+
+Volume 2 - Disabling Undo Fix when substructure unavailable
+
+Book - first implementation check (for use without Undo Output Control by Erik Temple)
+
+Part - second implementation check (for use without Undo Output Control by Nathanael Nerode)
+
+Section 5 - No Undo Fix (in place of Section 5 - Undo Fix in Title Case for Headings by Nathanael Nerode)
+
+[required to avoid compilation error]
+dummy_variable_97538642 is a truth state which varies.
+
 
 Title Case for Headings ends here.
 
