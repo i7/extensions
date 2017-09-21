@@ -1,4 +1,4 @@
-Version 1/080522 of Randomness by Mikael Segercrantz begins here.
+Version 2/170921 of Randomness by Mikael Segercrantz begins here.
 
 "Random number generation using a simple seedable pseudorandom number generator."
 
@@ -13,13 +13,13 @@ A pseudorandom number generator has a number called adder.
 Section 2 - Seeding the generator
 
 To seed the random number generator (prng - a pseudorandom number generator) with (n - a number):
-	change the previous value of prng to n.
+	now the previous value of prng is n.
 
 To set the multiplier of (prng - a pseudorandom number generator) to (n - a number):
-	change the multiplier of prng to n.
+	now the multiplier of prng is n.
 
 To set the adder of (prng - a pseudorandom number generator) to (n - a number):
-	change the adder of prng to n.
+	now the adder of prng is n.
 
 
 Section 3 - Initialize the generators
@@ -27,10 +27,10 @@ Section 3 - Initialize the generators
 To initialize the random number generators:
 	let seed be 1234;
 	repeat with prng running through pseudorandom number generators:
-		change the multiplier of prng to 13;
-		change the adder of prng to 4399;
+		now the multiplier of prng is 13;
+		now the adder of prng is 4399;
 		seed the random number generator prng with seed;
-		change the seed to seed + 1234.
+		now the seed is seed + 1234.
 
 When play begins:
 	initialize the random number generators.
@@ -42,7 +42,7 @@ To decide what number is the next random number of (prng - a pseudorandom number
 	let current value be the previous value of prng;
 	let current value be current value * multiplier of prng;
 	let current value be current value + adder of prng;
-	change previous value of prng to current value;
+	now the previous value of prng is the current value;
 	decide on current value.
 
 To decide what number is the previous random number of (prng - a pseudorandom number generator):
