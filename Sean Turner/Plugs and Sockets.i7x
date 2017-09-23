@@ -1,8 +1,6 @@
-Version 4/150909 of Plugs and Sockets by Sean Turner begins here.
+Version 4/170924 of Plugs and Sockets by Sean Turner begins here.
 
 "System for handling plugs and sockets."
-
-Include Plurality by Emily Short.
 
 Section 1 - Definitions
 
@@ -83,7 +81,7 @@ To say inserter status of the (item - a thing):
 To say exam receiver status of the (item - a thing):
 	if the count of occupied sockets of the item is 0, say "nothing";
 	else say "[receiver status of the item]";
-	say " plugged into [it-them of item].";
+	say " plugged into [regarding the item][them].";
 
 To say receiver status of the (item - a thing):
 	now connect listing is true;
