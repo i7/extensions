@@ -1,4 +1,4 @@
-Version 3/170926 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 3/170927 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
 
@@ -233,7 +233,7 @@ The can't remove what's not inside rule response (A) is "But [regarding the noun
 The can't remove from people rule response (A) is "[regarding the noun][Those] [seem] to belong to [the owner].".  [was "[regarding the noun][Those] [seem] to belong to [the owner]."]
 ]
 
-The can't drop yourself rule response (A) is "You can't drop yourself.".  [was "[We] [lack] the dexterity."]
+The can't drop yourself rule response (A) is "[We] [can't] drop [ourselves].".  [was "[We] [lack] the dexterity."]
 
 [
 The can't drop body parts rule response (A) is "[We] [can't drop] part of [ourselves].".  [was "[We] [can't drop] part of [ourselves]."]
@@ -1157,13 +1157,15 @@ This extension, by default, explicitly tells the player if a word they typed is 
 If the parser fails because it doesn't recognize a word, this extension will give an informative error message like:
 	[You don't need to use the word 'kludge' in this story.]
 You can change this to, for instance, the traditional Infocom-style message as follows:
-	The command includes word not in dictionary rule response (A) is "I don't know the word 'kludge'".
+	The command includes word not in dictionary rule response (A) is "I don't know the word '[word at position N]'".
+In the response's context, "word at position N" is the first non-dictionary word.
 This helps out players who know not to try the word again.
-	
+
 If the word is recognized but out of scope, the parser will instead say:
 	You can't see anything called 'kludge' right now.  [Or I misunderstood you.]
 You can change this as follows:
-	The command includes word not in scope rule response (A) is "Naughty player, referring to things you can't see."
+	The command includes word not in scope rule response (A) is "Naughty player, referring to things you can't see such as [the misunderstood word]."
+In the response's context, "the misunderstood word" is the first word not understood by the parser.
 
 If you want to conceal from the player which words are understood, you can restore the default Inform 7 message:
 	You can't see any such thing.
@@ -1195,7 +1197,8 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
-	Version 3: Incorporated remaining "difficult" features of Neutral Library Messages.
+	Version 3/170927: Fixes to two bugs reported by Daniel Stelzer.
+	Version 3/170926: Incorporated remaining "difficult" features of Neutral Library Messages.
 	Version 2: Unreleased: complete code rewrite to improve maintainability, included all straightforward message replacements.
 	Version 1: Unreleased: adapted Neutral Library Messages to responses system.
 
