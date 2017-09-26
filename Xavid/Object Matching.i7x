@@ -234,6 +234,10 @@ Chapter 3 - Bugs and Comments
 
 This extension is hosted in Github at https://github.com/i7/extensions/tree/master/Xavid. Feel free to email me at extensions@xavid.us with questions, comments, bug reports, suggestions, or improvements.
 
+Section 1 - Known Issues
+
+Something in the current multiple object list won't match as a "[thing]" or similar.
+
 Example: *** Psychic Examiner - Error messages with locations.
 
 	*: "Psychic Examiner"

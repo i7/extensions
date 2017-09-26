@@ -1,4 +1,4 @@
-Version 1/170530 of Expanded Understanding by Xavid begins here.
+Version 1/170913 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -20,13 +20,13 @@ Section 2 - Improved Errors for Taking
 A can't see any such thing rule when the clever action-to-be is the taking off action (this is the not wearing something to take off rule):
 	say "You're not wearing any [mistaken noun snippet]."
 
-[ Maybe it's "take something from something" ]
-A can't see any such thing rule when the clever action-to-be is the removing it from action and the mistaken noun position is 1 (this is the can't see something to take from rule):
+[ Maybe it's "take something from something" ; mistaken noun position will be 1 when it's nothing and 0 when it's something, but in the wrong location ]
+A can't see any such thing rule when the clever action-to-be is the removing it from action and the mistaken noun position is not 2 (this is the can't see something to take from rule):
 	if the clever second noun snippet object-matches "[thing]":
 		let loc be the substituted form of "in [the matched object]";
 		if the matched object is a supporter:
 			now loc is the substituted form of "on [the matched object]";
-		say the clever don't "see" any mistaken noun snippet message for loc;
+		say the clever don't "see" any clever noun snippet message for loc;
 	else:				
 		say the clever don't "see" any mistaken noun snippet message.
 
@@ -79,6 +79,10 @@ Understand "look inside/in/into/through [a visible thing]" as examining.
 Section 4 - Improved Errors for Examining
 
 Definition: a thing is remembered if the remembered location of it is not nothing.
+
+Section 5 - Examining Rooms
+
+Understand "room/here" as a room.
 
 Chapter 4 - Burn
 
@@ -158,6 +162,13 @@ Every turn (this is the followers pursue even through multiple rooms rule):
 					now the pursuer is not shadowing the goal of the pursuer;
 					break;
 
+Chapter 7 - Use
+
+[ Small Kindnesses defines a one-noun form of use, and a two-form but only in some cases. ]
+Understand "use [something] on [something]" as using it on. Using it on is an action applying to two things.
+
+Carry out using it on (this is the Expanded Understanding carry out using it on rule): say "You'll have to try a more specific verb than use."
+
 Part 2 - Other
 
 Chapter 1 - All
@@ -210,6 +221,17 @@ Section 3 - Give All
 
 Understand "give [things preferably held] to [someone]" as giving it to.
 Understand "give [someone] [things preferably held]" as giving it to (with nouns reversed).
+
+[ Bad grammar, but might get tried anyways. ]
+[ This is the intent, but doing literally this messes up the error messages for other things. Doing it as a parser error handler means it won't break otherwise successful commands. ]
+[Understand "give [a held thing] [someone]" as giving it to.]
+Rule for printing a parser error when the latest parser error is the can only do that to something animate error and the action-to-be is the giving it to action (this is the clever bad grammar giving rule):
+	if the length of the player's command >= 3 and the word at (the length of the player's command - 1) does not match "to" and the word at (the length of the player's command) object-matches "[someone]":
+		let person be the matched object;
+		if the snippet at 2 of length (the length of the player's command - 2) object-matches "[a held thing]":
+			try giving the matched object to the person;
+			rule succeeds;
+	continue the activity.
 
 Chapter 2 - Conversation
 
@@ -364,7 +386,8 @@ The clever verb is text that varies.
 To determine the mistaken noun:
 	let best score be -1;
 	[ set some defaults if no lines match, due to implied prepositions say ]
-	now the mistaken noun position is 1;
+	[ 0 means "unknown" ]
+	now the mistaken noun position is 0;
 	now the mistaken noun snippet is the snippet at 2 of length the length of the player's command - 1;
 	now the clever action-to-be is the waiting action;
 	get syntax;
@@ -452,34 +475,52 @@ To determine the mistaken noun:
 				now the clever noun snippet is N1;
 				now the clever second noun snippet is N2;
 				now the clever action-to-be is the action-to-be;
-				let mnstart be saved mistake start;
-				if n1start > mnstart:
-					let mnstart be n1start;
-				let mnlen be a number;
-				if n2start > 0 and the saved mistake start >= n2start:
-					now mnlen is n2len - (mnstart - n2start);
-					now the mistaken noun position is 2;				
+				[ saved mistake start might be from a later grammar line, so can't use it ]
+				[ let's see if the first noun doesn't object-match something ]
+				if the clever noun snippet object-matches "[thing]":
+					if the clever second noun snippet object-matches "[thing]":
+						[ both nouns match, so I'm out of ideas ]
+						now the mistaken noun position is 0;
+					else:
+						now the mistaken noun position is 2;
+						now the mistaken noun snippet is the clever second noun snippet;
 				else:
-					now mnlen is n1len - (mnstart - n1start);
 					now the mistaken noun position is 1;
-				now the mistaken noun snippet is the snippet at mnstart of length mnlen;
-				repeat with possible len running from 1 to mnlen:
+					now the mistaken noun snippet is the clever noun snippet;
+				[ handle lists of nouns somewhat properly ]
+				let mnstart be the start of the mistaken noun snippet;
+				let wordskip be 0;
+				let nounstoskip be the number of entries in the multiple object list;
+				repeat with possible len running from 1 to the length of the mistaken noun snippet:
 					let snip be the snippet at mnstart plus possible len of length 1;
-					if snip is valid and snip matches the regular expression "(?i)^and|,$":
-						[ end snippet early if we hit an and or , ]
-						now the mistaken noun snippet is the snippet at mnstart of length possible len;
-						break;
+					if (not (snip is valid)) or snip matches the regular expression "(?i)^and|,$":
+						[ maybe end snippet early if we hit an and or , ]
+						if nounstoskip > 0:
+							[ keep going ]
+							now wordskip is possible len plus 1;
+							now nounstoskip is nounstoskip minus 1;
+						else:
+							now the mistaken noun snippet is the snippet at (mnstart plus wordskip) of length (possible len minus wordskip);
+							break;
 				if n1start > 2:
 					now the clever verb is the snippet at 1 of length n1start;
 				else:
 					now the clever verb is the verb word;
 				if N1 is the mistaken noun snippet:
-					debug "Better match: [saved mistake start] N1!";
+					debug "Better match: [the mistaken noun snippet] N1!";
 				else if N2 is the mistaken noun snippet:
-					debug "Better match: [saved mistake start] N2!";
+					debug "Better match: [the mistaken noun snippet] N2!";
 				else:
-					debug "Better match: [saved mistake start]?";
+					debug "Better match: [n1start] ? [n2start] ? [mistaken noun snippet] ?";
 				now best score is score;
+				if action reversed is true:
+					let tmp be the clever noun snippet;
+					now the clever noun snippet is the clever second noun snippet;
+					now the clever second noun snippet is tmp;
+					if mistaken noun position is 2:
+						now mistaken noun position is 1;
+					else if mistaken noun position is 1:
+						now mistaken noun position is 2;
 	debug "XAVID best match: [clever action-to-be] [mistaken noun snippet].";
 
 Syntax len is a number that varies.
@@ -490,6 +531,12 @@ The token type variable translates into I6 as "found_ttype".
 
 Token data is a number that varies.
 The token data variable translates into I6 as "found_tdata".
+
+Action reversed is a truth state that varies.
+The action reversed variable translates into I6 as "action_reversed".
+
+Match from is a number that varies.
+The match from variable translates into I6 as "found_tdata".
 
 Include (-
 
@@ -787,7 +834,14 @@ Example: ** Unit Tests
 	Filling it from is an action applying to two things.
 	Understand "fill [something] from [something]" as filling it from.
 
+	Understand "put out [something] with [something preferably held]" as putting it on (with nouns reversed).
+
+	Understand "put [something preferably held] in front of [something]" as putting it on.
+
 	Unit test:
+		start test "x here";
+		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw) and a hammer here.";
+		[]
 		start test "implied preposition grammar";
 		assert that "fill stump girl" produces "You don't see any stump girl here.";
 		[]
@@ -852,6 +906,17 @@ Example: ** Unit Tests
 		assert that "girl, give all to me" produces "hammer: The girl gives the hammer to you.[paragraph break]saw: The girl gives the saw to you.";
 		assert that "give girl all" produces "saw: You give the saw to the girl.[line break]hammer: You give the hammer to the girl.";
 		assert that "girl, give me all" produces "hammer: The girl gives the hammer to you.[paragraph break]saw: The girl gives the saw to you.";
+		assert that "give hammer girl" produces "You give the hammer to the girl.";
+		do "n";
+		assert that "give saw to girl" produces "You don't see the girl here. You last saw her at In Yard.";
+		assert that "give saw to table" produces "You can only do that to something animate.";
+		assert that "use saw on table" produces "You'll have to try a more specific verb than use.";
+		[]
+		start test "complex verb lines";
+		do "drop saw";
+		assert that "put out stump with saw" produces "You don't see the stump here. It was at In Yard.";
+		do "s";
+		assert that "put out stump with saw" produces "You don't have the saw in your possession. You last saw it in the shed.";
 	
 	Test me with "unit".
 

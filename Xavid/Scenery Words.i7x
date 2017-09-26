@@ -1,4 +1,4 @@
-Scenery Words by Xavid begins here.
+Version 1/170913 of Scenery Words by Xavid begins here.
 
 Use authorial modesty.
 
@@ -6,6 +6,7 @@ Chapter 1 - Testing unknown words in descriptions - Not for release
 
 Include Snippetage by Dave Robinson.
 Include Command Unit Testing by Xavid.
+Include Object Matching by Xavid.
 
 [When play begins:
 	repeat with O running through rooms:
