@@ -366,7 +366,7 @@ Section - Holdall when receiving gifts
 [This requires code duplication because it's the second noun which must check carrying capacity.]
 
 Check an actor giving something to (this is the use holdall to avoid exceeding carrying capacity when receiving gifts rule):
-	if the number of things carried by the second noun is at least the carrying capacity of the actor:
+	if the number of things carried by the second noun is at least the carrying capacity of the second noun:
 		if the second noun is holding a player's holdall (called the current working sack):
 			let the transferred item be nothing;
 			repeat with the possible item running through things carried by the second noun:

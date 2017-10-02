@@ -1,4 +1,4 @@
-Version 3/171001 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 3/171002 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
 
@@ -212,7 +212,7 @@ The can't take what you're inside rule response (A) is "[We] [would have] to get
 The can't take what's already taken rule response (A) is "[We] already [have] [regarding the noun][those].".  [was "[We] already [have] [regarding the noun][those]."]
 ]
 
-The can't take scenery rule response (A) is "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken.[as normal]".  [was "[regarding the noun][They're] hardly portable."]
+The can't take scenery rule response (A) is "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken.[as normal][line break]".  [was "[regarding the noun][They're] hardly portable."]
 
 [
 The can only take things rule response (A) is "[We] [cannot] carry [the noun].".  [was "[We] [cannot] carry [the noun]."]
@@ -1200,6 +1200,7 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+	Version 3/171002: Line break fix.
 	Version 3/171001: Remove parser voicing from attack, throw, and kiss.  Name the unrecognized verb in the error message.  Redirect bogus message triggered only on 'get 100 items'.
 	Version 3/170927: Fixes to two bugs reported by Daniel Stelzer.
 	Version 3/170926: Incorporated remaining "difficult" features of Neutral Library Messages.
