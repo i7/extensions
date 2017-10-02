@@ -1,4 +1,4 @@
-Version 3/170927 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 3/171001 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
 
@@ -466,11 +466,11 @@ Section 9 - Throw, Attack, Kiss
 The implicitly remove thrown clothing rule response (A) is "(first taking [the noun] off)[command clarification break]".  [was "(first taking [the noun] off)[command clarification break]"]
 ]
 
-The futile to throw things at inanimate objects rule response (A) is "[as the parser][We] [can't] throw [regarding the noun][those][or that's not the way].[as normal]".  [was "Futile."]
-The block throwing at rule response (A) is "[as the parser]Throwing [the noun] at [the second noun] would have no effect[or it's the wrong time].[as normal]".  [was "[We] [lack] the nerve when it [if story tense is the past tense]came[otherwise]comes[end if] to the crucial moment."]
-The block attacking rule response (A) is "[as the parser]Attacking [the noun] would have no effect[or that's not the way].[as normal]".  [was "Violence [aren't] the answer to this one."]
-The kissing yourself rule response (A) is "[as the parser][We] [can't] [the quoted verb] [ourselves][or that's not the way].[as normal]".  [was "[We] [don't] get much from that."]
-The block kissing rule response (A) is "[as the parser][We] [can't] [the quoted verb] [the noun][or that's not the way].[as normal]".  [was "[The noun] [might not] like that."]
+The futile to throw things at inanimate objects rule response (A) is "[We] [can't] throw [regarding the noun][those][or that's not the way].".  [was "Futile."]
+The block throwing at rule response (A) is "Throwing [the noun] at [the second noun] would have no effect[or it's the wrong time].".  [was "[We] [lack] the nerve when it [if story tense is the past tense]came[otherwise]comes[end if] to the crucial moment."]
+The block attacking rule response (A) is "Attacking [the noun] would have no effect[or that's not the way].".  [was "Violence [aren't] the answer to this one."]
+The kissing yourself rule response (A) is "[We] [can't] [the quoted verb] [ourselves][or that's not the way].".  [was "[We] [don't] get much from that."]
+The block kissing rule response (A) is "[We] [can't] [the quoted verb] [the noun][or that's not the way].".  [was "[The noun] [might not] like that."]
 
 Section 10 - Speech
 
@@ -704,8 +704,10 @@ The parser error internal rule response (J) is "[as the parser]I'm not sure what
 The parser error internal rule response (K) is "[as the parser][We] [can't] see ['][pronoun i6 dictionary word]['] ([the noun]) at the moment.[as normal]".  [was "[We] [can't] see ['][pronoun i6 dictionary word]['] ([the noun]) at the moment."]
 The parser error internal rule response (L) is "[as the parser]You excepted something not included anyway.[as normal]".  [was "You excepted something not included anyway!"]
 The parser error internal rule response (M) is "[as the parser]You can only do that to something animate.[as normal]".  [was "You can only do that to something animate."]
-The parser error internal rule response (N) is "[as the parser]That's not a verb I [if American dialect option is active]recognize[otherwise]recognise[end if].[as normal]".  [was "That's not a verb I [if American dialect option is active]recognize[otherwise]recognise[end if]."]
+The parser error internal rule response (N) is "[as the parser]The word '[the quoted verb]' is not a verb I [if American dialect option is active]recognize[otherwise]recognise[end if].[as normal]".  [was "That's not a verb I [if American dialect option is active]recognize[otherwise]recognise[end if]."]
+[This error message is unused, probably -- SCENERY_PE is not called by the library -- unless NI generates it.]
 The parser error internal rule response (O) is "[as the parser]That's not something you need to refer to in the course of this story.[as normal]".  [was "That's not something you need to refer to in the course of this game."]
+[This error message is unused, probably -- JUNKAFTER_PE is not called by the library -- unless NI generates it.]
 The parser error internal rule response (P) is "[as the parser]I didn't understand the way that finished.[as normal]".  [was "I didn't understand the way that finished."]
 The parser error internal rule response (Q) is "[as the parser][if number understood is 0]None[otherwise]Only [number understood in words][end if] of those [regarding the number understood][are] available.[as normal]".  [was "[if number understood is 0]None[otherwise]Only [number understood in words][end if] of those [regarding the number understood][are] available."]
 The parser error internal rule response (R) is "[as the parser]That noun did not make sense in this context.[as normal]".  [was "That noun did not make sense in this context."]
@@ -718,7 +720,8 @@ The parser error internal rule response (X) is "[as the parser]No command given.
 
 Section 21 - Parser nothing error internal rule
 
-The parser nothing error internal rule response (A) is "[as the parser]Nothing to do.[as normal]".  [was "Nothing to do!"]
+[Error A is only triggered on "get 100 items" commands, and is clearly a programming bug in the I6 template code.  Redirect it to the other one.]
+The parser nothing error internal rule response (A) is "[text of the parser nothing error internal rule response (B)]".  [was "Nothing to do!"]
 The parser nothing error internal rule response (B) is "[as the parser][if command includes except]That excludes everything.[otherwise]There is nothing available to [the quoted verb].[end if][as normal]".  [was "[There] [adapt the verb are from the third person plural] none at all available!"]
 
 [This short class of errors handles "Remove" actions, and mimics the responses for "take" actions.  No changes needed.]
@@ -1197,6 +1200,7 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+	Version 3/171001: Remove parser voicing from attack, throw, and kiss.  Name the unrecognized verb in the error message.  Redirect bogus message triggered only on 'get 100 items'.
 	Version 3/170927: Fixes to two bugs reported by Daniel Stelzer.
 	Version 3/170926: Incorporated remaining "difficult" features of Neutral Library Messages.
 	Version 2: Unreleased: complete code rewrite to improve maintainability, included all straightforward message replacements.

@@ -1,4 +1,4 @@
-Version 1/170817 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 2/171001 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of worked examples illustrating various features of Inform.  There isn't actually anything in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -7,6 +7,20 @@ Nathanael's Cookbook ends here.
 ---- DOCUMENTATION ----
 
 This is just a collection of examples.
+
+Example: * Examine Room -- putting the room in scope
+
+If you're in a room called "Main Street", you probably want "look at main street" to work.  By default, it doesn't.
+
+	*: "Examine Room"
+
+	Main Street is a room.
+	"This is the center of the city, where it all happens!"
+
+	After deciding the scope of an object (called character) (this is the put room in scope rule):
+		Place the location of the character in scope, but not its contents.
+
+	test me with "examine street/examine main street".
 
 Example: * Meeting Place -- using arbitrary binary relations
 
