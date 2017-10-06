@@ -8,6 +8,27 @@ Nathanael's Cookbook ends here.
 
 This is just a collection of examples.
 
+Example: * Mention Unmention -- controlling whether something is mentioned
+
+	*: "Mention Unmention"
+
+	To say mention (item - a thing):
+		now item is mentioned;
+
+	To say unmention (item - a thing):
+		now item is not mentioned;
+
+	A fruit is a kind of thing.
+	A banana is a fruit.  The description of the banana is "It's a banana."
+	An orange is a fruit.  The description of the orange is "It's an orange."
+	A kiwi is a fruit.  The description of the kiwi is "You didn't notice it at first, but that's definitely a kiwi.";
+
+	Fruit Room is a room.
+	"This is a room for displaying fruit, such as [a list of fruit].[unmention banana][unmention orange]";
+
+	The banana and the orange are in the fruit room.
+
+
 Example: * Examine Room -- putting the room in scope
 
 If you're in a room called "Main Street", you probably want "look at main street" to work.  By default, it doesn't.

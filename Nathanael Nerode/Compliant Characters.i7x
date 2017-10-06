@@ -147,7 +147,8 @@ Unsuccessful attempt by an actor taking (this is the actor failed to take rule):
 		-- the can't take what's already taken rule:
 			say "[The actor] already [have] [regarding the noun][those]." (G);
 		-- the can't take scenery rule:
-			say "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken by [the actor].[as normal]" (H);
+			[This one triggers a line break bug for some reason.]
+			say "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken by [the actor].[as normal][line break]" (H);
 		-- the can only take things rule:
 			say "[The actor] [cannot] carry [the noun]." (I);
 		-- the can't take what's fixed in place rule:
@@ -535,5 +536,10 @@ If you want to override the rules in this extension, make sure your rules are li
 
 Chapter - Interactions with other Extensions
 
-	This extension depends on Parser Error Number Bugfix by Nathanael Nerode, which fixes a bug in the Standard Rules which left two parser errors misnamed.
-	This extension depends on Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+This extension depends on Parser Error Number Bugfix by Nathanael Nerode, which fixes a bug in the Standard Rules which left two parser errors misnamed.
+This extension depends on Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+
+Chapter - Changelog
+
+1/171003 - Fix line break issue in scenery message.
+1/171002 - First version.

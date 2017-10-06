@@ -311,8 +311,8 @@ Global MarkedObjectLength = 0;
 	if (mixed_parentage) common_parent = nothing;
 
 	if (length == 0) {
-    	if (style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
-    	else if (style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
+		if (style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
+		else if (style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
 		else LIST_WRITER_INTERNAL_RM('Y');
 	} else {
 		@push MarkedObjectArray; @push MarkedObjectLength;
