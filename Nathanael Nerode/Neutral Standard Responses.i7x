@@ -1,4 +1,4 @@
-Version 3/171003 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 4/171007 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
 
@@ -18,13 +18,12 @@ To say as normal -- ending say_as_the_parser: say "[close bracket][roman type]".
 
 Section - Noncommittal Phrases
 
-[These allow for the possibility that the player is using "push Bob" to mean something metaphorical, for example.
-They can be swapped out by the programmer, including blanking them out.]
+[These allow for the possibility that the player is using "push Bob" to mean something metaphorical, for example.  They can be swapped out by the programmer, including blanking them out.]
 
 To say or that's not the way: say ", or [regarding nothing]that [aren't] the way to do so".  [this is ", or that's not the way to do so" in the present tense]
 To say or it's the wrong time: say " in these circumstances".
 
-Chapter - Helper Phrases With Low-Level Implementation
+Chapter - Low-Level Phrases To Assist Parser Error Reporting
 
 Section - Exposing the Verb Word to Inform 7
 
@@ -33,15 +32,97 @@ Section - Exposing the Verb Word to Inform 7
 To decide which snippet is the quoted verb:
   (- ((verb_wordnum * 100) + 1) -) .
   
-Section - Exposing the Misunderstood Word to Inform 7
+Section - Exposing the Extraneous Word to Inform 7
 
-[This is used in "I only understood as far as" messages to give better error messages from the parser]
+[This is used in "I only understood as far as" messages to give better error messages from the parser.
+Using "the misunderstood word" doesn't work for this because the oops target isn't set.  Neither oops_from nor saved_oops is set.  Oy gevalt!
+This was the Neutral Library Messages implementation for the misunderstood word -- however, it doesn't actually work right for "you can't see any such thing", so we handle that using the oops target, below.]
 
-To decide which snippet is the misunderstood word: 
+To decide which snippet is the extraneous word:
   (- (((wn - 1) * 100) + 1) -).
 
-To decide whether the misunderstood word is in the dictionary: 
-  (- (wn--, NextWord() ~= 0) -).
+Section - Exposing the Misunderstood Word to Inform 7
+
+[This is used in "you can't see any such thing" errors.
+Using the extraneous word fails on "take all except asdf"
+Using oops_from fails on "put treaty on asdf"
+(Though consider whether we should restore the oops target and *then* use oops_from.  Probably?  FIXME)
+
+This is the only way to do this which is correct for both:
+	put treaty on asdf
+	take all except asdf
+]
+
+To decide which snippet is the misunderstood word:
+	(- (((saved_oops) * 100) + 1) -).
+
+[This one seems to have no actual use, but we're keeping it around]
+To decide which snippet is the other misunderstood word:
+	(- (((oops_from) * 100) + 1) -).
+
+To decide whether the misunderstood word is in the dictionary:
+	(- (WordNIsInDictionary(saved_oops) ~= 0) -)
+
+To decide whether the misunderstood word is not in the dictionary:
+	(- (WordNIsInDictionary(saved_oops) == 0) -)
+
+To decide whether the misunderstood word is out of range:
+	(- (saved_oops < 1 || saved_oops > WordCount()) -)
+
+Section - Adjusting oops target
+
+[ This is necessary to get the right oops target in many parser errors, including CANT_SEE; the default routine in Parser.i6t does this. ]
+To restore the/-- oops target:
+	(-	oops_from=saved_oops; -)
+
+[This is used in this extension for "I didn't recognise that verb" errors.]
+[This is also used by Compliant Characters.i7x because the oops word is misassigned in some 'character, command' instructions.]
+To set the/-- oops target to the/-- verb:
+	(- oops_from = verb_wordnum; -)
+
+[Used in this extension for "Jame, go north" when the player meant "Jane"]
+To set the/-- oops target to word (N - a number):
+	(- oops_from = {N}; -)
+
+Section - Debug (not for release)
+
+[This is too useful not to have it in place, but should never be in a published game.]
+
+Use parser error debugging translates as (- Constant PARSER_ERROR_DEBUGGING; -);
+
+Before printing a parser error (this is the debug parser errors rule):
+	If the parser error debugging option is active:
+		say "- saved_oops [the misunderstood word] - oops_from [the other misunderstood word] - wn [the extraneous word] -";
+	continue the activity;
+
+Section - Checking the pronoun referent
+
+[This is used by Compliant Characters.i7x]
+To decide if the pronoun typed refers to something:
+	(- (pronoun_obj ~= NULL) -)
+
+Section - Exposing Dictionary Lookup to Inform 7
+
+[This is used to determine whether the misunderstood word is in the dictionary or not, for better error messages.]
+
+Include (-
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Neutral Standard Responses.i7x: WordNIsInDictionary
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+[ WordNIsInDictionary n i j wc;
+	wc = WordCount();
+	if ((n < 1) || (n > wc)) return 0; ! Out of range
+	#Ifdef TARGET_ZCODE;
+		i = n*2-1; ! copied from NextWord
+	#Ifnot;
+		i = n*3-2; ! copied from NextWord
+	#Endif;
+	j = parse-->i;
+	! print "debugging: [", j, "]";
+	if (j == 0) return 0; ! 0 means not in dictionary
+	return 1; ! Inform 7 can't handle the large negative numbers in j and sometimes thinks they're false, so we convert them to 1
+];
+-) after "Words" in "Parser.i6t".
 
 Section - Exposing the Command Understood So Far to Inform 7
 
@@ -49,9 +130,7 @@ Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 ! Neutral Standard Responses.i7x: PrintCommandUnderstoodSoFar
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
-! This is used to replicate an error message for "I only understood your command as far as" in Inform 7
-
+! This is used to replicate the error message for "I only understood your command as far as" in Inform 7 code.
 [PrintCommandUnderstoodSoFar m;
 	! Grabs parser globals; very hacky
 	for (m=0 : m<32 : m++) pattern-->m = pattern2-->m;
@@ -61,12 +140,6 @@ Include (-
 
 To say the command understood so far:
 	(- PrintCommandUnderstoodSoFar(); -)
-	
-Section - Restore oops_from
-
-[ This is necessary to get the right oops target in some parser errors, including CANT_SEE; the default routine in Parser.i6t does this. ]
-To restore oops_from:
-	(-	oops_from=saved_oops; -)
 
 Section - Exposing first non-dictionary word in command to Inform 7
 
@@ -104,17 +177,15 @@ To decide what number is the/-- position of the/-- first/-- non-dictionary word:
 
 Section - Printing arbitrary token from the command
 
+[ From Unknown Word Error ]
+
 Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 ! Neutral Standard Responses.i7x: PrintToken
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 [ PrintToken wordnum 
  k l m numwds;
-#ifdef TARGET_GLULX;
- numwds = parse-->0;
-#ifnot;
- numwds = parse->1;
-#endif; ! TARGET_GLULX;
+ numwds = WordCount();
  if (wordnum <= 0 || wordnum > numwds) return;
  k=WordAddress(wordnum); 
  l=WordLength(wordnum); 
@@ -126,12 +197,34 @@ Include (-
 To say the/-- word at position/-- (N - a number):
 	(- PrintToken({N}); -)
 
-Section - Disabled Utility Functions
+Section - Detecting except
 
-[This was carried over from Neutral Library Messages by Aaron Reed but is unused]
+[Used to improve parser messages]
+To decide whether command includes except: if the player's command includes "but" or the player's command includes "except", decide yes.
 
-[To decide which snippet is what was misunderstood: 
-	(- (((wn - 1) * 100) + (WordCount() - 2)) -).]
+Section - Line breaks for single actions only
+
+[The idea here is that multiple actions frequently have a terse reporting format: either one line at a time, or all in one sentence.  Single actions have a more generous format.]
+
+[This is unused but present for completeness.]
+To say single action line break:
+	say "[if the I6 parser is running multiple actions][no line break][otherwise][line break][end if]";
+
+[This is used for implicit takes, drops, and the holdall code: line break for single item take, but space and no paragraph break in multiple item takes]
+To say single action command clarification break:
+	say "[if the I6 parser is running multiple actions] [run paragraph on][otherwise][command clarification break][end if]";
+
+[This is unused but present for completeness]
+To say single action paragraph break:
+	say "[if the I6 parser is running multiple actions][otherwise][paragraph break][end if]";
+
+[This is used in Neutral Standard Responses, and strongly recommended]
+To say single action conditional paragraph break:
+	say "[if the I6 parser is running multiple actions][otherwise][conditional paragraph break][end if]";
+
+[This is unused but present for completeness: applies when Inform *would* break the paragraph]
+To say multiple action run paragraph on:
+	say "[if the I6 parser is running multiple actions][run paragraph on][end if]";
 
 Section - New Verbs
 
@@ -153,11 +246,6 @@ To sleep is a verb.
 
 [These are all also *irregular* verbs, obnoxiously!]
 
-Section - Detecting except
-
-[Used to improve parser messages]
-
-To decide whether command includes except: if the player's command includes "but" or the player's command includes "except", decide yes.
 
 Volume - Standard Responses
 
@@ -212,7 +300,9 @@ The can't take what you're inside rule response (A) is "[We] [would have] to get
 The can't take what's already taken rule response (A) is "[We] already [have] [regarding the noun][those].".  [was "[We] already [have] [regarding the noun][those]."]
 ]
 
-The can't take scenery rule response (A) is "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken.[as normal]".  [was "[regarding the noun][They're] hardly portable."]
+[There is a particularly nasty issue here.  We want a paragraph break after if we're examining *one* item, but only a line break if we're examining *multiple* items.  [as normal] confuses the parser so that it can't figure out that the sentence is ending.]
+
+The can't take scenery rule response (A) is "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken.[as normal][single action conditional paragraph break]".  [was "[regarding the noun][They're] hardly portable."]
 
 [
 The can only take things rule response (A) is "[We] [cannot] carry [the noun].".  [was "[We] [cannot] carry [the noun]."]
@@ -220,8 +310,9 @@ The can only take things rule response (A) is "[We] [cannot] carry [the noun].".
 
 The can't take what's fixed in place rule response (A) is "[The noun] [aren't] portable.".  [was "[regarding the noun][They're] fixed in place."]
 
+The use player's holdall to avoid exceeding carrying capacity rule response (A) is "(putting [the transferred item] into [the current working sack] to make room)[single action command clarification break]".  [was "(putting [the transferred item] into [the current working sack] to make room)[command clarification break]"]
+
 [
-The use player's holdall to avoid exceeding carrying capacity rule response (A) is "(putting [the transferred item] into [the current working sack] to make room)[command clarification break]".  [was "(putting [the transferred item] into [the current working sack] to make room)[command clarification break]"]
 The can't exceed carrying capacity rule response (A) is "[We]['re] carrying too many things already.".  [was "[We]['re] carrying too many things already."]
 The standard report taking rule response (A) is "Taken.".  [was "Taken."]
 The standard report taking rule response (B) is "[The actor] [pick] up [the noun].".  [was "[The actor] [pick] up [the noun]."]
@@ -239,7 +330,11 @@ The can't drop yourself rule response (A) is "[We] [can't] drop [ourselves].".  
 The can't drop body parts rule response (A) is "[We] [can't drop] part of [ourselves].".  [was "[We] [can't drop] part of [ourselves]."]
 The can't drop what's already dropped rule response (A) is "[The noun] [are] already here.".  [was "[The noun] [are] already here."]
 The can't drop what's not held rule response (A) is "[We] [haven't] got [regarding the noun][those].".  [was "[We] [haven't] got [regarding the noun][those]."]
-The can't drop clothes being worn rule response (A) is "(first taking [the noun] off)[command clarification break]".  [was "(first taking [the noun] off)[command clarification break]"]
+]
+
+The can't drop clothes being worn rule response (A) is "(first taking [the noun] off)[single action command clarification break]".  [was "(first taking [the noun] off)[command clarification break]"]
+
+[
 The can't drop if this exceeds carrying capacity rule response (A) is "[There] [are] no more room on [the receptacle].".  [was "[There] [are] no more room on [the receptacle]."]
 The can't drop if this exceeds carrying capacity rule response (B) is "[There] [are] no more room in [the receptacle].".  [was "[There] [are] no more room in [the receptacle]."]
 The standard report dropping rule response (A) is "Dropped.".  [was "Dropped."]
@@ -249,15 +344,20 @@ The can't put something on itself rule response (A) is "[We] [can't put] somethi
 
 The can't put onto what's not a supporter rule response (A) is "[as the parser][The second noun] [don't need] to have things put on [them] in this story.[as normal]".  [was "Putting things on [the second noun] [would achieve] nothing."]
 
+The can't put clothes being worn rule response (A) is "(first taking [regarding the noun][them] off)[single action command clarification break]".  [was "(first taking [regarding the noun][them] off)[command clarification break]"]
+
 [
-The can't put clothes being worn rule response (A) is "(first taking [regarding the noun][them] off)[command clarification break]".  [was "(first taking [regarding the noun][them] off)[command clarification break]"]
 The can't put if this exceeds carrying capacity rule response (A) is "[There] [are] no more room on [the second noun].".  [was "[There] [are] no more room on [the second noun]."]
 The concise report putting rule response (A) is "Done.".  [was "Done."]
 The standard report putting rule response (A) is "[The actor] [put] [the noun] on [the second noun].".  [was "[The actor] [put] [the noun] on [the second noun]."]
 The can't insert something into itself rule response (A) is "[We] [can't put] something inside itself.".  [was "[We] [can't put] something inside itself."]
 The can't insert into closed containers rule response (A) is "[The second noun] [are] closed.".  [was "[The second noun] [are] closed."]
 The can't insert into what's not a container rule response (A) is "[regarding the second noun][Those] [can't contain] things.".  [was "[regarding the second noun][Those] [can't contain] things."]
-The can't insert clothes being worn rule response (A) is "(first taking [regarding the noun][them] off)[command clarification break]".  [was "(first taking [regarding the noun][them] off)[command clarification break]"]
+]
+
+The can't insert clothes being worn rule response (A) is "(first taking [regarding the noun][them] off)[single action command clarification break]".  [was "(first taking [regarding the noun][them] off)[command clarification break]"]
+
+[
 The can't insert if this exceeds carrying capacity rule response (A) is "[There] [are] no more room in [the second noun].".  [was "[There] [are] no more room in [the second noun]."]
 The concise report inserting rule response (A) is "Done.".  [was "Done."]
 The standard report inserting rule response (A) is "[The actor] [put] [the noun] into [the second noun].".  [was "[The actor] [put] [the noun] into [the second noun]."]
@@ -267,9 +367,7 @@ Section 3 - Eating
 
 The can't eat unless edible rule response (A) is "[if noun is player][We] [can't eat] [ourselves].[otherwise if noun is a person][We] [can't] eat [the noun].[otherwise][We] [can't eat] [the noun][or that's not the way].[end if]". [was "[regarding the noun][They're] plainly inedible."]
 
-[
-The can't eat clothing without removing it first rule response (A) is "(first taking [the noun] off)[command clarification break]".  [was "(first taking [the noun] off)[command clarification break]"]
-]
+The can't eat clothing without removing it first rule response (A) is "(first taking [the noun] off)[single action command clarification break]".  [was "(first taking [the noun] off)[command clarification break]"]
 
 The can't eat other people's food rule response (A) is "[regarding the noun][Those] [seem] to belong to [the owner]."  [was "[The owner] [might not appreciate] that."]
 The standard report eating rule response (A) is "[We] [eat] [the noun].".  [was "[We] [eat] [the noun]. Not bad."]
@@ -678,7 +776,7 @@ The action processing internal rule response (K) is "[as the parser]I didn't und
 
 Section 20 - Parser error internal rule
 
-[Parser styling]
+[Parser styling.  Note that the parser will spit out a line break for these.]
 
 The parser error internal rule response (A) is "[as the parser]I didn't understand that sentence.[as normal]".  [was "I didn't understand that sentence."]
 
@@ -696,7 +794,7 @@ The parser error internal rule response (E) is "[We] [can't] see any such thing.
 ]
 
 [This error message is unused, probably -- TOOLIT_PE is not called by the library -- unless NI generates it.]
-The parser error internal rule response (F) is "[as the parser]You seem to have said too little.[as normal]."  [was "You seem to have said too little!"]
+The parser error internal rule response (F) is "[as the parser]You seem to have said too little.[as normal]".  [was "You seem to have said too little!"]
 The parser error internal rule response (G) is "[We] [aren't] holding that."  [was "[We] [aren't] holding that!"]
 The parser error internal rule response (H) is "[as the parser]You can't use multiple objects with that verb.[as normal]".  [was "You can't use multiple objects with that verb."]
 The parser error internal rule response (I) is "[as the parser]You can only use multiple objects once on a line.[as normal]".  [was "You can only use multiple objects once on a line."]
@@ -770,8 +868,12 @@ Section 25 - Protagonist, Implicit Taking, Obituary
 The print protagonist internal rule response (A) is "[We]".  [was "[We]"]
 The print protagonist internal rule response (B) is "[ourselves]".  [was "[ourselves]"]
 The print protagonist internal rule response (C) is "[our] former self".  [was "[our] former self"]
-The standard implicit taking rule response (A) is "(first taking [the noun])[command clarification break]".  [was "(first taking [the noun])[command clarification break]"]
-The standard implicit taking rule response (B) is "([the second noun] first taking [the noun])[command clarification break]".  [was "([the second noun] first taking [the noun])[command clarification break]"]
+]
+
+The standard implicit taking rule response (A) is "(first taking [the noun])[single action command clarification break]".  [was "(first taking [the noun])[command clarification break]"]
+The standard implicit taking rule response (B) is "([the second noun] first taking [the noun])[single action command clarification break]".  [was "([the second noun] first taking [the noun])[command clarification break]"]
+
+[
 The print obituary headline rule response (A) is " You have died ".  [was " You have died "]
 The print obituary headline rule response (B) is " You have won ".  [was " You have won "]
 The print obituary headline rule response (C) is " The End ".  [was " The End "]
@@ -862,7 +964,7 @@ The parser error internal rule response (C) is "I only understood you as far as 
 ]
 
 For printing a parser error while the latest parser error is the only understood as far as error (this is the only understood as far as rule):
-	say "[as the parser]I can't understand your entire command.  The first part looked like the command '[the command understood so far]', but I didn't expect the word '[misunderstood word]' next.[as normal]" (A);
+	say "[as the parser]I can't understand your entire command.  The first part looked like the command '[the command understood so far]', but I didn't expect the word '[the extraneous word]' next.[as normal][line break]" (A);
 
 Chapter - Announcing the Score
 
@@ -915,13 +1017,14 @@ The full-sentence announce the score rule is listed instead of the announce the 
 
 This is the full-sentence announce the score rule:
 	if the actor is the player:
-		if the no scoring option is active:
-			say "[text of the announce the score rule response (C)]" (A);
-		otherwise:
+		if the scoring option is active:
 			if the table of rankings exists:
-				say "[as the parser][text of the announce the score rule response (A)][text of the announce the score rule response (B)][current rank name].[run paragraph on][as normal]" (B);
+				say "[as the parser][text of the announce the score rule response (A)][text of the announce the score rule response (B)][current rank name].[run paragraph on][as normal][line break]" (B);
 			otherwise:
-				say "[as the parser][text of the announce the score rule response (A)].[as normal]" (C);
+				say "[as the parser][text of the announce the score rule response (A)].[as normal][line break]" (C);
+		otherwise:
+			[For bizarre reasons, this one needs a line break, though the one which responds to "nofity on" does not.  Context, I guess.]
+			say "[text of the announce the score rule response (C)][line break]" (A);
 
 Chapter - Brief, Verbose, Superbrief
 
@@ -933,7 +1036,7 @@ The full-sentence report preferring sometimes abbreviated room descriptions rule
 
 This is the full-sentence report preferring sometimes abbreviated room descriptions rule:
 	if the actor is the player:
-		say "[as the parser][The story title][text of the standard report preferring sometimes abbreviated room descriptions rule response (A)][as normal]" (A);
+		say "[as the parser][The story title][text of the standard report preferring sometimes abbreviated room descriptions rule response (A)][as normal][line break]" (A);
 
 The full-sentence report preferring unabbreviated room descriptions rule is listed
 	instead of the standard report preferring unabbreviated room descriptions rule
@@ -941,7 +1044,7 @@ The full-sentence report preferring unabbreviated room descriptions rule is list
 	
 This is the full-sentence report preferring unabbreviated room descriptions rule:
 	if the actor is the player:
-		say "[as the parser][The story title][text of the standard report preferring unabbreviated room descriptions rule response (A)][as normal]" (A);
+		say "[as the parser][The story title][text of the standard report preferring unabbreviated room descriptions rule response (A)][as normal][line break]" (A);
 
 The full-sentence report preferring abbreviated room descriptions rule is listed
 	instead of the standard report preferring abbreviated room descriptions rule
@@ -949,7 +1052,7 @@ The full-sentence report preferring abbreviated room descriptions rule is listed
 
 This is the full-sentence report preferring abbreviated room descriptions rule:
 	if the actor is the player:
-		say "[as the parser][The story title][text of the standard report preferring abbreviated room descriptions rule response (A)][as normal]" (A);
+		say "[as the parser][The story title][text of the standard report preferring abbreviated room descriptions rule response (A)][as normal][line break]" (A);
 
 Chapter - Requesting the Pronoun Meanings
 
@@ -998,7 +1101,7 @@ The full-sentence announce the pronoun meanings rule is listed
 	in the carry out requesting the pronoun meanings rulebook.
 
 This is the full-sentence announce the pronoun meanings rule:
-		say "[as the parser][statement of pronoun meanings][as normal]".
+		say "[as the parser][statement of pronoun meanings][as normal][line break]".
 
 Volume - Player Description
 
@@ -1054,28 +1157,58 @@ Use traditional can't see any such thing translates as (- Constant TRADITIONAL_C
 
 Rule for printing a parser error when the latest parser error is the can't see any such thing error and the traditional can't see any such thing option is active (this is the traditional can't see any such thing rule):
 	say "[ text of the parser error internal rule response (E) ]";
-	restore oops_from;
+	restore the oops target;
 
 Chapter - Commmand includes word not in scope rule
 
-[This has to come first for reasons of 'oops', which will match the misunderstood word, NOT a later non-dictionary word in the command.  A bit imperfect but follows "least surprise".]
+[It's a bit silly to check whether the misunderstood word is in the dictionary twice, in two rules, but it's cheap code so we do this the "clean" way.]
 
 Rule for printing a parser error when the latest parser error is the can't see any such thing error and the misunderstood word is in the dictionary (this is the command includes word not in scope rule):
-	say "[We] [can't] see anything called '[the misunderstood word]' right [now].  [as the parser]Or I misunderstood you.[no line break][as normal]" (A);
-	restore oops_from;
+	say "[We] [can't] see anything called '[the misunderstood word]' right [now].  [as the parser]Or I misunderstood you.[no line break][as normal][line break]" (A);
+	restore the oops target;
 
 Chapter - Command includes word not in dictionary rule
 
-[This is the version from Dunno / Unknown Word Error, not the version from Neutral Library Messages.]
+[It's a bit silly to check whether the misunderstood word is in the dictionary twice, in two rules, but it's cheap code so we do this the "clean" way.]
 
-Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the command includes word not in dictionary rule):
-	Let N be the position of the first non-dictionary word;
-	if N is zero:
+Rule for printing a parser error when the latest parser error is the can't see any such thing error and the misunderstood word is not in the dictionary (this is the command includes word not in dictionary rule):
+	if the misunderstood word is out of range: [Could happen]
 		continue the activity;
-	say "[as the parser]You don't need to use the word '[word at position N]' in this story.[as normal]" (A);
-	restore oops_from;
+	say "[as the parser]You don't need to use the word '[the misunderstood word]' in this story.[as normal][line break]" (A);
+	restore the oops target;
 
-[Theoretically you could fall through with no non-dictionary words and no misunderstood word but you shouldn't get a CANT_SEE error in that case.  If this happens it'll fall back to the traditional "You can't see any such thing."]
+[Theoretically you could fall through if the misunderstood word is out of range -- but you shouldn't get a CANT_SEE error in that case.  If this happens it'll fall back to the traditional "You can't see any such thing."]
+
+Volume - Fix Remove Action
+
+[We have to patch a nasty bug in the Standard Rules.  Because the grammar lines don't recognize "remove [thing not inside] from [container]", the check rules for Remove never trigger, and it defaults to "you can't see any such thing"!  We displace the bad "things inside" token with "things", and then introduce a rule for "all" to prevent it from including things not on the table.]
+
+Understand "take [things] from [something]" as removing it from.
+Understand "take [things] off [something]" as removing it from.
+Understand "get [things] from [something]" as removing it from.
+Understand "remove [things] from [something]" as removing it from.
+
+Rule for deciding whether all includes a thing (called item) while removing (this is the don't remove things not there rule):
+	if the holder of the item is not the second noun:
+		it does not;
+	otherwise:
+		make no decision;
+
+Volume - Enhanced oops
+
+Section - Set oops target on verb I don't understand error
+
+[The standard rules fail to set the oops word here.]
+
+Rule for printing a parser error when the latest parser error is the not a verb I recognise error (this is the enhanced not a verb I recognise rule):
+	say "[text of the parser error internal rule response (N)][line break]" (A);
+	set the oops target to the verb;
+
+Section - Set oops target on can't see who to talk to error
+
+Rule for printing a parser error when the latest parser error is the can't see whom to talk to error (this is the enhanced can't see who to talk to rule):
+	say "[text of the parser error internal rule response (U)][line break]" (A);
+	set the oops target to word one;
 
 Neutral Standard Responses ends here.
 
@@ -1089,15 +1222,15 @@ Section - Rationale
 
 The main complaints levied against the standard reponses are:
 
-	They sometimes imply a certain tone of wry amusement which descends from the Infocom/text adventure era, and which is not always appropriate to modern works of IF.
+They sometimes imply a certain tone of wry amusement which descends from the Infocom/text adventure era, and which is not always appropriate to modern works of IF.
 	
-	There is not a clear distinction between messages narrating story world events and those giving parser refusals, leading to a muddying of the difference between the author's voice and the default system messages.
+There is not a clear distinction between messages narrating story world events and those giving parser refusals, leading to a muddying of the difference between the author's voice and the default system messages.
 	
-	Error messages often do not contain information instructing players how to better restate their command.
+Error messages often do not contain information instructing players how to better restate their command.
 	
-	They can sometimes contradict the story world, as in the assumption "That's plainly inedible," or mislead the player about a course of action, as in "This dangerous act would achieve little."
+They can sometimes contradict the story world, as in the assumption "That's plainly inedible," or mislead the player about a course of action, as in "This dangerous act would achieve little."
 	
-	Inconsistencies in style, such as whether command examples are given in CAPS or 'quotes', or which messages are wrapped in square brackets and what that signifies.
+Inconsistencies in style, such as whether command examples are given in CAPS or 'quotes', or which messages are wrapped in square brackets and what that signifies.
 
 The extension attempts to address all of these concerns as much as possible. Jokes or insults have been replaced by more neutral responses.  Many error messages have been rephrased to more clearly state what confused the parser or instruct the player towards a better command to try. Messages that make assumptions about the player's intentions or the world model have been softened so as not to appear incongruous with the story. All command examples are now given in 'quote' format.  And by default, all parser / out-of-world messages are wrapped in brackets and put in italics.
 
@@ -1129,16 +1262,63 @@ To override this, use code like the following:
 	To say as the parser -- beginning say_as_the_parser: say "[bold type]The parser says: '".
 	To say as normal -- ending say_as_the_parser: say "'[roman type]".
 	
-These say statements may be used in your own text to style parser messages.  There are some issues with line breaks which mean it is often best to write:
+These say statements may be used in your own text to style parser messages.  With a bracket following a period at the end of a sentence, Inform's line breaking algorithm gets confused, so it's often necessary to write:
+	say "[as the parser]Hi, I'm the parser.[no line break][as normal][line break]".
+
+Or if you're running the paragraph on:
 	say "[as the parser]Hi, I'm the parser.[no line break][as normal]".
 	
+One final subtlety:  if you're responding to an action like "take" which has a paragraph break after "take one thing" but not after each line in "take all", you'll want to use an additional phrase "single action conditional paragraph break" (see the section on line breaking):
+	say "[as the parser]You shouldn't try to take that in this story.[as normal][single action conditional paragraph break]";
+
+Section - Overriding Responses
+
 If you don't want parser messages to be styled differently from other library messages:
 	To say as the parser -- beginning say_as_the_parser: do nothing.
 	To say as normal -- ending say_as_the_parser: do nothing.
 
-Section - Overriding Responses
+Of course, all responses can be individually overridden using the usual responses system.
 
-All responses can be overridden using the usual responses system.
+Section - Use Different Line Breaking in Multiple Object Lists
+
+This extension provides several utility phrases to allow you to make the same text line-break correctly both for multiple action reports like:
+	the box: (putting the toy in the holdall to make room) Taken.
+	the cat: You can't take the cat.
+	
+	>
+
+And on single action reports like:
+	(putting the toy in the holdall to make room)
+	Taken.
+	
+	>
+
+The say phrases available are:
+
+	single action line break
+
+This is a line break if doing a single action, and no line break if doing multiple actions.  I haven't actually found a use for this:
+
+	single action conditional paragraph break
+
+This is a conditional paragraph break only if there is a single action.  This corrects the report for:
+	the box: You can't boil the box.
+	the cat: Boiled.
+
+	single action paragraph break
+
+This is a paragraph break only if there is a single action.  I haven't actually found a use for this, as the single action conditional paragraph break is more useful.
+
+	multiple action run paragraph on
+
+This could be used where Inform really wants to break the paragraph.  For multiple actions, it runs the paragraph on; for single actions, it doesn't.  I haven't found a use for this either.
+
+	single action command clarification break
+
+This is one space if doing multiple actions, and otherwise a command clarification break.  The purpose of this is specifically to avoid a line break in the following:
+	the box: (Putting the toy in the holdall to take room) Taken.
+
+It should generally be used only for such situations.
  
 Section - You can't see any such thing
 
@@ -1158,23 +1338,31 @@ Distinguishing between these subtle cases can be difficult. For instance, short 
 This extension, by default, explicitly tells the player if a word they typed is not in the story's dictionary. The classic argument against this, that sneaky players can use it to figure out the existence of yet-unseen objects, seems less relevant today than it did when puzzles comprised most IF content (not to mention having something of a nanny-state quality, like a novelist hovering around ensuring readers don't flip ahead and see IMPORTANT NOUNS they aren't supposed to know about yet). Perhaps a more relevant objection is that messages of this sort can make the parser seem primitive ("I don't know the word 'love.'")  I believe the benefit to players of knowing that a command didn't work because a certain word isn't important (rather than wondering if it's just not in scope, or they misspelled it, or they typed it in the wrong spot in the grammar line) outweighs these concerns, and I've attempted to make the message prescriptive rather than expository: "You don't need to use the word 'love' in this story." However, if you'd like to restore the traditional behavior, you can do so with 'Use traditional can't see any such thing'.
 
 If the parser fails because it doesn't recognize a word, this extension will give an informative error message like:
-	[You don't need to use the word 'kludge' in this story.]
+	"[You don't need to use the word 'kludge' in this story.]"
+
 You can change this to, for instance, the traditional Infocom-style message as follows:
 	The command includes word not in dictionary rule response (A) is "I don't know the word '[word at position N]'".
+
 In the response's context, "word at position N" is the first non-dictionary word.
 This helps out players who know not to try the word again.
 
 If the word is recognized but out of scope, the parser will instead say:
-	You can't see anything called 'kludge' right now.  [Or I misunderstood you.]
+	"You can't see anything called 'kludge' right now.  [Or I misunderstood you.]"
+
 You can change this as follows:
 	The command includes word not in scope rule response (A) is "Naughty player, referring to things you can't see such as [the misunderstood word]."
-In the response's context, "the misunderstood word" is the first word not understood by the parser.
+
+In the response's context, "the misunderstood word" is the first word not understood by the parser; it's the word which will be replaced by "oops".
+In certain responses, this isn't valid; use "the extraneous word" instead in those responses.
 
 If you want to conceal from the player which words are understood, you can restore the default Inform 7 message:
 	You can't see any such thing.
+
 by using the option
 	Use traditional can't see any such thing.
 	
+In addition, the Standard Rules have a bug in the 'remove thing from container' implementation which results in "You can't see any such thing" being printed for items which are visible but not inside the container.  This extension fixes this bug and gives the proper responses for that case.  This is fixed whether or not you "Use traditional can't see any such thing".
+
 Section - Further ideas for 'You can't see any such thing'
 
 Several additional extensions can help break things down further. "Remembering" carves off G from E-F, while "Poor Man's Mistype" can sometimes address D. "Smarter Parser" can sometimes offer helpful messages for certain types of A command related to body parts and common environmental features like the sky. Eric Eve's Text Capture could be a tool in distinguishing A from B.
@@ -1189,6 +1377,25 @@ This incorporates, and updates, the entirety of Neutral Library Messages by Aaro
 
 Some of the response replacements, particularly those where multiple responses were used to build a single sentence, were significantly more difficult to implement than others and involved hacking into I6 code.  These are in separate volumes and chapters; these can be individually replaced if they are causing trouble.  The "Standard Responses" volume should be safe in any case.
 
+I strongly recommend the "Tab Removal" extension.  This replaces tabs with spaces in commands typed by the player.  Without it, error messages for commands containing tabs are quite cryptic.
+
+The "Compliant Characters" extension depends on Neutral Standard Messages.  It enhances error messages for commands given to other characters.  With Compliant Characters, if the persuasion rules succeed a command like
+	Jane, take blox
+
+will give a response like
+	[You don't need to use the word "blox" in this story.]
+
+or
+	Jane already has that.
+
+or
+	Jane can't take that because that seems to belong to you.
+
+instead of the unhelpful default:
+	Jane is unable to do that.
+
+Compliant Characters is a separate extension because it is intended for stories where you want the *story* to give responses to mistyped or illogical commands, while some games may prefer that the *character* give responses in character (which is the Inform 7 default assumption).
+
 Section - Extension History
 
 This extension is based on Neutral Library Messages by Aaron Reed.  Aaron wrote many of the changed responses.  Aaron also wrote most of the documentation (athough I have made some substantial edits).  However, Neutral Library Messages stopped working when Inform 7 created the "responses" system.  Adapting to the responses system required a nearly complete rewrite.
@@ -1200,7 +1407,12 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
-	Version 3/171003: Revert line break fix.
+	Version 4/171007:
+		Add line break helper phrases and documentation.  Fix several tricky line break errors correctly (including some from the Standard Rules).
+		New and much better I6 method for determining the misunderstood word and for determining whether it is a dictionary word.
+		Major fixes to "You can't see that" responses.  Fix error on "take all but (item not in play)".
+		Repair bug in the Standard Rules implementation of Remove (which gave misleading error messages).
+		Set oops target on additional errors which didn't set it.
 	Version 3/171002: Line break fix.
 	Version 3/171001: Remove parser voicing from attack, throw, and kiss.  Name the unrecognized verb in the error message.  Redirect bogus message triggered only on 'get 100 items'.
 	Version 3/170927: Fixes to two bugs reported by Daniel Stelzer.
@@ -1235,12 +1447,14 @@ Example: * The Ringer - An array of different types of messages, both from the p
 	Singing is an action applying to nothing.
 	Understand "sing" as singing.
 
-	Check singing when player does not hold platform: instead say "[as the parser]You can't sing in this extension demo![no line break][as normal]".
+	Check singing when player does not hold platform: instead say "[as the parser]You can't sing in this extension demo![no line break][as normal][line break]".
 	Before jumping when player is on platform: say "Before jumping, you stop and think about something.".
-	Before sleeping when player is on platform: say "You can't.  [as the parser]You might try MOVE or TILT.[no line break][as normal]".
+	Instead of sleeping when player is on platform: say "You can't.  [as the parser]You might try MOVE or TILT.[no line break][as normal][line break]".
 	Before listening when player is on platform: say "[as the parser]That's totally impossible.[no line break][as normal]  But you do it anyway."
 
 	test me with "get bat / jump / get cat / big / wait / oops / listen to platform now / get on platform / look / remove all from cat / eat platform / open box / eat apple / g / take / bat / drop all but rat / drop all but bat / drop all but / sing / jump / sleep / listen / examine cat and rat / drop ascot / score". 
+
+	[NB - The one which gives the wrong error with version 4 of Neutral Library Messages is 'get all but rat'... a project for version 5.  The rest work.  This is a bug in drop, since take all but xxxx works right.]
 
 Example: * Ignorance is Bliss - Test for don't know that word rule (from Unknown Word Error)
 	
@@ -1262,5 +1476,22 @@ Example: ** Oops - Regression test for interaction between don't know that word 
 
 	Understand "put [something preferably held] on top of [something]" as putting it on.
 
-	[ Without "restore oops_from" above, this oops would result in "put table on tabl" and get the same error message a second time because of some parsing weirdness. ]
+	[ Without "restore the oops target" above, this oops would result in "put table on tabl" and get the same error message a second time because of some parsing weirdness. ]
 	Test me with "put treaty on tabl / oops table".
+
+Example: *** Scenery - Regression test for line break issues with scenery responses
+
+	*: "Scenery"
+
+	Include Neutral Standard Responses by Nathanael Nerode.
+
+	The House is a room.  "It's the house."
+
+	The banana is a thing.  [Kept offstage for testing.]
+
+	The furniture is a plural-named scenery thing in the house.  The description of the furniture is "The furniture is not meant to be used."
+
+	The decorations is a plural-named scenery thing in the house.  The description of the decorations is "Decorative."
+
+	test scenery with "take furniture/take furniture and decorations".
+	test cantsee with "take banana/take sdfh/take banana and furniture".

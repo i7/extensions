@@ -1,9 +1,9 @@
-Version 1/171002 of Compliant Characters by Nathanael Nerode begins here.
+Version 2/171007 of Compliant Characters by Nathanael Nerode begins here.
 
-"Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires Parser Error Number Bugfix and Neutral Standard Responses.  Tested with Inform 6M62."
+"Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires Parser Error Number Bugfix and version 4 of Neutral Standard Responses.  Tested with Inform 6M62."
 
 Include Parser Error Number Bugfix by Nathanael Nerode.
-Include Neutral Standard Responses by Nathanael Nerode.
+Include Neutral Standard Responses by Nathanael Nerode.  [This includes most of our callbacks into Inform 6, among other things]
 
 Volume - Parser Errors
 
@@ -13,36 +13,91 @@ We have to replicate most of the I6 code in "Parser Letter I".  Wonderful.
 Since "check an actor answering something that" ONLY happens in case of a parser error, there's always a latest parser error and it's from the most recent command.
 ]
 
-Section - Low-level Support Routines
+Section - Patch the I6 Parser
 
-To set the/-- oops word to the/-- verb:
-	(- oops_from = verb_wordnum; -)
-	
-To decide if the pronoun typed refers to something:
-	(- (pronoun_obj ~= NULL) -)
+[The I6 parser, infuriatingly, *resets* wn before passing it off to "answer".  We need to save it, for "the extraneous word".]
+[Annoyingly, even this is not reliable.]
 
-Section - Parser Errors with complex implementation
+Include (-
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Compliant Characters replacement for Parser.i6t: Parser Letter H
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+	.GiveError;
+	etype = best_etype;
+	if (actor ~= player) {
+		if (usual_grammar_after ~= 0) {
+			verb_wordnum = usual_grammar_after;
+			jump AlmostReParse;
+		}
+		m = wn; ! Save wn (change made by Compliant Characters.i7x), using existing temporary variable
+		wn = verb_wordnum;
+		special_word = NextWord();
+		if (special_word == comma_word) {
+			special_word = NextWord();
+			verb_wordnum++;
+		}
+		wn = m; ! Restore wn (change made by Compliant Characters.i7x), using existing temporary variable
+		parser_results-->ACTION_PRES = ##Answer;
+		parser_results-->NO_INPS_PRES = 2;
+		parser_results-->INP1_PRES = actor;
+		parser_results-->INP2_PRES = 1; special_number1 = special_word;
+		actor = player;
+		consult_from = verb_wordnum; consult_words = num_words-consult_from+1;
+		rtrue;
+	}
 
-[Some of the error types have potentially complicated implementations and get their own rules.]
+-) instead of "Parser Letter H" in "Parser.i6t".
 
-Check an actor answering something (called the commandee) that when the latest parser error is the can't see any such thing error (this is the print can't see any such thing error for commands to actors rule): [CANTSEE_PE]
-	if the misunderstood word is in the dictionary:
-		say "[The commandee] [can't] see anything called '[the misunderstood word]' right [now].  [as the parser]Or I misunderstood you.[no line break][as normal]" (Y);
-	otherwise:
-		say "[as the parser]You don't need to use the word '[the misunderstood word]' in this story.[as normal]" (Z);
-	restore oops_from; [Done in standard parser]
-	rule fails.
+Section - Debug (not for release)
+
+[This is too useful not to have it in place, but should never be in a published game.]
+
+The debug parser errors for commands to actors rule is listed first in the check answering it that rulebook. [ But normally does nothing ]
+
+Check an actor answering something (called the commandee) that (this is the debug parser errors for commands to actors rule):
+	If the parser error debugging option is active:
+		say "- saved_oops [the misunderstood word] - oops_from [the other misunderstood word] - wn [the extraneous word] -";
+	continue the action;
+
+Section - You can't see any such thing
+
+[CANTSEE_PE]
+
+[It's a bit silly to check whether the misunderstood word is in the dictionary twice, in two rules, but it's cheap code so we do this the "clean" way.]
+
+Check an actor answering something (called the commandee) that when the latest parser error is the can't see any such thing error and the misunderstood word is in the dictionary (this is the command to actor includes word not in scope rule):
+	say "[The commandee] [can't] see anything called '[the misunderstood word]' right [now].  [as the parser]Or I misunderstood you.[no line break][as normal][line break]" (A);
+	restore the oops target;
+	rule fails;
+
+Check an actor answering something (called the commandee) that when the latest parser error is the can't see any such thing error and the misunderstood word is not in the dictionary (this is the command to actor includes word not in dictionary rule):
+	if the misunderstood word is out of range:
+		continue the action;
+	say "[as the parser]You don't need to use the word '[the misunderstood word]' in this story.[as normal][line break]" (A);
+	restore the oops target;
+	rule fails;
+
+[This shouldn't ever happen; fallback rule.  We would hit this if saved_oops was out of range, but this shouldn't happen with a CANTSEE_PE error.]
+
+Check an actor answering something (called the commandee) that when the latest parser error is the can't see any such thing error and the misunderstood word is out of range (this is the command to actor can't see any such thing fallback rule):
+	say "[The commandee] [can't] see any such thing." (A);
+	rule fails;
+
+Section - Command clarification error failthrough
+
+[This will not normally be triggered: The parser will correctly spawn a command clarification question for this.  This is the backup in case something funny happens and command clarification doesn't happen.]
 
 Check an actor answering something (called the commandee) that when the latest parser error is the referred to a determination of scope error (this is the print referred to a determination of scope error for commands to actors rule): [ASKSCOPE_PE]
 	[This is swapped with NOTINCONTEXT_PE in the Standard Rules -- a large bug]
-	[TODO: This is a tricky one, because in the parser it spawns a clarification question.  I don't know how to trigger that.  So this is a placeholder.]
-	say "[as the parser][The commandee] [can't] tell what [the player] [are] referring to.[as normal]" (Y);
+	say "[as the parser][The commandee] [can't] tell what [the player] [are] referring to.[as normal][line break]" (Y);
 	rule fails.
+
+Section - Nothing to do error 
 
 [
 TODO: There's some screwy complicated code in the standard parser which special-cases nothing responding to ##Remove actions.
 Unfortunately, by the time we get here, the parser has trashed the real action name.
-So we can't do that clever stuff.  Have to default to the non-remove messages.  (Test to see whether the Remove errors are triggered.
+So we can't do that clever stuff.  Have to default to the non-remove messages.  (Test to see whether the Remove errors are triggered.)
 
 In addition, for non-##Remove, the parser gave the "Nothing to do" response if multi_wanted==100.
 This is... bizarre, and almost certainly an programming mistake, as it only triggers on "get 100 items", which is clearly wrong.
@@ -50,8 +105,28 @@ This is... bizarre, and almost certainly an programming mistake, as it only trig
 This leaves only one message.  It's "B" to match up with the parser error nothing rule responses, and it triggers on "get 4 items" or "get all items" (and now on get 100 items too).
 ]
 Check an actor answering something (called the commandee) that when the latest parser error is the nothing to do error (this is the print nothing to do error for commands to actors rule): [NOTHING_PE]
-	say "[as the parser][if command includes except]That excludes everything available to [the commandee].[otherwise]There is nothing available for [the commandee] to [the quoted verb].[end if][as normal]" (B);
+	say "[as the parser][if command includes except]That excludes everything available to [the commandee].[otherwise]There is nothing available for [the commandee] to [the quoted verb].[end if][as normal][line break]" (B);
 	rule fails.
+
+Section - Order of Parser Error Printing Rules
+
+[By default we want these errors to come last.  Any earlier check rule written by the author can have "success" and authorize the otherwise-parser-error command.]
+
+The command to actor includes word not in scope rule is listed last in the check answering it that rulebook. [5th to last]
+The command to actor includes word not in dictionary rule is listed last in the check answering it that rulebook. [4th to last]
+The command to actor can't see any such thing fallback rule is listed last in the check answering it that rulebook. [3rd to last]
+
+The print nothing to do error for commands to actors rule is listed last in the check answering it that rulebook. [2nd to last]
+The print parser errors for commands to actors rule is listed last in the check answering it that rulebook. [Really last]
+
+Section - Answering it that with NO parser error
+
+
+[ The player typed 'say "foo" to Jane' or something similar ]
+[
+Check an actor answering something (called the commandee) that (this is the explicit say rule):
+	[ We want to attempt a full scale redirect to the parser; this is VERY HARD ]
+]
 
 Section - Parser Errors with simple implementation
 
@@ -59,53 +134,56 @@ Section - Parser Errors with simple implementation
 This is the main error handling routine for printing parser errors for commands to actors.
 Query whether we should run the 'printing a parser error' activity here.  We choose not to.  The story author can intercept the "answering it that" action before this in order to achieve the same effect.
 The error letters are matched up strictly with parser internal error rule response letters, largely for maintenance reasons.
+The really nasty bit here is line breaking.  The standard parser errors throw in a line break, and this *doesn't*, so we can't reuse the same texts.
 ]
 Check an actor answering something (called the commandee) that (this is the print parser errors for commands to actors rule):
 	if the latest parser error is:
 		-- didn't understand error: [STUCK_PE]
-			say "[as the parser]I didn't understand that order, though I thought it was an instruction addressed to [the commandee].[as normal]" (A);
-			set the oops word to the verb;
+			[This will also be the case when the player actually typed 'say "blah" to Jane', so this needs to be fixed.  FIXME]
+			say "[as the parser]I didn't understand that order, though I thought it was an instruction addressed to [the commandee].[as normal][line break]" (A);
+			set the oops target to the verb;
 		-- only understood as far as error: [UPTO_PE]
-			say "[text of the only understood as far as rule response (A)]" (B);
+			say "[as the parser]I can't understand your entire instruction to [the commandee].  The first part looked like the command '[the command understood so far]', but I didn't expect the word '[the extraneous word]' next.[as normal][line break]" (B);
 		-- didn't understand that number error: [NUMBER_PE]
-			say "[as the parser]I can't understand your entire instruction to [the commandee].  The first part looked like the command '[the command understood so far]', but I didn't expect the word '[misunderstood word]' next.[as normal]" (D);
+			say "[as the parser]I can't understand your entire instruction to [the commandee].  The first part looked like the command '[the command understood so far]', which I expected to include a number, but I didn't expect the word '[the extraneous word]' next.[as normal][line break]" (D);
 [		-- can't see any such thing error: ] [CANTSEE_PE -- complex, break out into its own rule]
 [		-- said too little error: ] [TOOLIT_PE -- should never trigger, dead code in I6T & Standard Rules ]
 [			say "[text of the parser error internal rule response (F)]" (F); ]
 		-- aren't holding that error: [NOTHELD_PE]
 			say "[The commandee] [aren't] holding that." (G);
-			restore oops_from;
+			restore the oops target;
 		-- can't use multiple objects error: [MULTI_PE]
-			say "[text of the parser error internal rule response (H)]" (H);
+			say "[text of the parser error internal rule response (H)][line break]" (H);
 		-- can only use multiple objects error: [MMULTI_PE]
-			say "[text of the parser error internal rule response (I)]" (I);
+			say "[text of the parser error internal rule response (I)][line break]" (I);
 		-- not sure what it refers to error: [VAGUE_PE]
-			say "[text of the parser error internal rule response (J)]" (J);
+			say "[text of the parser error internal rule response (J)][line break]" (J);
 		-- can't see it at the moment error: [ITGONE_PE]
 			if the pronoun typed refers to something:
-				say "[as the parser][The commandee] [can't] see ['][pronoun i6 dictionary word]['] ([the noun]) at the moment.[as normal]" (K);
+				say "[as the parser][The commandee] [can't] see ['][pronoun i6 dictionary word]['] ([the noun]) at the moment.[as normal][line break]" (K);
 			otherwise:
 				say "[text of the the print parser errors for commands to actors rule response (J)]";
 		-- excepted something not included error: [EXCEPT_PE]
-			say "[as the parser]You excepted something not included anyway; please retry your instruction to [the commandee].[as normal]" (L);
+			say "[as the parser]You excepted something not included anyway; please retry your instruction to [the commandee].[as normal][line break]" (L);
 		-- can only do that to something animate error: [ANIMA_PE]
-			say "[as the parser][The commandee] [can] only do that to something animate.[as normal]" (M);
+			say "[as the parser][The commandee] [can] only do that to something animate.[as normal][line break]" (M);
 		-- not a verb I recognise error: [VERB_PE]
-			say "[text of the parser error internal rule response (N)]" (N);
+			set the oops target to the verb;
+			say "[text of the parser error internal rule response (N)][line break]" (N);
 [		-- not something you need to refer to error: ] [SCENERY_PE -- should never trigger, dead code in I6T & Standard Rules -- message O]
-[			say "[as the parser]That instruction to [the commandee] referred to something which you don't need to refer to in the course of this story.[as normal]" (O); ]
+[			say "[as the parser]That instruction to [the commandee] referred to something which you don't need to refer to in the course of this story.[as normal][line break]" (O); ]
 [		-- didn't understand the way that finished error: ] [JUNKAFTER_PE -- should never trigger, dead code in I6T & Standard Rules -- message P]
 		-- not enough of those available error: [TOOFEW_PE]
-			say "[as the parser][if number understood is 0]None[otherwise]Only [number understood in words][end if] of those [regarding the number understood][are] available to [the commandee].[as normal]" (Q);
+			say "[as the parser][if number understood is 0]None[otherwise]Only [number understood in words][end if] of those [regarding the number understood][are] available to [the commandee].[as normal][line break]" (Q);
 [		-- nothing to do error: ] [NOTHING_PE -- complex, break out into its own rule]
 		-- noun did not make sense in that context error: [NOTINCONTEXT_PE]
 			[This is swapped with ASKSCOPE_PE in the Standard Rules -- a large bug]
 			[This only triggers on pronouns which refer to out of context items.]
-			say "[text of the parser error internal rule response (R)]" (R);
+			say "[text of the parser error internal rule response (R)][line break]" (R);
 [		-- I beg your pardon error: ] [BLANK_LINE_PE -- cannot happen in this context -- message X]
 [		-- can't again the addressee error: ] [ANIMAAGAIN_PE -- cannot happen in this context -- message S]
 		-- comma can't begin error: [COMMABEGIN_PE]
-			say "[as the parser]Please only use one comma: 'person, command', not 'person,, command'.[as normal]" (T);
+			say "[as the parser]Please only use one comma: 'person, command', not 'person,, command'.[as normal][line break]" (T);
 [		-- can't see whom to talk to error: ] [MISSINGPERSON_PE -- cannot happen in this context -- message U]
 [		-- can't talk to inanimate things error: ] [ANIMALISTEN_PE -- cannot happen in this context -- message V]
 [		-- didn't understand addressee's last name error: ] [TOTALK_PE -- cannot happen in this context -- message W]
@@ -115,14 +193,6 @@ Check an actor answering something (called the commandee) that (this is the prin
 			[Someone has somehow sneaked an impossible error into here.  Pass through to the usual "You get no reply"/"You speak" responses.]
 			make no decision;
 	rule fails.
-
-Section - Order of Parser Error Printing Rules
-
-[By default we want these errors to come last.  Any earlier check rule written by the author can have "success" and authorize the otherwise-parser-error command.]
-
-The print can't see any such thing error for commands to actors rule is listed last in the check answering it that rulebook. [4th to last]
-The print nothing to do error for commands to actors rule is listed last in the check answering it that rulebook. [2nd to last]
-The print parser errors for commands to actors rule is listed last in the check answering it that rulebook. [Really last]
 
 Volume - Unsuccessful Actions
 
@@ -137,22 +207,22 @@ Unsuccessful attempt by an actor taking (this is the actor failed to take rule):
 		-- the can't take other people rule:
 			say "[The actor] [can't] pick up [the noun][or it's the wrong time][or that's not the way]." (B);
 		-- the can't take component parts rule:
-			say "[text of the can't take component parts rule response (A)]" (C);
+			say "[text of the can't take component parts rule response (A)][line break]" (C);
 		-- the general can't take people's possessions rule:
-			do nothing; [N.B.: This is handled by rewriting the rule, so we don't have compute the owner twice.]
+			do nothing; [N.B.: This is handled by rewriting the rule, so we don't have to compute the owner twice.]
 		-- the can't take items out of play rule:
-			say "[as the parser][regarding the noun][Those] [aren't] available to [the actor].[as normal]" (E);
+			say "[as the parser][regarding the noun][Those] [aren't] available to [the actor].[as normal][line break]" (E);
 		-- the can't take what you're inside rule:
 			say "[The actor] [would have] to get [if noun is a supporter]off[otherwise]out of[end if] [the noun] first." (F);
 		-- the can't take what's already taken rule:
 			say "[The actor] already [have] [regarding the noun][those]." (G);
 		-- the can't take scenery rule:
-			[This one triggers a line break bug for some reason.]
+			[Thanks to parser styling, this triggers several line break bugs.  Careful...]
 			say "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken by [the actor].[as normal][line break]" (H);
 		-- the can only take things rule:
 			say "[The actor] [cannot] carry [the noun]." (I);
 		-- the can't take what's fixed in place rule:
-			say "[text of the can't take what's fixed in place rule response (A)]" (J);
+			say "[text of the can't take what's fixed in place rule response (A)][line break]" (J);
 		-- the can't exceed carrying capacity rule:
 			say "[The actor] [are] carrying too many things already." (K);
 		-- otherwise:
@@ -190,9 +260,9 @@ Check an actor taking (this is the general use holdall to avoid exceeding carryi
 				if the possible item is not lit and the possible item is not the current working sack, let the transferred item be the possible item;
 			if the transferred item is not nothing:
 				if the actor is the player:
-					say "(putting [the transferred item] into [the current working sack] to make room)[command clarification break]" (A);
+					say "(putting [the transferred item] into [the current working sack] to make room)[single action command clarification break]" (A);
 				otherwise:
-					say "([The actor] putting [the transferred item] into [the current working sack] to make room)[command clarification break]" (B);
+					say "([The actor] putting [the transferred item] into [the current working sack] to make room)[single action command clarification break]" (B);
 				silently try the actor trying inserting the transferred item into the current working sack;
 				if the transferred item is not in the current working sack:
 					stop the action.
@@ -202,12 +272,20 @@ Chapter - Removing
 
 Section - Removing
 
+Unsuccessful attempt by an actor removing something from (this is the debug removing rule):
+	If the parser error debugging option is active:
+		say "- saved_oops [the misunderstood word] - oops_from [the other misunderstood word] - wn [the extraneous word] -";
+	continue the action;
+
+
 Unsuccessful attempt by an actor removing something from (this is the actor failed to remove rule):
 	if the reason the action failed is:
 		-- the can't take component parts rule:
-			say "[text of the can't take component parts rule response (A)]" (A);
+			if the noun is part of something (called the whole):
+				[This is guaranteed]
+				say "[text of the can't take component parts rule response (A)][line break]" (A);
 		-- the can't remove what's not inside rule:
-			say "[text of the can't remove what's not inside rule response (A)]" (B);
+			say "[text of the can't remove what's not inside rule response (A)][line break]" (B);
 		-- the can't remove from people rule:
 			let the owner be the holder of the noun;
 			if the owner is the player:
@@ -537,9 +615,32 @@ If you want to override the rules in this extension, make sure your rules are li
 Chapter - Interactions with other Extensions
 
 This extension depends on Parser Error Number Bugfix by Nathanael Nerode, which fixes a bug in the Standard Rules which left two parser errors misnamed.
-This extension depends on Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+This extension depends on version 4 or later Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
 
 Chapter - Changelog
 
+2/171007 - Update in association with version 4 of Neutral Standard Responses.  Fix misunderstood word reporting.  Fix several tricky paragraph break errors.
 1/171003 - Fix line break issue in scenery message.
 1/171002 - First version.
+
+Example: *** Barbie - Regression test
+
+	*: "Barbie"
+
+	Include Neutral Standard Responses by Nathanael Nerode.
+	Include Compliant Characters by Nathanael Nerode.
+
+	Barbie's house is a room. "It's Barbie's house."
+	Barbie is a person in the house.  The description of Barbie is "It's Barbie!"
+
+	The furniture is a plural-named scenery thing in the house.  The description of the furniture is "The furniture is not meant to be used."
+	The decorations is a plural-named scenery thing in the house.  The description of the decorations is "Decorative."
+
+	A banana is a thing.  [The banana stays off stage to test dictionary word / non-dictionary word responses.]
+	A red dress is a thing in the house.  The description of the dress is "A slinky red minidress."
+
+	[Test line break issues]
+	test scenery with "take furniture/take furniture and decorations".
+
+	[Test dictionary word / non-dictionary word responses]
+	test cantsee with "barbie, take banana/barbie, take glorph/barbie, take dress".
