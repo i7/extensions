@@ -1,12 +1,12 @@
-Version 1/171006 of Character Portraits by Nathanael Nerode begins here.
+Version 1/171007 of Character Portraits by Nathanael Nerode begins here.
 
 "Provides a complex system for customzing the printed descriptions of characters wearing or carrying lots of stuff, similar to the room description system in Standard Rules.  Requires Large Game Speedup by Nathanael Nerode."
 
-Include Large Game Speedup by Nathanael Nerode. [Needs my version to handle "Parts".]
+Include Large Game Speedup by Nathanael Nerode. [Needs my version to iterate over components.]
 
 [FIXME: include the relevant bits of Parts while not fighting with the other version.]
 
-Chapter - Expose concealment test
+Chapter - Expose concealment test to Inform 7
 
 to decide whether (A - an object) conceals (B - an object):
 	(- TestConcealment({A},{B}) -)
@@ -148,7 +148,7 @@ For printing the portrait description of something (called subject) (this is the
 				list the contents of the subject, as a sentence, including contents,
 					giving brief inventory information, tersely, not listing
 					concealed items, listing marked items only;
-				say ".  [run paragraph on with special look spacing]" (B);
+				say ".  [run paragraph on]" (B);
 				increment the portrait sentence count;
 				[ unfilter list recursion; ]
 			end the listing worn items in portrait activity with the subject;
@@ -177,7 +177,7 @@ For printing the portrait description of something (called subject) (this is the
 		otherwise:
 			if handling the listing body parts in portrait activity with the subject:
 				[FIXME: This needs better text handling.]
-				say "[regarding the subject][Possessive] [body parts list] [are] visible.  [run paragraph on with special look spacing]" (A);
+				say "[regarding the subject][Possessive] [body parts list] [are] visible.  [run paragraph on]" (A);
 				increment the portrait sentence count;
 			end the listing body parts in portrait activity with the subject;
 	continue the activity.
@@ -211,7 +211,7 @@ For printing the portrait description of something (called subject) (this is the
 				list the contents of the subject, as a sentence, including contents,
 					giving brief inventory information, tersely, not listing
 					concealed items, listing marked items only;
-				say ".  [run paragraph on with special look spacing]" (B);
+				say ".  [run paragraph on]" (B);
 				increment the portrait sentence count;
 				[ unfilter list recursion; ]
 			end the listing carried items in portrait activity with the subject;
@@ -245,9 +245,14 @@ For printing the portrait description of something (called subject) (this is the
 				let also be a text;
 				if the portrait sentence count is greater than zero:
 					let also be "also ";
-				say "[We] [also][see] [a list of marked for listing things including contents].  [run paragraph on with special look spacing]" (A);
+				say "[We] [also][see] [a list of marked for listing things including contents].  [run paragraph on]" (A);
 			end the listing miscellaneous items in portrait activity with the subject;
 	continue the activity.
+
+[This should ALWAYS be listed last.]
+The finish portrait paragraph rule is listed last in the for printing the portrait description rulebook.
+For printing the portrait description of something (called subject) (this is the finish portrait paragraph rule):
+	say "[paragraph break]";
 
 Chapter - Printing a portrait sentence
 
@@ -273,13 +278,13 @@ For printing a portrait sentence about a thing (called the item)
 For printing a portrait sentence about a thing (called the item)
 	(this is the offer items to writing a portrait sentence about rule):
 	if the item is not mentioned:
-		say "[run paragraph on with special look spacing]";
+		say "[run paragraph on]";
 		carry out the writing a portrait sentence about activity with the item; [SUBROUTINE CALL]
 		if a paragraph break is pending: [TODO -- this is an intensely hacky way to handle this and arguably unacceptable]
 			increase the portrait sentence count by 1;
 			set pronouns from the item;
 			now the item is mentioned;
-			say "[run paragraph on with special look spacing]";
+			say "[run paragraph on]";
 	continue the activity.
 
 [ FIXME -- this is for people carrying trays -- do later]
@@ -301,7 +306,7 @@ For printing a portrait sentence about a thing (called the item)
 			list the contents of the item, as a sentence, including contents,
 				giving brief inventory information, tersely, not listing
 				concealed items, prefacing with is/are, listing marked items only;
-			say ".[run paragraph on with special look spacing]";
+			say ".[run paragraph on]";
 	continue the activity.
 
 For printing a portrait sentence about a thing (called the item)
@@ -318,7 +323,7 @@ For printing a portrait sentence about a thing (called the item)
 			list the contents of the item, as a sentence, including contents,
 				giving brief inventory information, tersely, not listing
 				concealed items, prefacing with is/are, listing marked items only;
-			say ".[run paragraph on with special look spacing]";
+			say ".[run paragraph on]";
 	continue the activity.
 ]
 
@@ -424,3 +429,8 @@ Each of these will be called with the appropriate set of items "marked for listi
 The miscellaneous category is strictly for items which are not part of the character and not carried or worn by the character -- so they will only be listed if they were added deliberately by the story author.
 
 The body parts listing may not be what you want because the full name of each body part, by default, will be something like "Jenna's hand".  The easiest way to fix this is to assign a shorter "printed name" to each of the body parts.
+
+Section - Changelog
+
+	1/171007 - Fix line breaks
+	1/171006 - First version
