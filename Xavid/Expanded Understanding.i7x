@@ -1,4 +1,4 @@
-Version 1/170913 of Expanded Understanding by Xavid begins here.
+Version 1/170920 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -121,6 +121,11 @@ The can't approach our current location rule response (A) is "[We] [are] already
 
 Unsuccessful attempt by someone approaching when the noun is the location of the actor (this is the unsuccessful NPC attempt to approach the current location rule):
 	say "[The actor] is already [at the noun]."
+
+Section 4 - Go without "to" (for use with Approaches by Emily Short)
+
+Understand "go [any visited room]" as approaching.
+Understand "go [any landmark thing]" as landmark-approaching.
 
 Section 4 - Enter
 
