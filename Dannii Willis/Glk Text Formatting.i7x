@@ -114,7 +114,7 @@ Glk Text Formatting ends here.
 
 Glk Text Formatting allows you to control text colours and reverse mode at character granularity. Instead of only having one colour per style, you can now manually specify colours for each paragraph, sentence, word, or even single character.
 
-Glk Text Formatting uses non-standard Glk functions specified at <https://curiousdannii.github.io/if/gargoyle.html>. At present, they are supported only in Gargoyle and Windows Glulxe/Git.
+Glk Text Formatting uses non-standard Glk functions specified at <https://curiousdannii.github.io/if/gargoyle.html>. At present, they are supported only in Windows Glulxe/Git. Gargoyle will support these functions in its next release.
 
 It is strongly recommended that you test whether these functions are supported before using them. If you do not your interpreter may raise a fatal error.
 
