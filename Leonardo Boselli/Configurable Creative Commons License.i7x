@@ -165,7 +165,7 @@ Section 5 - Saying the copyright notice
 Copyright year string is a text that varies. [deliberately left blank, author may set in story file if desired]
 
 To say copyright notice:
-	say "[if FOR-WEB is true]<a href='http://creativecommons.org/licenses/[CC license chosen]/3.0/' target='_blank'><img src='interpreter/[CC image name].png' align='right'/></a>[end if][bold type]Copyright (c) [if copyright year string is not empty][copyright year string] [else if story creation year is not 0][story creation year] [else][assumed copyright year] [end if][copyright holder][roman type]".
+	say "[if FOR-WEB is true]<a href='http://creativecommons.org/licenses/[CC license chosen]/3.0/' target='_blank'><img src='interpreter/[CC image name].png' align='right'/></a>[end if][bold type]Copyright © [if copyright year string is not empty][copyright year string] [else if story creation year is not 0][story creation year] [else][assumed copyright year] [end if][copyright holder][roman type]".
 
 To say CC image name:
 	if CC license chosen is by-nc-nd:

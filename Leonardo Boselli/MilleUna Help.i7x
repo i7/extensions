@@ -29,7 +29,7 @@ To say show-milleuna-message:
 Showing the milleuna introduction text is an activity.
 
 For showing the milleuna introduction text (this is the MilleUna Framework showing the milleuna introduction text rule):
-	say "[line break]This interactive fiction was written with 'Inform 7' ([if FOR-WEB is true]<a href='http://inform7.com' target='_blank'>http://inform7.com</a>[otherwise]http://inform7.com[end if]) and the aid of 'MilleUna Framework', a collection of extensions put togheter by [if FOR-WEB is true]<a href='http://google.com/+LeonardoBoselli' target='_blank'>Leonardo Boselli</a>[otherwise]Leonardo Boselli[end if]. To know more about the development of interactive fiction, follow the tutorials and the examples available at [if FOR-WEB is true]<a href='http://youdev.it/page/Text-Games' target='_blank'>http://youdev.it/page/Text-Games</a>[otherwise]http://youdev.it/page/Text-Games[end if].[run paragraph on]" (A);
+	say "[line break]This interactive fiction was written with 'Inform 7' ([if FOR-WEB is true]<a href='http://inform7.com' target='_blank'>http://inform7.com</a>[otherwise]http://inform7.com[end if]) and the aid of 'MilleUna Framework', a collection of extensions put togheter by [if FOR-WEB is true]<a href='http://google.com/+LeonardoBoselli' target='_blank'>Leonardo Boselli</a>[otherwise]Leonardo Boselli[end if]. To know more about the development of interactive fiction, follow the tutorials and the examples available at [if FOR-WEB is true]<a href='http://youdev.it/milleuna' target='_blank'>http://youdev.it/milleuna</a>[otherwise]http://youdev.it/milleuna[end if].[run paragraph on]" (A);
 
 Section - Acknowledgements
 
@@ -46,7 +46,7 @@ To say acknowledgements:
 	say "[paragraph break]Many thanks to:[line break][thank-newsgroup][thank-people]";
 	
 To say thank-newsgroup:
-	say "The italian newsgroup [bold type]it.comp.giochi.avventure.testuali[roman type]".
+	say "The videogames portal [bold type]Old Games Italia [italic type]oldgamesitalia.net[roman type]".
 
 To say thank-people:
 	say "[line break][bold type]Graham Nelson[roman type] for the development of Inform 7[line break][bold type]Andrew Plotkin[roman type] for the development of Glulx and Quixe[line break][bold type]Massimo Stella[roman type] for the 'Italian Language' extension[line break][bold type]Mark Tilford[roman type] for many extensions[line break][bold type]Aaron Reed[roman type] for many extensions[line break][bold type]Emily Short[roman type] for many extensions[line break][bold type]Jon Ingold[roman type] for many extensions[line break][bold type]Eric Eve[roman type] for many extensions"
@@ -59,4 +59,4 @@ MilleUna Help ends here.
 ---- Documentation ----
 
 This is part of MilleUna Framework, that contains all is needed to write interactive fiction readable online and playable clicking hyperlinks.
-Visit http://youdev.it/page/MilleUna-Framework to know more.
+Visit http://youdev.it/milleuna to know more.

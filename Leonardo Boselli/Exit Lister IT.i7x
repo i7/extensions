@@ -25,7 +25,7 @@ Understand "uscite" as ExitListing.
 Chapter - Responses
 
 looking exits rule response (A) is "Da [qui] [regarding the player][puoi] andare".
-looking exits rule response (B) is " a [dir]".
+looking exits rule response (B) is "[if dir is not down and dir is not up] a[end if] [dir]".
 looking exits rule response (C) is " attraverso [the direction-object]".
 looking exits rule response (D) is " verso [the farplace]".
 looking exits rule response (E) is " e".

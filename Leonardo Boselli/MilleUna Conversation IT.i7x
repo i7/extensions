@@ -10,7 +10,10 @@ Part - Conversation
 
 Chapter 2 - Discussions
 
-To say arg-discusso (argument - a discussable thing):
+The inst-ex-disc rule response (A) is "[arg-discusso-ita argument]".
+The inst-ex-disc rule response (B) is "[arg-discusso-ita argument]".
+
+To say arg-discusso-ita (argument - a discussable thing):
 	say "[The argument] [sei] un argomento di discussione.[list-topics]"
 
 Section H (for use with Hyperlink Interface by Leonardo Boselli)
@@ -70,7 +73,6 @@ To say emphasize (O - an object):
 			say " [the word number CT in TT]";
 	say "[x]";
 
-
 Chapter END
 
 MilleUna Conversation IT ends here.
@@ -78,4 +80,4 @@ MilleUna Conversation IT ends here.
 ---- Documentation ----
 
 This is part of the MilleUna Framework, that contains all is needed to write interactive fiction readable online and playable clicking hyperlinks.
-Visit http://youdev.it/page/MilleUna-Framework to know more.
+Visit http://youdev.it/milleuna to know more.

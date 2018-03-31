@@ -152,6 +152,37 @@ Chapter 3 - Suggesting Actions
 
 Show suggested actions is a truth state that varies. Show suggested actions is true.
 
+After looking for the first time (this is the suggestions first time looking rule):
+	say "[no line break]([italic type]Type [t]SUGGESTIONS OFF[x][italic type] to hide the list of suggested actions[roman type]).[paragraph break]" (A);
+	continue the action.
+
+Understand "suggestions off" as turning off suggestions.
+Understand "suggestions" or "suggestions on" as turning on suggestions.
+
+Turning off suggestions is an action out of world.
+
+Check turning off suggestions (this is the turn off suggestions rule):
+	if show suggested actions is false, say "Suggestions are already off." (A) instead.
+
+Carry out turning off suggestions:
+	now show suggested actions is false;
+	continue the action;
+	
+Report turning off suggestions (this is the report turn off suggestions rule):
+	say "[t]Suggestions[x] are now off." (A).
+
+Turning on suggestions is an action out of world.
+
+Check turning on suggestions (this is the check turning on suggestions rule):
+	if show suggested actions is true, say "Suggestions are already on." (A) instead.
+
+Carry out turning on suggestions:
+	now show suggested actions is true;
+	continue the action;
+	
+Report turning on suggestions (this is the report turning on suggestions rule):
+	say "Suggestions are now on." (A).
+
 Before suggesting actions for a thing (called the O):
 	if show suggested actions is false:
 		stop the action;
@@ -165,6 +196,12 @@ Carry out suggesting actions for a door (called the O) (this is the suggesting d
 	otherwise:
 		now txt is "open" (B);
 	say "[suggest single-action txt on O]";
+	if the O is lockable and the matching key of O is not nothing and the player carries the matching key of O:
+		if the O is locked:
+			now txt is "unlock" (D);
+		otherwise:
+			now txt is "lock" (E);
+		say "[suggest multi-action on O][setlink][txt][aslink][txt] [the O] with [the matching key of O][endlink] [the O] with [the matching key of O]" (F);
 	now txt is "go" (C);
 	say "[suggest single-action txt on O]";
 	say "[run paragraph on]";
@@ -201,15 +238,15 @@ Carry out suggesting actions for a carried thing (called the O) (this is the sug
 	if the nearest-supporter is not nothing and the nearest-supporter is visible:
 		if the nearest-supporter is not the O:
 			if the nearest-supporter is not the last action-noun or the nearest-supporter is not the last action-noun2:
-				say "[suggest multi-action on O][setlink]put [the O] on [the nearest-supporter][endlink]" (E);
+				say "[suggest multi-action on O][setlink]put[aslink]put [the O] on [the nearest-supporter][endlink] [the O] on [the nearest-supporter]" (E);
 	if the nearest-container is not nothing and the nearest-container is visible:
 		if the nearest-container is not the O:
 			if bulk capacity of the nearest-container >= bulk of O:
 				if the nearest-container is not the last action-noun or the nearest-container is not the last action-noun2:
-					say "[suggest multi-action on O][setlink]put [the O] into [the nearest-container][endlink]" (F);
+					say "[suggest multi-action on O][setlink]put[aslink]put [the O] into [the nearest-container][endlink] [the O] into [the nearest-container]" (F);
 	if the nearest-person is not nothing and the nearest-person is visible:
 		if the nearest-person is not the last action-noun and the nearest-person is not the last action-noun2:
-			say "[suggest multi-action on O][setlink]give [the O] to [the nearest-person][endlink]" (G);
+			say "[suggest multi-action on O][setlink]give[aslink]give [the O] to [the nearest-person][endlink] [the O] to [the nearest-person]" (G);
 	say "[run paragraph on]";
 
 Carry out suggesting actions for a thing (called the O) (this is the suggesting takeable rule):
@@ -267,12 +304,12 @@ Carry out suggesting actions for an enterable thing (called the O) (this is the 
 		if the player is on the O:
 			say "[suggest multi-action on O][setlink]get off[endlink]" (A);
 		otherwise:
-			say "[suggest multi-action on O][setlink]enter [the O][endlink]" (B);
+			say "[suggest multi-action on O][setlink]enter[aslink]enter [the O][endlink] [the O]" (B);
 	otherwise if the O is a container:
 		if the player is in the O:
 			say "[suggest multi-action on O][setlink]exit[endlink]" (C);
 		otherwise:
-			say "[suggest multi-action on O][setlink]enter [the O][endlink]" (D);
+			say "[suggest multi-action on O][setlink]enter[aslink]enter [the O][endlink] [the O]" (D);
 	say "[run paragraph on]";
 
 Carry out suggesting actions for a person (called the O) (this is the suggesting person rule):

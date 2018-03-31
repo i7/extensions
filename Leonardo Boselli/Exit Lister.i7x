@@ -50,7 +50,7 @@ For looking exits (this is the looking exits rule):
 			if num is 0:
 				say "From [here] [we] [can] go" (A);
 			say " [dir]" (B);
-			if the direction-object is a closed door or the farplace is not visited:
+			if the direction-object is a closed door:
 				say " through [the direction-object]" (C);
 			if the farplace is visited:
 				say " towards [the farplace]" (D);

@@ -46,6 +46,7 @@ Chapter - Things
 Section - Examine Grammar Line
 
 Understand "[a thing]" as examining.
+Understand "[things]" as examining.
 
 Section - Definitions
 
@@ -59,6 +60,11 @@ Object hyperlinking something is an activity on objects.
 
 Rule for printing the name of a thing (called item):
 	carry out the object hyperlinking activity with item.
+
+Plural object hyperlinking something is an activity on objects.
+
+Rule for printing the plural name of a thing (called item):
+	carry out the plural object hyperlinking activity with item.
 
 Section - Hyperlinks management
 
@@ -180,6 +186,19 @@ Rule for object hyperlinking something (called item) (this is the Hyperlink Inte
 		else:
 			say "[word number wordcounter in output]".
 
+Rule for plural object hyperlinking something (called item) (this is the Hyperlink Interface plural object hyperlinking rule):
+	if object hyperlink highlighting is false or item is hyperlinkless:
+		say the printed plural name of item;
+		continue the action;
+	let output be indexed text;
+	now output is the printed plural name of item;
+	let hl be word number ( the number of words in output ) in output;
+	repeat with wordcounter running from 1 to the number of words in output:
+		say "[if wordcounter > 1] [end if]";
+		if word number wordcounter in output matches the regular expression "\b(?i)[hl]":
+			say "[o][word number wordcounter in output][x]";
+		else:
+			say "[word number wordcounter in output]".
 
 Chapter - Exits
 

@@ -24,16 +24,16 @@ Instead of examining a speakable thing (called the argument) when the current in
 	otherwise:
 		continue the action.
 
-Instead of examining a discussable thing (called the argument):
+Instead of examining a discussable thing (called the argument) (this is the inst-ex-disc rule):
 	if the current interlocutor is a person:
 		if the argument is listed in the ask-suggestions of the node of the current interlocutor:
 			try quizzing the current interlocutor about the argument;
 		otherwise if the argument is listed in the tell-suggestions of the node of the current interlocutor:
 			try informing the current interlocutor about the argument;
 		otherwise:
-			say "[arg-discusso argument]";
+			say "[arg-discusso argument]" (A);
 	otherwise:
-		say "[arg-discusso argument]".
+		say "[arg-discusso argument]" (B).
 
 To say arg-discusso (argument - a discussable thing):
 	say "[The argument] [are] a topic of conversation.[list-topics]"
@@ -138,7 +138,6 @@ Section K (for use without Hyperlink Interface by Leonardo Boselli)
 To say emphasize (TT - an object):
 	say "[TT]";
 
-
 Chapter END
 
 MilleUna Conversation ends here.
@@ -146,4 +145,4 @@ MilleUna Conversation ends here.
 ---- Documentation ----
 
 This is part of the MilleUna Framework, that contains all is needed to write interactive fiction readable online and playable clicking hyperlinks.
-Visit http://youdev.it/page/MilleUna-Framework to know more.
+Visit http://youdev.it/milleuna to know more.

@@ -19,4 +19,4 @@ MilleUna Interface IT ends here.
 ---- Documentation ----
 
 The MilleUna Framework contains all is needed to write interactive fiction readable online and playable clicking hyperlinks.
-Visit http://youdev.it/page/MilleUna-Framework to know more.
+Visit http://youdev.it/milleuna to know more.
