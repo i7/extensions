@@ -1,4 +1,4 @@
-Version 13/160601 of Tailored Room Description by Emily Short begins here.
+Version 13/180515 of Tailored Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, providing a different style of room description than the default. Parenthetical remarks such as (open) and (in which are...) are omitted in favor of full English sentences. Removes the requirement for Text Variations."
 
@@ -166,14 +166,14 @@ Rule for disclosing exterior of something (called special-target) (this is the s
 			say ". ";
 		now current-subject is the holder of current-subject;
 
-To sit is a verb.
+To sit is a verb. To rest is a verb.
 
 To say sits:
 	if the current-subject is carried by a person or the current-subject is worn by a person
 	begin;
 		say "[regarding current-subject][are] ";
 	otherwise;
-		say "[regarding current-subject][one of][sit] [or]rest[s] [or][are] [or][are] sitting [at random]";
+		say "[regarding current-subject][one of][sit] [or][rest] [or][are] [or][are] sitting [at random]";
 	end if;
 
 To say (N - a thing) as a possibly-known item:
@@ -300,7 +300,7 @@ current-container-content-table is a table-name that varies. current-container-c
 
 Table of Container Content Disclosures
 disclosure
-"[The current-subject] [optional also]contain[s] [a list of mentionable things in the current-subject]. "
+"[The current-subject] [optional also][contain] [a list of mentionable things in the current-subject]. "
 "In [the current-subject] [is-are a list of mentionable things in the current-subject]. "
 "There [mentionable-are] [optional also][a list of mentionable things in the current-subject] in [the current-subject]. "
 
