@@ -47,7 +47,7 @@ Carry out an actor sitting on (this is the standard carry out sitting on rule):
 					follow the report taking position rules;
 		otherwise:
 			if the actor is visible:
-				say "[The actor] can't sit on [the noun].";
+				say "[The actor] [can't] sit on [the noun].";
 
 Carry out an actor lying on (this is the standard carry out lying on rule):
 	if the holder of the actor is the noun:
@@ -66,7 +66,7 @@ Carry out an actor lying on (this is the standard carry out lying on rule):
 					follow the report taking position rules;
 		otherwise:
 			if the actor is visible:
-				say "[The actor] can't lie on [the noun].";
+				say "[The actor] [can't] lie on [the noun].";
 
 Carry out an actor standing up on (this is the standard carry out standing up on rule):
 	if the holder of the actor is the noun:
@@ -85,7 +85,7 @@ Carry out an actor standing up on (this is the standard carry out standing up on
 					follow the report taking position rules;
 		otherwise:
 			if the actor is visible:
-				say "[The actor] can't stand on [the noun].";
+				say "[The actor] [can't] stand on [the noun].";
 
 Section 5 - Sitting, Lying, and Standing with Default Objects
 
@@ -119,9 +119,9 @@ Instead of an actor lying down (this is the convert lying down rule):
 	otherwise:
 		if the actor is visible:
 			if the holder of the actor is a thing:
-				say "[The actor] can't lie down on [the holder of the actor].";
+				say "[The actor] [can't] lie down on [the holder of the actor].";
 			otherwise:
-				say "There's nothing here to lie on.";
+				say "There [are] nothing [here] to lie on.";
 		rule succeeds.
 
 To decide whether (N - a person) can sit here:
@@ -146,9 +146,9 @@ Instead of an actor sitting down (this is the convert sitting down rule):
 	otherwise:
 		if the actor is visible:
 			if the holder of the actor is a thing:
-				say "[The actor] can't sit down on [the holder of the actor].";
+				say "[The actor] [can't] sit down on [the holder of the actor].";
 			otherwise:
-				say "There's nothing here to sit on.";
+				say "There [are] nothing [here] to sit on.";
 		rule succeeds.
 
 Instead of an actor standing up (this is the convert standing up rule):
@@ -198,7 +198,7 @@ Taking position is an action applying to one posture.
 Check an actor taking position (this is the can't use inappropriate postures rule):
 	if the holder of the actor is not a room and the holder of the actor does not allow the posture understood:
 		if the actor is visible:
-			say "[The actor] can't take that position [in-on the holder of the actor].";
+			say "[The actor] [can't] take that position [in-on the holder of the actor].";
 		stop the action.
 
 Check an actor taking position (this is the can't use already used posture rule):
