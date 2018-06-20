@@ -23,7 +23,9 @@ Section 4 - Sitting, Lying, and Standing On Commands
 Understand the commands "stand" and "sit" and "lie" as something new.
 
 Understand "sit on/in [something]" as sitting on.
+Understand "sit down on/in [something]" as sitting on.
 Understand "lie on/in [something]" as lying on.
+Understand "lie down on/in [something]" as lying on.
 Understand "stand on/in [something]" as standing up on.
 
 Sitting on is an action applying to one thing.
