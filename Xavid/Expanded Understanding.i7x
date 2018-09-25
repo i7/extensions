@@ -1,4 +1,4 @@
-Version 1/170920 of Expanded Understanding by Xavid begins here.
+Version 1/171207 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -372,7 +372,13 @@ To say the clever don't (seehave - text) any (MS - a snippet) message for (loc -
 		else:
 			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. You last saw [them] [at the remembered location of the matched object].";
 	else:		
-		say "You don't [seehave] any [MS] [loc]."
+		say "You don't [seehave] any [cleanly MS] [loc]."
+
+To say cleanly (MS - a snippet):
+	if MS matches the regular expression "^(.*)\.$":
+		say the text matching subexpression 1;
+	else:
+		say MS.
 
 Chapter 5 - Scenery
 
@@ -867,6 +873,7 @@ Example: ** Unit Tests
 		[]
 		start test "examining errors";
 		assert that "x wombat" produces "You don't see any wombat here.";
+		assert that "Examine wombat." produces "You don't see any wombat here.";
 		assert that "x orb table" produces "You don't see any orb table here.";
 		[]
 		start test "alternate ways of ordering";
