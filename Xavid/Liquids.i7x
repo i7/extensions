@@ -1,4 +1,4 @@
-Version 1/170531 of Liquids by Xavid begins here.
+Version 1/180925 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
 
@@ -76,6 +76,12 @@ Check an actor filling something from (this is the can't fill something not wate
 Check an actor filling something from (this is the can't fill from things without liquid rule):
 	if the second noun is not liquid-yielding and the second noun is not water-tight:
 		instead say "You can't fill something from [the second noun]!".
+Check an actor filling something from (this is the can't fill something closed rule):
+	if the noun is openable and the noun is closed:
+		instead say "[The noun] [are] closed."
+Check an actor filling something from (this is the can't fill from something closed rule):
+	if the second noun is openable and the second noun is closed:
+		instead say "[The second noun] [are] closed."
 Check an actor filling something from (this is the can't fill from something empty rule):
 	if the second noun is an empty water-tight thing:
 		instead say "[The second noun] is empty!".
@@ -119,6 +125,9 @@ To do is a verb.
 Check an actor emptying something (this is the can't empty something empty rule):
 	if the noun is not a nonempty water-tight thing and the noun contains nothing:
 		instead say "[The noun] [don't] have anything in [them] to pour out."
+Check an actor emptying something (this is the can't empty something closed rule):
+	if the noun is openable and the noun is closed:
+		instead say "[The noun] [are] closed."
 
 Carry out an actor emptying something (this is the emptying rule):
 	now the former contents is the contained liquid of the noun;
@@ -297,6 +306,7 @@ Example: ** Unit Tests
 
 	There is a liquid called milk.
 	There is a liquid called juice.
+	There is a liquid called vinegar.
 
 	A sink is here. It is fixed in place. The available liquid is water.
 
@@ -306,6 +316,8 @@ Example: ** Unit Tests
 	
 	A vessel called a cup is here. The contained liquid is juice.
 	
+	A closed water-tight openable container called a jar is here. The contained liquid is vinegar.
+
 	An animal called a weasel is here.
 
 	Unit test:
@@ -326,5 +338,10 @@ Example: ** Unit Tests
 		assert that "empty juice from mug" produces "The mug is full of water, not juice.";
 		assert that "empty water from mug" produces "You pour out the water from the mug.";
 		assert that "remove juice from mug" produces "The mug doesn't have any juice in it to pour out.";
+		do "take jar";
+		assert that "empty jar" produces "The jar is closed.";
+		assert that "pour jar into cup" produces "The jar is closed.";
+		do "fill mug from sink";
+		assert that "pour mug into jar" produces "The jar is closed.";
 	
 	Test me with "unit".
