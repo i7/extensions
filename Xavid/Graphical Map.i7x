@@ -1,4 +1,4 @@
-Version 1 of Graphical Map (for Glulx only) by Xavid begins here.
+Version 2 of Graphical Map (for Glulx only) by Xavid begins here.
 
 "Provides support for an image-based map with a static background and icons for the player and optionally other things or doors."
 
@@ -28,8 +28,8 @@ Rule for refreshing the map window (this is the draw map rule):
 	if fig is the Figure of Cover:
 		now fig is the Figure of Map;
 	let the horizontal scroll be ((the width of the map window) minus the image-width of fig) divided by 2;
-	if the width of the map window is less than the image-width of fig or the hide unvisited rooms in map option is active:
-		let the horizontal scroll be ((((the width of the map window) minus the map grid size) divided by 2) minus ((entry 1 of the map padding) plus (the map grid size times (entry 1 of the real map pos of the location)))) to the nearest whole number;
+	if (the width of the map window is less than the image-width of fig or the hide unvisited rooms in map option is active) and the fixed map option is not active:
+		let the horizontal scroll be ((((the width of the map window) minus the map grid size) divided by 2) minus ((entry 1 of the map padding) plus (the map grid size times (entry 1 of the real grid pos of the location)))) to the nearest whole number;
 		if the zero-based map grid option is not active:
 			let the horizontal scroll be the horizontal scroll plus the map grid size;
 		[ We don't bound the scrolling when hiding unvisited rooms to avoid spoiling the edges of the map ]
@@ -39,8 +39,8 @@ Rule for refreshing the map window (this is the draw map rule):
 			if the horizontal scroll is less than (the width of the map window) minus the image-width of fig:
 				let the horizontal scroll be (the width of the map window) minus the image-width of fig;
 	let the vertical scroll be 0;
-	if the height of the map window is less than the image-height of fig or the hide unvisited rooms in map option is active:
-		let the vertical scroll be ((((the height of the map window) minus the map grid size) divided by 2) minus ((entry 2 of the map padding) plus (the map grid size times (entry 2 of the real map pos of the location)))) to the nearest whole number;
+	if (the height of the map window is less than the image-height of fig or the hide unvisited rooms in map option is active) and the fixed map option is not active:
+		let the vertical scroll be ((((the height of the map window) minus the map grid size) divided by 2) minus ((entry 2 of the map padding) plus (the map grid size times (entry 2 of the real grid pos of the location)))) to the nearest whole number;
 		if the zero-based map grid option is not active:
 			let the vertical scroll be the vertical scroll plus the map grid size;
 		[ We don't bound the scrolling when hiding unvisited rooms to avoid spoiling the edges of the map ]
@@ -52,6 +52,13 @@ Rule for refreshing the map window (this is the draw map rule):
 	display fig in the map window at the horizontal scroll x the vertical scroll;
 	now entry 1 of the map origin is the horizontal scroll plus entry 1 of the map padding;
 	now entry 2 of the map origin is the vertical scroll plus entry 2 of the map padding;
+	repeat with R running through plotted rooms:
+		let xpos be ((entry 1 of the map offset of R) plus (the map grid size times ((entry 1 of the real grid pos of R) plus 0.5)) minus ((the image-width of the map icon of R) divided by 2)) to the nearest whole number;
+		let ypos be ((entry 2 of the map offset of R) plus (the map grid size times ((entry 2 of the real grid pos of R) plus 0.5)) minus ((the image-height of the map icon of R) divided by 2)) to the nearest whole number;
+		if the zero-based map grid option is not active:
+			let xpos be xpos minus the map grid size;
+			let ypos be ypos minus the map grid size;
+		display the map icon of R in the map window at ((entry 1 of the map origin) plus xpos) x ((entry 2 of the map origin) plus ypos);
 	repeat with T running through mappable things:
 		follow the map drawing rulebook for T;
 	if the right map overlay is not no map icon:	
@@ -60,12 +67,13 @@ Rule for refreshing the map window (this is the draw map rule):
 		display the right map overlay in the map window at ox x oy;
 	if the hide unvisited rooms in map option is active:
 		repeat with R running through unvisited rooms that do not contain the player:
-			let xpos be (the horizontal scroll plus (entry 1 of the map padding) plus (the map grid size times (entry 1 of the real map pos of R))) to the nearest whole number;
-			let ypos be (the vertical scroll plus (entry 2 of the map padding) plus (the map grid size times (entry 2 of the real map pos of R))) to the nearest whole number;
-			if the zero-based map grid option is not active:
-				let xpos be xpos minus the map grid size;
-				let ypos be ypos minus the map grid size;
-			erase rect in the map window at xpos x ypos with size the map grid size x the map grid size.
+			if the map figure of R is the map figure of the location:
+				let xpos be (the horizontal scroll plus (entry 1 of the map padding) plus (the map grid size times (entry 1 of the real grid pos of R))) to the nearest whole number;
+				let ypos be (the vertical scroll plus (entry 2 of the map padding) plus (the map grid size times (entry 2 of the real grid pos of R))) to the nearest whole number;
+				if the zero-based map grid option is not active:
+					let xpos be xpos minus the map grid size;
+					let ypos be ypos minus the map grid size;
+				erase rect in the map window at xpos x ypos with size the map grid size x the map grid size.
 
 Every turn (this is the redraw map each turn rule):
 	refresh the map window.
@@ -78,40 +86,45 @@ Map drawing is a thing based rulebook. Map drawing rules have default success.
 Section 1 - Drawing Things
 
 Map drawing a thing (called T) (this is the default map drawing rule):
-	let xpos be ((entry 1 of the map offset of T) plus (the map grid size times (entry 1 of the real map pos of the location of T))) to the nearest whole number;
-	let ypos be ((entry 2 of the map offset of T) plus (the map grid size times (entry 2 of the real map pos of the location of T))) to the nearest whole number;
-	if the zero-based map grid option is not active:
-		let xpos be xpos minus the map grid size;
-		let ypos be ypos minus the map grid size;
-	map draw T at xpos x ypos.
+	if the only draw visited things option is not active or the location of T is visited:
+		let xpos be ((entry 1 of the computed room offset of T) plus (the map grid size times (entry 1 of the real grid pos of the location of T))) to the nearest whole number;
+		let ypos be ((entry 2 of the computed room offset of T) plus (the map grid size times (entry 2 of the real grid pos of the location of T))) to the nearest whole number;
+		if the zero-based map grid option is not active:
+			let xpos be xpos minus the map grid size;
+			let ypos be ypos minus the map grid size;
+		map draw T at xpos x ypos.
 
 Section 2 - Drawing Doors
 
+A door has a list of numbers called the map position.
 Map drawing a door (called D) (this is the map drawing doors rule):
-	if D is closed:
-		map draw D at entry 1 of the map offset of D x entry 2 of the map offset of D.
+	if D is closed and (the only draw visited things option is not active or the location of D is visited):
+		map draw D at entry 1 of the map position of D x entry 2 of the map position of D.
 
 Part 3 - Map Options
 
 Use zero-based map grid translates as (- -).
 
 Use hide unvisited rooms in map translates as (- -).
+Use fixed map translates as (- -).
+
+Use only draw visited things translates as (- -).
 
 The map grid size is a number that varies.
 The map padding is a list of numbers that varies.
 
 Part 4 - Map Properties
 
-A room has a list of numbers called the map position.
-A room has a list of real numbers called the real map position.
+A room has a list of numbers called the grid position.
+A room has a list of real numbers called the real grid position.
 [ Unfortunately, if we try to set a list of real numbers property to {1,2}, Inform ends up getting confused, so we need this hack to allow either. ]
-To decide which list of real numbers is the real map pos of (R - a room):
-	if the real map position of R is not empty:
-		decide on the real map position of R;
+To decide which list of real numbers is the real grid pos of (R - a room):
+	if the real grid position of R is not empty:
+		decide on the real grid position of R;
 	else:
 		let P be a list of real numbers;
-		add entry 1 of the map position of R to P;
-		add entry 2 of the map position of R to P;
+		add entry 1 of the grid position of R to P;
+		add entry 2 of the grid position of R to P;
 		decide on P.
 
 A room has a figure name called the map figure.
@@ -120,11 +133,17 @@ The map figure is usually Figure of Map.
 but we can't because we want to let the individual game define what file Figure of Map is, so we fake it.
 ]
 
+A room has a figure name called the map icon.
+A room has a list of numbers called the map offset.
+
 A thing has a figure name called the map icon.
-A thing has a list of numbers called the map offset.
+A thing has a list of numbers called the room offset.
+To decide which list of numbers is the computed room offset of (T - a thing):
+	decide on the room offset of T.
 
 No map icon is always the figure of cover.
-Definition: a thing is mappable if the map icon of it is not the figure of cover and it is not nowhere.
+Definition: a thing is mappable if the map icon of it is not the figure of cover and it is not nowhere and the map figure of the location of it is the map figure of the location.
+Definition: a room is plotted if the map icon of it is not the figure of cover and it is visited and the map figure of it is the map figure of the location.
 
 The right map overlay is a figure name that varies.
 
@@ -189,9 +208,9 @@ The map window isn't shown by default, in case you want to have some introductor
 
 Section 2 - Rooms
 
-The above is enough to display a static map. But to draw things on it, first we need to know what space in the map grid each Inform room corresponds to. We do this by setting the map position of a room to its horizontal and vertical position in the map grid, for example:
+The above is enough to display a static map. But to draw things on it, first we need to know what space in the map grid each Inform room corresponds to. We do this by setting the grid position of a room to its horizontal and vertical position in the map grid, for example:
 
-	The map position of the Crossroads is {3, 1}.
+	The grid position of the Crossroads is {3, 1}.
 
 This puts the room in the third column and first row on the map.
 
@@ -230,6 +249,8 @@ The map will automatically scroll around to keep the room the player is currentl
 
 The map always scrolls when the hide unvisited rooms in map option is active, to avoid spoiling the fact that the player's at the edge of the map.
 
+If you want to disable scrolling, for example because you use a wide map image to avoid white bars on the edge for wider screens but it's fine for the edges to get cut off on smaller screens, say "use fixed map".
+
 Section 7 - Multiple Maps
 
 You can have multiple maps, for example for different floors in a building or if your game has different discontinuous areas. To use a figure other than the Figure of Map for a room, say something like:
@@ -263,17 +284,19 @@ Example: * Simple Map - Mapping a two-room world.
 	Figure of Door is the file "Door.png".
 
 	[ This positions a 25 x 25 icon (just shy of) centered in the room. ]
-	The map icon of yourself is the Figure of PC. The map offset of yourself is {12, 12}.
+	The map icon of yourself is the Figure of PC.
+	To decide which list of numbers is the computed room offset of (T - yourself):
+		decide on {12, 12}.
 
 	Balcony is a room.
-	The map position is {1, 1}.
+	The grid position is {1, 1}.
 
 	An open door called the glass door is south of Balcony.
-	The map offset is {0, 49}.
+	The map position is {0, 49}.
 	The map icon is the figure of Door.
 
 	Bedroom is south of the glass door.
-	The map position is {1, 2}.
+	The grid position is {1, 2}.
 	
 	When play begins:
 		Open the map window.
@@ -294,37 +317,38 @@ Example: * Scrolling Map - A map that is too tall to fit on screen all at once.
 	Figure of Map is the file "Tall Map.png".
 	Figure of PC is the file "PC.png".
 
-	The map icon of yourself is the Figure of PC. The map offset of yourself is {12, 12}.
+	The map icon of yourself is the Figure of PC.
+	The room offset of yourself is {12, 12}.
 
 	Arlington Heights is a room.
-	The map position is {1, 1}.
+	The grid position is {1, 1}.
 
 	Park Ave is south of Arlington Heights.
-	The map position is {1, 2}.
+	The grid position is {1, 2}.
 
 	Daniels St is south of Park Ave.
-	The map position is {1, 3}.
+	The grid position is {1, 3}.
 
 	Appleton St is south of Daniels St.
-	The map position is {1, 4}.
+	The grid position is {1, 4}.
 
 	Quincy St is south of Appleton St.
-	The map position is {1, 5}.
+	The grid position is {1, 5}.
 
 	Menotomy Rd is south of Quincy St.
-	The map position is {1, 6}.
+	The grid position is {1, 6}.
 
 	Mt Vernon St is south of Menotomy Rd.
-	The map position is {1, 7}.
+	The grid position is {1, 7}.
 
 	Lockeland Ave is south of Mt Vernon St.
-	The map position is {1, 8}.
+	The grid position is {1, 8}.
 
 	Newman Way is south of Lockeland Ave.
-	The map position is {1, 9}.
+	The grid position is {1, 9}.
 
 	Academy St is south of Newman Way.
-	The map position is {1, 10}.
+	The grid position is {1, 10}.
 
 	When play begins:
 		Open the map window.
