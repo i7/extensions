@@ -1,4 +1,4 @@
-Version 1/171207 of Expanded Understanding by Xavid begins here.
+Version 1/191405 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -78,7 +78,7 @@ Understand "look inside/in/into/through [a visible thing]" as examining.
 
 Section 4 - Improved Errors for Examining
 
-Definition: a thing is remembered if the remembered location of it is not nothing.
+Definition: a thing is remembered if the remembered holder of it is not nothing.
 
 Section 5 - Examining Rooms
 
@@ -366,11 +366,11 @@ To say the clever don't (seehave - text) any (MS - a snippet) message for (loc -
 		say "I'm not sure what you want to [clever verb].";		
 	else if MS object-matches "[any remembered thing]":
 		if the location of the matched object is the location of the player:
-			say "[regarding the matched object][The matched object] [aren't] [loc]. [They]['re] [at the remembered location of the matched object].";
+			say "[regarding the matched object][The matched object] [aren't] [loc]. [They]['re] [at the remembered holder of the matched object].";
 		else if the matched object is fixed in place:
-			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. [They] [adapt the verb are in the past tense] [at the remembered location of the matched object].";
+			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. [They] [adapt the verb are in the past tense] [at the remembered holder of the matched object].";
 		else:
-			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. You last saw [them] [at the remembered location of the matched object].";
+			say "[regarding the matched object]You don't [seehave] [the matched object] [loc][if (the location of the remembered holder of the matched object is not the location of the player) and (the number of characters in the remembered action of the matched object is not 0)]. You [regarding the matched object][remembered action of the matched object][end if].";
 	else:		
 		say "You don't [seehave] any [cleanly MS] [loc]."
 
@@ -413,7 +413,7 @@ To determine the mistaken noun:
 		[add grammar token 1 to P;]
 		let J be 0;
 		analyze token J;
-		let rejected line be false;
+		let rejected line be false;		
 		let cmd point be 2;
 		let score be 0;
 		debug "[line break]EU line [I - 1]";
@@ -436,26 +436,30 @@ To determine the mistaken noun:
 								now n1len is K - n1start;
 								now found mid is true;
 							now cmd point is K + 1;
-							debug "XAVID: wombat [W].";
+							debug "XAVID: matched word: [W].";
 							break;
 					if matched word is true:
 						break;
 				if matched word is false:
-					debug "XAVID no match";
-					now rejected line is true;
+					if n1start > 0 and ((the length of the player's command) is n1start):
+						debug "XAVID guessing partial command";
+						decrease score by 1;
+					else:
+						debug "XAVID no match";
+						now rejected line is true;
 					break;
 				now WL is {};
 			if token type is 1 and token data is 15:
 				break;
 			else if token type is 2:
 				let T be the substituted form of "[token text]";
-				add T to WL;														
+				add T to WL;
 			else:
 				if cmd point > the length of the player's command:
 					debug "XAVID off end";
 					now rejected line is true;
 					break;
-				debug "XAVID nounish? [found mid] [cmd point]";
+				debug "XAVID nounish? '[snippet at cmd point of length 1]' [found mid] [cmd point]";
 				if found mid is true:
 					now n2start is cmd point;
 				else:
@@ -463,10 +467,10 @@ To determine the mistaken noun:
 			increase J by 1;
 			analyze token J;
 		if n2start > 0 and n2start <= the length of the player's command and n2len is 0:
-			debug "XAVID A [n2start].";
+			debug "XAVID guessing n2 to end from [n2start].";
 			now n2len is (the length of the player's command - n2start) + 1;
 		else if n1start > 0 and n1len is 0:
-			debug "XAVID B [n1start].";
+			debug "XAVID guessing n1 to end from [n1start].";
 			now n1len is (the length of the player's command - n1start) + 1;
 		debug "XAVID: [cmd point] [n1start] [n2start] [rejected line].";
 		if (cmd point <= the length of the player's command) and (cmd point is not n2start) and (cmd point is not n1start):
@@ -623,21 +627,36 @@ Section 3 - Remembering Locations of Things (for use without Remembering by Aaro
 
 A thing can be memorable or unmemorable. Things are usually memorable.
 
-Every thing has an object called the remembered location. The remembered location of a thing is usually nothing.
+Remembered holding relates various things to one thing (called the remembered holder). The verb to be remembered to be holding means the reversed remembered holding relation. The verb to be remembered to be held by means the remembered holding relation.
+
+Every thing has a text called the remembered action.
 
 Last when play begins (this is the Remembering update remembered positions for first turn rule):
 	follow the Remembering update remembered positions of things rule.
 
 Every turn (this is the Remembering update remembered positions of things rule):
 	unless in darkness:
-		repeat with item running through things that are enclosed by the location:
-			if remembered location of item is not holder of item:
-				if item is visible and (item is described or item is scenery) and item is memorable:
-					now the remembered location of item is the holder of item.
+		repeat with item running through visible things:
+			if remembered holder of item is not holder of item:				
+				if (item is described or item is scenery) and item is memorable:
+					now the remembered action of the item is "last saw [them] [at the remembered holder of the matched object]";
+					now the remembered holder of item is the holder of item;
+		let visible holders be the list of visible things;
+		add the location to visible holders;
+		repeat with item running through visible holders:
+			let L be the list of things remembered to be held by item;
+			repeat with subitem running through L:
+				if the holder of subitem is not item:
+					now the remembered action of subitem is "".
 
 [ We shouldn't remember undescribed items just by walking past them, but examining them, sure. ]
 Carry out examining something memorable:
-	now the remembered location of the noun is the holder of the noun.
+	now the remembered action of the noun is "last saw [them] [at the remembered holder of the matched object]";
+	now the remembered holder of the noun is the holder of the noun.
+
+Last carry out dropping something memorable:
+	now the remembered action of the noun is "dropped [them] [at the remembered holder of the matched object]";
+	now the remembered holder of the noun is the holder of the noun.
 
 Section 4 - Printing the Name of a Room
 
@@ -654,16 +673,21 @@ The at preposition of a room is usually "at".
 The at preposition of a thing is usually "in".
 The at preposition of a supporter is usually "on".
 
-To say at (T - a room):
+To say at (T - an object):
+	carry out the saying at activity with T.
+
+Saying at something is an activity on objects.
+
+Rule for saying at a room (called T):
 	if T is the location:
 		say "right here";
 	else:
 		say "[at preposition of T] [the natural name of T]".
-	
-To say at (T - a thing):
+
+Rule for saying at a thing (called T):
 	say "[at preposition of T] [the T] [at the holder of T]".
-	
-To say at (T - a person):
+
+Rule for saying at a person (called T):
 	if T is the player:
 		say "among your possessions";
 	else:
@@ -849,6 +873,12 @@ Example: ** Unit Tests
 
 	Understand "put [something preferably held] in front of [something]" as putting it on.
 
+	Zapping is an action applying to one thing.
+	Understand "zap [something]" as zapping.
+	Instead of zapping something:
+		say "Zot!";
+		now the noun is nowhere.
+
 	Unit test:
 		start test "x here";
 		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw) and a hammer here.";
@@ -928,7 +958,21 @@ Example: ** Unit Tests
 		do "drop saw";
 		assert that "put out stump with saw" produces "You don't see the stump here. It was at In Yard.";
 		do "s";
-		assert that "put out stump with saw" produces "You don't have the saw in your possession. You last saw it in the shed.";
+		assert that "put out stump with saw" produces "You don't have the saw in your possession. You dropped it in the shed.";
+		[]
+		start test "multiword verb messages";
+		assert that "put out fish with saw" produces "You don't see any fish here.";
+		[ regression test for implied prepositional phrases for the second noun ]
+		assert that "put out fish" produces "You don't see any fish here.";
+		[]
+		start test "items that aren't where you remember them";
+		assert that "take saw" produces "You don't see the saw here. You dropped it in the shed.";
+		do "n";
+		do "zap saw";
+		assert that "take saw" produces "You don't see the saw here.";
+		do "s";
+		assert that "take saw" produces "You don't see the saw here.";
+		
 	
 	Test me with "unit".
 
