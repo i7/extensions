@@ -1,4 +1,4 @@
-Version 1/180925 of Liquids by Xavid begins here.
+Version 1/190411 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
 
@@ -229,6 +229,15 @@ There is a liquid called water.
 
 Definition: something is watery if it yields water or it is full of water.
 
+Watering is an action applying to one thing.
+Understand "water [something]" as watering.
+
+Check an actor watering something (this is the need a water source to water something rule):
+	if the actor does not hold something watery:
+		instead say "[The actor] [do]n't have any water."
+Carry out an actor watering something:
+	try the actor pouring a random watery thing held by the actor onto the noun.
+
 Liquids ends here.
 
 ---- DOCUMENTATION ----
@@ -287,7 +296,7 @@ Example: * Kitchen - Basic manipulation of liquids.
 
 	There is a liquid called milk.
 
-	A sink is here. The available liquid is water.
+	A sink is here. It is fixed in place. The available liquid is water.
 
 	A vessel called a cup is here.
 
