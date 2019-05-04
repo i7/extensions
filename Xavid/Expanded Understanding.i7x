@@ -1,4 +1,4 @@
-Version 1/191405 of Expanded Understanding by Xavid begins here.
+Version 2 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -24,7 +24,9 @@ A can't see any such thing rule when the clever action-to-be is the taking off a
 A can't see any such thing rule when the clever action-to-be is the removing it from action and the mistaken noun position is not 2 (this is the can't see something to take from rule):
 	if the clever second noun snippet object-matches "[thing]":
 		let loc be the substituted form of "in [the matched object]";
-		if the matched object is a supporter:
+		if the matched object is a person:
+			now loc is the substituted form of "held by [the matched object]";
+		else if the matched object is a supporter:
 			now loc is the substituted form of "on [the matched object]";
 		say the clever don't "see" any clever noun snippet message for loc;
 	else:				
@@ -948,6 +950,7 @@ Example: ** Unit Tests
 		assert that "girl, give all to me" produces "hammer: The girl gives the hammer to you.[paragraph break]saw: The girl gives the saw to you.";
 		assert that "give girl all" produces "saw: You give the saw to the girl.[line break]hammer: You give the hammer to the girl.";
 		assert that "girl, give me all" produces "hammer: The girl gives the hammer to you.[paragraph break]saw: The girl gives the saw to you.";
+		assert that "take all from girl" produces "You don't see anything obvious to take.";
 		assert that "give hammer girl" produces "You give the hammer to the girl.";
 		do "n";
 		assert that "give saw to girl" produces "You don't see the girl here. You last saw her at In Yard.";
@@ -972,6 +975,9 @@ Example: ** Unit Tests
 		assert that "take saw" produces "You don't see the saw here.";
 		do "s";
 		assert that "take saw" produces "You don't see the saw here.";
+		[]
+		start test "held by";
+		assert that "take stump from girl" produces "The stump isn't held by the girl. It's right here.";
 		
 	
 	Test me with "unit".
