@@ -63,7 +63,14 @@ After deciding the scope of the player when examining (this is the things in adj
 			place S in scope, but not its contents.
 
 Before examining something when the noun is not in the location (this is the indicate direction when examining things in adjacent rooms rule):
-	let D be the best route from the location to the location of the noun, using doors;
+	[ We check these first to prefer NSEW to like inside ]
+	let D be nothing;
+	repeat with MD running through {north, south, east, west, northeast, southeast, southwest, northwest, up, down}:
+		if the room MD of the location is the location of the noun:
+			now D is MD;
+			break;
+	if D is nothing:
+		now D is the best route from the location to the location of the noun, using doors;
 	if D is not nothing:
 		say "(looking [D] to [the natural name of the location of the noun])[line break]".
 
@@ -135,7 +142,14 @@ Section 4 - Enter
 
 Understand the command "enter" as something new.
 Understand "enter [a door]" as entering.
+Understand "enter [a vehicle]" as entering.
 Understand "enter [something]" as entering.
+
+[ This can also be the going-inside action. ]
+Entering simply is an action applying to nothing.
+Understand "enter" as entering simply when the room-or-door inside from the location is not nothing.
+Check an actor entering simply:
+	convert to the going action on inside.
 
 Section 5 - Leave
 
@@ -857,7 +871,10 @@ Example: ** Unit Tests
 	
 	A thing called a hammer is here.
 	
+	A vehicle called a hovercraft is here.
+	
 	A room called In Yard is south of Shed.
+	Inside from In Yard is Shed.
 	
 	A scenery thing called the yard is here. "This is a thing, not a room."
 	
@@ -883,7 +900,7 @@ Example: ** Unit Tests
 
 	Unit test:
 		start test "x here";
-		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw) and a hammer here.";
+		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw), a hammer and a hovercraft (empty) here.";
 		[]
 		start test "implied preposition grammar";
 		assert that "fill stump girl" produces "You don't see any stump girl here.";
@@ -918,7 +935,7 @@ Example: ** Unit Tests
 		assert that "put stump on yard" produces "(first trying to take the stump)[line break]That's fixed in place.";
 		[]
 		start test "going to";
-		assert that "go to orb" produces "You go north to the shed. [paragraph break]Shed[line break]You can see a table (on which is a saw) here.";
+		assert that "go to orb" produces "You go inside to the shed. [paragraph break]Shed[line break]You can see a table (on which is a saw) and a hovercraft (empty) here.";
 		[]
 		start test "complex taking";
 		assert that "take hammer from table" produces "The hammer isn't on the table. It's among your possessions.";
@@ -978,6 +995,11 @@ Example: ** Unit Tests
 		[]
 		start test "held by";
 		assert that "take stump from girl" produces "The stump isn't held by the girl. It's right here.";
+		[]
+		start test "enter";
+		do "enter";
+		assert that "[location]" substitutes to "Shed";
+		assert that "enter" produces "(the hovercraft)[line break]You get into the hovercraft.";
 		
 	
 	Test me with "unit".
