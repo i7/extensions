@@ -1,4 +1,4 @@
-Version 1/190411 of Liquids by Xavid begins here.
+Version 1/190523 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
 
@@ -58,10 +58,10 @@ Chapter 2 - Verbs
 Section 1 - Filling
 
 Filling it from is an action applying to two things.
-Understand "fill [an empty water-tight thing] from/at/in/with [a visible liquid-yielding thing]" as filling it from.
-Understand "fill [an empty water-tight thing] from/at/in/with [a nonempty water-tight thing]" as filling it from.
+Understand "fill [a water-tight thing] from/at/in/with [a visible liquid-yielding thing]" as filling it from.
+Understand "fill [a water-tight thing] from/at/in/with [a nonempty water-tight thing]" as filling it from.
 Understand "fill [something preferably held] from/at/in/with [something]" as filling it from.
-Understand "pour [a nonempty water-tight thing] into/in [an empty water-tight thing]" as filling it from (with nouns reversed).
+Understand "pour [a nonempty water-tight thing] into/in [a water-tight thing]" as filling it from (with nouns reversed).
 Understand "pour [something preferably held] into/in [something preferably held]" as filling it from (with nouns reversed).
 Understand "put [a nonempty water-tight thing] in/into [a water-tight thing]" as filling it from (with nouns reversed).
 Understand "put [a visible liquid-yielding thing] in/into [a water-tight thing]" as filling it from (with nouns reversed).
@@ -166,15 +166,25 @@ Section 3 - Pouring Onto
 Pouring it onto is an action applying to one carried thing and one thing.
 Understand "empty [a held nonempty water-tight thing] on/onto [something]" as pouring it onto.
 Understand "empty [something preferably held] on/onto [something]" as pouring it onto.
-Understand "pour out/-- [a held nonempty water-tight thing] out/-- on/onto [something]" as pouring it onto.
-Understand "pour out/-- [something preferably held] out/-- on/onto [something]" as pouring it onto.
+Understand "pour out/-- [a held nonempty water-tight thing] out/-- on/onto/at [something]" as pouring it onto.
+Understand "pour out/-- [something preferably held] out/-- on/onto/at [something]" as pouring it onto.
 Understand "douse [something] with [a held nonempty water-tight thing]" as pouring it onto (with nouns reversed).
 Understand "douse [something] with [something preferably held]" as pouring it onto (with nouns reversed).
 Understand the command "dump" as "pour".
 
+Definition: something is non-supporter if it is not a supporter.
+Understand "put [a held nonempty water-tight thing] on [a non-supporter thing]" as pouring it onto.
+
+Check an actor pouring something onto something (this is the can't pour something not held rule):
+	if the actor is not carrying the noun: 
+		carry out the implicitly taking activity with the noun; 
+		if the actor is not carrying the noun, stop the action.
 Check an actor pouring something onto something (this is the can't pour something empty onto rule):
 	if the noun is not a nonempty water-tight thing:
-		instead say "[The noun] [don't] have anything in [them] to pour out."
+		if the noun is liquid-yielding:
+			instead say "That doesn't seem like it'd work very well.";
+		else:
+			instead say "[The noun] [don't] have anything in [them] to pour out."
 Last check an actor pouring something onto something (this is the block pouring onto rule):
 	instead say "Drenching [the second noun] in [contained liquid of the noun] doesn't seem like it would improve the situation."
 

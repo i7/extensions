@@ -1,4 +1,4 @@
-Version 2 of Expanded Understanding by Xavid begins here.
+Version 2/190831 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -44,35 +44,16 @@ A can't see any such thing rule when (the clever action-to-be is the putting it 
 A can't see any such thing rule when the clever action-to-be is the dropping action (this is the can't see something to drop rule):
 	say the clever don't "have" any mistaken noun snippet message for "in your possession".
 
+Section 2 - Throwing At
+
+Understand "throw [something] on [something]" as throwing it at.
+
 Chapter 3 - Examine/Look/Search
 
 Section 1 - Preferably Examining Things
 
 [ Make this more specific so that you'll examine the thing, not the room, if both are visible. Examining rooms is enabled by the required Small Kindnesses by Aaron Reed. ]
 Understand "examine [a visible thing]" as examining.
-
-Section 2 - Examining Things in Adjacent Rooms
-
-A thing can be visible from a distance.
-
-After deciding the scope of the player when examining (this is the things in adjacent rooms are in scope for examining rule):
-	repeat with S running through visible from a distance things in adjacent rooms:
-		place S in scope, but not its contents;
-	repeat with D running through open doors in the location:
-		repeat with S running through visible from a distance things in the other side of D:
-			place S in scope, but not its contents.
-
-Before examining something when the noun is not in the location (this is the indicate direction when examining things in adjacent rooms rule):
-	[ We check these first to prefer NSEW to like inside ]
-	let D be nothing;
-	repeat with MD running through {north, south, east, west, northeast, southeast, southwest, northwest, up, down}:
-		if the room MD of the location is the location of the noun:
-			now D is MD;
-			break;
-	if D is nothing:
-		now D is the best route from the location to the location of the noun, using doors;
-	if D is not nothing:
-		say "(looking [D] to [the natural name of the location of the noun])[line break]".
 
 Section 3 - Searching
 
@@ -189,6 +170,16 @@ Chapter 7 - Use
 Understand "use [something] on [something]" as using it on. Using it on is an action applying to two things.
 
 Carry out using it on (this is the Expanded Understanding carry out using it on rule): say "You'll have to try a more specific verb than use."
+
+Chapter 8 - Tie
+
+Tying a knot in is an action applying to one thing.
+Understand "tie knot in [something preferably held]" as tying a knot in.
+
+Check an actor tying a knot in (this is the block tying a knot in rule):
+	if the actor is the player:
+		say "That's not something you can tie a knot in.";
+	stop the action.
 
 Part 2 - Other
 
@@ -386,7 +377,7 @@ To say the clever don't (seehave - text) any (MS - a snippet) message for (loc -
 		else if the matched object is fixed in place:
 			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. [They] [adapt the verb are in the past tense] [at the remembered holder of the matched object].";
 		else:
-			say "[regarding the matched object]You don't [seehave] [the matched object] [loc][if (the location of the remembered holder of the matched object is not the location of the player) and (the number of characters in the remembered action of the matched object is not 0)]. You [regarding the matched object][remembered action of the matched object][end if].";
+			say "[regarding the matched object]You don't [seehave] [the matched object] [loc][if (the location of the remembered holder of the matched object is not the location of the player) and (the number of characters in the remembered action of the matched object is not 0)]. You [regarding the matched object][remembered action of the matched object] [at the remembered holder of the matched object][end if].";
 	else:		
 		say "You don't [seehave] any [cleanly MS] [loc]."
 
@@ -655,7 +646,7 @@ Every turn (this is the Remembering update remembered positions of things rule):
 		repeat with item running through visible things:
 			if remembered holder of item is not holder of item:				
 				if (item is described or item is scenery) and item is memorable:
-					now the remembered action of the item is "last saw [them] [at the remembered holder of the matched object]";
+					now the remembered action of the item is "last saw [them]";
 					now the remembered holder of item is the holder of item;
 		let visible holders be the list of visible things;
 		add the location to visible holders;
@@ -667,11 +658,11 @@ Every turn (this is the Remembering update remembered positions of things rule):
 
 [ We shouldn't remember undescribed items just by walking past them, but examining them, sure. ]
 Carry out examining something memorable:
-	now the remembered action of the noun is "last saw [them] [at the remembered holder of the matched object]";
+	now the remembered action of the noun is "last saw [them]";
 	now the remembered holder of the noun is the holder of the noun.
 
 Last carry out dropping something memorable:
-	now the remembered action of the noun is "dropped [them] [at the remembered holder of the matched object]";
+	now the remembered action of the noun is "dropped [them]";
 	now the remembered holder of the noun is the holder of the noun.
 
 Section 4 - Printing the Name of a Room
@@ -759,8 +750,6 @@ Chapter 3 - Modified Commands
 Section 1 - Examining Tweaks
 
 This raises the priority of things when examining so that, in the common case where there's a scenery thing in a room with a similar name, the thing wins. (Examining rooms is enabled by the required Small Kindnesses by Aaron Reed.)
-
-In addition, a thing can be visible from a distance, meaning you can examine it from adjacent rooms. This can be useful if you have something like a river where in adjacent room descriptions you say "To the west is a river.", but you don't want to make it a backdrop because you don't want the player to be able to interact with it in other ways from these adjacent rooms.
 
 You can set this for individual things by saying:
 	

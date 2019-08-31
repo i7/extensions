@@ -1,4 +1,4 @@
-Version 2 of Graphical Map (for Glulx only) by Xavid begins here.
+Version 2/190831 of Graphical Map (for Glulx only) by Xavid begins here.
 
 "Provides support for an image-based map with a static background and icons for the player and optionally other things or doors."
 
@@ -76,6 +76,9 @@ Rule for refreshing the map window (this is the draw map rule):
 				erase rect in the map window at xpos x ypos with size the map grid size x the map grid size.
 
 Every turn (this is the redraw map each turn rule):
+	refresh the map window.
+	
+After looking for the first time:
 	refresh the map window.
 
 To map draw (T - thing) at (X - a number) x (Y - a number):
