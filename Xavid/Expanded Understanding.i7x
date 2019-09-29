@@ -1,4 +1,4 @@
-Version 2/190831 of Expanded Understanding by Xavid begins here.
+Version 2/190926 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -117,7 +117,7 @@ Section 4 - Go without "to" (for use with Approaches by Emily Short)
 Understand "go [any visited room]" as approaching.
 Understand "go [any landmark thing]" as landmark-approaching.
 
-Section 4 - Enter
+Section 5 - Enter
 
 [The standard rules have "understand "enter" as entering", which keeps Inform from supplying a noun automatically in the parenthetical manner.]
 
@@ -132,7 +132,7 @@ Understand "enter" as entering simply when the room-or-door inside from the loca
 Check an actor entering simply:
 	convert to the going action on inside.
 
-Section 5 - Leave
+Section 6 - Leave
 
 [We want leaving the room to be more specific than leaving something we're not on, because often the room name can also match scenery in the room.]
 
@@ -146,6 +146,13 @@ Check an actor exiting (this is the Expanded Understanding exit leaves rule):
 	if the container exited from is the local room:
 		convert to the going action on outside.
 The Expanded Understanding exit leaves rule is listed before the can't exit when not inside anything rule in the check exiting rules.
+
+Section 7 - Going Up/Down Something
+
+Understand "go up/down [something]" as climbing.
+
+Understand "stairs" as up when the room up from the location is not nowhere and the room down from the location is nowhere.
+Understand "stairs" as down when the room down from the location is not nowhere and the room up from the location is nowhere.
 
 Chapter 6 - Following (for use with Simple Followers by Emily Short)
 
@@ -270,6 +277,10 @@ After reading a command (this is the Expanded Understanding conversational subst
 			change the text of the player's command to the substituted form of "[snippet at 1 of length (length of the player's command - 2)] to [word at (length of the player's command)]";
 		else:
 			change the text of the player's command to the substituted form of "[snippet at 1 of length (length of the player's command - 1)] to [word at (length of the player's command)]";
+	else if the length of the player's command is 1 and the word at 1 matches "hello":
+		change the text of the player's command to the substituted form of "answer [the player's command]";
+	else if the length of the player's command is 2 and the word at 1 matches "hello" and the word at 2 matches "[someone]":
+		change the text of the player's command to the substituted form of "[the word at 2], [the word at 1]";
 
 Section 2 - Telling That
 
@@ -854,7 +865,7 @@ Example: ** Unit Tests
 	
 	Shed is an improper-named room. The at preposition is "in".
 	
-	A scenery thing called a glowing orb is here. It is visible from a distance.
+	A scenery thing called a glowing orb is here. [It is visible from a distance.]
 	
 	A supporter called a table is here. On the table is a saw.
 	
@@ -887,6 +898,8 @@ Example: ** Unit Tests
 		say "Zot!";
 		now the noun is nowhere.
 
+	A room called Roof is up from Shed.
+	
 	Unit test:
 		start test "x here";
 		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw), a hammer and a hovercraft (empty) here.";
