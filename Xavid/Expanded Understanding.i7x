@@ -1,4 +1,4 @@
-Version 2/190926 of Expanded Understanding by Xavid begins here.
+Version 2/191001 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -398,11 +398,6 @@ To say cleanly (MS - a snippet):
 	else:
 		say MS.
 
-Chapter 5 - Scenery
-
-[Normally, we don't want scenery to come up as the default nouns Inform will guess when we type words without all necessary nouns specified. This avoids that.]
-A scenery thing is usually undescribed.
-
 Section 3 - Implementation
 
 The clever noun snippet is a snippet that varies.
@@ -631,6 +626,31 @@ To debug (T - text):
 
 To say tokenly (N - a number):
 	do nothing.
+
+Chapter 5 - Scenery
+
+[Normally, we don't want scenery to come up as the default nouns Inform will guess when we type words without all necessary nouns specified. This avoids that.]
+A scenery thing is usually undescribed.
+
+Chapter 6 - Clarification
+
+Section 1 - Whom do you want to give?
+
+The parser clarification internal rule response (D) is "[whom do you want to verb message]".
+
+To say whom do you want to verb message:
+	if the substituted form of "[parser command so far]" is "give":
+		say "What would you like [if the noun is not the player][the noun] [end if]to give?[command clarification break]";
+	else:
+		say "Whom do you want [if the noun is not the player][the noun] [end if]to
+		[parser command so far]?[command clarification break]".
+
+Section 2 - Responding N to a clarification question
+
+[ These almost certainly is the player getting a clarification question and then trying to go a direction ]
+After reading a command (this is the Expanded Understanding answering directions rule):
+	if the player's command matches "give/take/drop n/s/e/w/u/d/nw/ne/se/sw":
+		change the text of the player's command to the substituted form of "[word at 2]".
 
 Part 3 - Implementation Details
 
@@ -885,6 +905,8 @@ Example: ** Unit Tests
 		persuasion succeeds.
 	The block giving rule does nothing.
 	
+	An animal called the wombat is here.
+	
 	Filling it from is an action applying to two things.
 	Understand "fill [something] from [something]" as filling it from.
 
@@ -918,9 +940,6 @@ Example: ** Unit Tests
 		[]
 		start test "scenery matches room";
 		assert that "x yard" produces "This is a thing, not a room.";
-		[]
-		start test "visible from a distance";
-		assert that "x orb" produces "(looking north to the shed)[paragraph break]You see nothing special about the glowing orb.";
 		[]
 		start test "examining errors";
 		assert that "x wombat" produces "You don't see any wombat here.";
