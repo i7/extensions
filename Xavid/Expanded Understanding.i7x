@@ -499,11 +499,19 @@ The clever verb is text that varies.
 
 To determine the mistaken noun:
 	let best score be -1;
+	let cmd end be the length of the player's command;
+	repeat with K running from 2 to the length of the player's command:
+		debug "[the word at K]";
+		if the word at K exactly matches the text ".":
+			debug "cmd end is [K - 1]";
+			now cmd end is K - 1;
+			break;
 	[ set some defaults if no lines match, due to implied prepositions say ]
 	[ 0 means "unknown" ]
 	now the mistaken noun position is 0;
-	now the mistaken noun snippet is the snippet at 2 of length the length of the player's command - 1;
+	now the mistaken noun snippet is the snippet at 2 of length cmd end - 1;
 	now the clever action-to-be is the waiting action;
+	now the clever verb is the verb word;
 	get syntax;
 	repeat with I running from 1 to the syntax len:		
 		let WL be a list of text;
@@ -527,7 +535,7 @@ To determine the mistaken noun:
 				increase score by 1;
 				let matched word be false;
 				repeat with W running through WL:
-					repeat with K running from cmd point to the length of the player's command:
+					repeat with K running from cmd point to cmd end:
 						debug "Comparing [word at K] vs [W]";
 						if the word at K exactly matches the text W:
 							if K > cmd point and n1start is 0:
@@ -544,7 +552,7 @@ To determine the mistaken noun:
 					if matched word is true:
 						break;
 				if matched word is false:
-					if n1start > 0 and ((the length of the player's command) is n1start):
+					if n1start > 0 and (cmd end is n1start):
 						debug "XAVID guessing partial command";
 						decrease score by 1;
 					else:
@@ -558,7 +566,7 @@ To determine the mistaken noun:
 				let T be the substituted form of "[token text]";
 				add T to WL;
 			else:
-				if cmd point > the length of the player's command:
+				if cmd point > cmd end:
 					debug "XAVID off end";
 					now rejected line is true;
 					break;
@@ -569,14 +577,14 @@ To determine the mistaken noun:
 					now n1start is cmd point;
 			increase J by 1;
 			analyze token J;
-		if n2start > 0 and n2start <= the length of the player's command and n2len is 0:
+		if n2start > 0 and n2start <= cmd end and n2len is 0:
 			debug "XAVID guessing n2 to end from [n2start].";
-			now n2len is (the length of the player's command - n2start) + 1;
+			now n2len is (cmd end - n2start) + 1;
 		else if n1start > 0 and n1len is 0:
 			debug "XAVID guessing n1 to end from [n1start].";
-			now n1len is (the length of the player's command - n1start) + 1;
+			now n1len is (cmd end - n1start) + 1;
 		debug "XAVID: [cmd point] [n1start] [n2start] [rejected line].";
-		if (cmd point <= the length of the player's command) and (cmd point is not n2start) and (cmd point is not n1start):
+		if (cmd point <= cmd end) and (cmd point is not n2start) and (cmd point is not n1start):
 			debug "XAVID mismatch";
 			now rejected line is true;
 		if rejected line is false:
@@ -612,7 +620,7 @@ To determine the mistaken noun:
 				let wordskip be 0;
 				repeat with possible len running from 1 to the length of the mistaken noun snippet:
 					let snip be the snippet at mnstart plus possible len of length 1;
-					if (not (snip is valid)) or snip matches the regular expression "(?i)^and|,$":
+					if (not (snip is valid)) or snip matches the regular expression "(?i)^and|<,.>$":
 						[ maybe end snippet early if we hit an and or , ]
 						let currsnip be the snippet at (mnstart plus wordskip) of length (possible len minus wordskip);
 						if currsnip matches a noun:
@@ -625,8 +633,10 @@ To determine the mistaken noun:
 							break;
 				if n1start > 2:
 					now the clever verb is the snippet at 1 of length n1start;
+					debug "Clever verb snip: [the clever verb]";
 				else:
 					now the clever verb is the verb word;
+					debug "Clever verb: [the clever verb]";
 				if N1 is the mistaken noun snippet:
 					debug "Better match: [the mistaken noun snippet] N1!";
 				else if N2 is the mistaken noun snippet:
@@ -642,7 +652,10 @@ To determine the mistaken noun:
 						now mistaken noun position is 1;
 					else if mistaken noun position is 1:
 						now mistaken noun position is 2;
-	debug "XAVID best match: [clever action-to-be] [mistaken noun snippet].";
+	if the length of the mistaken noun snippet > 0:
+		debug "XAVID best match: [clever action-to-be] [mistaken noun snippet].";
+	else:
+		debug "XAVID best match: [clever action-to-be] {empty noun at [the start of the mistaken noun snippet]}.";
 
 Syntax len is a number that varies.
 The syntax len variable translates into I6 as "syntax_len".
@@ -1130,6 +1143,10 @@ Example: ** Unit Tests
 		assert that "empty table" produces "You remove the apple from the table and put it down.";
 		do "put apple in hovercraft";
 		assert that "empty hovercraft" produces "You remove the apple and the pear from the hovercraft and put them down.";
+		[]
+		start test "periods";
+		assert that "take pie. jump" produces "You don't see any pie here.";
+		assert that "take. jump" produces "I'm not sure what you want to take.";
 	
 	Test me with "unit".
 
