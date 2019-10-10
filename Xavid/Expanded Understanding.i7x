@@ -1,4 +1,4 @@
-Version 2/191009 of Expanded Understanding by Xavid begins here.
+Version 3 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -18,7 +18,7 @@ Section 2 - Improved Errors for Taking
 
 [ Is it "take off hat" or "take hat off"? ]
 A can't see any such thing rule when the clever action-to-be is the taking off action (this is the not wearing something to take off rule):
-	say "You're not wearing any [mistaken noun snippet]."
+	say "[We]['re] not wearing any [mistaken noun snippet]."
 
 [ Maybe it's "take something from something" ; mistaken noun position will be 1 when it's nothing and 0 when it's something, but in the wrong location ]
 A can't see any such thing rule when the clever action-to-be is the removing it from action and the mistaken noun position is not 2 (this is the can't see something to take from rule):
@@ -38,11 +38,11 @@ Section 1 - Improved Errors for Dropping
 
 [ Maybe it's "drop something on something" ]
 A can't see any such thing rule when (the clever action-to-be is the putting it on action or the clever action-to-be is the inserting it into action) and the mistaken noun position is 1 (this is the can't see something to drop on something rule):
-	say the clever don't "have" any mistaken noun snippet message for "in your possession".
+	say the clever don't "have" any mistaken noun snippet message for "in [our] possession".
 
 [ Probably "drop something" ]
 A can't see any such thing rule when the clever action-to-be is the dropping action (this is the can't see something to drop rule):
-	say the clever don't "have" any mistaken noun snippet message for "in your possession".
+	say the clever don't "have" any mistaken noun snippet message for "in [our] possession".
 
 Section 2 - Throwing At
 
@@ -185,8 +185,87 @@ Understand "tie knot in [something preferably held]" as tying a knot in.
 
 Check an actor tying a knot in (this is the block tying a knot in rule):
 	if the actor is the player:
-		say "That's not something you can tie a knot in.";
+		say "That's not something [we] can tie a knot in.";
 	stop the action.
+
+Chapter 9 - Empty
+
+Section 1 - Two Nouns
+
+To say in-on:
+	if the prior named object is a supporter:
+		say "on";
+	else:
+		say "in".
+
+To say regarding-number (N - a number):
+	(- RegardingNumber({N}); -).	
+To say regarding (L - a list of objects):
+	if the number of entries in L is 1:
+		say regarding entry 1 in L;
+	else:
+		say regarding-number number of entries in L.
+
+Emptying it into is an action applying to two things.
+Understand "empty [something preferably held] to/in/into/on/onto [something]" as emptying it into.
+
+The emptying it into action has a list of things called the transferred items.
+Setting action variables for emptying something into:
+	now the transferred items is the list of things in the noun;
+	add the list of things on the noun to the transferred items.
+
+Check an actor emptying something into:
+	if the noun is the second noun:
+		if the actor is the player,	 say "[We] can't empty something into itself!";
+		stop the action.
+
+Check an actor emptying something into:
+	if the noun is a person:
+		if the actor is the player,	 say "[We] can't empty a person!";
+		stop the action.
+
+Check an actor emptying something into:
+	if the second noun is a person:
+		if the actor is the player,	 say "[We] can't empty something into a person!";
+		stop the action.
+
+Check an actor emptying something into:
+	if the number of entries in transferred items is 0:
+		if the actor is the player,	 say "[The noun] [don't] have anything [in-on] [them].";
+		stop the action.
+
+Check an actor emptying something into:
+	if the second noun is not a container and the second noun is not a supporter and the second noun is not a room:
+		if the actor is the player, say "[The second noun] can't contain things.";
+		stop the action.
+
+Carry out an actor emptying something into a container:
+	let L be the transferred items;
+	repeat with I running through L:
+		now I is in the second noun.
+
+Carry out an actor emptying something into a supporter:
+	let L be the transferred items;
+	repeat with I running through L:
+		now I is on the second noun.
+
+To remove is a verb.
+Report an actor emptying something into a room:
+	if the action is not silent:
+		say "[The actor] [remove] [transferred items with definite articles] from [the noun] and [regarding the actor][put] [regarding transferred items][them] down.";
+	stop the action.
+
+Report an actor emptying something into:
+	if the action is not silent:
+		say "[The actor] [put] [transferred items with definite articles] from [the noun] [regarding the second noun][in-on]to [the second noun]."
+
+Section 2 - One Noun
+
+Emptying is an action applying to one thing.
+Understand "empty [something preferably held]" as emptying.
+
+Check an actor emptying:
+	convert to the emptying it into action on the noun and the holder of the actor.
 
 Part 2 - Other
 
@@ -199,9 +278,9 @@ Rule for deciding whether all includes things held by someone when an actor taki
 
 Rule for printing a parser error when the latest parser error is the nothing to do error (this is the clever error for all matching nothing rule):
 	if the the action-to-be is the taking action or the action-to-be is the removing it from action:
-		say "You don't see anything obvious to [the verb word].";
+		say "[We] [don't] see anything obvious to [the verb word].";
 	else if the action-to-be is the dropping action or the action-to-be is the putting it on action or the action-to-be is the inserting it into action or the action-to-be is the throwing it at action:
-		say "You're not carrying anything to [the verb word].";
+		say "[We]['re] not carrying anything to [the verb word].";
 	else:
 		say "I'm not sure what you want to [the verb word]."
 
@@ -384,13 +463,13 @@ To say the clever don't (seehave - text) any (MS - a snippet) message for (loc -
 		say "I'm not sure what you want to [clever verb].";		
 	else if MS object-matches "[any remembered thing]":
 		if the location of the matched object is the location of the player:
-			say "[regarding the matched object][The matched object] [aren't] [loc]. [They]['re] [at the remembered holder of the matched object].";
+			say "[regarding the matched object][The matched object] [aren't] [loc]. [regarding the matched object][They]['re] [at the remembered holder of the matched object].";
 		else if the matched object is fixed in place:
-			say "[regarding the matched object]You don't [seehave] [the matched object] [loc]. [They] [adapt the verb are in the past tense] [at the remembered holder of the matched object].";
+			say "[regarding the matched object][We] [don't] [seehave] [the matched object] [loc]. [regarding the matched object][They] [adapt the verb are in the past tense] [at the remembered holder of the matched object].";
 		else:
-			say "[regarding the matched object]You don't [seehave] [the matched object] [loc][if (the location of the remembered holder of the matched object is not the location of the player) and (the number of characters in the remembered action of the matched object is not 0)]. You [regarding the matched object][remembered action of the matched object] [at the remembered holder of the matched object][end if].";
+			say "[regarding the matched object][We] [don't] [seehave] [the matched object] [loc][if (the location of the remembered holder of the matched object is not the location of the player) and (the number of characters in the remembered action of the matched object is not 0)]. [We] [regarding the matched object][remembered action of the matched object] [at the remembered holder of the matched object][end if].";
 	else:		
-		say "You don't [seehave] any [cleanly MS] [loc]."
+		say "[We] [don't] [seehave] any [cleanly MS] [loc]."
 
 To say cleanly (MS - a snippet):
 	if MS matches the regular expression "^(.*)\.$":
@@ -730,7 +809,7 @@ Rule for saying at a thing (called T):
 
 Rule for saying at a person (called T):
 	if T is the player:
-		say "among your possessions";
+		say "among [our] possessions";
 	else:
 		say "in [the T]'s possession".
 
@@ -896,6 +975,10 @@ Example: ** Unit Tests
 	
 	A vehicle called a hovercraft is here.
 	
+	A container called a box is here.
+	A thing called an apple is in the box.
+	A thing called a pear is in the box.
+	
 	A room called In Yard is south of Shed.
 	Inside from In Yard is Shed.
 	
@@ -927,7 +1010,7 @@ Example: ** Unit Tests
 	
 	Unit test:
 		start test "x here";
-		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw), a hammer and a hovercraft (empty) here.";
+		assert that "x room" produces "Shed[line break]You can see a table (on which is a saw), a hammer, a hovercraft (empty) and a box (in which are an apple and a pear) here.";
 		[]
 		start test "implied preposition grammar";
 		assert that "fill stump girl" produces "You don't see any stump girl here.";
@@ -959,7 +1042,7 @@ Example: ** Unit Tests
 		assert that "put stump on yard" produces "(first trying to take the stump)[line break]That's fixed in place.";
 		[]
 		start test "going to";
-		assert that "go to orb" produces "You go inside to the shed. [paragraph break]Shed[line break]You can see a table (on which is a saw) and a hovercraft (empty) here.";
+		assert that "go to orb" produces "You go inside to the shed. [paragraph break]Shed[line break]You can see a table (on which is a saw), a hovercraft (empty) and a box (in which are an apple and a pear) here.";
 		[]
 		start test "complex taking";
 		assert that "take hammer from table" produces "The hammer isn't on the table. It's among your possessions.";
@@ -1024,7 +1107,16 @@ Example: ** Unit Tests
 		do "enter";
 		assert that "[location]" substitutes to "Shed";
 		assert that "enter" produces "(the hovercraft)[line break]You get into the hovercraft.";
-		
+		[]
+		start test "empty";
+		assert that "empty box onto table" produces "You put the apple and the pear from the box onto the table.";
+		assert that "empty table onto box" produces "You put the pear and the apple from the table into the box.";
+		assert that "empty box into box" produces "You can't empty something into itself!";
+		assert that "empty box into me" produces "You can't empty something into a person!";
+		assert that "empty box" produces "You put the apple and the pear from the box into the hovercraft.";
+		do "put apple on table";
+		do "exit hovercraft";
+		assert that "empty table" produces "You remove the apple from the table and put it down.";
 	
 	Test me with "unit".
 
