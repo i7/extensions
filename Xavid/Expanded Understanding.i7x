@@ -209,10 +209,12 @@ To say regarding (L - a list of objects):
 Emptying it into is an action applying to two things.
 Understand "empty [something preferably held] to/in/into/on/onto [something]" as emptying it into.
 
-The emptying it into action has a list of things called the transferred items.
-Setting action variables for emptying something into:
-	now the transferred items is the list of things in the noun;
-	add the list of things on the noun to the transferred items.
+Setting action variables for an actor emptying something into:
+	now every thing is unmarked for listing;
+	repeat with T running through things in the noun:
+		now T is marked for listing;	
+	repeat with T running through things on the noun:
+		now T is marked for listing.
 
 Check an actor emptying something into:
 	if the noun is the second noun:
@@ -229,8 +231,12 @@ Check an actor emptying something into:
 		if the actor is the player,	 say "[We] can't empty something into a person!";
 		stop the action.
 
-Check an actor emptying something into:
-	if the number of entries in transferred items is 0:
+Check an actor emptying something into (this is the can't empty something closed rule):
+	if the noun is openable and the noun is closed:
+		instead say "[The noun] [are] closed."
+
+Check an actor emptying something into (this is the can't empty something empty rule):
+	if the number of marked for listing things is 0:
 		if the actor is the player,	 say "[The noun] [don't] have anything [in-on] [them].";
 		stop the action.
 
@@ -239,25 +245,30 @@ Check an actor emptying something into:
 		if the actor is the player, say "[The second noun] can't contain things.";
 		stop the action.
 
+Check an actor emptying something into:
+	if the noun is not fixed in place:
+		if the actor is carrying the noun, continue the action;
+		carry out the implicitly taking activity with the noun;
+		if the actor is carrying the noun, continue the action;
+		stop the action.
+
 Carry out an actor emptying something into a container:
-	let L be the transferred items;
-	repeat with I running through L:
+	repeat with I running through marked for listing things:
 		now I is in the second noun.
 
 Carry out an actor emptying something into a supporter:
-	let L be the transferred items;
-	repeat with I running through L:
+	repeat with I running through marked for listing things:
 		now I is on the second noun.
 
 To remove is a verb.
 Report an actor emptying something into a room:
 	if the action is not silent:
-		say "[The actor] [remove] [transferred items with definite articles] from [the noun] and [regarding the actor][put] [regarding transferred items][them] down.";
+		say "[The actor] [remove] [the list of marked for listing things] from [the noun] and [regarding the actor][put] [regarding marked for listing things][them] down.";
 	stop the action.
 
 Report an actor emptying something into:
 	if the action is not silent:
-		say "[The actor] [put] [transferred items with definite articles] from [the noun] [regarding the second noun][in-on]to [the second noun]."
+		say "[The actor] [put] [the list of marked for listing things] from [the noun] [regarding the second noun][in-on]to [the second noun]."
 
 Section 2 - One Noun
 
@@ -1109,14 +1120,16 @@ Example: ** Unit Tests
 		assert that "enter" produces "(the hovercraft)[line break]You get into the hovercraft.";
 		[]
 		start test "empty";
-		assert that "empty box onto table" produces "You put the apple and the pear from the box onto the table.";
+		assert that "empty box onto table" produces "(first taking the box)[line break]You put the pear and the apple from the box onto the table.";
 		assert that "empty table onto box" produces "You put the pear and the apple from the table into the box.";
 		assert that "empty box into box" produces "You can't empty something into itself!";
 		assert that "empty box into me" produces "You can't empty something into a person!";
-		assert that "empty box" produces "You put the apple and the pear from the box into the hovercraft.";
+		assert that "empty box" produces "You put the pear and the apple from the box into the hovercraft.";
 		do "put apple on table";
 		do "exit hovercraft";
 		assert that "empty table" produces "You remove the apple from the table and put it down.";
+		do "put apple in hovercraft";
+		assert that "empty hovercraft" produces "You remove the apple and the pear from the hovercraft and put them down.";
 	
 	Test me with "unit".
 

@@ -1,6 +1,8 @@
-Version 1/190523 of Liquids by Xavid begins here.
+Version 2 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
+
+Include version 3 of Expanded Understanding by Xavid.
 
 Chapter 1 - Basic Implementation
 
@@ -62,10 +64,10 @@ Understand "fill [a water-tight thing] from/at/in/with [a visible liquid-yieldin
 Understand "fill [a water-tight thing] from/at/in/with [a nonempty water-tight thing]" as filling it from.
 Understand "fill [something preferably held] from/at/in/with [something]" as filling it from.
 Understand "pour [a nonempty water-tight thing] into/in [a water-tight thing]" as filling it from (with nouns reversed).
+Understand "empty [a nonempty water-tight thing] into/in [a water-tight thing]" as filling it from (with nouns reversed).
 Understand "pour [something preferably held] into/in [something preferably held]" as filling it from (with nouns reversed).
 Understand "put [a nonempty water-tight thing] in/into [a water-tight thing]" as filling it from (with nouns reversed).
 Understand "put [a visible liquid-yielding thing] in/into [a water-tight thing]" as filling it from (with nouns reversed).
-Understand the command "empty" as "pour".
 
 Check an actor filling something from (this is the can't fill from itself rule):
 	if the noun is the second noun:
@@ -111,41 +113,37 @@ Report an actor filling something from a portable liquid-yielding thing (this is
 Report an actor filling something from something fixed in place (this is the report filling from something fixed in place rule):
 	say "[The actor] [fill] [the noun] with [contained liquid of the noun] from [the second noun]."
 
-Section 2 - Emptying
+Section 2 - Emptying as Filling
 
-Emptying is an action applying to one carried thing.
+Check an actor emptying a nonempty water-tight thing into something:
+	convert to the filling it from action on the second noun and the noun.
+
+Section 3 - Emptying (not as Filling)
+
+[ These will all get converted into the "emptying it into" action by the rule in Expanded Understanding ]
 Understand "empty [a held nonempty water-tight thing]" as emptying.
-Understand "empty [something preferably held]" as emptying.
 Understand "pour out/-- [a held nonempty water-tight thing] out/--" as emptying.
 Understand "pour out/-- [something preferably held] out/--" as emptying.
 
-The emptying action has a liquid called the former contents.
+The emptying it into action has a liquid called the former contents.
+
+The can't empty something empty rule does nothing if the noun is a nonempty water-tight thing.
 
 To do is a verb.
-Check an actor emptying something (this is the can't empty something empty rule):
-	if the noun is not a nonempty water-tight thing and the noun contains nothing:
+Check an actor emptying a water-tight thing into (this is the Liquids can't empty something empty rule):
+	if the noun is not nonempty and the noun contains nothing:
 		instead say "[The noun] [don't] have anything in [them] to pour out."
-Check an actor emptying something (this is the can't empty something closed rule):
-	if the noun is openable and the noun is closed:
-		instead say "[The noun] [are] closed."
 
-Carry out an actor emptying something (this is the emptying rule):
+Carry out an actor emptying something into (this is the emptying rule):
 	now the former contents is the contained liquid of the noun;
-	now the contained liquid of the noun is emptiness;
-	now every thing is unmarked for listing;
-	repeat with T running through things in the noun:
-		now T is marked for listing;
-		now T is in the location of the actor.
+	now the contained liquid of the noun is emptiness.
 
 To pour is a verb. To dump is a verb.
-Report an actor emptying something (this is the report emptying rule):
-	if the former contents is emptiness:
-		say "[The actor] [dump] out [the list of marked for listing things] from [the noun].";
-	else if the list of marked for listing things is empty:
-		say "[The actor] [pour] out the [former contents] from [the noun].";
+Report an actor emptying something into when the former contents is not emptiness:
+	if the list of marked for listing things is empty:
+		instead say "[The actor] [pour] out the [former contents] from [the noun].";
 	else:
-		say "[The actor] [dump] out the [former contents] as well as [the list of marked for listing things] from [the noun].";
-	now every thing is unmarked for listing.
+		instead say "[The actor] [dump] out the [former contents] as well as [the list of marked for listing things] from [the noun]."
 
 Emptying it from is an action applying to one liquid and one carried thing.
 Understand "empty [a liquid] from [a held nonempty water-tight thing]" as emptying it from.
@@ -161,7 +159,7 @@ Check an actor emptying a liquid (called L) from something:
 	else:
 		instead say "[The second noun] [are] full of [the contained liquid of the second noun], not [L]."
 
-Section 3 - Pouring Onto
+Section 4 - Pouring Onto
 
 Pouring it onto is an action applying to one carried thing and one thing.
 Understand "empty [a held nonempty water-tight thing] on/onto [something]" as pouring it onto.
@@ -194,7 +192,7 @@ Carry out an actor pouring something onto something (this is the pouring onto ru
 Report an actor pouring something onto something (this is the report pouring onto rule):
 	say "[The actor] [pour] out the [former contents] from [the noun] onto [the second noun]."
 
-Section 4 - Drinking
+Section 5 - Drinking
 
 Understand "drink from [something preferably held]" as drinking.
 Understand "drink from [a nonempty held water-tight thing]" as drinking.
@@ -224,7 +222,7 @@ Carry out an actor drinking something liquid-yielding (this is the drinking from
 Report an actor drinking something (this is the report drinking rule):
 	say "[The actor] [drink] the [beverage] from [the noun]."
 
-Section 5 - Error Messages
+Section 6 - Error Messages
 
 Check an actor inserting something into a water-tight thing that is not a container (this is the can't insert into water-tight non-containers rule):
 	if the actor is the player:
