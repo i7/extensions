@@ -1,10 +1,10 @@
-Version 2/191001 of Expanded Understanding by Xavid begins here.
+Version 2/191009 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
 Include Snippetage by Dave Robinson.
 Include Small Kindnesses by Aaron Reed.
-Include Object Matching by Xavid.
+Include version 2 of Object Matching by Xavid.
 
 Part 1 - Commands
 
@@ -200,7 +200,7 @@ Rule for deciding whether all includes things held by someone when an actor taki
 Rule for printing a parser error when the latest parser error is the nothing to do error (this is the clever error for all matching nothing rule):
 	if the the action-to-be is the taking action or the action-to-be is the removing it from action:
 		say "You don't see anything obvious to [the verb word].";
-	else if the action-to-be is the dropping action or the action-to-be is the putting it on action or the action-to-be is the inserting it into action: 
+	else if the action-to-be is the dropping action or the action-to-be is the putting it on action or the action-to-be is the inserting it into action or the action-to-be is the throwing it at action:
 		say "You're not carrying anything to [the verb word].";
 	else:
 		say "I'm not sure what you want to [the verb word]."
@@ -510,25 +510,28 @@ To determine the mistaken noun:
 						[ both nouns match, so I'm out of ideas ]
 						now the mistaken noun position is 0;
 					else:
+						debug "N2 seems mistaken based on [clever second noun snippet]";
 						now the mistaken noun position is 2;
 						now the mistaken noun snippet is the clever second noun snippet;
 				else:
+					debug "N1 seems mistaken based on [clever noun snippet]";
 					now the mistaken noun position is 1;
 					now the mistaken noun snippet is the clever noun snippet;
 				[ handle lists of nouns somewhat properly ]
 				let mnstart be the start of the mistaken noun snippet;
 				let wordskip be 0;
-				let nounstoskip be the number of entries in the multiple object list;
 				repeat with possible len running from 1 to the length of the mistaken noun snippet:
 					let snip be the snippet at mnstart plus possible len of length 1;
 					if (not (snip is valid)) or snip matches the regular expression "(?i)^and|,$":
 						[ maybe end snippet early if we hit an and or , ]
-						if nounstoskip > 0:
+						let currsnip be the snippet at (mnstart plus wordskip) of length (possible len minus wordskip);
+						if currsnip matches a noun:
+							debug "[currsnip] matches a thing";
 							[ keep going ]
 							now wordskip is possible len plus 1;
-							now nounstoskip is nounstoskip minus 1;
 						else:
-							now the mistaken noun snippet is the snippet at (mnstart plus wordskip) of length (possible len minus wordskip);
+							debug "'[currsnip]' at [mnstart plus wordskip] len [possible len minus wordskip] does not match a thing";
+							now the mistaken noun snippet is currsnip;
 							break;
 				if n1start > 2:
 					now the clever verb is the snippet at 1 of length n1start;
@@ -905,7 +908,7 @@ Example: ** Unit Tests
 		persuasion succeeds.
 	The block giving rule does nothing.
 	
-	An animal called the wombat is here.
+	An animal called the penguin is here.
 	
 	Filling it from is an action applying to two things.
 	Understand "fill [something] from [something]" as filling it from.

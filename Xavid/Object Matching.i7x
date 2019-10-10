@@ -1,4 +1,4 @@
-Version 1/170530 of Object Matching by Xavid begins here.
+Version 2 of Object Matching by Xavid begins here.
 
 "Support for getting the matched object when matching a snippet against a pattern and for disabling clarification when a command or snippet is ambiguous."
 
@@ -37,7 +37,29 @@ Include (-
 
 -).
 
-Section 2 - I6T Hacking
+Section 2 - Getting an object out of a nounlike snippet
+
+[ This version doesn't take a topic, so it's less flexible, but it works even in error or multi-object cases where the above does not. ]
+
+To decide if (S - a snippet) matches a noun:
+	(- SnippetIsNoun({S}) -)
+
+Include (-
+
+[ SnippetIsNoun snippet rv prev_num_words;
+	wn = snippet/100;
+	prev_num_words = num_words;
+	num_words = snippet%100 + wn - 1;
+	rv = NounDomain(actors_location, actor, NOUN_TOKEN, true);
+	num_words = prev_num_words;
+	if (rv == REPARSE_CODE || rv == 0 || rv == 1) rfalse;
+	matched_object = rv;
+	rtrue;
+];
+
+-).
+
+Section 3 - I6T Hacking
 
 [ We add a global variable that lets us disable the clarification flow. Otherwise, if we try to match an ambiguous object and the player answers the resulting question, we'll get a parser crash. ]
 
@@ -74,6 +96,8 @@ Include (-
         i = multiple_object-->0;
         #Ifdef DEBUG;
         if (parser_trace >= 3) print "  [Calling NounDomain on location and actor]^";
+        if (parser_trace >= 3 && token_allows_multiple) print "  [token_allows_multiple]^";
+        if (parser_trace >= 3 && ~~multiflag) print "  [multiflag]^";
         #Endif; ! DEBUG
         l = NounDomain(actors_location, actor, token, disable_clarification);
         if (l == REPARSE_CODE) return l;                  ! Reparse after Q&A
