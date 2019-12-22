@@ -1,9 +1,10 @@
-Version 3 of Expanded Understanding by Xavid begins here.
+Version 4 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
 Include Snippetage by Dave Robinson.
 Include Small Kindnesses by Aaron Reed.
+Include Locksmith by Emily Short.
 Include version 2 of Object Matching by Xavid.
 
 Part 1 - Commands
@@ -13,6 +14,8 @@ Chapter 1 - Take
 Section 1 - Aliases
 
 Understand "remove [something in a container]" as taking.
+
+Understand the commands "collect" and "gather" as "take".
 
 Section 2 - Improved Errors for Taking
 
@@ -207,7 +210,7 @@ To say regarding (L - a list of objects):
 		say regarding-number number of entries in L.
 
 Emptying it into is an action applying to two things.
-Understand "empty [something preferably held] to/in/into/on/onto [something]" as emptying it into.
+Understand "empty out/-- [something preferably held] to/in/into/on/onto [something]" as emptying it into.
 
 Setting action variables for an actor emptying something into:
 	now every thing is unmarked for listing;
@@ -273,10 +276,32 @@ Report an actor emptying something into:
 Section 2 - One Noun
 
 Emptying is an action applying to one thing.
-Understand "empty [something preferably held]" as emptying.
+Understand "empty out/-- [something preferably held]" as emptying.
+Understand "empty [something preferably held] out" as emptying.
 
 Check an actor emptying:
 	convert to the emptying it into action on the noun and the holder of the actor.
+
+Chapter 10 - Give and Show
+
+[ If everything past the verb is in the mistaken snippet and the first noun word matches someone, then this is probably "show worker symbol" where symbol is nonsense. ]
+A can't see any such thing rule when (the clever action-to-be is the giving it to action or the clever action-to-be is the showing it to action) and the start of mistaken noun snippet is 2 and the length of mistaken noun snippet is (length of the player's command - 1) and the length of the player's command >= 3 and the word at 2 matches "[someone]":
+	say the clever don't "have" any (snippet at 3 of length (length of the player's command - 2)) message for "in [our] possession".
+
+[ Makes give all work better, maybe? ]
+Understand "give [things preferably held] to [someone]" as giving it to.
+Understand "give [someone] [things preferably held]" as giving it to (with nouns reversed).
+
+[ Bad grammar, but might get tried anyways. ]
+[ This is the intent, but doing literally this messes up the error messages for other things. Doing it as a parser error handler means it won't break otherwise successful commands. ]
+[Understand "give [a held thing] [someone]" as giving it to.]
+Rule for printing a parser error when the latest parser error is the can only do that to something animate error and the action-to-be is the giving it to action (this is the clever bad grammar giving rule):
+	if the length of the player's command >= 3 and the word at (the length of the player's command - 1) does not match "to" and the word at (the length of the player's command) object-matches "[someone]":
+		let person be the matched object;
+		if the snippet at 2 of length (the length of the player's command - 2) object-matches "[a held thing]":
+			try giving the matched object to the person;
+			rule succeeds;
+	continue the activity.
 
 Part 2 - Other
 
@@ -325,22 +350,6 @@ Understand "drop [things preferably held]" as dropping.
 Understand "drop [something preferably held] in/into/down [something]" as inserting it into.
 Understand "drop [something preferably held] on/onto [something]" as putting it on.
 Understand the commands "throw" and "discard" as "drop".]
-
-Section 3 - Give All
-
-Understand "give [things preferably held] to [someone]" as giving it to.
-Understand "give [someone] [things preferably held]" as giving it to (with nouns reversed).
-
-[ Bad grammar, but might get tried anyways. ]
-[ This is the intent, but doing literally this messes up the error messages for other things. Doing it as a parser error handler means it won't break otherwise successful commands. ]
-[Understand "give [a held thing] [someone]" as giving it to.]
-Rule for printing a parser error when the latest parser error is the can only do that to something animate error and the action-to-be is the giving it to action (this is the clever bad grammar giving rule):
-	if the length of the player's command >= 3 and the word at (the length of the player's command - 1) does not match "to" and the word at (the length of the player's command) object-matches "[someone]":
-		let person be the matched object;
-		if the snippet at 2 of length (the length of the player's command - 2) object-matches "[a held thing]":
-			try giving the matched object to the person;
-			rule succeeds;
-	continue the activity.
 
 Chapter 2 - Conversation
 
@@ -448,7 +457,21 @@ To finish the implicit action with participle (partc - some non-empty text) infi
     if cond is false,  say "[captured text][run paragraph on]";   
   end if.
 
-Chapter 4 - Can't See Any Such Thing
+Chapter 4 - Other Implicit Actions
+
+Section 1 - Opening and Unlocking
+
+Before an actor going through a closed locked door (called D) when the actor does not enclose something that unbolts D (this is the trying to go through a locked door parenthetical rule):
+	say "(first [if the actor is not the player][the actor] [end if]trying to unlock and open [the D])[command clarification break]";
+	say key-refusal for D;
+	stop the action.
+
+Before an actor opening a closed locked door (called D) when the actor does not enclose something that unbolts D (this is the trying to open a locked door parenthetical rule):
+	say "(first [if the actor is not the player][the actor] [end if]trying to unlock [the D])[command clarification break]";
+	say key-refusal for D;
+	stop the action.
+
+Chapter 5 - Can't See Any Such Thing
 
 Section 1 - Rules
 
@@ -733,12 +756,12 @@ To debug (T - text):
 To say tokenly (N - a number):
 	do nothing.
 
-Chapter 5 - Scenery
+Chapter 6 - Scenery
 
 [Normally, we don't want scenery to come up as the default nouns Inform will guess when we type words without all necessary nouns specified. This avoids that.]
 A scenery thing is usually undescribed.
 
-Chapter 6 - Clarification
+Chapter 7 - Clarification
 
 Section 1 - Whom do you want to give?
 
@@ -801,6 +824,18 @@ Carry out examining something memorable:
 Last carry out dropping something memorable:
 	now the remembered action of the noun is "dropped [them]";
 	now the remembered holder of the noun is the holder of the noun.
+
+Remembering is an action applying to one visible thing.
+Understand "find [any remembered thing]" or "remember [any remembered thing]" as remembering.
+Report remembering something:
+	if the player is wearing the noun:
+		say "You're wearing [the noun].";
+	else if the player is holding the noun:
+		say "You're holding [the noun].";
+	if the noun is visible:
+		say "[The noun]'s [at the holder of the noun].";
+	else:
+		say "You [remembered action of the noun] [at the remembered holder of the noun]."
 
 Section 4 - Printing the Name of a Room
 
@@ -1147,6 +1182,10 @@ Example: ** Unit Tests
 		start test "periods";
 		assert that "take pie. jump" produces "You don't see any pie here.";
 		assert that "take. jump" produces "I'm not sure what you want to take.";
+		[]
+		start test "give nonsense";
+		do "s";
+		assert that "give girl symbol" produces "You don't have any symbol in your possession.";
 	
 	Test me with "unit".
 

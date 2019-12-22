@@ -1,4 +1,4 @@
-Version 2 of Liquids by Xavid begins here.
+Version 2/191114 of Liquids by Xavid begins here.
 
 "Basic support for sources of liquids and things that can hold a liquid, more minimalist than Liquid Handling by Al Golden."
 
@@ -159,7 +159,15 @@ Check an actor emptying a liquid (called L) from something:
 	else:
 		instead say "[The second noun] [are] full of [the contained liquid of the second noun], not [L]."
 
-Section 4 - Pouring Onto
+Section 4 - Getting as Filling
+
+Instead of taking a fixed in place liquid-yielding thing:
+	if an empty water-tight thing (called C) is held:
+		try filling C from the noun;
+	else:
+		say "You don't have anything to put [the available liquid of the noun] from [the noun] into."
+
+Section 5 - Pouring Onto
 
 Pouring it onto is an action applying to one carried thing and one thing.
 Understand "empty [a held nonempty water-tight thing] on/onto [something]" as pouring it onto.
@@ -192,7 +200,7 @@ Carry out an actor pouring something onto something (this is the pouring onto ru
 Report an actor pouring something onto something (this is the report pouring onto rule):
 	say "[The actor] [pour] out the [former contents] from [the noun] onto [the second noun]."
 
-Section 5 - Drinking
+Section 6 - Drinking
 
 Understand "drink from [something preferably held]" as drinking.
 Understand "drink from [a nonempty held water-tight thing]" as drinking.
@@ -220,9 +228,12 @@ Carry out an actor drinking something liquid-yielding (this is the drinking from
 	now the beverage is the available liquid of the noun.
 
 Report an actor drinking something (this is the report drinking rule):
-	say "[The actor] [drink] the [beverage] from [the noun]."
+	if the noun is liquid-yielding:
+		say "[The actor] [drink] [beverage] from [the noun].";
+	else:
+		say "[The actor] [drink] the [beverage] from [the noun]."
 
-Section 6 - Error Messages
+Section 7 - Error Messages
 
 Check an actor inserting something into a water-tight thing that is not a container (this is the can't insert into water-tight non-containers rule):
 	if the actor is the player:
