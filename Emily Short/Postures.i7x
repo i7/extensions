@@ -2,6 +2,10 @@ Version 2/180528 of Postures by Emily Short begins here.
 
 "Postures defines three postures -- seated, standing, and reclining -- and allows pieces of furniture to specify which postures are possible and preferred when the player is on those furnishings."
 
+Chapter - Miscellaneous Definitions
+
+Use posture visibility checks translates as (- Constant POSTURE_VISIBILITY_CHECKS; -).
+
 Section 1 - The Concenpt
 
 A posture is a kind of value. The postures are seated, standing, and reclining.
@@ -35,7 +39,7 @@ Standing up on is an action applying to one thing.
 Carry out an actor sitting on (this is the standard carry out sitting on rule):
 	if the holder of the actor is the noun:
 		if the actor is seated:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [are] already sitting on [the noun].";
 		otherwise:
 			try the actor taking position seated;
@@ -48,13 +52,13 @@ Carry out an actor sitting on (this is the standard carry out sitting on rule):
 				otherwise:
 					follow the report taking position rules;
 		otherwise:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [can't] sit on [the noun].";
 
 Carry out an actor lying on (this is the standard carry out lying on rule):
 	if the holder of the actor is the noun:
 		if the actor is reclining:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [are] already reclining on [the noun].";
 		otherwise:
 			try the actor taking position reclining;
@@ -67,13 +71,13 @@ Carry out an actor lying on (this is the standard carry out lying on rule):
 				otherwise:
 					follow the report taking position rules;
 		otherwise:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [can't] lie on [the noun].";
 
 Carry out an actor standing up on (this is the standard carry out standing up on rule):
 	if the holder of the actor is the noun:
 		if the actor is standing:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [are] already standing on [the noun].";
 		otherwise:
 			try the actor taking position standing;
@@ -86,7 +90,7 @@ Carry out an actor standing up on (this is the standard carry out standing up on
 				otherwise:
 					follow the report taking position rules;
 		otherwise:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [can't] stand on [the noun].";
 
 Section 5 - Sitting, Lying, and Standing with Default Objects
@@ -119,7 +123,7 @@ Instead of an actor lying down (this is the convert lying down rule):
 		if the posture of the actor is reclining:
 			rule succeeds;
 	otherwise:
-		if the actor is visible:
+		unless the posture visibility checks option is active and the actor is not visible:
 			if the holder of the actor is a thing:
 				say "[The actor] [can't] lie down on [the holder of the actor].";
 			otherwise:
@@ -146,7 +150,7 @@ Instead of an actor sitting down (this is the convert sitting down rule):
 		if the posture of the actor is seated:
 			rule succeeds;
 	otherwise:
-		if the actor is visible:
+		unless the posture visibility checks option is active and the actor is not visible:
 			if the holder of the actor is a thing:
 				say "[The actor] [can't] sit down on [the holder of the actor].";
 			otherwise:
@@ -157,7 +161,7 @@ Instead of an actor standing up (this is the convert standing up rule):
 	let the source be the holder of the actor;
 	if the source is not the location:
 		if the posture of the actor is standing:
-			if the actor is visible:
+			unless the posture visibility checks option is active and the actor is not visible:
 				say "[The actor] [are] already standing.";
 			the rule succeeds;
 		otherwise:
@@ -199,13 +203,13 @@ Taking position is an action applying to one posture.
 
 Check an actor taking position (this is the can't use inappropriate postures rule):
 	if the holder of the actor is not a room and the holder of the actor does not allow the posture understood:
-		if the actor is visible:
+		unless the posture visibility checks option is active and the actor is not visible:
 			say "[The actor] [can't] take that position [in-on the holder of the actor].";
 		stop the action.
 
 Check an actor taking position (this is the can't use already used posture rule):
 	if the posture understood is the posture of the actor:
-		if the actor is visible:
+		unless the posture visibility checks option is active and the actor is not visible:
 			say "[The actor] [are] already [the posture understood].";
 		stop the action.
 
@@ -213,7 +217,7 @@ Carry out an actor taking position (this is the standard taking position rule):
 	now the posture of the actor is the posture understood.
 
 Report an actor taking position (this is the standard position report rule):
-	if the actor is visible:
+	unless the posture visibility checks option is active and the actor is not visible:
 		say "[The actor] [are] now [the posture of the actor][if the holder of the actor is not the location of the actor] [in-on the holder of the actor][end if]."
 
 To say in-on (item - a thing):
@@ -239,7 +243,7 @@ The arrival-posture rule is listed after the standard entering rule in the carry
 
 Check an actor going somewhere (this is the can't go without standing rule):
 	if the actor is in a room and the actor is not standing:
-		if the actor is visible:
+		unless the posture visibility checks option is active and the actor is not visible:
 			say "([if the actor is not the player][the actor] [end if]first standing up)[command clarification break]";
 		silently try the actor taking position standing;
 		if the actor is not standing, stop the action.
@@ -305,15 +309,25 @@ without naming where he wants to lie down. The game will first look for an avail
 
 	There's nothing to lie on.
 
+Section: The Posture Visibility Checks option
+
+Before printing an error message for an NPC, such as "Clark is already sitting" when Clark is trying to sit, this extension can first check whether the player can actually see Clark. If he is in another room or in a closed opaque container, no message will be printed. As visibility checks in Inform can sometimes be slow, this feature is off by default, but can be turned on with the line
+
+	Use posture visibility checks.
+
+Note that this only applies to the new messages introduced by this extension. Many error messages in the Inform Standard Rules will print even if the NPC they mention is not visibile to the player.
+
 Section: Change Log
 
-Version 2/180527 fixes a run-time error that could occur when typing LIE. It also always looks for a reasonable piece of furniture to sit or lie down on in a room rather than defaulting to the floor when typing just SIT or LIE, even if the room is posture-friendly.
+Version 2/180528 fixes a run-time error that could occur when typing LIE. It also always looks for a reasonable piece of furniture to sit or lie down on in a room rather than defaulting to the floor when typing just SIT or LIE, even if the room is posture-friendly. It also introduces the posture visibility checks option
 
 Example: * Muddy Lawn - A room where the player can't sit on the ground, plus a folding chair, a safer-to-sit-on driveway, and the ubiquitous guinea-pig Clark.
 
 	*: "Muddy Lawn"
 
 	Include Postures by Emily Short.
+
+	Use posture visibility checks.
 
 	A chair is a kind of supporter. A chair is always enterable. Every chair allows seated and standing. A chair is usually seated.
 
