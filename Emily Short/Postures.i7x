@@ -315,7 +315,9 @@ Before printing an error message for an NPC, such as "Clark is already sitting" 
 
 	Use posture visibility checks.
 
-Note that this only applies to the new messages introduced by this extension. Many error messages in the Inform Standard Rules will print even if the NPC they mention is not visibile to the player.
+Note that this only applies to the new messages introduced by this extension. Some error messages in the Inform Standard Rules will print even if the NPC they mention is not visibile to the player.
+
+See this discussion about other glitches that may occur when NPC actions fail, and some ideas on what to do about it: https://intfiction.org/t/postures-by-emily-short/6748/6
 
 Section: Change Log
 
