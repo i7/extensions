@@ -1,4 +1,4 @@
-Version 4 of Expanded Understanding by Xavid begins here.
+Version 4/200323 of Expanded Understanding by Xavid begins here.
 
 "Various tweaks to understand additional variations of commands and have cleverer, more specific error messages in common failure cases."
 
@@ -262,6 +262,10 @@ Carry out an actor emptying something into a container:
 Carry out an actor emptying something into a supporter:
 	repeat with I running through marked for listing things:
 		now I is on the second noun.
+
+Carry out an actor emptying something into a room:
+	repeat with I running through marked for listing things:
+		now I is in the second noun.
 
 To remove is a verb.
 Report an actor emptying something into a room:
