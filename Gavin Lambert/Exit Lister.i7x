@@ -1,18 +1,12 @@
-Version 3 of Exit Lister by Gavin Lambert begins here.
+Version 4 of Exit Lister by Gavin Lambert begins here.
 
-"Automatic listing of available exits, with a reasonable dose of customization built in."
+"Automatic listing of available exits, with a reasonable dose of customisation built in."
 
-[
-version 1 by Andre Kosmos - basic features
-version 2 by Gavin Lambert - more features
-version 3 by Mark Harviston <mark.harviston@gmail.com> - updated for 6L38
-]
+"based on Exit Lister by Andre Kosmos"
 
 Section 1 - Text
 
 To say closed door: say "(closed)".
-
-To say no obvious exits: say "You can see no obvious exits."
 
 A door has a text called passing text. Passing text of a door is usually "through".
 A door has a text called closed text.  Closed text of a door is usually "[closed door]".
@@ -24,7 +18,6 @@ List exits is a truth state that varies. List exits is true.
 Mentioning doors is a truth state that varies. Mentioning doors is true.
 Room memory is a truth state that varies. Room memory is true.
 Darkness memory is a truth state that varies. Darkness memory is true.
-Mentioning unvisited rooms is a truth state that varies. Mentioning unvisited rooms is true.
 
 To mention doors: now mentioning doors is true.
 To don't mention doors: now mentioning doors is false.
@@ -35,7 +28,9 @@ To don't mention visited rooms in darkness: now darkness memory is false.
 
 Section 3 - Listing Exits
 
-The exit obviousness rules are an object-based rulebook.  The door obviousness rules are an object-based rulebook.
+The exit obviousness rules are an object-based rulebook.
+The door obviousness rules are an object-based rulebook.
+The room memory rules are an object-based rulebook.
 
 Last door obviousness rule for a door (called gateway) (this is the check obvious doors rule):
 	if gateway is not obvious, rule fails.
@@ -44,6 +39,9 @@ An exit obviousness rule for a room (called place) (this is the darkness hides e
 	if not in darkness, make no decision;
 	if darkness memory is false, rule fails;
 	if place is not visited, rule fails.
+	
+Last room memory rule for a room (called place) (this is the unvisited room memory rule):
+	if place is not visited, rule fails.
 
 To decide if (way - a direction) is a listable exit:
 	let place be the room way from the location;
@@ -51,12 +49,20 @@ To decide if (way - a direction) is a listable exit:
 	follow the exit obviousness rules for place;
 	if the rule failed, decide no;
 	let gateway be the room-or-door way from the location;
-	if gateway is a door
-	begin;
+	if gateway is a door:
 		follow the door obviousness rules for gateway;
 		if the rule failed, decide no;
-	end if;
 	decide yes.
+
+To decide if (place - a room) is a memorable room:
+	if place is not a room, decide no;
+	follow the room memory rules for place;
+	if the rule failed, decide no;
+	decide yes.
+
+To decide if (way - a direction) is a remembered exit:
+	let place be the room way from the location;
+	decide on whether or not place is a memorable room.
 
 Definition: A direction is exit-listable if it is a listable exit.
 
@@ -64,20 +70,17 @@ Listing exits is an activity.
 
 The last for listing exits rule (this is the standard exit listing rule):
 	let exits be the number of exit-listable directions;
-	if exits is 0, say "[no obvious exits]";
-	otherwise say "You can go [list of exit-listable directions] from here.".
+	if exits is 0, say "[We] [can see] no obvious exits." (A);
+	otherwise say "[We] [can go] [list of exit-listable directions] from [here]." (B).
 
 Last after printing the name of a direction (called way) while listing exits (this is the standard exit printing rule):
-	let place be the room way from the location;
-	if mentioning doors is true
-	begin;
+	if mentioning doors is true:
 		let gateway be the room-or-door way from location;
-		if gateway is a door, say " [passing text of gateway] [the gateway]";
-	end if;
-	if place is visited and room memory is true, say " to [the place]".
+		if gateway is a door, say " [passing text of gateway] [the gateway]" (A);
+	if room memory is true and way is a remembered exit, say " to [the room way from the location]" (B).
 
 Last after printing the name of a closed door (called gateway) while listing exits (this is the standard door closed text rule):
-	say " [closed text of gateway]".
+	say " [closed text of gateway]" (A).
 
 Section 4 - Player Rules
 
@@ -91,18 +94,24 @@ Carry out listing exits: carry out the listing exits activity.
 Turning exits on is an action out of world.
 Understand "exits on" as turning exits on.
 Carry out turning exits on: now list exits is true.
-Report turning exits on: say "(exits listing is on)".
+Report turning exits on (this is the report turning exits on rule):
+	say "(exits listing is on)" (A).
 
 Turning exits off is an action out of world.
 Understand "exits off" as turning exits off.
 Carry out turning exits off: now list exits is false.
-Report turning exits off: say "(exits listing is off)".
+Report turning exits off (this is the report turning exits off rule):
+	say "(exits listing is off)" (A).
 
-Section 5 - Secret Doors (for use with Secret Doors by Andrew Owen)
+Section 5a - Secret Doors (for use with Secret Doors by Andrew Owen)
 
 Definition: a secret door is obvious if it is revealed.
 Definition: a secret door is not obvious if it is unrevealed.
 
+Section 5b - Secret Doors (for use with Secret Doors by Gavin Lambert)
+
+Definition: a secret door is obvious if it is revealed.
+Definition: a secret door is not obvious if it is unrevealed.
 
 Exit Lister ends here.
 
@@ -115,7 +124,7 @@ This extension is based on Exit Lister by Andre Kosmos.  I've tried to keep the 
 This gives you a list of available exits at the end of the room description.
 There are options to mention doors that are in your way, to mention rooms you have already visited, and how much info to reveal in dark rooms.
 
-For suggestions and feedback, Gavin Lambert can be contacted via "http://www.mirality.co.nz/".
+For suggestions and feedback, Gavin Lambert can be contacted via "http://www.mirality.co.nz/" or via GitHub.
 
 Chapter: Reference
 
@@ -159,16 +168,16 @@ This can be overridden on a case by case basis, eg:
 	The closed text for the brown door is "(barred)".
 
 If the closed text for a door is not defined, closed doors are mentioned with the text "(closed)" by default, but you can write your own text with:
-	To say closed door: say "(if you manage to open it)".
+	To say closed door: say "(tightly shut)".
 
 If you don't want to mention the fact that doors are closed (unless you've defined a "closed text" for it) you can use:
 	To say closed door: do nothing instead.
 
-You can also change the text shown when no obvious exits are visible (which doesn't necessarily mean no exits are present):
-	To say no obvious exits: say "There doesn't seem to be anywhere you can go."
+You can also change the text shown when no obvious exits are visible (which doesn't necessarily mean no exits are present; note that as this is a phrase, it must appear inside a rule -- typically "when play begins".)  In previous versions of this extension, this was done with the rule "To say no obvious exits, say ..." instead, but this method is more in the spirit of the new rule-response system in Inform:
+	now the standard exit listing rule response (A) is "There doesn't seem to be anywhere that you can go."
 
 In addition, you can override the normal description by using the "listing exits" activity.  For example:
-	Rule for listing exits while in Fog Bank: say "It's too foggy to see."
+	Rule for listing exits when the location is Fog Bank: say "It's too foggy to see the exits."
 
 Doors can be made "not obvious".  This will cause them to be hidden from exit listings (and they will stay that way even after use unless you later mark them as "obvious").
 	Hidden Trapdoor is a door.  It is not obvious.
@@ -185,9 +194,18 @@ This also works for exits, by checking against where they go to:
 
 Note that it is best to only use "rule fails" and "make no decision" -- this permits other rules (such as the standard "darkness hides exits rule") to also hide the door/exit.
 
-Also, while it's a little odd, you can choose to avoid describing specific exits like so (this will still display the direction, but won't display the name of the door or where it leads to):
+You can also decide on a room-by-room basis (the destination room) whether you want to tell the player the destination of the exit or not.  The default rule is to only show the destination if the player has been there before ("visited"), but for example if there's a glass door between the two locations then it may be reasonable for the player to know what's on the other side regardless (you can check "the location" to see where they are now).  Conversely in a maze you may not want the player to know which rooms they've been to already:
+
+	A room memory rule for the Garden:
+		if the location is the Conservatory, rule succeeds; [due to glass door]
+	A room memory rule for Inside the Well:
+		if the well cover is open, rule succeeds;
+	A room memory rule:
+		if the location is mazelike, rule fails.
+
+Also, while it's a little odd, you can choose to completely avoid describing specific exits like so (this will still display the direction, but won't display the name of the door or where it leads to):
 	After printing the name of east while listing exits:
-		if in the Garden, do nothing instead.
+		if the location is the Garden, do nothing instead.
 
 The standard "mention / don't mention visited rooms in darkness" controls let you decide if you want to tell the player the way to get out (ie. the way they came in) while hiding other paths (although bear in mind that by default Inform doesn't stop them actually using those other paths), or whether you want to hide all the exits and report that there are no obvious exits.  Note that only the room's visited flag is checked; in the Test Game example, the path up out of darkness to the Main Road is listed because the player has been to the Main Road, even though they haven't used that specific exit before.
 
@@ -201,11 +219,23 @@ One final option would be to override all normal handling (including testing for
 	A door obviousness rule for the Glowing Door:
 		rule succeeds.
 
+There are a few more things that you can tweak if you delve into the innards of the extension, but I couldn't come up with a compelling example for when you'd want to.  If you do come up with something, let me know and I'll add it to the list!
+
 Chapter: Integration
 
-If the "Secret Doors by Andrew Owen" extension is in use (this is optional), an unrevealed secret door is automatically unobvious as well.
+If the "Secret Doors by Andrew Owen" (or its update, "Secret Doors by Gavin Lambert") extension is in use (this is optional), then an unrevealed secret door is automatically unobvious as well.
 
 Chapter: Change Log
+
+Section: Changes from version 2 to version 4
+
+Updated various phrases for 6L02 compatibility, after some prompting by Joey Cramsey.
+
+Replaced "To say no obvious exits" with "the standard exit listing rule response (A)".  (Response (B) is also editable, but that seems less useful as it's already pretty flexible.)
+
+Added room memory rulebook to allow further customisation.
+
+Skipped version 3 because Mark Harviston used that version number in the Friends of i7 repo (since I didn't republish this quickly enough); this version ignores and supersedes those changes.
 
 Section: Changes from version 1 to version 2
 
@@ -217,7 +247,7 @@ Added "closed text" property to doors.
 
 When printing the names of exit destinations, the definite article is used (if you've used any article when defining the place in your source text).
 
-Example: * Test Game for Exit Lister - 
+Example: * Test Game for Exit Lister - Lots of interesting rooms and doors to explore.
 
 This example asks the player up front what they want to see in the exit list, in order to better demonstrate the options.  Normally, though, these will be fixed by the author, although if you want you can define additional commands to let the player change them at will.
 
@@ -231,17 +261,21 @@ This example asks the player up front what they want to see in the exit list, in
 	The pink door is east of hallway and west of Bathroom. It is a door and scenery.
 	The description of the bathroom is "Everything in here is pink. The tiles on the walls, the toilet bowl, the bathtub, the floor, and even the ceiling. The only thing not pink is a large mirror on the wall, but since all it reflects is pink that hardly matters.".
 	A large mirror is scenery in bathroom. Instead of examining mirror, say "Don't be vain, you look fine.".
+        Rule for listing exits when the location is Bathroom: say "All this pink numbs your brain, and you can't remember how you got here."
 
 	The brown door is west of hallway and east of the Living Room. It is a door and scenery. The closed text of the brown door is "(barred)".
 	The description of the living room is "You are in a well decorated room here, there are numerous pictures on the walls, some comfy looking chairs, and a big television set."
+	Before opening the brown door for the first time, say "Despite the bars, the door opens surprisingly easily."
 
 	The green door is south of hallway and north of Garden. It is a door and scenery.
 	The description of garden is "A large garden with very short cut grass, and various flowerbeds. The main thing you notice is a large oak tree. From between the leaves of the trees you see a rope ladder hanging down to the ground. The ladder is dug into the ground to keep it from swinging too much when you climb it."
 
 	The rope ladder is up from garden and down from the Tree house. It is a open unopenable door and scenery.
-	The passing text of rope ladder is "climbing". Instead of climbing the rope ladder in tree house, try going down. Instead of climbing the rope ladder in garden, try going up.
+	The passing text of rope ladder is "climbing".
+	Instead of climbing the rope ladder in tree house, try going down.
+	Instead of climbing the rope ladder in garden, try going up.
 
-	The description of the tree house is "A Rather untraditional tree house, the walls are decorated with a rather ugly wallpaper with pink and purple flowers, and a thick red carpet covers the floor."
+	The description of the tree house is "A rather untraditional tree house, the walls are decorated with a rather ugly wallpaper with pink and purple flowers, and a thick red carpet covers the floor."
 
 	A wooden bridge is east of garden and west of the Main Street. It is an open unopenable door and scenery. The passing text of the wooden bridge is "over".
 
@@ -269,3 +303,46 @@ This example asks the player up front what they want to see in the exit list, in
 		say "[paragraph break]".
 
 	test me with "open green door / s / e / w / u / d / d / e / u / get stick / d / w"
+
+Example: * Simple Cave with Secret Door and Lever, plus Exit Listing - Secret Doors example plus Exit Listing
+
+For ease of testing the different behaviour, this example also asks the player whether they want to see exits listed when play begins; normally this can just be left to the default.
+
+	*: "Secret Cave Passage with Listed Exits" by Gavin Lambert
+
+	Include Secret Doors by Gavin Lambert.
+	Include Exit Lister by Gavin Lambert.
+
+	Big Cave is a room. "You're not sure how you ended up here, but you're surrounded on all sides by slightly damp rock.  Fortunately the walls seem to contain faintly glowing moss, so there's enough light to see by."
+	The faintly glowing moss is scenery in the Big Cave.  "It glows just barely enough to make out your surroundings."
+
+	Secret Passage is a room. "For being so close to a cave, this passage is surprisingly well built and is lit by standard electrical bulbs.  Unfortunately it also appears to be blocked by rubble not too far from the entrance; you can't seem to proceed any further."
+	The rubble is scenery in the Secret Passage.  "It looks completely impassable."
+
+	The passage door is an unopenable secret door.  "It's fairly unassuming.  You'd never have known it was there until it opened."
+	It is west of the Big Cave and east of the Secret Passage.
+
+	The hidden lever is a secret switch in the Big Cave.  "Nestled almost invisibly between two rocks in the cave wall.  [if the passage door is revealed]It has been pulled downwards.[otherwise]It points invitingly upwards.[end if]"
+
+	The cave wall is scenery in the Big Cave.  "Nothing else more interesting presents itself.  Just more glowing moss."
+	Understand "damp rock" or "rock" as the cave wall.
+
+	Instead of searching or examining the cave wall for the first time:
+		now the lever is revealed;
+		say "As you examine the cave wall, in a gap between two rocks you discover a lever."
+		
+	Instead of pulling or pushing the revealed lever:
+		if the passage door is revealed:
+			say "You don't have any desire to close the passage again.";
+		otherwise:
+			now the passage door is revealed;
+			now the passage door is open;
+			say "A secret door opens with a rumble, revealing a secret passage in the west wall!"
+
+	When play begins:
+		say "Do you want a list of possible exits at the end of the room description?";
+		if player consents, try turning exits on;
+		otherwise try turning exits off;
+		say "[paragraph break]You can always turn the exit list on or off with the commands EXITS ON and EXITS OFF. You can also always ask for an exit list with the command EXITS.[paragraph break]";
+
+	Test me with "w / x door / pull lever / x wall / pull lever / w"
