@@ -7,6 +7,8 @@ Include Version 7 of Glulx Entry Points by Emily Short.
 
 Section 1 - The Command Line
 
+Show command line is a truth state that varies. Show command line is true.
+
 Every turn:
 	follow the command line drawing rule;
 	continue the action.
@@ -46,6 +48,8 @@ To say bottom rose:
 Section 1a - Drawing Rule (for use with Automap by Mark Tilford)
 
 This is the command line drawing rule:
+	if show command line is false:
+		rule fails;
 	focus the command window;
 	say "[fixed letter spacing][top rose] |[set link 2]look[end link]  |[set link 3]inventory[end link]|[set link 7]x me[end link][line break][middle rose] |" (A);
 	if object hyperlink highlighting is true:
@@ -63,6 +67,8 @@ This is the command line drawing rule:
 Section 1b - Drawing Rule (for use without Automap by Mark Tilford)
 
 This is the command line drawing rule:
+	if show command line is false:
+		rule fails;
 	focus the command window;
 	say "[fixed letter spacing][top rose] |[set link 2]look[end link]  |[set link 3]inventory[end link]|[set link 7]x me[end link][line break][middle rose] |" (A);
 	if object hyperlink highlighting is true:
@@ -80,7 +86,7 @@ This is the command line drawing rule:
 Section 2 - I6/I7 Command Line Stuff
 
 Include(-  
-	Constant GG_CMDWIN_ROCK = 200;
+	Constant GG_CMDWIN_ROCK = 300;
 	Global gg_cmdwin = 0; 
 -) before "Glulx.i6t".   
 

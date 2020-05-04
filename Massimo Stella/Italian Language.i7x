@@ -1,4 +1,4 @@
-Version 2/140814 of Italian Language by Massimo Stella begins here.
+Version 3/171001 of Italian Language by Massimo Stella begins here.
 
 "To make Italian the language of play. Heavily based on code written by Massimo Stella. Now maintained by Leonardo Boselli. Requires 'Text Capture' by Eric Eve."
 
@@ -6,7 +6,7 @@ Include Text Capture by Eric Eve.
 
 Include Punctuation Removal by Emily Short.
 After reading a command:
-     remove apostrophes;
+	remove apostrophes;
 
 Volume 1 - Settings
 
@@ -122,8 +122,10 @@ Array LanguageArticles -->
 				   !             s     p     s     p
 				   !             m f n m f n m f n m f n
 
-Array LanguageGNAsToArticles --> 0 1 0 2 3 0 0 1 0 2 3 0;
+Array LanguageGNAsToArticles --> 0 1 0 2 3 2 0 1 0 2 3 2;
 -) instead of "Articles" in "Language.i6t".
+
+[??? Array LanguageGNAsToArticles --> 0 1 0 2 3 0 0 1 0 2 3 0;]
 
 Chapter 2.1.2 - Numbers
 
@@ -742,8 +744,9 @@ To say Il Suo:
 		otherwise:
 			say "La sua".
 
-
 Chapter 2.2.4 - Directions
+
+[&&&
 
 North translates into Italian as nord.
 South translates into Italian as sud.
@@ -758,10 +761,14 @@ Outside translates into Italian as fuori.
 Up translates into Italian as su.
 Down translates into Italian as giù.
 
+&&&]
+
 Up is proper-named.
 Down is proper-named.
 Inside is proper-named.
 Outside is proper-named.
+
+[&&&
 
 Chapter 2.2.5 - Kinds
 
@@ -843,16 +850,19 @@ figure name translates into Italian as nome di figura. the plural of nome di fig
 sound name translates into Italian as nome di suono. the plural of nome di suono is nomi di suono.
 external file translates into Italian as nome di file. the plural of nome di file is nomi di file.
 
-
 Section 2.2.5.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
+[
 A rideable animal translates into Italian as un animale montabile.
 A rideable vehicle translates into Italian as un veicolo montabile.
+]
 
 Section 2.2.5.3 - In Locksmith (for use with Locksmith by Emily Short)
 
 A passkey translates into Italian as una chiave universale.
 A keychain translates into Italian as un portachiavi.
+
+&&&]
 
 Chapter 2.2.6 - Plurals
 
@@ -1082,6 +1092,7 @@ published guide to Inform syntax, which goes through the English case; but
 the French case below shows off features not needed for English, so it's a
 better example to follow for other languages.]
 
+[&&&
 
 Include (-
 language Italian
@@ -1132,6 +1143,7 @@ i modi e i tempi irregolari.]
 	racchiudere	<it-racchiudere-conjugation> |
 	assaggiare	<it-assaggiare-conjugation> |
 	dare			<it-dare-conjugation> |
+	dire		<it-dire-conjugation> |
 	bloccare		<it-bloccare-conjugation> |
 	sbloccare	<it-sbloccare-conjugation> |
 	capire			<it-incoativi-terza-conjugation> |
@@ -1951,6 +1963,38 @@ English, where the asterisks are never used. ]
 	diedi | desti | diede | demmo | deste | diedero
 
 [
+---> Italian : "DIRE" verb. <----
+]
+
+<it-dire-conjugation> ::=
+	5 		<it-first-stem-general>	|
+	2		dicendo |
+	3		detto |
+	<it-dire-tabulation>
+
+<it-dire-tabulation> ::=
+	a1+		<it-dire-present> |
+	a2+		<it-dire-past> |
+	a3+		( t1 avere ) 3 |
+	a4+		( t2 avere ) 3 |
+	a5+		<it-dire-future> |
+	a6+		<it-dire-past-historic> |
+	a7+		<it-avere-future> 3 |
+	p*		3+*
+
+<it-dire-present> ::=
+	dico | dici | dice | diciamo | dite | dicono
+
+<it-dare-past> ::=
+	dicevo | dicevi | diceva | dicevamo | dicevate | dicevano
+
+<it-dare-future> ::=
+	dirò | dirai | dirà | diremo | direte | diranno
+
+<it-dare-past-historic> ::=
+	dissi | dicesti | disse | dicemmo | diceste | dissero
+
+[
 --------> Italian : "BLOCCARE e SBLOCCARE" verb. <-------
 ]
 
@@ -2193,8 +2237,10 @@ In Italian sbloccare is a verb meaning to unlock.
 
 Section 2.4.2.2 - In Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
+[
 In Italian montare su is a verb meaning to mount.
 In Italian scendere is a verb meaning to dismount.
+]
 
 Section 2.4.2.3 - In Locksmith (for use with Locksmith by Emily Short)
 
@@ -2281,6 +2327,7 @@ In Italian essere a sudest della is a verb meaning the mapping southeast relatio
 In Italian essere a sudest dello is a verb meaning the mapping southeast relation.
 In Italian essere a sudest del is a verb meaning the mapping southeast relation.
 
+&&&]
 
 Volume 3 - Responses
 
@@ -2324,19 +2371,21 @@ To decide which number is the artflag of (sostan - a room):
 Articulated preposition is a kind of value. Some articulated prepositions are defined by the Table of Prepositions.
 
 Table of Prepositions
-Name	1Il	2Lo	3La	4I	5Gli	6Le	7L
-dip	"del"	"dello"	"della"	"dei"	"degli"	"delle"	"dell[']"
-ap	"al"	"allo"	"alla"	"ai"	"agli"	"alle"	"all[']"
-dap	"dal"	"dallo"	"dalla"	"dai"	"dagli"	"dalle"	"dall[']"
-inp	"nel"	"nello"	"nella"	"nei"	"negli"	"nelle"	"nell[']"
-conp	"con il"	"con lo"	"con la"	"con i"	"con gli"	"con le"	"con l[']"
-sup	"sul"	"sullo"	"sulla"	"sui"	"sugli"	"sulle"	"sull[']"
-perp	"per il"	"per lo"	"per la"	"per i"	"per gli"	"per le"	"per l[']"
-trap	"tra il"	"tra lo"	"tra la"	"tra i"	"tra gli"	"tra le"	"tra l[']"
-frap	"fra il"	"fra lo"	"fra la"	"fra i"	"fra gli"	"fra le"	"fra l[']"
+Name	1Il	2Lo	3La	4I	5Gli	6Le	7L	8pn
+dip	"del"	"dello"	"della"	"dei"	"degli"	"delle"	"dell[']"	"di"
+ap	"al"	"allo"	"alla"	"ai"	"agli"	"alle"	"all[']"	"a"
+dap	"dal"	"dallo"	"dalla"	"dai"	"dagli"	"dalle"	"dall[']"	"da"
+inp	"nel"	"nello"	"nella"	"nei"	"negli"	"nelle"	"nell[']"	"in"
+conp	"con il"	"con lo"	"con la"	"con i"	"con gli"	"con le"	"con l[']"	"con"
+sup	"sul"	"sullo"	"sulla"	"sui"	"sugli"	"sulle"	"sull[']"	"su"
+perp	"per il"	"per lo"	"per la"	"per i"	"per gli"	"per le"	"per l[']"	"per"
+trap	"tra il"	"tra lo"	"tra la"	"tra i"	"tra gli"	"tra le"	"tra l[']"	"tra"
+frap	"fra il"	"fra lo"	"fra la"	"fra i"	"fra gli"	"fra le"	"fra l[']"	"fra"
 
 To say (p - an articulated preposition) the (obj - a thing):
-	if obj is female:
+	if obj is proper-named:
+		say "[8pn of p] ";
+	otherwise if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
 	otherwise if artflag of obj is 2:
 		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
@@ -2352,7 +2401,9 @@ To say (p - an articulated preposition) cui (obj - a thing):
 	say "cui [regarding the obj][obj]".
 
 To say (p - an articulated preposition) the (obj - a room):
-	if obj is female:
+	if obj is proper-named:
+		say "[8pn of p] ";
+	otherwise if obj is female:
 		say "[if obj is plural-named][6Le of p] [otherwise if artflag of obj is 0][7L of p][otherwise][3La of P] [end if]";
 	otherwise if artflag of obj is 2:
 		say "[if obj is plural-named][4I of p] [otherwise][1Il of p] [end if]";
@@ -2361,6 +2412,8 @@ To say (p - an articulated preposition) the (obj - a room):
 	say "[regarding the obj][obj]".
 
 Chapter 3.1.1 - Responses in the Standard Rules
+
+[&&&
 
 [Many thanks to Sarganar for the Collection of Responses]
 In Italian stare is a verb.
@@ -2381,6 +2434,8 @@ In Italian possedere is a verb.
 In Italian provare is a verb.
 In Italian parlare is a verb.
 In Italian rispondere is a verb.
+In Italian chiedere is a verb.
+In Italian dire is a verb.
 In Italian salutare is a verb.
 In Italian arrivare is a verb.
 In Italian entrare is a verb.
@@ -2419,30 +2474,916 @@ In Italian dare is a verb.
 In Italian agitare is a verb.
 In Italian ascoltare is a verb.
 
+&&&]
+verbo 1^ is a kind of object.
+verbo 2^ is a kind of object.
+verbo 3^ is a kind of object.
+
+stai is a verbo 1^.
+guardi is a verbo 1^.
+arrivi is a verbo 1^.
+entri is a verbo 1^.
+trovi is a verbo 1^.
+ispezioni is a verbo 1^.
+sfili is a verbo 1^.
+passi is a verbo 1^.
+aspetti is a verbo 1^.
+sembri is a verbo 1^.
+indossi is a verbo 1^.
+parli is a verbo 1^.
+provi is a verbo 1^.
+[ext]
+saluti is a verbo 1^.
+
+metti is a verbo 2^.
+prendi is a verbo 2^.
+scendi is a verbo 2^.
+vedi is a verbo 2^.
+chiudi is a verbo 2^.
+accendi is a verbo 2^.
+spegni is a verbo 2^.
+[ext]
+porgi is a verbo 2^.
+
+rispondi is a verbo 2^.
+
+apri is a verbo 3^.
+sali is a verbo 3^.
+[ext]
+scopri is a verbo 3^.
+
+To say (verbo - a verbo 1^):
+	let prn be the printed name of verbo;
+	let len be the number of characters in prn;
+	replace character number len in prn with "";
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]o";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]i";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]a";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]iamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]ate";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]ano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]ano";
+			otherwise:
+				say "[prn]a";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]avo";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]avi";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]ava";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]avamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]avate";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]avano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]avano";
+			otherwise:
+				say "[prn]ava";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]erò";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]erai";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]erà";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]eremo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]erete";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]eranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]eranno";
+			otherwise:
+				say "[prn]erà".
+
+To say (verbo - a verbo 2^):
+	let prn be the printed name of verbo;
+	let len be the number of characters in prn;
+	replace character number len in prn with "";
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]o";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]i";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]e";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]iamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]ete";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]ono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]ono";
+			otherwise:
+				say "[prn]e";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]evo";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]evi";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]eva";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]evamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]evate";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]evano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]evano";
+			otherwise:
+				say "[prn]eva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]erò";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]erai";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]erà";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]eremo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]erete";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]eranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]eranno";
+			otherwise:
+				say "[prn]erà".
+
+To say (verbo - a verbo 3^):
+	let prn be the printed name of verbo;
+	let len be the number of characters in prn;
+	replace character number len in prn with "";
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]o";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]i";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]e";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]iamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]ite";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]ono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]ono";
+			otherwise:
+				say "[prn]e";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]ivo";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]ivi";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]iva";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]ivamo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]ivate";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]ivano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]ivano";
+			otherwise:
+				say "[prn]iva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "[prn]irò";
+			otherwise if the story viewpoint is second person singular:
+				say "[prn]irai";
+			otherwise if the story viewpoint is third person singular:
+				say "[prn]irà";
+			otherwise if the story viewpoint is first person plural:
+				say "[prn]iremo";
+			otherwise if the story viewpoint is second person plural:
+				say "[prn]irete";
+			otherwise if the story viewpoint is third person plural:
+				say "[prn]iranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "[prn]iranno";
+			otherwise:
+				say "[prn]irà".
+
+To say sei:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "sono";
+			otherwise if the story viewpoint is second person singular:
+				say "sei";
+			otherwise if the story viewpoint is third person singular:
+				say "è";
+			otherwise if the story viewpoint is first person plural:
+				say "siamo";
+			otherwise if the story viewpoint is second person plural:
+				say "siete";
+			otherwise if the story viewpoint is third person plural:
+				say "sono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "sono";
+			otherwise:
+				say "è";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "ero";
+			otherwise if the story viewpoint is second person singular:
+				say "eri";
+			otherwise if the story viewpoint is third person singular:
+				say "era";
+			otherwise if the story viewpoint is first person plural:
+				say "eravamo";
+			otherwise if the story viewpoint is second person plural:
+				say "eravate";
+			otherwise if the story viewpoint is third person plural:
+				say "erano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "erano";
+			otherwise:
+				say "era";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "sarò";
+			otherwise if the story viewpoint is second person singular:
+				say "sarai";
+			otherwise if the story viewpoint is third person singular:
+				say "sarà";
+			otherwise if the story viewpoint is first person plural:
+				say "saremo";
+			otherwise if the story viewpoint is second person plural:
+				say "sarete";
+			otherwise if the story viewpoint is third person plural:
+				say "saranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "saranno";
+			otherwise:
+				say "sarà".
+
+To say hai:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "ho";
+			otherwise if the story viewpoint is second person singular:
+				say "hai";
+			otherwise if the story viewpoint is third person singular:
+				say "ha";
+			otherwise if the story viewpoint is first person plural:
+				say "abbiamo";
+			otherwise if the story viewpoint is second person plural:
+				say "avete";
+			otherwise if the story viewpoint is third person plural:
+				say "hanno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "hanno";
+			otherwise:
+				say "ha";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "avevo";
+			otherwise if the story viewpoint is second person singular:
+				say "avevi";
+			otherwise if the story viewpoint is third person singular:
+				say "aveva";
+			otherwise if the story viewpoint is first person plural:
+				say "avevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "avevate";
+			otherwise if the story viewpoint is third person plural:
+				say "avevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "erano";
+			otherwise:
+				say "era";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "avrò";
+			otherwise if the story viewpoint is second person singular:
+				say "avrai";
+			otherwise if the story viewpoint is third person singular:
+				say "avrà";
+			otherwise if the story viewpoint is first person plural:
+				say "avremo";
+			otherwise if the story viewpoint is second person plural:
+				say "avrete";
+			otherwise if the story viewpoint is third person plural:
+				say "avranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "avranno";
+			otherwise:
+				say "avrà".
+
+To say stai:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "sto";
+			otherwise if the story viewpoint is second person singular:
+				say "stai";
+			otherwise if the story viewpoint is third person singular:
+				say "sta";
+			otherwise if the story viewpoint is first person plural:
+				say "stiamo";
+			otherwise if the story viewpoint is second person plural:
+				say "state";
+			otherwise if the story viewpoint is third person plural:
+				say "stanno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "stanno";
+			otherwise:
+				say "stai";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "stavo";
+			otherwise if the story viewpoint is second person singular:
+				say "stavi";
+			otherwise if the story viewpoint is third person singular:
+				say "stava";
+			otherwise if the story viewpoint is first person plural:
+				say "stavamo";
+			otherwise if the story viewpoint is second person plural:
+				say "stavate";
+			otherwise if the story viewpoint is third person plural:
+				say "stavano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "stavano";
+			otherwise:
+				say "stava";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "starò";
+			otherwise if the story viewpoint is second person singular:
+				say "starai";
+			otherwise if the story viewpoint is third person singular:
+				say "starà";
+			otherwise if the story viewpoint is first person plural:
+				say "staremo";
+			otherwise if the story viewpoint is second person plural:
+				say "starete";
+			otherwise if the story viewpoint is third person plural:
+				say "staranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "staranno";
+			otherwise:
+				say "starà".
+
+To say puoi:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "posso";
+			otherwise if the story viewpoint is second person singular:
+				say "puoi";
+			otherwise if the story viewpoint is third person singular:
+				say "può";
+			otherwise if the story viewpoint is first person plural:
+				say "possiamo";
+			otherwise if the story viewpoint is second person plural:
+				say "potete";
+			otherwise if the story viewpoint is third person plural:
+				say "possono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "possono";
+			otherwise:
+				say "può";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "potevo";
+			otherwise if the story viewpoint is second person singular:
+				say "potevi";
+			otherwise if the story viewpoint is third person singular:
+				say "poteva";
+			otherwise if the story viewpoint is first person plural:
+				say "potevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "potevate";
+			otherwise if the story viewpoint is third person plural:
+				say "potevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "potevano";
+			otherwise:
+				say "poteva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "potrò";
+			otherwise if the story viewpoint is second person singular:
+				say "potrai";
+			otherwise if the story viewpoint is third person singular:
+				say "potrà";
+			otherwise if the story viewpoint is first person plural:
+				say "potremo";
+			otherwise if the story viewpoint is second person plural:
+				say "potrete";
+			otherwise if the story viewpoint is third person plural:
+				say "potranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "potranno";
+			otherwise:
+				say "potrà";
+
+To say devi:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "devo";
+			otherwise if the story viewpoint is second person singular:
+				say "devi";
+			otherwise if the story viewpoint is third person singular:
+				say "deve";
+			otherwise if the story viewpoint is first person plural:
+				say "dobbiamo";
+			otherwise if the story viewpoint is second person plural:
+				say "dovete";
+			otherwise if the story viewpoint is third person plural:
+				say "devono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "devono";
+			otherwise:
+				say "deve";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "dovevo";
+			otherwise if the story viewpoint is second person singular:
+				say "dovevi";
+			otherwise if the story viewpoint is third person singular:
+				say "doveva";
+			otherwise if the story viewpoint is first person plural:
+				say "dovevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "dovevate";
+			otherwise if the story viewpoint is third person plural:
+				say "dovevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "dovevano";
+			otherwise:
+				say "doveva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "dovrò";
+			otherwise if the story viewpoint is second person singular:
+				say "dovrai";
+			otherwise if the story viewpoint is third person singular:
+				say "dovrà";
+			otherwise if the story viewpoint is first person plural:
+				say "dovremo";
+			otherwise if the story viewpoint is second person plural:
+				say "dovrete";
+			otherwise if the story viewpoint is third person plural:
+				say "dovranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "dovranno";
+			otherwise:
+				say "dovrà";
+
+To say fai:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "faccio";
+			otherwise if the story viewpoint is second person singular:
+				say "fai";
+			otherwise if the story viewpoint is third person singular:
+				say "fa";
+			otherwise if the story viewpoint is first person plural:
+				say "facciamo";
+			otherwise if the story viewpoint is second person plural:
+				say "fate";
+			otherwise if the story viewpoint is third person plural:
+				say "fanno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "fanno";
+			otherwise:
+				say "fa";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "facevo";
+			otherwise if the story viewpoint is second person singular:
+				say "facevi";
+			otherwise if the story viewpoint is third person singular:
+				say "faceva";
+			otherwise if the story viewpoint is first person plural:
+				say "facevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "facevate";
+			otherwise if the story viewpoint is third person plural:
+				say "facevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "facevano";
+			otherwise:
+				say "faceva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "farò";
+			otherwise if the story viewpoint is second person singular:
+				say "farai";
+			otherwise if the story viewpoint is third person singular:
+				say "farà";
+			otherwise if the story viewpoint is first person plural:
+				say "faremo";
+			otherwise if the story viewpoint is second person plural:
+				say "farete";
+			otherwise if the story viewpoint is third person plural:
+				say "faranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "faranno";
+			otherwise:
+				say "farà";
+
+To say vai:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "vado";
+			otherwise if the story viewpoint is second person singular:
+				say "vai";
+			otherwise if the story viewpoint is third person singular:
+				say "va";
+			otherwise if the story viewpoint is first person plural:
+				say "andiamo";
+			otherwise if the story viewpoint is second person plural:
+				say "andate";
+			otherwise if the story viewpoint is third person plural:
+				say "vanno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "vanno";
+			otherwise:
+				say "va";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "andavo";
+			otherwise if the story viewpoint is second person singular:
+				say "andavi";
+			otherwise if the story viewpoint is third person singular:
+				say "andava";
+			otherwise if the story viewpoint is first person plural:
+				say "andavamo";
+			otherwise if the story viewpoint is second person plural:
+				say "andavate";
+			otherwise if the story viewpoint is third person plural:
+				say "andavano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "andavano";
+			otherwise:
+				say "andava";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "andrò";
+			otherwise if the story viewpoint is second person singular:
+				say "andrai";
+			otherwise if the story viewpoint is third person singular:
+				say "andrà";
+			otherwise if the story viewpoint is first person plural:
+				say "andremo";
+			otherwise if the story viewpoint is second person plural:
+				say "andrete";
+			otherwise if the story viewpoint is third person plural:
+				say "andranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "andranno";
+			otherwise:
+				say "andrà";
+
+To say esci:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "esco";
+			otherwise if the story viewpoint is second person singular:
+				say "esci";
+			otherwise if the story viewpoint is third person singular:
+				say "esce";
+			otherwise if the story viewpoint is first person plural:
+				say "usciamo";
+			otherwise if the story viewpoint is second person plural:
+				say "uscite";
+			otherwise if the story viewpoint is third person plural:
+				say "escono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "escono";
+			otherwise:
+				say "esce";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "uscivo";
+			otherwise if the story viewpoint is second person singular:
+				say "uscivi";
+			otherwise if the story viewpoint is third person singular:
+				say "usciva";
+			otherwise if the story viewpoint is first person plural:
+				say "uscivamo";
+			otherwise if the story viewpoint is second person plural:
+				say "uscivate";
+			otherwise if the story viewpoint is third person plural:
+				say "uscivano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "uscivano";
+			otherwise:
+				say "usciva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "uscirò";
+			otherwise if the story viewpoint is second person singular:
+				say "uscirai";
+			otherwise if the story viewpoint is third person singular:
+				say "uscirà";
+			otherwise if the story viewpoint is first person plural:
+				say "usciremo";
+			otherwise if the story viewpoint is second person plural:
+				say "uscirete";
+			otherwise if the story viewpoint is third person plural:
+				say "usciranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "usciranno";
+			otherwise:
+				say "uscirà";
+
+To say tieni:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "tengo";
+			otherwise if the story viewpoint is second person singular:
+				say "tieni";
+			otherwise if the story viewpoint is third person singular:
+				say "tiene";
+			otherwise if the story viewpoint is first person plural:
+				say "teniamo";
+			otherwise if the story viewpoint is second person plural:
+				say "tenete";
+			otherwise if the story viewpoint is third person plural:
+				say "tengono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "tengono";
+			otherwise:
+				say "tiene";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "tenevo";
+			otherwise if the story viewpoint is second person singular:
+				say "tenevi";
+			otherwise if the story viewpoint is third person singular:
+				say "teneva";
+			otherwise if the story viewpoint is first person plural:
+				say "tenevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "tenevate";
+			otherwise if the story viewpoint is third person plural:
+				say "tenevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "tenevano";
+			otherwise:
+				say "teneva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "terrò";
+			otherwise if the story viewpoint is second person singular:
+				say "terrai";
+			otherwise if the story viewpoint is third person singular:
+				say "terrà";
+			otherwise if the story viewpoint is first person plural:
+				say "terremo";
+			otherwise if the story viewpoint is second person plural:
+				say "terrete";
+			otherwise if the story viewpoint is third person plural:
+				say "terranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "terranno";
+			otherwise:
+				say "terrà";
+
+To say possiedi:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "posseggo";
+			otherwise if the story viewpoint is second person singular:
+				say "possiedi";
+			otherwise if the story viewpoint is third person singular:
+				say "possiede";
+			otherwise if the story viewpoint is first person plural:
+				say "possediamo";
+			otherwise if the story viewpoint is second person plural:
+				say "possedete";
+			otherwise if the story viewpoint is third person plural:
+				say "possiedono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "possiedono";
+			otherwise:
+				say "possiede";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "possedevo";
+			otherwise if the story viewpoint is second person singular:
+				say "possedevi";
+			otherwise if the story viewpoint is third person singular:
+				say "possedeva";
+			otherwise if the story viewpoint is first person plural:
+				say "possedevamo";
+			otherwise if the story viewpoint is second person plural:
+				say "possedevate";
+			otherwise if the story viewpoint is third person plural:
+				say "possedevano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "possedevano";
+			otherwise:
+				say "possedeva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "possederò";
+			otherwise if the story viewpoint is second person singular:
+				say "possederai";
+			otherwise if the story viewpoint is third person singular:
+				say "possederete";
+			otherwise if the story viewpoint is first person plural:
+				say "possederemo";
+			otherwise if the story viewpoint is second person plural:
+				say "possederete";
+			otherwise if the story viewpoint is third person plural:
+				say "possederanno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "possederanno";
+			otherwise:
+				say "possederà";
+
+To say togli:
+	if story tense is present tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "tolgo";
+			otherwise if the story viewpoint is second person singular:
+				say "togli";
+			otherwise if the story viewpoint is third person singular:
+				say "toglie";
+			otherwise if the story viewpoint is first person plural:
+				say "togliamo";
+			otherwise if the story viewpoint is second person plural:
+				say "togliete";
+			otherwise if the story viewpoint is third person plural:
+				say "tolgono";
+		otherwise:
+			if the prior named object is plural-named:
+				say "tolgono";
+			otherwise:
+				say "toglie";
+	otherwise if story tense is past tense:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "toglievo";
+			otherwise if the story viewpoint is second person singular:
+				say "toglievi";
+			otherwise if the story viewpoint is third person singular:
+				say "toglieva";
+			otherwise if the story viewpoint is first person plural:
+				say "toglievamo";
+			otherwise if the story viewpoint is second person plural:
+				say "toglievate";
+			otherwise if the story viewpoint is third person plural:
+				say "toglievano";
+		otherwise:
+			if the prior named object is plural-named:
+				say "toglievano";
+			otherwise:
+				say "toglieva";
+	otherwise:
+		if the prior named object is the player:
+			if the story viewpoint is first person singular:
+				say "toglierò";
+			otherwise if the story viewpoint is second person singular:
+				say "toglierai";
+			otherwise if the story viewpoint is third person singular:
+				say "toglierete";
+			otherwise if the story viewpoint is first person plural:
+				say "toglieremo";
+			otherwise if the story viewpoint is second person plural:
+				say "toglierete";
+			otherwise if the story viewpoint is third person plural:
+				say "toglieranno";
+		otherwise:
+			if the prior named object is plural-named:
+				say "toglieranno";
+			otherwise:
+				say "toglierà";
+
+[&&&]
+
 To say ci sei:
 	if story tense is present tense:
-		say "c[']è";
+		if the prior named object is plural-named:
+			say "ci sono";
+		otherwise:
+			say "c[']è";
 	otherwise if story tense is past tense:
-		say "c[']era";
+		if the prior named object is plural-named:
+			say "c[']erano";
+		otherwise:
+			say "c[']era";
 	otherwise:
-		say "ci sarà";
+		if the prior named object is plural-named:
+			say "ci saranno";
+		otherwise:
+			say "ci sarà";
 
-To say ci sono:
+To say Ci sei:
 	if story tense is present tense:
-		say "ci sono";
+		if the prior named object is plural-named:
+			say "Ci sono";
+		otherwise:
+			say "C[']è";
 	otherwise if story tense is past tense:
-		say "c[']erano";
+		if the prior named object is plural-named:
+			say "C[']erano";
+		otherwise:
+			say "C[']era";
 	otherwise:
-		say "ci saranno";
+		if the prior named object is plural-named:
+			say "Ci saranno";
+		otherwise:
+			say "Ci sarà";
 
-To say sono:
-	if story tense is present tense:
-		say "sono";
-	otherwise if story tense is past tense:
-		say "erano";
-	otherwise:
-		say "saranno";
-
+[&&&
 In Italian aperto is an adjective.
 In Italian chiuso is an adjective.
 In Italian vuoto is an adjective.
@@ -2470,6 +3411,59 @@ In Italian sceso is an adjective.
 In Italian alzato is an adjective.
 In Italian uscito is an adjective.
 In Italian tolto is an adjective.
+&&&]
+An aggettivo is a kind of object.
+
+aperto is an aggettivo.
+chiuso is an aggettivo.
+vuoto is an aggettivo.
+acceso is an aggettivo.
+spento is an aggettivo.
+fissato is an aggettivo.
+preso is an aggettivo.
+rimasto is an aggettivo.
+lasciato is an aggettivo.
+commestibile is an aggettivo.
+indossato_ is an aggettivo.
+bloccato is an aggettivo.
+adatto is an aggettivo.
+interessato is an aggettivo.
+capace is an aggettivo.
+contenente is an aggettivo.
+ingombrante is an aggettivo.
+sveglio is an aggettivo.
+stesso is an aggettivo.
+salito is an aggettivo.
+saltato is an aggettivo.
+seduto is an aggettivo.
+entrato is an aggettivo.
+sceso is an aggettivo.
+alzato is an aggettivo.
+uscito is an aggettivo.
+tolto is an aggettivo.
+
+To say (agg - an aggettivo):
+	let prn be the printed name of agg;
+	let len be the number of characters in prn;
+	let last be the character number len in prn;
+	if last is "_":
+		replace character number len in prn with "";
+		now len is len minus 1;
+		now last is the character number len in prn;
+	if last is "o":
+		if the prior named object is plural-named:
+			if the prior named object is female:
+				replace character number len in prn with "e";
+			otherwise:
+				replace character number len in prn with "i";
+		otherwise:
+			if the prior named object is female:
+				replace character number len in prn with "a";
+	otherwise if last is "e":
+		if the prior named object is plural-named:
+			replace character number len in prn with "i";
+	say "[prn]".
+[&&&]
 
 To say sei entrato:
 	if the player's command includes "sali":
@@ -2541,11 +3535,11 @@ Report other people taking inventory rule response (A) is "[The actor] [guardi] 
 Can't take yourself rule response (A) is "[regarding the player][maiuscolo][sei][maiuscolo] sempre con [te]."
 Can't take other people rule response (A) is "[regarding the player]Non [puoi] prendere [the noun]."
 Can't take component parts rule response (A) is "[The noun] [fai] parte [dip the whole]."
-Can't take people's possessions rule response (A) is "[The noun] [sembri] appartenere [ap the owner]."
+Can't take people's possessions rule response (A) is "[The noun] appar[tieni] [ap the owner]."
 Can't take items out of play rule response (A) is "[The noun] non [sei] a [tua] disposizione."
-Can't take what you're inside rule response (A) is "Prima dovresti [if noun is a supporter]scendere[otherwise]uscire[end if] [dap the noun]."
+Can't take what you're inside rule response (A) is "Prima dovresti [if noun is a supporter]scendere[otherwise]uscire[end if] [dap the noun]." [$$$ verbo anche al plurale]
 Can't take what's already taken rule response (A) is "[The noun] [sei] già in [regarding the player][tuo] possesso."
-Can't take scenery rule response (A) is "[The noun] non si [regarding nothing][puoi] trasportare."
+Can't take scenery rule response (A) is "[The noun] non si [puoi] trasportare."
 Can only take things rule response (A) is "[The noun] [sei] fuori dalla [tua] portata."
 Can't take what's fixed in place rule response (A) is "[The noun] [sei] [fissato] al proprio posto."
 Use player's holdall to avoid exceeding carrying capacity rule response (A) is "(prima [regarding the player][metti] qualcosa [inp the current working sack] per fare spazio)[command clarification break]".
@@ -2582,6 +3576,7 @@ Can't insert clothes being worn rule response (A) is "(prima [regarding the play
 Can't insert if this exceeds carrying capacity rule response (A) is "[regarding nothing]Non [ci sei] più spazio [inp the second noun]."
 Concise report inserting rule response (A) is "Fatto."
 Standard report inserting rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Hai][maiuscolo][otherwise][The actor] [hai][end if] messo [the noun] [su-in the second noun]."
+
 [ Eating ]
 Can't eat unless edible rule response (A) is "Non [regarding the player][puoi] mangiare [the noun] perché non [regarding the noun][sei] [commestibile]."
 Can't eat clothing without removing it first rule response (A) is "(prima [regarding the player][togli] [the noun])[command clarification break]".
@@ -2607,11 +3602,11 @@ Describe room gone into rule response (B) is "[if the actor is the player][regar
 Describe room gone into rule response (C) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] verso [the noun]."
 Describe room gone into rule response (D) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dall'alto."
 Describe room gone into rule response (E) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] dal basso."
-Describe room gone into rule response (F) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the back way]".
+Describe room gone into rule response (F) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the door gone through]".
 Describe room gone into rule response (G) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] ."
 Describe room gone into rule response (H) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
 Describe room gone into rule response (I) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] dal basso."
-Describe room gone into rule response (J) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] [dap the back way]."
+Describe room gone into rule response (J) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [ap the room gone to] [dap the door gone through]."
 Describe room gone into rule response (K) is "[if the actor is the player][regarding the player][maiuscolo][Vai][maiuscolo][otherwise][The actor] [vai][end if] attraverso [the noun]".
 Describe room gone into rule response (L) is "[if the actor is the player][regarding the player][maiuscolo][Arrivi][maiuscolo][otherwise][The actor] [arrivi][end if] [dap the noun]".
 Describe room gone into rule response (M) is "[sup the vehicle gone by]".
@@ -2666,6 +3661,7 @@ Can't exit closed containers rule response (A) is "Non [regarding the player][pu
 Standard report exiting rule response (A) is "[regarding the player][maiuscolo][Sei uscito][maiuscolo] [dap the container exited from]."
 Standard report exiting rule response (B) is "[regarding the player][maiuscolo][Sei uscito][maiuscolo] [dap the container exited from]."
 Standard report exiting rule response (C) is "[The actor] [sei uscito] [dap the container exited from]."
+
 [ Getting off ]
 Can't get off things rule response (A) is "[Ora] non [regarding the player][sei] [sup the noun]."
 Standard report getting off rule response (A) is "[if the actor is the player][regarding the player][maiuscolo][Sei uscito][maiuscolo][otherwise][The actor] [sei uscito][end if] [dap the noun]."
@@ -2681,12 +3677,12 @@ Room description heading rule response (C) is " (dentro [the intermediate level]
 Room description body text rule response (A) is "L'oscurità avvolge tutto. Non [regarding the player][puoi] vedere nulla."
 Other people looking rule response (A) is "[The actor] si [guardi] attorno."
 [ Examining ]
-Examine directions rule response (A) is "[regarding the player]Non [vedi] nulla di speciale in quella direzione."
+Examine directions rule response (A) is "[regarding the player]Non [vedi] nulla di particolare in quella direzione."
 Examine containers rule response (A) is "Dentro [the noun] ".
 Examine containers rule response (B) is "[The noun] [sei] [vuoto]."
 Examine supporters rule response (A) is "Sopra [the noun] ".
 Examine devices rule response (A) is "[Ora] [the noun] [sei] [if the noun is switched on][acceso][otherwise][spento][end if]."
-Examine undescribed things rule response (A) is "[regarding the player]Non [trovi] nulla di speciale [inp the noun]."
+Examine undescribed things rule response (A) is "[regarding the player]Non [trovi] nulla di particolare [inp the noun]."
 Report other people examining rule response (A) is "[The actor] [guardi] con attenzione [the noun]."
 [ Looking under ]
 Standard looking under rule response (A) is "[regarding the player]Non [trovi] nulla di interessante."
@@ -2702,7 +3698,6 @@ Report other people searching rule response (A) is "[The actor] [ispezioni] [the
 [ Consulting it about ]
 Block consulting rule response (A) is "[regarding the player]Non [scopri] nulla di interessante [sup the noun]."
 Block consulting rule response (B) is "[The actor] [guardi] verso [the noun]."
-
 
 Section 3.1.1.4 - Standard actions which change the state of things
 
@@ -2998,16 +3993,21 @@ List writer internal rule response (G) is "[regarding the noun][chiuso] e [vuoto
 List writer internal rule response (H) is "[regarding the noun][chiuso] e [acceso]".
 List writer internal rule response (I) is "[regarding the noun][vuoto] e [acceso]".
 List writer internal rule response (J) is "[regarding the noun][chiuso], [vuoto][if serial comma option is active],[end if] e [acceso]".
+[&&&
 List writer internal rule response (K) is "[regarding the noun][acceso] e [indossato]".
 List writer internal rule response (L) is "[regarding the noun][indossato]".
+&&&]
+List writer internal rule response (K) is "[regarding the noun][acceso] e [indossato_]".
+List writer internal rule response (L) is "[regarding the noun][indossato_]".
+[&&&]
 List writer internal rule response (M) is "[regarding the noun][aperto]".
 List writer internal rule response (N) is "[regarding the noun][aperto] ma [vuoto]".
 List writer internal rule response (O) is "[regarding the noun][chiuso]".
 List writer internal rule response (P) is "[regarding the noun][chiuso] e [bloccato]".
 List writer internal rule response (Q) is "[regarding the noun][contenente]".
-List writer internal rule response (R) is " (su cui ".
+List writer internal rule response (R) is "su cui ".
 List writer internal rule response (S) is ", su cui ".
-List writer internal rule response (T) is " (in cui ".
+List writer internal rule response (T) is "in cui ".
 List writer internal rule response (U) is ", in cui ".
 List writer internal rule response (V) is "[regarding the player][vedi]".
 List writer internal rule response (W) is "[sei] niente".
@@ -3033,7 +4033,7 @@ Parser error internal rule response (A) is "Non ho capito la frase."
 Parser error internal rule response (B) is "Ho capito solo: ".
 Parser error internal rule response (C) is "Ho capito solo: ".
 Parser error internal rule response (D) is "Non ho compreso il numero."
-Parser error internal rule response (E) is "Non [regarding the player][puoi] vedere nulla del genere."
+Parser error internal rule response (E) is "[Qui] non [regarding the player][puoi] vedere nulla del genere."
 Parser error internal rule response (F) is "Hai detto troppo poco."
 Parser error internal rule response (G) is "[Ora] non lo [possiedi]."
 Parser error internal rule response (H) is "Non puoi usare più di un oggetto con questo verbo."
@@ -3115,21 +4115,28 @@ Immediately undo rule response (E) is "[bracket]Turno precedente annullato.[clos
 
 Chapter 3.1.2 - Rideable Vehicles (for use with Rideable Vehicles by Graham Nelson)
 
-Understand "monta [su-art] [something]" as mounting.
-Understand "smonta [da-art] [something]" as dismounting.
+Understand "monta [art-det] [something]" as mounting.
+Understand "monta [something]" or "monta [su-art] [something]" as mounting.
+Understand "smonta" as dismounting.
 
-can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the steed].".
-can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già montando [the conveyance].".
-can't mount something unrideable rule response (A) is "[The noun] non [puoi] essere montato.".
-standard report mounting rule response (A) is "[regarding the player][maiuscolo][Monti][maiuscolo] [the noun].".
-standard report mounting rule response (B) is "[The actor] [monti] [the noun].".
-mounting excuses rule response (A) is "[The person asked] [stai] già montando [the steed].".
-mounting excuses rule response (B) is "[The person asked] [stai] già montando [the conveyance].".
-mounting excuses rule response (C) is "[The noun] non [puoi] essere montato.".
-can't dismount when not mounted rule response (A) is "Non [regarding the player][stai] montando nulla.".
-standard report dismounting rule response (A) is "[refarding the player][maiuscolo][Smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
+In Italian montare is a verb.
+In Italian smontare is a verb.
+
+In Italian cavalcato is an adjective.
+In Italian montato is an adjective.
+
+can't mount when mounted on an animal rule response (A) is "[regarding the player][maiuscolo][Stai][maiuscolo] già cavalcando [the steed].".
+can't mount when mounted on a vehicle rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [montato] [sup the conveyance].".
+can't mount something unrideable rule response (A) is "[The noun] non [puoi] essere [cavalcato].".
+standard report mounting rule response (A) is "[regarding the player][maiuscolo][Monti][maiuscolo] [sup the noun].".
+standard report mounting rule response (B) is "[The actor] [monti] [sup the noun].".
+mounting excuses rule response (A) is "[The person asked] [stai] già cavalcando [the steed].".
+mounting excuses rule response (B) is "[The person asked] [sei] già [montato] [sup the conveyance].".
+mounting excuses rule response (C) is "Non si [regarding nothing][puoi] montare [sup the noun].".
+can't dismount when not mounted rule response (A) is "Non [regarding the player][sei] [montato] su nulla.".
+standard report dismounting rule response (A) is "[regarding the player][maiuscolo][Smonti][maiuscolo] [dap the noun].[line break][run paragraph on]".
 standard report dismounting rule response (B) is "[The actor] [smonti] [dap the noun].".
-dismounting excuses rule response (A) is "[The person asked] non [stai] montando nulla.".
+dismounting excuses rule response (A) is "[The person asked] non [sei] [montato] su nulla.".
 
 Chapter 3.1.3 - Locksmith (for use with Locksmith by Emily Short)
 
@@ -3160,9 +4167,9 @@ unsuccessful persuasion of inanimate objects rule response (A) is "[The target] 
 Chapter 3.1.7 - Complex Listing (for use with Complex Listing by Emily Short)
 
 [
-    standard delimiting rule response (A): "[second delimiter entry]"
-    standard delimiting rule response (B): "[alternate second delimiter entry]"
-    standard delimiting rule response (C): "[first delimiter entry]"
+	standard delimiting rule response (A): "[second delimiter entry]"
+	standard delimiting rule response (B): "[alternate second delimiter entry]"
+	standard delimiting rule response (C): "[first delimiter entry]"
 ]
 
 Part 3.2 - The Final Question
@@ -3233,88 +4240,87 @@ Part 4.1 - Pronouns and possessives in commands
 
 [ Tali meccanismi sono ancora da implementare... ]
 
+Part 4.2.1 - Replacing English verbs
 
-Part 4.2.1 - Replacing English verbs 
- 
-[ Propósito: Para no incluir el bloque de gramaticas (y verbos) ingleses en el fuente (optimiza memoria)] 
- 
-Understand nothing as answering it that. 
-Understand nothing as asking it about. 
-Understand nothing as asking it for. 
-Understand nothing as attacking. 
-Understand nothing as burning. 
-Understand nothing as buying. 
-Understand nothing as climbing. 
-Understand nothing as closing. 
-Understand nothing as consulting it about. 
-Understand nothing as cutting. 
-Understand nothing as drinking. 
-Understand nothing as dropping. 
-Understand nothing as eating. 
-Understand nothing as entering. 
-Understand nothing as examining. 
-Understand nothing as exiting. 
-Understand nothing as getting off. 
-Understand nothing as giving it to. 
-Understand nothing as going. 
-Understand nothing as inserting it into. 
-Understand nothing as jumping. 
-Understand nothing as kissing. 
-Understand nothing as listening to. 
-Understand nothing as locking it with. 
-Understand nothing as looking under. 
-Understand nothing as looking. 
-Understand nothing as opening. 
-Understand nothing as preferring abbreviated room descriptions. 
-Understand nothing as preferring sometimes abbreviated room descriptions. 
-Understand nothing as preferring unabbreviated room descriptions. 
-Understand nothing as pulling. 
-Understand nothing as pushing it to. 
-Understand nothing as pushing. 
-Understand nothing as putting it on. 
-Understand nothing as quitting the game. 
-Understand nothing as removing it from. 
-Understand nothing as requesting the pronoun meanings. 
-Understand nothing as requesting the score. 
-Understand nothing as requesting the story file version. 
-Understand nothing as restarting the game. 
-Understand nothing as restoring the game. 
-Understand nothing as rubbing. 
-Understand nothing as saving the game. 
-Understand nothing as saying no. 
-Understand nothing as saying sorry. 
-Understand nothing as saying yes. 
-Understand nothing as searching. 
-Understand nothing as setting it to. 
-Understand nothing as showing it to. 
-Understand nothing as sleeping. 
-Understand nothing as smelling. 
-Understand nothing as squeezing. 
-Understand nothing as swinging. 
-Understand nothing as switching off. 
-Understand nothing as switching off. 
-Understand nothing as switching on. 
-Understand nothing as switching score notification off. 
-Understand nothing as switching score notification on. 
-Understand nothing as switching the story transcript off. 
-Understand nothing as switching the story transcript on. 
-Understand nothing as taking inventory. 
-Understand nothing as taking off. 
-Understand nothing as taking. 
-Understand nothing as tasting. 
-Understand nothing as telling it about. 
-Understand nothing as thinking. 
-Understand nothing as throwing it at. 
-Understand nothing as touching. 
-Understand nothing as turning. 
-Understand nothing as tying it to. 
-Understand nothing as unlocking it with. 
-Understand nothing as verifying the story file. 
-Understand nothing as waiting. 
-Understand nothing as waking up. 
-Understand nothing as waving hands. 
-Understand nothing as waving. 
-Understand nothing as wearing. 
+[ Propósito: Para no incluir el bloque de gramaticas (y verbos) ingleses en el fuente (optimiza memoria)]
+
+Understand nothing as answering it that.
+Understand nothing as asking it about.
+Understand nothing as asking it for.
+Understand nothing as attacking.
+Understand nothing as burning.
+Understand nothing as buying.
+Understand nothing as climbing.
+Understand nothing as closing.
+Understand nothing as consulting it about.
+Understand nothing as cutting.
+Understand nothing as drinking.
+Understand nothing as dropping.
+Understand nothing as eating.
+Understand nothing as entering.
+Understand nothing as examining.
+Understand nothing as exiting.
+Understand nothing as getting off.
+Understand nothing as giving it to.
+Understand nothing as going.
+Understand nothing as inserting it into.
+Understand nothing as jumping.
+Understand nothing as kissing.
+Understand nothing as listening to.
+Understand nothing as locking it with.
+Understand nothing as looking under.
+Understand nothing as looking.
+Understand nothing as opening.
+Understand nothing as preferring abbreviated room descriptions.
+Understand nothing as preferring sometimes abbreviated room descriptions.
+Understand nothing as preferring unabbreviated room descriptions.
+Understand nothing as pulling.
+Understand nothing as pushing it to.
+Understand nothing as pushing.
+Understand nothing as putting it on.
+Understand nothing as quitting the game.
+Understand nothing as removing it from.
+Understand nothing as requesting the pronoun meanings.
+Understand nothing as requesting the score.
+Understand nothing as requesting the story file version.
+Understand nothing as restarting the game.
+Understand nothing as restoring the game.
+Understand nothing as rubbing.
+Understand nothing as saving the game.
+Understand nothing as saying no.
+Understand nothing as saying sorry.
+Understand nothing as saying yes.
+Understand nothing as searching.
+Understand nothing as setting it to.
+Understand nothing as showing it to.
+Understand nothing as sleeping.
+Understand nothing as smelling.
+Understand nothing as squeezing.
+Understand nothing as swinging.
+Understand nothing as switching off.
+Understand nothing as switching off.
+Understand nothing as switching on.
+Understand nothing as switching score notification off.
+Understand nothing as switching score notification on.
+Understand nothing as switching the story transcript off.
+Understand nothing as switching the story transcript on.
+Understand nothing as taking inventory.
+Understand nothing as taking off.
+Understand nothing as taking.
+Understand nothing as tasting.
+Understand nothing as telling it about.
+Understand nothing as thinking.
+Understand nothing as throwing it at.
+Understand nothing as touching.
+Understand nothing as turning.
+Understand nothing as tying it to.
+Understand nothing as unlocking it with.
+Understand nothing as verifying the story file.
+Understand nothing as waiting.
+Understand nothing as waking up.
+Understand nothing as waving hands.
+Understand nothing as waving.
+Understand nothing as wearing.
 
 Part 4.2.2 - Understand grammar
 
@@ -3428,7 +4434,7 @@ Check an actor talking to (this is the talking to yourself rule):
 		say "[regarding the player][maiuscolo][Hai][maiuscolo] parlato a [te] [stesso]." (A) instead;
 	else if the actor is not the player and the noun is the actor:
 		stop the action.
-Unsuccessful attempt by someone talking to while the reason the action failed is the talking to yourself rule: 
+Unsuccessful attempt by someone talking to while the reason the action failed is the talking to yourself rule:
 	say "[The actor] [hai] parlato a [te] [stesso].".
 Report an actor talking to (this is the standard report talking to rule):
 	say "[if the actor is the player]Non [regarding the player][else][The actor] non[end if][hai] niente da dire." (A).
@@ -3488,7 +4494,7 @@ Understand "sud" or "s" as south.
 Understand "ovest" or "o" as west.
 Understand "est" or "e" as east.
 Understand "nordest" or "ne" as northeast.
-Understand "nordovest" as northwest.
+Understand "nordovest" or "nw" as northwest.
 Understand "sudovest" or "so" as southwest.
 Understand "sudest" or "se" as southeast.
 
@@ -3518,40 +4524,41 @@ The printed name of  outside is "fuori".
 
 [Sì/no]
 Understand "sì" or "si" as saying yes.
+Understand "no" as saying no.
 
 Part 4.3 - Command parser internals
 
 Include (-
 [ LanguageVerb i;
-    switch (i) {
-      'i//','inv','inventario':
-               print "inventario";
-      'r//':   print "revisionare";
-      'x//':   print "esaminare";
-      'z//':   print "aspettare";
-      'v//':   print "revisionare";
-      'a//':   print "aspettare";
-      '!//':   print "dire";
-      '?//':   print "domandare";
-      'q//':   print "uscire";
-      'chiudere': print "chiudere";
-      'sbloccare': print "sbloccare";
-      default: rfalse;
-    }
-    rtrue;
+	switch (i) {
+	  'i//','inv','inventario':
+			   print "inventario";
+	  'r//':   print "revisionare";
+	  'x//':   print "esaminare";
+	  'z//':   print "aspettare";
+	  'v//':   print "revisionare";
+	  'a//':   print "aspettare";
+	  '!//':   print "dire";
+	  '?//':   print "domandare";
+	  'q//':   print "uscire";
+	  'chiudere': print "chiudere";
+	  'sbloccare': print "sbloccare";
+	  default: rfalse;
+	}
+	rtrue;
 ];
 
 [ LanguageVerbLikesAdverb w;
-    if (w == 'look' or 'go' or 'push' or 'walk')
-        rtrue;
-    rfalse;
+	if (w == 'look' or 'go' or 'push' or 'walk')
+		rtrue;
+	rfalse;
 ];
 
 [ LanguageVerbMayBeName w;
-    if (w == 'long' or 'short' or 'normal'
-                    or 'brief' or 'full' or 'verbose')
-        rtrue;
-    rfalse;
+	if (w == 'long' or 'short' or 'normal'
+					or 'brief' or 'full' or 'verbose')
+		rtrue;
+	rfalse;
 ];
 -) instead of "Commands" in "Language.i6t".
 

@@ -22,7 +22,7 @@ Open number prompt is text that varies.  Open number prompt is ">".
 Closed menu prompt is text that varies.  Closed menu prompt is "Inserisci un numero tra 1 e [number of entries in current question menu] >".
 Open menu prompt is text that varies.  Open menu prompt is ">".
 
-Closed yes/no prompt is text that varies.  Closed yes/no prompt is "Inserisci S o N (Sì¡¯ No) >".
+Closed yes/no prompt is text that varies.  Closed yes/no prompt is "Inserisci S o N (Sì o No) >".
 Open yes/no prompt is text that varies.  Open yes/no prompt is ">".
 
 Closed gender prompt is text that varies.  Closed gender prompt is "Inserisci M, F o N (Maschio, Femmina e Neutro) >".

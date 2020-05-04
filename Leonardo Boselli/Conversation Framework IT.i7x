@@ -65,7 +65,7 @@ Check hailing (this is the alternate check what's being hailed rule):
   now the noun is a random visible person who is not the player;
   if the noun is a person and the noun is not yourself and the noun is not the player,  
     do nothing; [say "(rivolgendoti [ap the noun])" (B);]
-  otherwise say "Non [regarding nothing][ci sono] nessun altro [qui]." (C) instead.
+  otherwise say "Non [regarding nothing][ci sei] nessun altro [qui]." (C) instead.
 
 
 Chapter 2  - Saying Goodbye
@@ -87,9 +87,9 @@ Understand "rispondi a/al/allo/alla/ai/agli/alle/all [someone] [text]" as answer
 
 Chapter - Responses
 
-    block informing rule response (A) is "Non [regarding nothing][ci sono] stata risposta.".
-    block quizzing rule response (A) is "Non [regarding nothing][ci sono] stata risposta.".
-    implicit-conversing needs current interlocutor rule response (A) is "[Qui] non [regarding nothing][ci sono] nessuno a cui parlare.".
+    block informing rule response (A) is "Non [regarding nothing][ci sei] stata risposta.".
+    block quizzing rule response (A) is "Non [regarding nothing][ci sei] stata risposta.".
+    implicit-conversing needs current interlocutor rule response (A) is "[Qui] non [regarding nothing][ci sei] nessuno a cui parlare.".
     implicit-conversing needs current interlocutor rule response (B) is "Devi specificare a chi vuoi parlare.".
     implicit-conversing needs current interlocutor rule response (C) is "(rivolgendoti [ap the interlocutor])".
     implicit-conversing needs current interlocutor rule response (D) is "Non [regarding the player][stai] parlando con nessuno.".

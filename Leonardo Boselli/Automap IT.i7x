@@ -1,4 +1,4 @@
-Version 4/140728 of Automap IT by Leonardo Boselli begins here.
+Version 4/140823 of Automap IT by Leonardo Boselli begins here.
 
 "Translation in italian of Version 4/140513 of Automap by Mark Tilford. An extension to automatically draw a map."
 
@@ -20,17 +20,10 @@ Understand "nascondi mappa" as zooming away.  Check zooming away: now current zo
 	
 Section 5 - Hyperlink specific stuff (for use with Basic Hyperlinks by Emily Short)
 
-Check hyperlink moving to room:
-	if the noun is the location, say "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the location]." instead.
-	
-Check hyperlink moving to room:
-	while the player is not in the noun:
-		let heading be the best route from the location to the noun through visited rooms, using even locked doors;
-		if heading is not a direction, say "Da [qui] non [regarding the player][hai] idea di come andarci." instead;
-		let destination be the room heading from the location;
-		say "(direzione [heading])[command clarification break]";
-		try going heading;
-		if the player is not in the destination, rule fails.
+[It's necessary to modify 'Automap' by Mark Tilford]
+the check moving to room rule response (A) is "[regarding the player][maiuscolo][Sei][maiuscolo] già [inp the location].".
+the carry out moving to room rule response (A) is "Da [qui] non [regarding the player][hai] idea di come andarci.".
+the carry out moving to room rule response (B) is "([if heading is not up and heading is not down]verso [otherwise]andando[end if][heading])[command clarification break]".
 
 	
 Automap IT ends here.

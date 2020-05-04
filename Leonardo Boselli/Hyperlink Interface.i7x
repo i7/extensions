@@ -46,7 +46,7 @@ Chapter - Things
 Section - Examine Grammar Line
 
 Understand "[a thing]" as examining.
-Understand "[a door]" as examining.
+Understand "[things]" as examining.
 
 Section - Definitions
 
@@ -60,6 +60,11 @@ Object hyperlinking something is an activity on objects.
 
 Rule for printing the name of a thing (called item):
 	carry out the object hyperlinking activity with item.
+
+Plural object hyperlinking something is an activity on objects.
+
+Rule for printing the plural name of a thing (called item):
+	carry out the plural object hyperlinking activity with item.
 
 Section - Hyperlinks management
 
@@ -157,10 +162,9 @@ To end HI hyperlink capture:
 Hyperlink clicked is initially false.
 The default command replacement by hyperlinks rule is not listed in any rulebook.
 A clicking hyperlink rule (this is the alternative command replacement by hyperlinks rule):
-	Now hyperlink clicked is true;
 	if current link number is greater than HI-max-hyperlinks:
-		now glulx replacement command is "";
-		rule succeeds;
+		continue the action;
+	now hyperlink clicked is true;
 	choose row ( current link number ) in the Table of Hyperlink Commands;
 	now the glulx replacement command is replacement entry;
 
@@ -182,6 +186,19 @@ Rule for object hyperlinking something (called item) (this is the Hyperlink Inte
 		else:
 			say "[word number wordcounter in output]".
 
+Rule for plural object hyperlinking something (called item) (this is the Hyperlink Interface plural object hyperlinking rule):
+	if object hyperlink highlighting is false or item is hyperlinkless:
+		say the printed plural name of item;
+		continue the action;
+	let output be indexed text;
+	now output is the printed plural name of item;
+	let hl be word number ( the number of words in output ) in output;
+	repeat with wordcounter running from 1 to the number of words in output:
+		say "[if wordcounter > 1] [end if]";
+		if word number wordcounter in output matches the regular expression "\b(?i)[hl]":
+			say "[o][word number wordcounter in output][x]";
+		else:
+			say "[word number wordcounter in output]".
 
 Chapter - Exits
 
@@ -189,19 +206,34 @@ Section - Definitions
 
 Direction hyperlink highlighting is initially true.
 
-Understand "[a direction]" as going. Understand "[an open door]" as entering.
+Understand "[a direction]" as going.
 
 Direction hyperlinking something is an activity. 
 
-Rule for printing the name of a direction (called dir) while looking (this is the Hyperlink Interface highlight directions while looking rule):
+Rule for printing the name of a direction (called dir) while looking exits (this is the Hyperlink Interface highlight directions while looking rule):
 	carry out the direction hyperlinking activity with dir.
 
 Rule for printing the name of a direction (called dir) while listing exits (this is the Hyperlink Interface highlight directions while listing exits rule):
 	carry out the direction hyperlinking activity with dir.
 
+Rule for printing the name of a room (called dir) while looking exits (this is the Hyperlink Interface highlight rooms while looking exits rule):
+	carry out the direction hyperlinking activity with dir.
+
+Rule for printing the name of a room (called dir) while listing exits (this is the Hyperlink Interface highlight rooms while listing exits rule):
+	carry out the direction hyperlinking activity with dir.
+
+Rule for printing the name of a room (called dir) while saying the location name of a room (this is the Hyperlink Interface highlight rooms while remembering rule):
+	carry out the direction hyperlinking activity with dir.
+
 Section - Rule for direction hyperlinking something
 
 Rule for direction hyperlinking a direction (called dir) (this is the Hyperlink Interface direction hyperlinking rule):
+	if direction hyperlink highlighting is false:
+		say the printed name of dir;
+		continue the action;
+	say "[d][the printed name of dir][x]".
+
+Rule for direction hyperlinking a room (called dir) (this is the Hyperlink Interface room hyperlinking rule):
 	if direction hyperlink highlighting is false:
 		say the printed name of dir;
 		continue the action;
@@ -316,14 +348,9 @@ The hyperlink emphases are hyperlink-color1-style, hyperlink-color2-style, hyper
 The style of object-word is usually hyperlink-bold-style. The style of direction-word is usually hyperlink-fixedwidth-style. The style of topic-word is usually hyperlink-italics-style. The style of parser-word is usually hyperlink-italics-style.
 
 Table of User Styles (continued)
-style name	fixed width	boldness	relative size	glulx color
-special-style-1	proportional-font	bold-weight	0	g-color1
-special-style-2	proportional-font	bold-weight	0	g-color2
- 
-Table of Common Color Values (continued)
-glulx color value	assigned number   
-g-color1	255	[blue]
-g-color2	3381555	[green]
+style name (a glulx text style)	color (a text)	fixed width (a truth state)	font weight (a font weight)	relative size (a number)
+special-style-1	"#0000ff"	false	bold-weight	0
+special-style-2	"#00ff00"	false	bold-weight	0
 
 To set the text style for (val - a hyperlink emphasis):
 	if val is hyperlink-color1-style:
@@ -475,10 +502,10 @@ Section - Things
 
 Understand "things" as thing listing. Thing listing is an action out of world applying to nothing.
 
-Carry out thing listing (this is the Hyperlink Interface carry out thing listing rule):
-	say "Nearby [is-are a list of visible other things which are not carried by the player][if the number of visible other things which are not carried by the player is 0] of note[end if]." (A)
+Definition: a thing is listable if it is not the player and it is not carried by the player and it is not worn by the player and it is not part of something.
 
-Definition: a thing is other if it is not the player.
+Carry out thing listing (this is the Hyperlink Interface carry out thing listing rule):
+	say "Nearby [is-are a list of visible listable things][if the number of visible listable things is 0] of note[end if]." (A)
 
 Rule for printing the name of a thing (called item) while thing listing:
 	carry out the object hyperlinking activity with item.
@@ -527,7 +554,7 @@ Section - Hyperlink Introduction Text
 Showing the hyperlink introduction text is an activity.
 
 For showing the hyperlink introduction text (this is the Hyperlink Interface showing the hyperlink introduction text rule):
-	say "[line break]As you read [story title], you'll see certain [emphasiz]ed hyperlinks in the prose. Type any hyperlink to advance the story. [if object hyperlink highlighting is true]You can type an [emphasiz]ed [o]object[x] hyperlink to examine that item more closely. [end if][if direction hyperlink highlighting is true]An [emphasiz]ed [d]direction[x] indicates that typing that word will move you that direction or towards that distant scenery. [end if][if topic hyperlink highlighting is true]An [emphasiz]ed word in [t]conversation[x] means typing that word will steer the conversation towards that topic. [end if][paragraph break]If the hyperlink[if the number of active hyperlink systems > 1]s in the paragraph above are[else] in the paragraph above is[end if] not distinct from the surrounding text, type [o]HYPERLINKS[x] to adjust the display style." (A)
+	say "[line break]As you read [story title], you'll see certain [emphasiz]ed hyperlinks in the prose. Type any hyperlink to advance the story. [if object hyperlink highlighting is true]You can type an [emphasiz]ed [o]object[x] hyperlink to examine that item more closely. [end if][if direction hyperlink highlighting is true]An [emphasiz]ed [d]direction[x] indicates that typing that word will move you that direction or towards that distant scenery. [end if][if topic hyperlink highlighting is true]An [emphasiz]ed word in [t]conversation[x] means typing that word will steer the conversation towards that topic. [end if][paragraph break]If the hyperlink[if the number of active hyperlink systems > 1]s in the paragraph above are[else] in the paragraph above is[end if] not distinct from the surrounding text, type [o]HYPERLINKS[x] to adjust the display style.[run paragraph on]" (A);
 
 [This extension uses a statistically unlikely number of words with spellings that differ in America. We define a number of text substitutions to let us easily switch between.]
 

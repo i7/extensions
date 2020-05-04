@@ -26,7 +26,7 @@ Chapter - Responses
     Keyword Interface carry out setting screen reader mode rule response (A) is "La modalità di lettura schermo è stata attivata.".
     Keyword Interface carry out setting screen reader mode rule response (B) is "La modalità di lettura schermo è stata disattivata. '[story title]' usa l[']enfatizzazione delle parole chiave per indicare parole importanti che possono essere digitate per progredire nella storia. Il tuo lettore potrebbe porre un[']enfasi riconoscibile nel pronunciare parole enfatizzate come [o]questa[x]. Se non lo facesse, puoi scrivere il comando [o]oggetti[x] per ottenere la lista degli oggetti vicini, o scrivere [d]uscite[x] per la lista delle direzioni. Scrivi [o]parole chiave[x] per modificare lo stile delle parole chiave, o scrivi screen reader senza spazi per attivare o disattivare questa modalità.".
     Keyword Interface carry out listing exits rule response (A) is "Non [regarding nothing][ci sei] nessuna uscita.".
-    Keyword Interface carry out listing exits rule response (B) is "Da [qui], [if the number of viable directions is 1]l'unica uscita [regarding nothing][sei][otherwise][puoi] andare[end if] verso [a list of viable directions].".
+    Keyword Interface carry out listing exits rule response (B) is "Da [qui] [if the number of viable directions is 1]l'unica uscita [regarding nothing][sei][otherwise][puoi] andare[end if] verso [list of viable directions].".
 
 To decide which number is list-plurality of the (list - a list of objects):
 	let list-number be 0; [0: singular, 1: plural]
