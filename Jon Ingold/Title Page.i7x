@@ -1,6 +1,6 @@
-Version 3 of Title Page by Jon Ingold begins here.
+Version 4/200510 of Title Page by Jon Ingold begins here.
 
-"Provides an intro panel to the game, offering a menu, a restore and restart prompt, a quotation and (under Glulx) a picture. Updated to version 3 for compatibility with Inform 6L02 and later by Emily Short."
+"Provides an intro panel to the game, offering a menu, a restore and restart prompt, a quotation and (under Glulx) a picture. Updated to version 3 for compatibility with Inform 6L02 and later by Emily Short.  Updated to version 4 by Gavin Lambert to fix an error with 'use skip intro'."
 
 section 1 - inclusions
 
@@ -53,7 +53,7 @@ Title-debugging is a truth state that varies. Title-debugging is false.
 The first when play begins rule (this is the title screen rule):
 	if the skip intro option is active:
 		if title-debugging is true:
-			stop;
+			make no decision;
 	while 1 is 1:
 		clear the screen;
 		redraw status line;
