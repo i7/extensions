@@ -1,8 +1,6 @@
-Version 2/150421 of In-Line Topical Hints by Andrew Schultz begins here.
+Version 2/200530 of In-Line Topical Hints by Andrew Schultz begins here.
 
-"Lets the author offer the player in-line hints, with options for presentation. This extension requires Inform 6L02 or higher to run."
-
-Include version 3 of Standard Rules by Graham Nelson.
+"Lets the author offer the player in-line hints, with options for presentation. This extension requires Inform 6M62 or higher to run."
 
 Include Basic Screen Effects by Emily Short.
 
@@ -10,7 +8,7 @@ Part 1 - definitions and globals
 
 chapter defining a hint-topic
 
-a hint-topic is a kind of thing. a hint-topic is usually privately-named. [This is just so that we don't have any disambiguation.]
+a hint-topic is a kind of object.
 
 [hint topics should always be given a printed name.]
 
@@ -130,7 +128,7 @@ chapter displaying hint topics
 
 hinting is an action out of world.
 
-understand the command "hint/hints/topics/topic" as something new.
+understand the commands "hint" and "hints" and "topics" and "topic" as something new.
 
 understand "hint" and "hints" and "topics" and "topic" as hinting.
 
@@ -252,7 +250,7 @@ carry out turning hints off (this is the turn hints off rule):
 
 Part 3 - topics and expounding
 
-accessing hint topics by number is an action applying to one number.
+accessing hint topics by number is an action out of world applying to one number.
 
 understand the command "t" as something new.
 
@@ -295,7 +293,7 @@ carry out accessing hint topics by number (this is the check for topic rule) :
 			try expounding Q instead;
 	say "There should be something with that number, but there isn't." instead;
 
-expounding is an action applying to one visible thing.
+expounding is an action out of world applying to one visible thing.
 
 definition: a hint-topic (called my-top) is repeat-viewed: [this is so a paged-through hint topic can be printed all the way through without "you saw this before."]
 	if table-row of my-top is 1, decide no;
@@ -340,7 +338,15 @@ carry out expounding (this is the look for topic's next available hint rule) :
 				say "[head-num of Q and numrows][hint-text entry][if q is numrows][else if q is 1 and table-row of noun is 1] (H for next hint)[else if in-hint is false and q is table-row of noun] (H for next hint)[end if][line break]";
 	else:
 		choose row table-row of noun in hint-list of noun;
-		say "[head-num of table-row of noun and numrows][hint-text entry][if table-row of noun is numrows][else if table-row of noun is 1 or in-hint is false] (H for next hint)[end if][line break]";
+		if there is a show-rule entry:
+			skip upcoming rulebook break;
+			follow the show-rule entry;
+			if the rule succeeded:
+				say "[head-num of table-row of noun and numrows][hint-text entry][if table-row of noun is numrows][else if table-row of noun is 1 or in-hint is false] (H for next hint)[end if][line break]";
+			else if table-row of noun is less than numrows:
+				try expounding the noun instead;	[try skipping to the next hint]
+		else:
+			say "[head-num of table-row of noun and numrows][hint-text entry][if table-row of noun is numrows][else if table-row of noun is 1 or in-hint is false] (H for next hint)[end if][line break]";
 	now in-hint is true;
 	now last-topic-hinted is noun;
 	if table-row of noun is numrows:
@@ -619,7 +625,7 @@ after reading a command (this is the t1 to t 1 rule) :
 
 understand "hint [text]" as a mistake ("[if hint-block is true][all-blocked][else][hint-usage][end if].").
 
-The restore the game rule response (B) is "[if hint-block is true]You had hints blocked completely in your previous section, but now they are temporarily turned off instead. You can type HINT ON to reactivate them[true-it].[else][end if]"
+The restore the game rule response (B) is "[if hint-block is true]You had hints blocked completely in your previous session, but now they are temporarily turned off instead. You can type HINT ON to reactivate them[true-it].[else][end if]"
 
 to say true-it:
 	now hint-local-block is true;
@@ -664,7 +670,7 @@ carry out toggling in-game hint debugging (this is the hint debugging for progra
 	the rule succeeds;
 
 every turn when hint-debug is true (this is the list topics every turn rule) : [you may wish to change the text here to make it more useer friendly.]
-	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics]. [if last-topic-hinted is not null-topic]Last topic hinted = [last-topic-hinted][else]No topic hinted yet[end if].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
+	say "[bold type]START TOPIC DEBUG DUMP[roman type].[line break]Currently available hint topics: [list of available hint-topics in brace notation]. [if last-topic-hinted is not null-topic]Last topic hinted = [last-topic-hinted][else]No topic hinted yet[end if].[line break][bold type]END TOPIC DEBUG DUMP[roman type].";
 
 section showing all active full hint topics
 
@@ -721,7 +727,7 @@ section showing one full hint topic
 
 [!! not documented yet]
 
-showing one full hint topic is an action applying to one number.
+showing one full hint topic is an action out of world applying to one number.
 
 understand the command "tx" as something new.
 
@@ -737,7 +743,7 @@ carry out showing one full hint topic (this is the debug a full hint topic rule)
 		if reference-number of Q is number understood:
 			try fully revealing Q;
 
-fully revealing is an action applying to one visible thing.
+fully revealing is an action out of world applying to one visible thing.
 
 carry out fully revealing:
 	let Z be the hint-list of noun;
@@ -786,10 +792,10 @@ chapter debug tests - not for release
 
 record-hints is a truth state that varies.
 
-the file of potential hint topics is "hint-topics"
+the file of potential hint topics is called "hinttopics".
 
-every turn when debug-hints-to-file is true (this is the dump hint topics to file rule):
-	append ">>[text of the player's command]: [list of available hint-topics].[line break]" to the file of potential hint topics;
+every turn when record-hints is true (this is the dump hint topics to file rule):
+	append ">>[the player's command]: [list of available hint-topics in brace notation].[line break]" to the file of potential hint topics;
 
 section toggling recording hints to file
 
@@ -801,7 +807,7 @@ understand "recordhints" as toggling recording hints to file.
 
 carry out toggling recording hints to file (this is the hint record toggle rule):
 	now record-hints is whether or not record-hints is false;
-	say "Now recording hints is [if record-hints is true]on. Remember to search for hint-topics as a file. On the Mac, it won't have an extension. On Windows, it will have a GLKDATA extension[else]off[end if].";
+	say "Now recording hints is [if record-hints is true]on. Remember to search for hinttopics as a file. On the Mac, it won't have an extension. On Windows, it will have a GLKDATA extension[else]off[end if].";
 	the rule succeeds;
 
 hint-on-start is a truth state that varies. [this line can be changed to force hinting immediately so players don't forget]
@@ -860,6 +866,7 @@ PREVIOUS VERSIONS
 
 1/150214 was part of Delphina's House and featured basic debugging, HA/HL and the basic commands.
 2/150418 added debugging exported to a file.
+2/200530 includes small tweaks by Gavin Lambert to fix some code that didn't compile in 6M62; also changed the hint-topic to be a kind of object rather than a thing so that it cannot possibly be confused with in-world things.
 
 EXAMPLE
 
@@ -970,7 +977,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 		if the player has the gold coin, the rule succeeds;
 		the rule fails.
 
-	is-this-easy is a noncritical active hint-topic. printed name is "Isn't this example too easy for a real game?"
+	is-this-easy is a noncritical active hint-topic.  hint-list is table of is-easy hints. printed name is "Isn't this example too easy for a real game?"
 
 	table of is-easy hints
 	hint-text	done-yet	show-rule
@@ -996,7 +1003,7 @@ Example: ** Fetch Quest - A minimal game with hints, rule-dependent and not
 
 Example: *** Gems - a small game with strictly rule-based hints
 
-	"Gems" by Andrew
+	*: "Gems" by Andrew
 
 	include In-Line Topical Hints by Andrew Schultz.
 
