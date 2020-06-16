@@ -1,4 +1,4 @@
-Version 10/160919 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10/200602 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -42,7 +42,7 @@ To decide whether the current input context is char/character input (deprecated)
 	(- ( (+ library input context +) == 1 ) -)
 	
 To decide which g-event is the current glk event (deprecated):
-	(- GE_Event_Struct_type -)
+	decide on GEP internal current glk event.
 	
 To decide what number is the window of the current glk event (deprecated):
 	(- GE_Event_Struct_win -)
@@ -51,9 +51,23 @@ To decide what number is the character code returned (deprecated):
 	(- GE_Event_Struct_val1 -)
 
 To decide what number is input replacement (deprecated):
-	(- 2 -)
+	decide on GEP internal input replacement.
 
 To decide what number is input continuation (deprecated):
+	decide on GEP internal input continuation.
+
+
+Section - Internal-use wrappers - unindexed
+
+[These exist to avoid triggering deprecation warnings from our own code, which is a problem if "use no deprecated features" is active.]
+
+To decide which g-event is the GEP internal current glk event:
+	(- GE_Event_Struct_type -)
+
+To decide what number is GEP internal input replacement:
+	(- 2 -)
+
+To decide what number is GEP internal input continuation:
 	(- 1 -)
 
 
@@ -66,18 +80,18 @@ The glulx input handling rules have outcomes replace player input (success) and 
 
 To decide what number is the value returned by glk event handling (this is the handle glk event rule):
 	now glulx replacement command is "";
-	follow the glulx input handling rules for the current glk event;
+	follow the glulx input handling rules for the GEP internal current glk event;
 	if the outcome of the rulebook is the replace player input outcome:
-		decide on input replacement;
+		decide on GEP internal input replacement;
 	if the outcome of the rulebook is the require input to continue outcome:
-		decide on input continuation;
+		decide on GEP internal input continuation;
 	follow the command-counting rules;
 	if the rule succeeded:
 		follow the input-cancelling rules;
 		follow the command-showing rules;
 		follow the command-pasting rules;
 		if the [command-pasting] rule succeeded:
-			decide on input replacement.
+			decide on GEP internal input replacement.
 
 
 Section - HandleGlkEvent routine
@@ -254,6 +268,7 @@ Glulx Entry Points ends here.
 
 Please note that this extension is provided as a framework and as a basis for other extensions. Thanks to Eliuk Blau and Jon Ingold for pointing out some bugs in version 5, and to Erik Temple for the patch handling input cancellation that brings us to version 7.
 
+Version 10/200602 was a trivial patch by Gavin Lambert to avoid the use of deprecated phrases within the extension itself, fixing compatibility with "use no deprecated features".
 
 Chapter: Events
 
