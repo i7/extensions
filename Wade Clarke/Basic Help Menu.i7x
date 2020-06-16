@@ -1,8 +1,11 @@
-Version 2/131208 of Basic Help Menu by Wade Clarke begins here.
+Version 4 of Basic Help Menu by Wade Clarke begins here.
 
-"Provides a HELP command in your Glulx or Z-Code project which brings up a menu giving some standard instructions about IF. This is an update of Emily Short's Basic Help Menu extension to make it compatible with Wade Clarke's Menus. Requires Menus Version 2/131208 by Wade Clarke to run."
+"Adds a HELP command to your Glulx or Z-Code project for Inform 6M62 or later which brings up a menu giving some standard instructions about IF. This is a tech and content update of Emily Short's Basic Help Menu extension made for compatibility with Wade Clarke's Menus. Requires Menus by Wade Clarke (version 5 or greater) to run."
 
-Include Menus by Wade Clarke.
+Include version 5 of Menus by Wade Clarke.
+
+When play begins:
+	now mn_master_table is table of help contents;
 
 table of help contents
 title (text)	subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
@@ -46,7 +49,7 @@ This is the switch notification status rule:
 	if notify mode is on:
 		try switching score notification off;
 	otherwise:
-		try switching score notification on.
+		try switching score notification on;
 
 This is the switch description types rule:
 	if the current verbosity mode is verbose:
@@ -57,7 +60,7 @@ This is the switch description types rule:
 		rule succeeds;
 	if the current verbosity mode is superbrief:
 		try preferring unabbreviated room descriptions;
-		rule succeeds.
+		rule succeeds;
 
 Verbosity is a kind of value. The verbosities are brief, verbose, and superbrief.
 
@@ -65,7 +68,7 @@ To decide what verbosity is the current verbosity mode:
 	let n be the current lookmode number;
 	if n is 1, decide on brief;
 	if n is 2, decide on verbose;
-	if n is 3, decide on superbrief.
+	if n is 3, decide on superbrief;
 	
 To decide what number is the current lookmode number:
 	(- lookmode -);
@@ -75,7 +78,7 @@ Asking for help is an action out of world.
 Carry out asking for help (this is the help request rule):
 	carry out the displaying activity;
 	clear the screen;
-	try looking.
+	try looking;
 
 Basic Help Menu ends here.
 
@@ -83,43 +86,25 @@ Basic Help Menu ends here.
 
 Chapter: Overview
 
-The Basic Help Menu provides a HELP command (with synonyms HINT, HINTS, ABOUT and INFO) which will bring up a help menu system in your Glulx or Z-Code project. The menus contain a set of introductory instructions on how to play interactive fiction. An optional addition is included in this extension which can add controls for managing verbosity and score notification to the menus.
+The Basic Help Menu provides a HELP command (with synonyms HINT, HINTS, ABOUT and INFO) which will bring up a help menu system in your Glulx or Z-Code project for Inform version 6M62 or greater. The menus contain a set of introductory instructions on how to play interactive fiction.
 
-Basic Help Menu is essentially an update of Emily Short's Basic Help Menu extension to make it compatible with my own updated Menus extension. This extension's prose content is 99% identical to that in Emily's Basic Help Menu, so the author of the instructions which will appear in your game is really Emily Short. As Emily's Basic Help Menu is to Emily's Menus extension, my Basic Help Menu is to my updated Menus extension.
+An optional additional menu called 'the table of setting options' is included (and it's used in the example project) which adds controls for managing verbosity and score notification to the menus. This menu is not included by default because both these features are being used by fewer Inform projects these days.
 
-Basic Help Menu depends upon the extension Menus (by Wade Clarke) to function, and tries to include it in your game automatically. If you have not already done so, you will need to download Menus and add it to your Inform extensions collection. You can get it from the Inform 7 extensions site. Visit the following link then click 'Wade Clarke':
+Basic Help Menu is essentially an update of Emily Short's Basic Help Menu extension to make it compatible with my own new Menus extension. This extension's prose content is 99% identical to that in Emily's Basic Help Menu, so the author of the instructions which will appear in your game is really Emily Short. As Emily's Basic Help Menu is to Emily's classic Menus extension, my Basic Help Menu is to my new Menus extension.
 
-http://http://inform7.com/extensions/authors/
+This version 4 of Basic Help Menu depends upon the extension Menus (by Wade Clarke, version 5 at least) to function, and tries to include it in your game automatically. If you have not already done so, you will need to download Menus from Inform's Public Library and add it to your Inform extensions collection.
+
+Version 4 of Basic Help Menu requires Inform 6M62 or greater.
 
 Chapter: Usage
 
-For any given game, you're likely to want to modify the menu content. This extension defines a table of help contents, the table of instruction options (which contains the help text) and the table of setting options (which lets the player turn score notification and verbosity on and off, but which is not included in the help system by default). You should certainly modify the introduction stub in the table of help contents, which otherwise just says 'Welcome to (your game)' when selected by a player.
+For any given game, you're likely to want to modify the menu content. This extension defines a table of help contents, the table of instruction options (which contains the help text) and the table of setting options (which lets the player turn score notification and verbosity on and off, but which is NOT included in the help system by default). You should certainly modify the introduction stub in the table of help contents, which otherwise just says 'Welcome to (your game)' when selected by a player. For the instructions on creating / editing help menus, please refer to the documentation of the Menus extension.
 
-If you have only a few changes you want to make to the menu content (for instance, just the change to the intro stub I mentioned above), 'soft' methods will suffice. For instance you can change individual lines in the tables by selecting and modifying them when play begins:
+To add the verbosity and score notification functionality to your own project, add a submenu link in your menu system to the table of setting options.
 
-	When play begins:
-		choose row 1 in table of help contents;
-		now description entry is "This is a game about my grandmother's adventures during World War II..."
-		
-You can also add elements to a table by including a continuation of them in your game's source code, like so:
+* How to manage a modified version of this extension?
 
-	table of help contents (continued)
-	title	subtable (table name)	description (text)
-	"Contacting the author"	--	"If you have any difficulties with [story title], please contact me at..."
-
-These additional lines would then be appended to the relevant menu. For complete information on the kind of content you can add to the menu system and how to format it for the help tables, please refer to the documentation included with the Menus extension.
-
-If you want to make widespread and significant changes to this extension's menu content, the easiest way is to just edit the tables in the extension file, though with the way Inform 7 keeps track of extensions in version 6G60/6H98 or earlier, this method can create file management headaches. For starters, any other game of yours using the same extension will be affected by your changes next time you compile it. A workaround which is safe to use with Basic Help Menu is to make a copy of this extension and change its name. For instance, if your game is called 'Buicks to the Moon', save a copy of the Basic Help Menu extension as 'Basic Help Menu for Buicks.i7x' (in the same location as the original), modify the copy instead of the original and include it in your game instead of the original.
-
-To change the copied extension's name requires that you change it in 3 places:
-
-1. The file name itself must be changed to the new name, followed by the .i7x suffix.
-
-2. The extension name in the first line of the extension source code must be changed to the new name.
-
-3. The extension name mentioned in the line of the extension's source code which says 'Basic Help Menu ends here.' must be changed to the new name.
-
-The name must be exactly the same in all of 1-3 or the extension system will complain and your game won't compile.
+From Inform 6L02 onwards, you can save a copy of an extension you've modified for use with a particular project in that project's materials folder. Within 'materials', create an 'Extensions' folder, and inside that create a 'Wade Clarke' folder (extensions are filed by author name). If you put a copy of 'Basic Help Menu' into that Wade Clarke folder, you can hack it all you want to suit your project without affecting any other projects or the vanilla copy of the extension in your primary extensions colllection.
 
 Example: * Basics - A very small game mostly consisting of help.
 
