@@ -776,7 +776,7 @@ Carry out someone discussing something which is not quippishly-relevant (this is
 		[	Only when the NPC takes up and responds in the new thread has the subject been successfully changed.	]
 
 Carry out someone discussing a one-time character-tailored quip which quip-supplies the current interlocutor (this is the eliminate used quips rule):  
-	remove the noun from play; [This is so that we are steadily whittling away single-use quips after they are discussed.]
+	now the noun is nowhere; [This is so that we are steadily whittling away single-use quips after they are discussed.]
 
 Report someone discussing something (this is the interlocutor's reply rule):
 [	This is a report, rather than a carry out rule, so that in theory characters can discuss things in another room, exchanging information behind the player's back.	]
