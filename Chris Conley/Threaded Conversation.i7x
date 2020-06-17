@@ -1,4 +1,4 @@
-Version 5/150117 of Threaded Conversation by Chris Conley begins here.
+Version 7/180807 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -536,6 +536,8 @@ To decide whether (N - an object) fits the parse list:
 	(- (FindInParseList({N})) -)
 
 Include (-
+
+#ifndef FindInParseList;
 [ FindInParseList obj i k marker;
 	marker = 0;
 	for (i=1 : i<=number_of_classes : i++) {
@@ -545,11 +547,13 @@ Include (-
 	}
 	rfalse;
 ];
+#endif;
 -) 
 
 Disambiguating quips is initially false.
 
 Rule for asking which do you mean when everything parse-matched is a quip: 
+	if everything parse-matched is nothing, make no decision;
 	if the current interlocutor is not a person,
 		say "[text of cannot talk without an interlocutor rule response (A)][line break]" instead; ['You're not talking to anyone right now']
 	now disambiguating quips is true;
@@ -721,7 +725,7 @@ Before doing something with a quip (this is the quips are not tangible rule):
 	continue the action.
 
 Rule for printing a parser error when the latest parser error is the can't see any such thing error (this is the quips are not visible rule):
-	if the player's command includes "say/ask/answer/discuss/tell/a/t" or the player's command includes "[any quip]":
+	if the player's command includes "say/ask/answer/discuss/tell/a/t": [or the player's command includes "[any quip]":]
 		if the current interlocutor is a person and tc reparse flag is false:
 			say "That doesn't seem to be a topic of conversation at the moment." (A) instead;
 		otherwise:
@@ -772,7 +776,7 @@ Carry out someone discussing something which is not quippishly-relevant (this is
 		[	Only when the NPC takes up and responds in the new thread has the subject been successfully changed.	]
 
 Carry out someone discussing a one-time character-tailored quip which quip-supplies the current interlocutor (this is the eliminate used quips rule):  
-	remove the noun from play; [This is so that we are steadily whittling away single-use quips after they are discussed.]
+	now the noun is nowhere; [This is so that we are steadily whittling away single-use quips after they are discussed.]
 
 Report someone discussing something (this is the interlocutor's reply rule):
 [	This is a report, rather than a carry out rule, so that in theory characters can discuss things in another room, exchanging information behind the player's back.	]
@@ -1936,6 +1940,11 @@ to generate this hard-coded cache automatically, which can then be pasted back i
 Rebuilding needs to happen every time we add new quips or change the way quips relate to one another, so it's kind of tedious to wait on during serious development; but once we approach release and the content becomes fairly stable, we're going to want the cache in place, even if we still have to regenerate it sometimes.
 
 Chapter: Release Notes
+
+Section: Versions 6/7
+
+	Fixing a few parser error issues
+	(date 180807: corrected invalid extension ending line)
 
 Section: Versions 4/5
 	

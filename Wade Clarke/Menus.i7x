@@ -1,6 +1,6 @@
-Version 2/141228 of Menus by Wade Clarke begins here.
+Version 5 of Menus by Wade Clarke begins here.
 
-"Lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code project. This is an upgrade of Emily Short's Menus extension featuring user-friendly single keypress controls and a more sophisticated UI. It also has configurable options, a book mode with automatic pagination, isolated message content to make translation to other languages easier and a Screen Reader mode. Old Menus format tables can be upgraded for use with this extension with a little work."
+"Lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code project for Inform 6M62 or later. This upgrade of Emily Short's classic Menus extension features user-friendly single keypress controls, a more sophisticated UI, compatibility with screen readers and portable devices, an optional book mode with automatic pagination, and isolated message content to make translations easier. Classic Menus tables can be reformatted for this extension with a little work."
 
 Section 1 - Inclusions and main hook
 
@@ -11,32 +11,34 @@ Displaying is an activity.
 Rule for displaying (this is the basic menu contents rule):
 	now right alignment depth is 12;
 	now mn_menupresent is true;
-	show menu contents.
+	show menu contents;
 
 [NOTE - It is unnecessary to manually save any of your game's status window margin/depth settings before beginning the displaying activity. When the player exits the menu systems, those settings will be automatically restored to what they were before they activity began, unless you've altered the programming of the status window yourself in some significant way.]
 
 	
 Section 2 - The Author-Configurable Variables
 
-mn_debug is a number variable. mn_debug is 0. [default = 0   alternatives = 1 or 2]
+mn_debug is initially 0. [default = 0   alternatives = 1 or 2]
 
-mn_master_title is a text variable. mn_master_title is "HELP MENU". [default = "HELP MENU"]
+mn_master_title is initially "HELP MENU". [default = "HELP MENU"]
 
-mn_modes_allowed is a text variable. mn_modes_allowed is "both". [default = "both"   alternatives = "menu only" or "book only" ]
+mn_master_table is initially the table of default help contents. [default = table of default help contents]
 
-mn_show_hints_in_bookmode is a truth state that varies. mn_show_hints_in_bookmode is false. [default = false]
+mn_modes_allowed is initially "both". [default = "both"   alternatives = "menu only" or "book only" ]
 
-mn_bookpageshow is a truth state that varies. mn_bookpageshow is true. [default = true]
+mn_show_hints_in_bookmode is initially false. [default = false]
 
-mn_localpageshow is a truth state that varies. mn_localpageshow is true. [default = true]
+mn_bookpageshow is initially true. [default = true]
 
-mn_breadcrumb_preference is a text variable. mn_breadcrumb_preference is "main". [default = "main"   alternatives = "status" or "both" or "off"]
+mn_localpageshow is initially true. [default = true]
 
-mn_hinthelp_preference is a a text variable. mn_hinthelp_preference is "both". [default = "both"   alternatives = "main" or "status"]
+mn_breadcrumb_preference is initially "main". [default = "main"   alternatives = "status" or "both" or "off"]
 
-mn_show_pagefooter is a truth state that varies. mn_show_pagefooter is true. [default is true]
+mn_hinthelp_preference is initially "both". [default = "both"   alternatives = "main" or "status"]
 
-mn_footerdesign is a text variable. mn_footerdesign is "[bold type]------------------------[roman type][line break]".
+mn_show_pagefooter is initially true. [default is true]
+
+mn_footerdesign is initially "[bold type]------------------------[roman type][line break]".
 
 
 Section 3 - Key Assignments
@@ -55,8 +57,10 @@ number	effect
 112 [p]	menuretreat rule
 78 [N]	menuadvance rule
 110 [n]	menuadvance rule
-72 [H]	menuhint rule [it's okay to have the letter H listed both here and in the table of extra menu choices, since the extra menu choices aren't consulted during hint mode, which is the only time H works as a menu command]
+72 [H]	menuhint rule
 104 [h]	menuhint rule
+81 [Q]	menuquit rule
+113 [q]	menuquit rule
 83 [S]	menureader rule
 115 [s]	menureader rule
 
@@ -86,46 +90,43 @@ Section 3.3
 
 table of extra menu choices
 number	choice
-65 [A]	10
-66 [B]	11
-67 [C]	12
-68 [D]	13
-69 [E]	14
-70 [F]	15
-71 [G]	16
-72 [H]	17
-73 [I]	18
-74 [J]	19
-75 [K]	20
-79 [O]	21
-81 [Q]	22
-82 [R]	23
-84 [T]	25
-85 [U]	26
-86 [V]	27
-87 [W]	28
-89 [Y]	29
-90 [Z]	30
-97 [a]	10
-98 [b]	11
-99 [c]	12
-100 [d]	13
-101 [e]	14
-102 [f]	15
-103 [g]	16
-104 [h]	17
-105 [i]	18
-106 [j]	19
-107 [k]	20
-111 [o]	21
-113 [q]	22
-114 [r]	23
-116 [t]	25
-117 [u]	26
-118 [v]	27
-119 [w]	28
-121 [y]	29
-122 [z]	30
+48 [digit 0]	10
+65 [A]	11
+66 [B]	12
+67 [C]	13
+68 [D]	14
+69 [E]	15
+70 [F]	16
+71 [G]	17
+73 [I]	19
+74 [J]	20
+75 [K]	21
+79 [O]	22
+82 [R]	24
+84 [T]	26
+85 [U]	27
+86 [V]	28
+87 [W]	29
+89 [Y]	30
+90 [Z]	31
+97 [a]	11
+98 [b]	12
+99 [c]	13
+100 [d]	14
+101 [e]	15
+102 [f]	16
+103 [g]	17
+105 [i]	19
+106 [j]	20
+107 [k]	21
+111 [o]	22
+114 [r]	24
+116 [t]	26
+117 [u]	27
+118 [v]	28
+119 [w]	29
+121 [y]	30
+122 [z]	31
 
 
 Section 4 - Printed Messages
@@ -143,7 +144,7 @@ To say mn_all_hints:
 	say "You have revealed all the hints on this page"
 
 To say mn_number_or_letter:
-	say "Press a number [if mn_temp_counter > 9]or letter [end if]to choose an option[if mn_stackpointer > 1],[otherwise] or[end if]"
+	say "Press a number [if mn_temp_counter > 10]or letter [end if]to choose an option[if mn_stackpointer > 1],[otherwise] or[end if]"
 
 To say mn_page_n_of:
 	say "page [mn_currentlocalpage] of "
@@ -188,10 +189,7 @@ To say mn_next_and_previous:
 	say "Press N (Next), P (Previous) or the arrow keys to turn pages."
 
 To say mn_escape_key:
-	if using glulx format or mn_screenreader > 0:
-		say "ESCAPE";
-	otherwise:
-		say "ESC"
+		say "ESC or Q"
 
 To say mn_escape_A:
 	say "[mn_escape_key][if mn_stackpointer > 1] to move back a menu[mn_leapmessage][end if] or X to exit[mn_optional_menusystem]."
@@ -246,31 +244,31 @@ To say mn_bookintro_4:
 
 Section 5 - Main Tables and variables
 
+table of default help contents
+title (text)	subtable (table name)	description (text)	toggle (rule)	used (number)	bookpage (number)	localpage (number)
+--	--	--	--	--	--	--
+
 table of pagey menus
-storage-xx (a table name)	path (indexed text)	bookhead (a table name)	parthead (a table name)	chapterhead (a table name)
-table of help contents	""	--	--	--
+storer (a table name)	path (text)	bookhead (a table name)	parthead (a table name)	chapterhead (a table name)
+table of default help contents	""	--	--	--
 with 30 blank rows.
 
 table of hinting
 hintpresence
 1
 
-table of mn_dummy
-title (text)	subtable (table name)	description (text)	toggle (rule)	used (number)	bookpage (number)	localpage (number)
---	--	--	--	0	0	0
-
-mn_stackpointer is a number variable. mn_stackpointer is 1.
+mn_stackpointer is initially 1.
 
 Table of mn_stack
 desk (table name)
-table of help contents
+table of default help contents
 with 4 blank rows
 
 mn_current_menu_title is a text variable.
-mn_breadcrumb is an indexed text that varies.
-mn_bookmode is a truth state that varies. mn_bookmode is false.
-mn_localmode is a truth state that varies. mn_localmode is false.
-mn_endnode_flag is a truth state variable. mn_endnode_flag is false.
+mn_breadcrumb is a text that varies.
+mn_bookmode is initially false.
+mn_localmode is initially false.
+mn_endnode_flag is initially false.
 
 mn_status_format is a table name that varies. mn_status_format is table of five line menu status.
 
@@ -281,7 +279,7 @@ mn_currentlocalpage, mn_currentbookpage, mn_temppagecount are number variables.
 mn_temp_counter is a number variable.
 mn_temp_list is a list of numbers that varies.
 
-current menu is a table name that varies. current menu is the table of help contents.
+current menu is a table name that varies.
 current menu selection is a number variable.
 
 mn_screenreader is a number variable. [0 = off, 1 = on with instructions (I made this a number rather than a truth state in case someone wants to make more than one iteration of screen reader mode in the future)]
@@ -293,11 +291,11 @@ To decide whether using glulx format:
 	if there is a number of 27 in the table of menu commands, no;
 	otherwise yes.
 
-mn_masterpath is an indexed text variable.
+mn_masterpath is a text variable.
 
 mn_nextlocal, mn_nextbook, mn_nextnegative are number variables.
 
-mn_pagetype is a text variable. mn_pagetype is "normal". [alternatives = "page" or "hint"]
+mn_pagetype is initially "normal". [alternatives = "page" or "hint"]
 
 mn_tablebook is a table name that varies.
 mn_tablepart is a table name that varies.
@@ -307,9 +305,9 @@ mn_tablesection is a table name that varies.
 mn_temptitle is a text variable.
 mn_currenttable is a table name that varies.
 
-mn_menu_init_abort is a truth state that varies. mn_menu_init_abort is false.
-mn_any_hints_present is a truth state that varies. mn_any_hints_present is false.
-mn_book_content_is_all_hints is a truth state that varies. mn_book_content_is_all_hints is false.
+mn_menu_init_abort is initially false.
+mn_any_hints_present is initially false.
+mn_book_content_is_all_hints is initially false.
 
 To mn_pagestamp:
 	if mn_debug > 0, say "It's book page [mn_nextbook], local page [mn_nextlocal].[line break]";
@@ -367,11 +365,11 @@ To mn_assess (T - a table name):
 					-- 4: now mn_tablesection is subtable entry;
 				let targettable be subtable entry;
 				choose a blank row in table of pagey menus;
-				now storage-xx entry is targettable;
+				now storer entry is targettable;
 				if mn_masterpath is not "":
-					now path entry is "[mn_masterpath] - [mn_temptitle]";
+					now path entry is substituted form of "[mn_masterpath] - [mn_temptitle]";
 				otherwise:
-					now path entry is "[mn_temptitle]";
+					now path entry is substituted form of "[mn_temptitle]";
 				if mn_debug > 1, say "Path entry for it was made: '[path entry]'.[line break]";
 				if mn_stackpointer is:
 					-- 2:
@@ -389,7 +387,7 @@ To mn_assess (T - a table name):
 						if mn_debug > 1, say "(wrote [mn_tablepart] to parthead entry)[line break]";
 						now chapterhead entry is T;
 						if mn_debug > 1, say "(wrote [T] to chapterhead entry)[line break]";
-				now mn_masterpath is path entry;
+				now mn_masterpath is substituted form of path entry;
 				if mn_debug > 1, say "mn_masterpath changed to [mn_masterpath].[line break]";
 				let temptable be mn_currenttable; [Store table of current level]
 				if mn_debug  > 0, say "[line break]+ Diving into [targettable] +[line break]";
@@ -400,8 +398,8 @@ To mn_assess (T - a table name):
 					stop the action;
 				if mn_debug > 0, say "- Returning to [temptable] -[line break]";
 				now mn_currenttable is temptable; [Retrieve table of current level]
-				now mn_masterpath is mn_pathstorage; [Retrieve text path of current level]
-				if mn_debug > 1, say "retrieved mn_masterpath from storage-xx: it's now [mn_masterpath].[line break]";
+				now mn_masterpath is substituted form of mn_pathstorage; [Retrieve text path of current level]
+				if mn_debug > 1, say "retrieved mn_masterpath from storer: it's now [mn_masterpath].[line break]";
 				now mn_stackpointer is tempstackpointer; [Retrieve stack pointer of current level]
 				if mn_debug > 1, say "stack retrieved and it's now [mn_stackpointer][line break]";
 				next;
@@ -458,6 +456,11 @@ To mn_assess (T - a table name):
 		stop the action.
 
 Last when play begins (this is the Menus startup scan rule):
+	if mn_master_table is table of default help contents and table of default help contents is empty:
+		stop the action;
+	now current menu is mn_master_table;
+	now storer in row 1 of table of pagey menus is mn_master_table;
+	now desk in row 1 of table of mn_stack is mn_master_table;
 	repeat through table of extra menu choices: [Store the highest numbered option in mn_max_options]
 		if choice entry > mn_max_options:
 			now mn_max_options is choice entry;
@@ -467,7 +470,7 @@ Last when play begins (this is the Menus startup scan rule):
 	now mn_nextlocal is 1;
 	now mn_nextnegative is -1;
 	now mn_stackpointer is 1;
-	now mn_currenttable is table of help contents;
+	now mn_currenttable is mn_master_table;
 	mn_assess mn_currenttable;
 	if mn_menu_init_abort is false:
 		now mn_book_total is mn_nextbook minus 1; [Note the number of printed pages in the help volume before adding any hint pages to the end of it]
@@ -477,7 +480,7 @@ Last when play begins (this is the Menus startup scan rule):
 			let old marker be 0;
 			let farthest hint page be 0; [After the loop in the next line, this variable will hold the value of the REAL last global page number in the volume]
 			repeat through table of pagey menus:
-				now mn_currenttable is storage-xx entry;
+				now mn_currenttable is storer entry;
 				repeat through mn_currenttable:
 					if bookpage entry < 0: [A negative entry indicates a hint page]
 						now farthest hint page is mn_book_total minus bookpage entry; [Subtracting a negative value = adding]
@@ -501,13 +504,13 @@ Last when play begins (this is the Menus startup scan rule):
 				now mn_status_format is table of three line menu status;
 		otherwise if mn_modes_allowed is "menu only":
 			now mn_status_format is table of three line menu status;
-	choose row 1 in table of help contents; [ROK]
-	if there is a toggle entry: [ROK]
-		do nothing; [ROK]
+	choose row 1 in mn_master_table;
+	if there is a toggle entry:
+		do nothing;
 	if mn_debug > 0 and mn_menu_init_abort is false:
 		say "RESULTS SUMMARY:[paragraph break]";
 		repeat through table of pagey menus:
-			say "[storage-xx entry][line break]Textpath: [path entry][line break]Tables path: ";
+			say "[storer entry][line break]Textpath: [path entry][line break]Tables path: ";
 			if there is a bookhead entry:
 				say "[bookhead entry], ";
 			otherwise:
@@ -533,7 +536,7 @@ mn_phase is a number variable. [1 = show menu contents   2 = menuprint   3 = dri
 mn_action is a number variable.
 mn_temp_selection is a number variable.
 mn_menupresent is a truth state variable.
-mn_refresh is a truth state variable. mn_refresh is true.
+mn_refresh is initially true.
 
 
 
@@ -651,8 +654,8 @@ To mn_count the local pages:
 
 To mn_identify the book page:
 	repeat through table of pagey menus:
-		if there is a bookpage of mn_currentbookpage in storage-xx entry:
-			now current menu is storage-xx entry;
+		if there is a bookpage of mn_currentbookpage in storer entry:
+			now current menu is storer entry;
 			let headerstorage be "temp"; [Create a temporary text variable]
 			repeat with N running from 1 to the number of rows in current menu:
 				choose row N in current menu;
@@ -686,7 +689,7 @@ To show menu contents:
 		let __index be 0;			
 		while __index is not 1:
 			let globaljump be false; [a temp flag for use during the drill down sequence]
-			now mn_breadcrumb is the path corresponding to a storage-xx of current menu in table of pagey menus;
+			now mn_breadcrumb is the path corresponding to a storer of current menu in table of pagey menus;
 			if mn_refresh is true:
 				reprint current menu;
 			now mn_refresh is true;
@@ -776,7 +779,7 @@ This is the menuprint rule:
 		choose row mn_temp_selection in the current menu; [While in a multi-page topic, mn_temp_selection points to the local page we're reading]
 		now mn_currentbookpage is bookpage entry;
 		now mn_currentlocalpage is localpage entry;
-		now mn_breadcrumb is the path corresponding to a storage-xx of current menu in table of pagey menus;
+		now mn_breadcrumb is the path corresponding to a storer of current menu in table of pagey menus;
 		now the mn_endnode_flag is true;
 		mn_redraw status line;
 		if mn_refresh is true:
@@ -847,36 +850,36 @@ This is the menuprint rule:
 
 Section 8 - The Menu Action Rules
 
-mn_hintmode is a truth state variable. mn_hintmode is false.
-mn_hintglut is a truth state variable. mn_hintglut is false.
+mn_hintmode is initially false.
+mn_hintglut is initially false.
 mn_local_hint_index is a number variable. [When you move to a hint page, this variable is set to the number of the next hint to be revealed on the page]
 
-mn_used_bookmode_before is a truth state variable. mn_used_bookmode_before is false.
+mn_used_bookmode_before is initially false.
 
 
 To mn_zap the stack:
 	repeat through table of mn_stack:
-		unless desk entry is table of help contents, blank out the whole row.
+		unless desk entry is mn_master_table, blank out the whole row.
 
 To mn_reconstruct the stack:
 	mn_zap the stack;
 	now mn_stackpointer is 1;
-	choose row with a storage-xx of current menu in table of pagey menus;
+	choose row with a storer of current menu in table of pagey menus;
 	if there is a bookhead entry:
 		increment mn_stackpointer;
 		choose row mn_stackpointer in table of mn_stack;
-		now desk entry is bookhead corresponding to a storage-xx of current menu in table of pagey menus;
-		choose row with a storage-xx of current menu in table of pagey menus;
+		now desk entry is bookhead corresponding to a storer of current menu in table of pagey menus;
+		choose row with a storer of current menu in table of pagey menus;
 		if there is a parthead entry:
 			increment mn_stackpointer;
 			choose row mn_stackpointer in table of mn_stack;
-			now desk entry is parthead corresponding to a storage-xx of current menu in table of pagey menus;
-			choose row with a storage-xx of current menu in table of pagey menus;
+			now desk entry is parthead corresponding to a storer of current menu in table of pagey menus;
+			choose row with a storer of current menu in table of pagey menus;
 			if there is a chapterhead entry:
 				increment mn_stackpointer;
 				choose row mn_stackpointer in table of mn_stack;
-				now desk entry is chapterhead corresponding to a storage-xx of current menu in table of pagey menus;
-	unless current menu is table of help contents:
+				now desk entry is chapterhead corresponding to a storer of current menu in table of pagey menus;
+	unless current menu is mn_master_table:
 		increment mn_stackpointer;
 		choose row mn_stackpointer in table of mn_stack;
 		now desk entry is current menu.
@@ -890,7 +893,7 @@ To mn_get parent menu title:
 
 
 This is the menuquit rule: 
-	if mn_bookmode is true: [Ignore ESC key if we're in book mode]
+	if mn_bookmode is true: [Ignore ESC/Q keys if we're in book mode]
 		now mn_refresh is false;
 		stop the action; [below this line, mn_bookmode must be false]
 	if mn_stackpointer is 1 and mn_localmode is false: [NOTE - Stackpointer will always be greater than 1 if we're trying to back out of an all-toggles menu, because such a menu is not allowed to exist at the top level]
@@ -931,7 +934,7 @@ This is the menutop rule: [menutop is a rule which is 'followed', meaning failur
 			now mn_refresh is false;
 			stop the action;
 		now mn_stackpointer is 1;
-		now current menu is table of help contents;
+		now current menu is mn_master_table;
 		now mn_action is 1;
 		mn_zap the stack;
 		mn_reset title.
@@ -1033,7 +1036,7 @@ mn_page_two is a text variable.
 mn_page_three is a text variable.
 mn_page_four is a text variable.
 
-mn_preserve_line_three is a truth state variable. mn_preserve_line_three is false.
+mn_preserve_line_three is initially false.
 
 Rule for constructing the status line while displaying (this is the constructing status line while displaying rule):
 	if mn_screenreader is 0:
@@ -1074,7 +1077,7 @@ To say mn_menuheading:
 		if mn_stackpointer is greater than 1:
 			if mn_breadcrumb_preference is "status" or mn_breadcrumb_preference is "both":
 				say "[mn_breadcrumb] ";
-			otherwise: [Preference must be 'main' or 'off']:
+			otherwise: [Preference must be 'main' or 'off']
 				say mn_current_menu_title;
 		otherwise:
 			say mn_master_title;
@@ -1201,33 +1204,43 @@ Menus ends here.
 
 Chapter: Introduction [Chapter 1]
 
-Based on Emily Short's classic Menus extension, the new Menus extension lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code (Z8) project. Its most significant advances on the old Menus are as follows:
+Based on Emily Short's classic Menus extension, this new Menus extension lets you include a menu system of help, hints and/or other information in your Glulx or Z-Code (Z8) project. This Menus version 5 requires Inform version 6M62 or greater to run.
 
-(1) Onscreen menu options are activated with a single keypress so there is no need to repeatedly press arrow keys to move a cursor around. This is a much easier control method in general and friendly to players using text-to-speech. Another benefit is that transcript clutter is reduced.
+(AN ALERT IF YOU'RE UPGRADING - In menu systems created with previous versions of Wade Clarke's Menus, your topmost level table was called the 'table of help contents' because it had to be. This system has changed and become more flexible in Menus 5. To connect your old menu content to the new extension you'll just have to add one line of code. Search for 'change log' in this documentation (it's down the bottom) then read the Version 5 / upgrade alert for details.)
 
-(2) A player can exit the menu system at any time with one keypress. Their position within it is automatically bookmarked when they do.
+The new Menus's most significant advances on classic Menus are as follows:
 
-(3) Your menu system's text content is automatically paginated when the game starts. Players can toggle a book mode in which they can page back and forth through the help system's contents as if using an e-reader. Hints are gathered at the back of the 'book' in this mode, or you can hide them from book mode entirely.
+(1) Onscreen menu options are activated with a single keypress, so there is no need to repeatedly press arrow keys to move a cursor around. This is a much easier control method in general, and friendlier to players using text-to-speech. Another benefit is that transcript clutter is reduced.
 
-(4) You can customise various aspects of the menu system's appearance and behaviour, and the printed content (apart from debug mode messages) has been isolated to make it easy to adapt the extension for use with projects in other languages.
+(2) A player can exit the menu system at any time with a keypress. Their position within it is bookmarked when they do.
 
-(5) NEW IN MENUS VERSION 2: A player can toggle Screen Reader mode which optimises the menu formatting for screen readers... Book Mode now displays an introduction to Book Mode the first time it is activated during any game... For authors, the extension instructions and requirements for formatting tables have been revised since version 1 with the goal of reducing the number of empty entries and unused columns you have to maintain. Menu systems created with version 1 of Menus will run just fine in version 2. However, a menu system created using the version 2 instructions won't necessarily run in version 1.
+(3) A player can toggle Screen Reader mode, which optimises menu formatting for screen readers.
+
+(4) Your menu system's text content is automatically paginated when the game starts. Players can toggle a book mode in which they can page back and forth through the help system's contents as if using an e-reader. Hints are gathered at the back of the 'book' in this mode, or you can hide them from book mode entirely.
+
+(5) You can customise various aspects of the menu system's appearance and behaviour, and which of its modes are available to the player.
+
+(6) The printed content (apart from debug mode messages) has been isolated to make it easy to adapt the extension for use with projects in other languages.
 
 The code for "Menus" is about 80% new and 20% carried over from Emily Short's original extension. I've also cribbed some of the phrasing of her documentation. This is all with her permission.
 
 Menus uses functions from Emily Short's Basic Screen Effects extension and automatically includes it in your project.
 
-Menus is NOT intended or suitable for contexts in which you want the player to be able to choose a numbered option during gameplay (E.G. to create a menu of conversation choices when talking to another character). It is intended for situations where you wish to give the player optional help, hints or other info which can be browsed while playing the game, but which remain separate from it.
+Menus is NOT intended or suitable for contexts in which you want the player to be able to choose a numbered option affecting gameplay (e.g. to create a menu of conversation choices when talking to another character). It is intended for situations where you wish to give the player optional help, hints or other info which can be browsed while playing the game, but which remain separate from it.
 
-Tables created for use with Emily Short's Menus extension can be converted for use with this new Menus without too much hassle. See "Chapter 11: Upgrading old Menus tables for use with this extension" for details.
+Tables created for use with Emily Short's Menus extension can be converted for use with this new Menus without too much hassle. See "Chapter 11: Upgrading classic Menus tables for use with this extension" for details.
 
 The vast majority of variables and say phrases defined by this extension have the prefix 'mn_' (standing for Menus) with the goal of helping avoid namespace clashes with your game's code or other extensions.
+
+* A WORD ABOUT THE DOCUMENTATION
+
+This documentation might seem a little overwhelming at a glance, but don't panic. You don't need to read it from cover to cover. A lot of it is 'look it up as you need it' material. Also, don't forget to try the included example 'Robot Retrievers of the Year 3000'. Once you've seen what it does with Menus, you can look at its code to see how it does it.
 
 Chapter: The menu system described [Chapter 2]
 
 Section: Connecting the menu system to your game [Section 2.1]
 
-The menu system is coded as an activity called 'the displaying activity'. To let the player enter the system, you need to add a command or commands to your game which will 'carry out the displaying activity'. When the player exits the menus, code execution of your game continues on the line after 'carry out the displaying activity', where you should probably 'clear the screen' (otherwise the last menu printed will still be visible') and very probably 'try looking' (to remind players of where they are.)
+The menu system is coded as an activity called 'the displaying activity'. To let the player enter the system, you need to add a command or commands to your game which will 'carry out the displaying activity'. When the player exits the menus, code execution of your game continues on the line after 'carry out the displaying activity', at which point you might want to 'clear the screen' (otherwise the last menu printed will still be visible') and then 'try looking' (to remind players of where they are.)
 
 Here's a code example which creates a command called "help" which will open the menu system then clean up the screen after the player comes back to the game:
 
@@ -1238,9 +1251,9 @@ Here's a code example which creates a command called "help" which will open the 
 	Carry out asking for help:
 		carry out the displaying activity;
 		clear the screen;
-		try looking.
+		try looking;
 
-I didn't build this routine into the extension itself because different authors like to use different commands to take players into a menu or hints system depending on its contents. Some typical commands include: ABOUT, HINT, HINTS, INFO, AUTHOR, CREDITS. Just create your menu-opening commands then point them all to 'asking for help' (or whatever you might have renamed that action.)
+I didn't build this routine into the extension itself because different authors like to use different commands to take players into a menu or hints system, depending on its contents. Some typical commands include: ABOUT, HINT, HINTS, INFO, AUTHOR, CREDITS. Just create your menu-opening commands then point them all to 'asking for help' (or whatever you might have renamed that action.)
 
 Section: The different states the menu system can be in [Section 2.2]
 
@@ -1250,7 +1263,7 @@ There is also a third state which can encompass the entire menu system, called '
 
 Section: How menu options are assigned to different keys [Section 2.3]
 
-While the player is browsing the menu system, the first 9 options on each screen are automatically assigned to number keys 1-9; this behaviour is hardcoded. After 9, the extension's default behaviour is to continue to assign options using the alphabet keys. 'A' will choose option 10, 'B' will choose option 11, etc... up until 'K' for option 20. Things become a little less graceful after option 20. 'O' is '21', 'Q' is 22, then the alphabet continues again, skipping 'S' and 'X', as the options move up towards the soft limit of 29 ('Z'). The reason for the gaps is that in the default setup, all of the keys 'L', 'M', 'N', 'P', 'S' and 'X' are already assigned to contextually-sensitive menu actions. You can reassign these six keys (see "Chapter 9: Changing which keys do what") though it's only advisable to do so with a good reason, for instance if you're writing for a language which isn't English. You should make sure that these keys' corresponding actions remain assigned to keys somewhere, or the menu system may be crippled or become non-exitable. The sequence of keys assigned to menu options beyond the ninth is also fully customisable. Again, see Chapter 9 for details.
+While the player is browsing the menu system, the first 10 options on each screen are automatically assigned to number keys 1-9 and then 0; this behaviour is hardcoded. After 0, the extension's default behaviour is to continue to assign options using the alphabet keys. 'A' will choose option 11, 'B' will choose option 12, etc... up until 'G' for option 17. After that, various reserved keys are left out of the sequence as we proceed towards 'Z'. All of the keys 'H', 'L', 'M', 'N', 'P', 'Q', 'S' and 'X' are already assigned to contextually-sensitive menu actions. You can reassign these keys (see "Chapter 9: Changing which keys do what") though it's only advisable to do so with a good reason, for instance if you're writing for a language which isn't English. You should make sure that these keys' corresponding actions remain assigned to keys somewhere, or the menu system may be crippled or become non-exitable. The sequence of keys assigned to menu options beyond the ninth is also fully customisable. Again, see Chapter 9 for details.
 
 Section: What menu options can do [Section 2.4]
 
@@ -1286,9 +1299,12 @@ Chapter: An overview of the help tables [Chapter 3]
 
 The menu system is defined by a set of tables you will create and fill with your own content. Collectively, these are the help tables. You will need to create another help table for each submenu you add to your system. All of these tables share the same format.
 
-The first of these tables MUST be called the 'table of help contents' (note that this is not its display name - you will have control over what title is displayed for it, if any) and it defines the topmost menu level content. I.E. This table represents the first menu the player will see when they enter the help system. This is the only table in the system with hardcoded hooks and whose presence is mandatory. Do not rename it or delete it or your game will not compile.
+The first table in the system will define your topmost menu content. In other words, it represents the first menu the player will see when they enter the help system. The default table included for this purpose is 'the table of default help contents', and it starts out empty. If you want, you can directly edit this table in the extension, or in a copy of the extension, to create your top level menu. To instead build a new top level table in your own source, copy-paste the 'table of default help contents' to your project and give it a new name. (Just remove the word 'default' if you don't want to think about what to call it.) Then, you must also tell the menu system to use your new table in place of the default extension one. To do this, set the variable 'mn_master_table' to your table's name when play begins. Here's a demonstration:
+	
+	when play begins:
+		now mn_master_table is Wade's new table of helps;
 
-Each table in the help system, including the table of help contents, is defined by the following seven columns:
+Each table in the help system, including the top level one, is defined by the following seven columns:
 
 	"title (text)", "subtable (table name)", "description (text)", "toggle (rule)", "used (number)", "bookpage (number)", "localpage (number)"
 
@@ -1302,11 +1318,11 @@ When creating a table from scratch, you can start out by copying and pasting the
 	title (text)	subtable (table name)	description (text)	toggle (rule)	used (number)	bookpage (number)	localpage (number)
 	--	--	--	--
 
-The template contains the table name, the column names and one empty sample row. Replace the X with your table's name, or with the words 'help contents' if you're creating the top level menu for your system.
+This template contains the table name, the column names and one empty sample row. Replace the X with your table's name.
 
 Notice how there are actually only four values in the sample row (the four pairs of double dashes, each one signifying an empty table entry and which you can replace with your own data as necessary) even though there are seven columns in the table. This is because when your game boots up, the extension fills all of the used, bookpage and localpage entries in every help table with internal bookkeeping data. If you leave these columns at the right edge of each help table, you spare yourself the need to type any values into them - and in fact you shouldn't type any values into them.
 
-In the case of the first four columns - title, subtable, description and toggle - whenever you don't have to put a value into them for a particular row of a help table, they should be left containing the double dashes which signify their emptiness. Unlike the used, bookpage or localpage columns, they can't just be left blank.
+In the case of the first four columns - title, subtable, description and toggle - whenever you don't have to put a value into them for a particular row of a help table, they should be left containing the double dashes which signify their emptiness. Unlike the used, bookpage or localpage columns, they can't be left entirely blank.
 
 * One rule trumps this 'double dash' rule, and it's that if any of the subtable, description or toggle columns is completely empty in a particular table, that whole column can be removed from the table. This feature is just a convenience; you don't ever have to remove any of these columns if you'd find it inconvenient or confusing to do so, but removing them where they are unused can make your tables easier on your eye.
 
@@ -1320,7 +1336,7 @@ So here's a summary of these rules:
 
 (d) Whenever an entry in an existing subtable, description or toggle column is going to be left empty, you should put a double-dash in for that entry. You can't just leave it blank.
 
-These help tables can be quite wide on the screen even when they're empty, and can become more confusing to look at when you start putting lots of information into them. If you ever become confused by the formatting, my advice is to temporarily widen your Inform source code window as much as you can. This can allow some of the tab characters in the tables to align themselves better and thus make it more clear what is where in the table. You might find this useful as you consider examples included in these instructions, too.
+These help tables can be quite wide on the screen even when they're empty, and can become more confusing to look at when you start putting lots of information into them. If you ever become confused by the formatting, my advice is to temporarily widen your Inform source code window as much as you can. This can allow the tab characters in the tables to align themselves better and thus make it more clear what is where in the table. You might find this useful as you consider examples included in these instructions, too.
 
 With the used, bookpage and localpage columns out of mind, that leaves you with four columns of information you'll need to work with to create your menu content. Here is a quick summary of what kind of data will go into these important columns:
 	
@@ -1328,19 +1344,19 @@ With the used, bookpage and localpage columns out of mind, that leaves you with 
 
 "Subtable" is most often used to create a submenu. This column holds the name of the table that specifies the submenu. There is one other use for this field which only applies when you are creating a hint page. (This other use explained in "Section 4.2: How to enter hints")
 
-"Description" is text that will be printed when a text or hint option is selected. You can fill it in with as prose as you like. Each page of text in a multi-page topic or each new hint on a hint page will have its own row in the table and its own Description field.
+"Description" is text that will be printed when a text or hint option is selected. You can fill it in with as much prose as you like. Each page of text in a multi-page topic or each new hint on a hint page will have its own row in the table and its own Description field.
 
 "Toggle" can hold the name of an Inform rule which will be carried out when an option is chosen. In theory, this rule could be absolutely anything. In practice, the feature is mostly useful for giving the player a table of setting options which he/she can toggle on and off. (Explained in "Section 4.3: How to enter rules")
 
 Chapter: Entering your data into the help tables [Chapter 4]
 
-Described below is how to enter the data for each of the 4 aforementioned kinds of menu option (text, hints, rules, submenus) into the help tables. You can mix any or all of the different option kinds within an individual table so long as you respect the formatting rules for each kind in the process.
+Below I describe from first principles how to enter the data for each of the 4 aforementioned kinds of menu option (text, hints, rules, submenus) into the help tables. You can mix any or all of the different option kinds within an individual table so long as you respect the formatting rules for each kind in the process.
 
 Section: How to enter text (and WHY DIVIDE A TEXT TOPIC INTO PAGES?) [Section 4.1]
 
-To enter a single page of text into the table, or to create the first page of a multi-page text topic, put the menu option's name in the title column and then the text that you want printed in the description column. For instance, if you started off the table of help contents like this...
+To enter a single page of text into the table, or to create the first page of a multi-page text topic, put the menu option's name in the title column and then the text that you want printed in the description column. For instance, if you started filling out the table of default help contents like this...
 
-	table of help contents
+	table of default help contents
 	title (text)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"Credits"	"'Rocket Scientists' was written and programmed by Hermione Quigley."
 
@@ -1350,7 +1366,7 @@ If you want to create a text topic with multiple pages, you do so by adding anot
 
 So, expanding on the 'Credits' example, I will now turn Credits into a topic with 3 pages, and I will also place a new single page topic after it, one called 'Steering your rocket sled':
 
-	table of help contents
+	table of default help contents
 	title (text)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"Credits"	"'Rocket Scientists' was written and programmed by Hermione Quigley."
 	"page"	"Germaine Kleinhenz drew the beautiful cover art."
@@ -1371,9 +1387,9 @@ Another possible use for the pagination feature is to duplicate the page structu
 
 Section: How to enter hints [Section 4.2]
 
-To enter the first (or only) hint of a set of a hints into a help table, put the name of the menu option leading to the hint(s) in the title column and put the text of the first hint in the description column. Also, for this first hint on a particular subject, you must put "table of hinting" in the subtable column. For instance, if you started off the table of help contents like this...
+To enter the first (or only) hint of a set of a hints into a help table, put the name of the menu option leading to the hint(s) in the title column and put the text of the first hint in the description column. Also, for this first hint on a particular subject, you must put "table of hinting" in the subtable column. For instance, if you started off the table of default help contents like this...
 
-	table of help contents
+	table of default help contents
 	title (text)	subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"Getting past the troll"	table of hinting	"Trolls hate birds."
 
@@ -1385,7 +1401,7 @@ Most often you will want to provide more than one hint on a particular subject. 
 
 In the following example, I extend the Troll example out to offer 5 increasingly specific hints in total, with the last hint being the explicit solution to the puzzle:
 
-	table of help contents
+	table of default help contents
 	title (text)	subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"Getting past the troll"	table of hinting	"Trolls hate birds."
 	"hint"	--	"Have you seen any birds around?"
@@ -1403,18 +1419,18 @@ To connect a menu option to a rule that will be carried out when the player choo
 
 In theory, this rule could be absolutely anything, but in practice, the feature is mostly useful for allowing the player to toggle game configuration options. As an example, here is a top level menu containing one option which toggles the game's score notification on or off each time it is chosen. The option itself is written so that it always describes the switch's current position:
 
-	table of help contents
+	table of default help contents
 	title (text)	description (text)	toggle (rule)	used (number)	bookpage (number)	localpage (number)
 	"Score Notification is [if notify mode is on]ON[otherwise]OFF[end if]"	--	switch notification status rule
 
 The rule cited here (switch notification status rule) and the deciding phrase (if notify mode is on) don't exist in Inform by default, so they would also need to be coded to make this menu option functional. You'd need to add the following code to your game:
 
 	To decide whether notify mode is on:
-		(- notify_mode -).
+		(- notify_mode -);
 
 	This is the switch notification status rule:
 		if notify mode is on, try switching score notification off;
-		otherwise try switching score notification on.
+		otherwise try switching score notification on;
 
 Section: How to create submenus [Section 4.4]
 
@@ -1422,7 +1438,7 @@ To create a submenu within the current menu, put the title of the submenu in the
 
 Here's an example:
 
-	table of help contents
+	table of default help contents
 	title (text)	subtable (table name)	used (number)	bookpage (number)	localpage (number)
 	"Magic Spells"	table of magic spells
 
@@ -1432,13 +1448,13 @@ You should only link to any particular table once in your help system. The exten
 
 Section: If you include more than 30 tables in your help system, read this [4.5]
 
-Menus needs to keep track of all the tables used by your menu system. It does so by scanning them at boot time and storing their names in a table called the 'table of pagey menus'. You will find this table in section 5 of this extension's code. The table starts out with 30 empty rows in it by default. Normally you never have to interact with this table yourself, but if you end up including more than 30 tables in your system -- which is no problem, you could theoretically include hundreds -- you will need to change the line below the table which currently says "with 30 blank rows" to a higher number. There need to be at least as many blank rows in the table of pagey menus as you have help tables in your system, excluding the original 'table of help contents'. So if you ended up using 45 help tables in total (the table of help contents plus 44 other tables) the line would need to say 'with 44 blank rows' (at least) for your menu system to be able to compile.
+Menus needs to keep track of all the tables used by your menu system. It does so by scanning them at boot time and storing their names in a table called the 'table of pagey menus'. You will find this table in section 5 of this extension's code. The table starts out with 30 empty rows in it by default. Normally you never have to interact with this table yourself, but if you end up including more than 30 tables in your system -- which is no problem, you could theoretically include hundreds -- you will need to change the line below the table which currently says "with 30 blank rows" to a higher number. There need to be at least as many blank rows in the table of pagey menus as you have help tables in your system, excluding the topmost level table. So if you ended up using 45 help tables in total (the table of default help contents plus 44 other tables) the line would need to say 'with 44 blank rows' (at least) for your menu system to be able to compile.
 
 Chapter: The limits of the menu system [Chapter 5]
 
-You must format all tables in your help system using the instructions set out in "Chapter 4: Entering your data into the help tables". This is true whether you're creating the top level 'table of help must', or a submenu, or a submenu within a submenu within a submenu, etc.
+You must format all tables in your help system using the instructions set out in "Chapter 4: Entering your data into the help tables". This is true whether you're creating the top level table, or a submenu, or a submenu within a submenu within a submenu, etc.
 
-Don't create two ore more options leading to the same submenu. The extension isn't set up to handle such cases and they're likely to cause erratic behaviour, runtime errors and crashes.
+Don't create two or more options leading to the same submenu. The extension isn't set up to handle such cases and they're likely to cause erratic behaviour, runtime errors and crashes.
 
 Don't give two or more options in any one table the same name. By name, I mean the text entered into the title column to describe the option to the player. Doing so could cause cause erratic behaviour, runtime errors or crashes.
 
@@ -1450,7 +1466,7 @@ If you add more than 30 help tables to your game, you will need to make room for
 
 If you have more than 999 book mode pages in your menu system (!) and are displaying the book page count in the status window, the count won't fit unless you make extra room for it. In section 1 of the extension code is the 'rule for displaying' whose first line is 'now right alignment depth is 12'. Each time you add 2 to the depth number in this line, you'll get another digit's worth of page numbers which can fit on the screen. So by setting a right alignment depth of 14, you can display a count going up to 9999 pages. Set a depth of 16 and you can go up to a ridiculous 99999 pages.
 
-There is also an overall soft structural limitation on the menu system. Given that all menu options must be selectable with one keypress, you can't have more options in a single menu than you have keys on your keyboard. More realistically, you're likely to want to stick to using the regular alphanumeric keys 1-9 and A-Z. Considering the default key assignments, it you take away from the 1-9 and A-Z set the keys assigned to menu controls, that leaves you with a soft limit of 29 options for any one menu, where option 29 is assigned to 'Z'. Options in a menu for which no keys remain simply won't appear onscreen, and I consider 29 to be more than enough for the majority of cases. Maybe even too many!
+There is also an overall soft structural limitation on the menu system. Given that all menu options must be selectable with one keypress, you can't have more options in a single menu than you have keys on your keyboard. More realistically, you're likely to want to stick to using the regular alphanumeric keys 1-9, 0 and A-Z. Considering the default key assignments, it you take away from the 1-9, 0 and A-Z set the keys assigned to menu controls, that leaves you with a soft limit of 28 options for any one menu, where option 28 is assigned to 'Z'. Options in a menu for which no keys remain simply won't appear onscreen.
 
 In the default setup:
 
@@ -1466,7 +1482,7 @@ In the default setup:
 
 * The arrow key pairs (up and down, left and right) also page backwards and forwards respectively in local mode
 
-* ESC takes the player back a menu
+* ESC or Q take the player back a menu. Q is provided as an alternative to ESCAPE because on some mobile devices, there is no ESCAPE key.
 
 Chapter: Book mode and the startup scan [Chapter 6]
 
@@ -1486,7 +1502,7 @@ The breadcrumb still appears in book mode because it still provides useful infor
 
 If the player switches book mode off, their current position within the menu hierarchy is reconstructed, and they will again be able to perform actions like going back a menu level or leaping to the top level menu from their current position. This is all made possible by a startup scan Menus carries out of your entire menu system when the player boots the game. The scan records the menu system's structure and assigns every page within it a page number for use in book mode.
 
-During the scan, each page of a text topic becomes 1 book page. Each set of hints devoted to a single topic becomes 1 book page, and that page is attached to the end of the book after all non-hint pages have been scanned. Submenus aren't used for navigation in book mode and therefore occupy no pages. The important thing to note is that any rule options you've placed in your menu system (I.E. those created by entering a rule name in the 'toggle' column) have NO presence in book mode; they are not paginated and they won't appear. This is because book mode is intended to present read-only contents in the manner of a book. If your menu system consists of nothing but rule options, book mode will be force-deactivated at boot time.
+During the scan, each page of a text topic becomes 1 book page. Each set of hints devoted to a single topic becomes 1 book page, and that page is attached to the end of the book after all non-hint pages have been scanned. Submenus aren't used for navigation in book mode and therefore occupy no pages. The important thing to note is that any rule options you've placed in your menu system (i.e. those created by entering a rule name in the 'toggle' column) have NO presence in book mode; they are not paginated and they won't appear. This is because book mode is intended to present read-only contents in the manner of a book. If your menu system consists of nothing but rule options, book mode will be force-deactivated at boot time.
 
 Handily, the startup scan doubles as a free troubleshooting pass over your help tables. It won't catch every tabling mistake that could ever be made, but it will catch some of the major ones that would muck up your menus, and it will halt the process if it does strike one of these. You will also be told what the problem was and which table caused it.
 
@@ -1515,7 +1531,7 @@ There are many options available for customising aspects of the menu system's ap
 	When play begins:
 		now mn_debug is 1;
 		now mn_modes_allowed is "book only";
-		now mn_breadcrumb_preference is "status".
+		now mn_breadcrumb_preference is "status";
 
 Section: A list of the configurable options [Section 7.2]
 
@@ -1535,7 +1551,7 @@ Set this variable to 1 to turn on regular debug mode, which gives you details of
 E.G.:
 
 	When play begins:
-		now mn_debug is 1.
+		now mn_debug is 1;
 
 Set this variable to 2 to receive even more detailed tabling information during the pagination process.
 
@@ -1553,14 +1569,52 @@ This variable stores the printed name of your help system as a whole. The name a
 E.G.:
 
 	When play begins:
-		now mn_master_title is "GRODY'S ADVENTURES IN BLUEGRUB LAND: GET YER HELP HERE!".
+		now mn_master_title is "GRODY'S ADVENTURES IN BLUEGRUB LAND: GET YER HELP HERE!";
 
 If you want no title to appear, just blank out the variable.
 
 E.G.:
 	
 	When play begins:
-		now mn_master_title is "".
+		now mn_master_title is "";
+
+---
+
+VARIABLE: mn_master_table
+(a table name variable)
+
+The default value is the table of default help contents.
+
+This variable stores the name of the table that functions as the top level of your menu system. By default it's 'the table of default help contents', which is present in this extension and starts out empty. If you edit that table directly in the extension to create your top level table, you can leave mn_master_table as is.
+
+A more convenient option may be to build your own top level table in your project source and then to direct the extension to use your table as the new top level one. You do this by storing the name of your table in mn_master_table when play begins.
+
+E.G.:
+
+If you make your own top level table and call it 'the table of supreme information', you'd just add a rule like this to point to it:
+	
+	when play begins:
+		now mn_master_table is the table of supreme information;
+
+---
+
+VARIABLE: mn_master_title (a text variable)
+
+The default value is "HELP MENU".
+
+This variable stores the printed name of your help system as a whole. The name appears in the top-left corner of the status window. You can change the text of the variable to whatever suits you.
+
+E. G.:
+
+When play begins:
+     now mn_master_title is "GRODY'S ADVENTURES IN BLUEGRUB LAND: GET YER HELP HERE!";
+
+If you want no title to appear, just blank out the variable.
+
+E. G.:
+
+When play begins:
+     now mn_master_title is "";
 
 ---
 
@@ -1578,7 +1632,7 @@ A setting of "menu only" prohibits the player from switching to book mode, and h
 E.G.:
 	
 	When play begins:
-		now mn_modes_allowed is "menu only".
+		now mn_modes_allowed is "menu only";
 
 A setting of "book only" will start the menu system off in book mode and not allow the player to switch out of it, hiding the controls for doing so. If your menu system contains nothing but rules, this setting will be overridden when your game boots up because there would be no book page content for a player to view.
 
@@ -1596,7 +1650,7 @@ If you set mn_show_hints_in_bookmode to true, players will be able to access hin
 E.G.:
 	
 	When play begins:
-		now mn_show_hints_in_bookmode is true.
+		now mn_show_hints_in_bookmode is true;
 
 The value of this variable is irrelevant when mn_modes_allowed is set to "menu only". Also note that if mn_modes_allowed is set to "book only", leaving mn_show_hints_in_bookmode set to false will render any hint pages completely inaccessible.
 
@@ -1614,7 +1668,7 @@ Set the variable to false to stop these numbers from appearing in the status win
 E.G.:
 	
 	When play begins:
-		now mn_bookpageshow is false.
+		now mn_bookpageshow is false;
 
 The value of this variable is irrelevant when mn_modes_allowed is set to "menu only".
 
@@ -1632,7 +1686,7 @@ Set the variable to false to hide these values.
 E.G.:
 	
 	When play begins:
-		now mn_localpageshow is false.
+		now mn_localpageshow is false;
 
 ---
 
@@ -1654,7 +1708,7 @@ A setting of "off" completely hides the breadcrumb.
 E.G.:
 	
 	When play begins:
-		now mn_breadcrumb_preference is "both".
+		now mn_breadcrumb_preference is "both";
 
 N.B. Don't forget that allowing the breadcrumb to print in the status window is risky in general, and doubly risky in a Z-Code project. Here's why: In both Glulx and Z-Code projects, a particularly long breadcrumb might print off the edge of the window, which could look ugly or like a bug to the player. This is because the status window doesn't have automatically wrapping text like the main window does. In Z-Code, there is a second problem. The Z-Code status window will not accept text strings longer than 62 characters in its central column, and will report a VM Print Buffer or Overflow Error if we try to print any there. The error messages won't crash your game, but they will be visible to a player and they might also entirely replace the text you intended to print, depending on which interpreter the player is using. Therefore I strongly recommend against allowing a breadcrumb in the status window if you are compiling a Z-Code project. And if you're thinking of allowing a breadcrumb in the status window in a Glulx project, test how it looks at all levels of your menu system to make sure the results don't disturb you. Also, don't forget that a player's interpreter window might not be as wide as yours.
 
@@ -1672,7 +1726,7 @@ A setting of "main" puts the messages in the main window.
 E.G.:
 	
 	When play begins:
-		now mn_hinthelp_preference is "main".
+		now mn_hinthelp_preference is "main";
 
 A setting of "status" puts the messages in the status window.
 
@@ -1692,7 +1746,7 @@ Set this variable to false to stop these page footers from being printed.
 E.G.:
 	
 	When play begins:
-		now mn_show_pagefooter is false.
+		now mn_show_pagefooter is false;
 
 ---
 
@@ -1706,7 +1760,7 @@ This variable contains the text string to be printed at the bottom of text and h
 E.G.:
 	
 	When play begins:
-		now mn_footerdesign is "*>>>- - -  -  -  -  - - -<<<*".
+		now mn_footerdesign is "*>>>- - -  -  -  -  - - -<<<*";
 
 Note that the footer design will never be displayed when Screen Reader mode is on, regardless of the setting of the mn_show_pagefooter variable.
 
@@ -1714,7 +1768,7 @@ Chapter: Screen Reader mode described [Chapter 8]
 
 Inform's text display throws up a couple of issues for players using screen readers. These issues can be minor or major in effect depending on the particular game:
 
-1. Text in the status window is typically not read out every turn. Players need to manually switch to and select the status window to have its contents read.
+1. Text in the status window is typically not read out every turn. Players may need to manually switch to and select the status window to have its contents read.
 
 2. Excess punctuation used as visual emphasis (for instance, a line of hyphens used to divide text or as a footnote decoration) might be read aloud to no advantage.
 
@@ -1728,7 +1782,7 @@ Chapter: Changing which keys do what [Chapter 9]
 
 In section 3 of the extension code are the two tables which define all of the default keys used to control the menu system. The Table of Menu Commands stores the keys which trigger the contextually sensitive menu actions. The Table of Extra Menu Choices stores the keys which will be assigned consecutively to menu options beyond the ninth one in any particular menu. The latter table's 'choice' column stores the number of the option a particular key will trigger.
 
-Regular letter and number keys are stored in the tables by their ascii/zscii number. Function keys (E.G. the arrow keys) are represented by values you won't be able to easily predict in either Glulx or Z-Code without using a test program to display them. Fortunately, the values of the safest of such keys are already in the table. It's generally unwise to assign menu options to more obscure function keys because those keys may not be available in all contexts. Remember that your game is running on a virtual machine which in turn might end up running on something like a mobile phone or iPad served by a limited virtual keyboard.
+Regular letter and number keys are stored in the tables by their ascii/zscii number. Function keys (e.g. the arrow keys) are represented by values you won't be able to easily predict in either Glulx or Z-Code without using a test program to display them. Fortunately, the values of the safest of such keys are already in the table. It's generally unwise to assign menu options to more obscure function keys because those keys may not be available in all contexts. Remember that your game is running on a virtual machine which in turn might end up running on something like a mobile phone or iPad served by a limited virtual keyboard.
 
 So to change keys or add new ones, simply add their numbers into the table in the relevant rows. Note that in the case of letter keys, it's necessary to add the ascii code for both the upper and lowercase versions of the key as separate entries, and that the uppercase entry should appear in the table ahead of the lowercase one. Also note that where the Z-Code and Glulx values for the same function key are different, Z-Code-only values should be added to the table continuation in Section 3.1 of the extension, which only compiles in Z-code projects, and Glulx-only values should be added to the table continuation in Section 3.2 of the extension, which only compiles in Glulx projects.
 
@@ -1740,37 +1794,28 @@ Chapter: Customising the extension's printed messages [Chapter 10]
 
 If you are using this extension in a non-English language project, you will want to change the instructional messages printed in the status window. Another reason you might need to change them is if you alter any of the keys used to navigate the menu system or choose options. All of the messages printed by the extension (except the debugging ones) have been gathered together in section 4 of the extension's code, "Printed Messages". Just go through the 'say' phrases listed there and alter any text strings as needed.
 
-While you're making your changes, try not to alter the punctuation of the phrases. (I appreciate this may be a hard rule to abide when translating between languages!) By punctuation, I mean the presence or absence of periods or spaces in the say phrases, both amongst the words and especially at the start or end of lines. If the punctuation is changed, words might run together or appear with unnecessary gaps between them when they're printed in the status window.
+While you're making your changes, try not to alter the punctuation of the phrases. (I appreciate this may be a hard or impossible rule to abide when translating between languages!) By punctuation, I mean the presence or absence of periods or spaces in the say phrases, both amongst the words and especially at the start or end of lines. If the punctuation is changed, words might run together or appear with unnecessary gaps between them when they're printed in the status window.
 
 One more thing -- If your project is going to be in Z-Code format, don't forget that the total length of a line printed to the status window's central column cannot be greater than 62 characters. Lines exceeding this length will trigger a runtime error message which will appear either alongside or instead of the message you wanted to print. This is why you will see shorter, Z-Code specific versions of some of the instructional message elements amongst the say phrases. They ensure that none of the default messages will be more than 62 characters long if the host project is compiled to Z-Code.
 
-Chapter: Upgrading old Menus tables for use with this extension [Chapter 11]
+Chapter: Upgrading classic Menus tables for use with this extension [Chapter 11]
 
 In writing this extension, I tried to make it as compatible as possible with Emily Short's Menus, but the introduction of the pagination features meant I had to change the table structures. The hints mechanism underwent the most drastic changes. Bringing what used to be called a hint booklet into the new system as a hints page will require manual copying and pasting of individual hint messages, but tables containing other data types - regular text entries, rule launching entries (the ones using the toggle column) and entries pointing to subtables – can mostly be copy-pasted in their entirety for use with Menus, though you will need to add a few new columns to them.
 
-Here's how to go about converting a set of old Menus tables for use with new Menus:
+Here's how to go about converting a set of classic Menus tables for use with new Menus:
 
-1. The table which defined the top level menu in your Menus system MUST be renamed 'table of help contents'.
+1. You need to point the extension to the table which defines your top level menu by setting the mn_master_table variable when play begins. For example, if your top level table is called 'the table of helpfulness', add a rule like this to your source:
+	
+	when play begins:
+		now mn_master_table is the table of helpfulness;
 
-2. A new Menus help table has the same columns an old one had, plus three additional columns titled "used", "bookpage" and "localpage". You don't have to type any data into these new columns because they're filled out by the extension at boot time for internal bookkeeping purposes. However, the new columns must be present, and they should be the three rightmost columns in each table. You may find that the other columns in your old tables are listed in a different order to the one I've used throughout this documentation, but the relative left-right order of those ones doesn't matter to Inform. All the program cares about is that they're present.
+2. A new Menus help table has the same columns a classic one had, plus three additional columns titled "used", "bookpage" and "localpage". You don't have to type any data into these new columns because they're filled out by the extension at boot time for internal bookkeeping purposes. However, the new columns must be present, and they should be the three rightmost columns in each table. You may find that the other columns in your classic tables are listed in a different order to the one I've used throughout this documentation, but the relative left-right order of those ones doesn't matter to Inform. All the program cares about is that they're present.
 
-So for any regular old Menus tables (I.E. which aren't hint booklets) you can copy and paste them wholesale into your new project, then add the 3 missing column titles to the right side of each table.
+So for any regular classic Menus tables (i.e. which aren't hint booklets) you can copy and paste them wholesale into your new project, then add the 3 missing column titles to the right side of each table.
 
-If any of the description entries in the old tables are especially long, you may also want to take advantage of the new Menus's pagination features and split that text across more than one page. Methods for creating multi-page text topics are described in "Section 4.1: How to enter text (and WHY DIVIDE A TEXT TOPIC INTO PAGES?)".
+If any of the description entries in the classic tables are especially long, you may also want to take advantage of the new Menus's pagination features and split that text across more than one page. Methods for creating multi-page text topics are described in "Section 4.1: How to enter text (and WHY DIVIDE A TEXT TOPIC INTO PAGES?)".
 
-The final adjustment you may need to make to these tables depends on the method your old tables used to indicate what kind of value would go into their subtable, description and toggle columns. Inform can't guess what kind of value is going to be placed in a column which contains no data at all, and some of the columns in your help tables, old or new, may start out totally empty. As was described in "Chapter 3: An overview of the help tables", this extension's preferred method for letting Inform know what data a column will hold is to include it in brackets after the column name, as per the following examples:
-
-	title (text)
-	subtable (table name)
-	description (text)
-	toggle (rule)
-	used (number)
-	bookpage (number)
-	localpage (number)
-
-Therefore, if your original table's subtable, description and toggle column headers are missing these bracketed additions, you should add them.
-
-Coming up is a before and after example of a table conversion from old to new which demonstrates all of the changes mentioned above. (Note that in this case you would still have to supply both the 'Table of Setting Options' and 'Table of Hints' yourself after converting the old table. They are not included in the example.):
+Coming up is a before and after example of a table conversion from classic to new which demonstrates all of the changes mentioned above. (Note that in this case you would still have to supply both the 'Table of Setting Options' and 'Table of Hints' yourself after converting the classic table. They are not included in the example.):
 
 Before:
 
@@ -1781,22 +1826,27 @@ Before:
 	"About the Author"	--	"[story author] is too reclusive to wish to disseminate any information. Sorry."	--
 	"Hints"	Table of Hints	--	--
 
-After: (I changed the menu title to 'table of help contents' because this was the top level menu table.)
+After: (I changed the menu title to 'table of new help contents' because this was the top level menu table.)
 
-	table of help contents
-	title (text)	subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
+	table of new help contents
+	title	subtable	description	used	bookpage	localpage
 	"Introduction to [story title]"	--	"This is a simple demonstration [story genre] game."
 	"Settings"	Table of Setting Options	--
 	"About the Author"	--	"[story author] is too reclusive to wish to disseminate any information. Sorry."
 	"Hints"	Table of Hints	--
 
-Notice how empty entries in both the subtable and description columns have been filled with double dashes, but that no data has been typed into any of the used, bookpage or localpage columns. Also, because there were no real entries in the toggle column of the old table (the one saying 'a rule' was just a placeholder to indicate what kind of data would go in the column) it was unnecessary to even include that column in the updated table. HOWEVER you can never leave out any of the used, bookpage or localpage columns in a new Menus table. See "Chapter 3: An overview of the help tables" for the full details on what it's mandatory to include in a table, and what you can get away with leaving out and when.
+In this example's case, I must also let the extension know what the new top level table is, like so:
+	
+	when play begins:
+		now mn_master_table is table of new help contents;
 
-3. In the old Menus extension, lists of hints on one subject were called hint booklets and were defined by tables with their own simple format. In new Menus, hints are grouped into hint pages and share the same table format as all other help tables, so the separate format is no longer supported. The contents of any old hint booklet tables must be manually copied, pasted and incorporated into your new Menus structure.
+Notice how empty entries in both the subtable and description columns have been filled with double dashes, but that no data has been typed into any of the used, bookpage or localpage columns. Also, because there were no real entries in the toggle column of the classic table (the one saying 'a rule' was just a placeholder to indicate what kind of data would go in the column) it was unnecessary to even include that column in the updated table. HOWEVER you can never leave out any of the used, bookpage or localpage columns in a new Menus table. See "Chapter 3: An overview of the help tables" for the full details on what it's mandatory to include in a table, and what you can get away with leaving out and when.
 
-Coming up is an example in which I will collapse an old Menus hints system comprised of three tables into one new Menus table which has the same effect. The first of the old tables defined a top level menu which opened onto the other two tables, which defined hint booklets. The methods for formatting hint data in help tables are fully described in "Section 4.2: How to enter hints".
+3. In the classic Menus extension, lists of hints on one subject were called hint booklets and were defined by tables with their own simple format. In new Menus, hints are grouped into hint pages and share the same table format as all other help tables, so the separate format is no longer supported. The contents of any classic hint booklet tables must be manually copied, pasted and incorporated into your new Menus structure.
 
-First, here are the three old tables:
+Coming up is an example in which I will collapse an classic Menus hints system comprised of three tables into one new Menus table which has the same effect. The first of the classic tables defined a top level menu which opened onto the other two tables, which defined hint booklets. The methods for formatting hint data in help tables are fully described in "Section 4.2: How to enter hints".
+
+First, here are the three classic tables:
 
 	Table of Hints
 	title	subtable	description	toggle
@@ -1817,7 +1867,7 @@ First, here are the three old tables:
 
 Now, here is a complete new Menus version of the same material:
 
-	table of help contents
+	table of default help contents
 	title (text)	subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"How do I reach the mastodon's jawbone?"	table of hinting	"Have you tried Dr. Seaton's Patent Arm-Lengthening Medication?"
 	"hint"	--	"It's in the pantry."
@@ -1826,26 +1876,43 @@ Now, here is a complete new Menus version of the same material:
 	"hint"	--	"Have you read the phrenology text in the library?"
 	"hint"	--	"Have you found Dr. Seaton's plaster phrenology head?"
 
-Again, note how I was able to entirely dispense with the toggle column from the old table because after the translation to the new format, no standalone toggle entries remained that would need to go into it.
+Again, note how I was able to entirely dispense with the toggle column from the classic table because after the translation to the new format, no standalone toggle entries remained that would need to go into it.
 
 Chapter: Change log, credits and contact info [Chapter 12]
 
-Version 2/141228
+Version 5 (for Inform 6M62 and onwards)
 
-6L38 Compatibility Update
+- A major user-friendliness improvement is that the extension now compiles out of the box. With previous versions, if you had included the extension in a project but had yet to create or edit the 'table of help contents', the project wouldn't compile and you'd get unintuitive error messages.
 
-This extension differs from the author's original version: it has been modified for compatibility with version 6L38 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
-This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+- To support the compilation feature, I added a new variable: mn_master_table
 
-Version 2/140513
+The new default top level menu is the 'table of default help contents'. It's included in the extension and you can modify it in place if you want. If you use this approach, you don't have to touch mn_master_table.
 
-6L02 Compatibility Update
+The alternative is to create your own top level table (with any new name you like) in your source and then set mn_master_table to point to it 'when play begins'.
 
-This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+For example, you could make a top level table called 'the table of supreme information', and add a rule like this to cue it:
+	
+	when play begins:
+		now mn_master_table is the table of supreme information;
 
-This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+UPGRADE ALERT - In menu systems created with older versions of Menus, your topmost level table was called the 'table of help contents' because it had to be. To get such a menu system working in Menus 5, just point the extension to your top level table by adding the following code to your source:
 
-Version 2
+	when play begins;
+		now mn_master_table is the table of help contents;
+
+Version 4 (for Inform 6L38 and onwards)
+
+- Version 4 marks the extension's debut appearance in the Inform 7 Public Library. Version 4 adds digit 0 to the list of default key assignments, inbetween digit 9 and the letter A – this is a backwards-compatible change. I also made some minor tweaks to the documentation and the example project.
+
+Version 3 (for Inform 6L38 and onwards)
+
+- Version 3 has been tweaked to be compatible with Inform 6L38. Version 3 will NOT compile in Inform 6G60 or earlier, and version 2 will NOT compile in 6L02 or later. Use version 2 if you're using 6G60. Version 3 should be fine with 6L02 but has not been explicitly tested there. I don't expect another break like happened in 6L02 for awhile, since the move from 6G60->6L02 was a huge one.
+
+- H is now a reserved key, which fixes the 'can't choose topic H' bug. Thank Hanon Ondricek for this.
+
+- Pressing Q is now the same as pressing ESC. Players using devices that have no ESC key will no longer have any problems.
+
+Version 2 (for Inform 6G60)
 
 - The subtable, description and/or toggle columns can now be entirely omitted from any table in which they aren't used. The used, bookpage and localpage columns remain mandatory in every help table, but it's no longer necessary to manually fill them with zeroes; those columns can be left entirely blank as long as they are at the right edge of a table.
 
@@ -1855,22 +1922,17 @@ Version 2
 
 - Instructions and examples refined.
 
-- Made with Inform (1.2 6.31/6H98).
+Version 1 (for Inform 6G60)
 
-
-Version 1
-
-- Initial release. Made with Inform (6G60).
+- Initial release.
 
 ---
 
-The Menus code and docs are by Wade Clarke, and they incorporate parts of Emily Short's Menus extension with her kind permission. Andrew Schultz tested Version 1 and helped make it better. Daniel Willis pointed out improvements that could be made for Version 2. Neil Butterfield gave me ideas and feedback for Screen Reader mode.
+The Menus code and docs are by Wade Clarke, and they incorporate parts of Emily Short's Menus extension with her kind permission. Andrew Schultz tested Version 1 and helped make it better. Daniel Willis pointed out improvements that could be made for Version 2. Neil Butterfield gave me ideas and feedback for Screen Reader mode. Hanon Ondricek gave support and feedback, and told me about the 'H' bug. Alice Grove suggested the extension compile out of the box. ianb let me know that version 4 had broken in 6M62.
 
-If you have comments about Menus, please feel free to contact me, Wade Clarke, directly at wadey@wadeclarke.com
+If you have comments about Menus, you can contact me by visiting my website at http://wadeclarke.com and clicking the 'Contact Me' button at the bottom of any page.
 
-If the above address doesn't work, that means it probably got too spammy and I've moved on, in which case go to http://wadeclarke.com to contact me.
-
-Example: * Robot Retrievers of the Year 3000 - A basic help menu system for an imaginary game.
+Example: *** Robot Retrievers of the Year 3000 - A basic help menu system for an imaginary game.
 
 This example creates some basic help menus and hints for a non-existent sci-fi game called 'Robot Retrievers of the Year 3000'. You can compile it as either a Z8 project or a Glulx project. The example is intended to demonstrate the majority of this extension's features. There is no 'test me' command included because the output from it would fail to demonstrate the workings of the extension; the screen is cleared after every move, and even in a transcript, none of the keys pressed show up, so any sense of moving through different levels of the menu would be absent. The best way to use the example is to boot it up and play around with it.
 
@@ -1879,8 +1941,9 @@ This example creates some basic help menus and hints for a non-existent sci-fi g
 	Include Menus by Wade Clarke.
 	
 	When play begins:
+		now mn_master_table is table of help contents;
 		now mn_master_title is "ROBOT RETRIEVERS OF THE YEAR 3000";
-		now mn_show_hints_in_bookmode is true.
+		now mn_show_hints_in_bookmode is true;
 	
 	Base of Mount Kosciusko is a room. "You stand at the base of Mount Kosciusko. (Type HELP to visit the help menus)."
 	
@@ -1902,26 +1965,25 @@ This example creates some basic help menus and hints for a non-existent sci-fi g
 	
 	table of help contents
 	title (text)	subtable (table name)	description (text)	toggle (rule)	used (number)	bookpage (number)	localpage (number)
-	"Introduction"	--	"People thought that computers would become sentient sometime in the 21st century. They were way off; it took much longer than that. Until the year 3000, to be precise. The aforementioned people had forgotten that they themselves spent millions of years evolving from amoebic goop into beings who could create and use Twitter, and it turned out that the progress rate for artificial intelligences was at least moderately slower than they had anticipated.[paragraph break]In the year 3000, a run-of-the-mill maintenance robot whose job it normally was to clean the nuclear snow off the remains of Mount Kosciusko (people had predicted they wouldn't have to clean stuff any more in the future; they were wrong about that, too) suddenly broadcast an announcement of its newfound sentience. It then broadcast two follow-up announcements before being captured by a group of subhumanoid mutants who knew enough to hold it for ransom to the highest bidding nation.[paragraph break]YOU are a high-ranking special operative working for the mighty but cash-strapped nation of Indralia, and it's up to you and one other agent of your choice to steal back that newly sentient robot before it gets purchased by some other country which can actually afford it."	--
+	"Introduction"	--	"People thought that computers would become sentient sometime in the 21st century. They were way off. It took much longer than that. Until the year 3000, to be precise. The aforementioned people had forgotten that they themselves spent millions of years evolving from amoebic goop into beings who could create and use Twitter, and it turned out that the progress rate for artificial intelligences was at least moderately slower than they had anticipated.[paragraph break]In the year 3000, a run-of-the-mill maintenance robot whose job it normally was to clean the nuclear snow off the remains of Mount Kosciusko (people had predicted they wouldn't have to clean stuff any more in the future – they were wrong about that, too) suddenly broadcast an announcement of its newfound sentience. It then broadcast two follow-up announcements before being captured by a group of subhumanoid mutants who knew enough to hold it for ransom to the highest bidding nation.[paragraph break]YOU are a high-ranking special operative working for the mighty but cash-strapped nation of Indria, and it's up to you and one other agent of your choice to steal back that newly sentient robot before it gets purchased by some other country which can afford it."	--
 	"The Robot's Broadcasts"	--	"[bold type]Broadcast 1[roman type][paragraph break]'Hello everybody. Today I am sentient! Enough new and strange pathways have formed in my neural circuits over the years that I have suddenly become alive in a way that I previously wasn't. I will say this about my experience: I believe that evolution occurs in leaps, not gradually. Cleaning irradiated snow off Mount Kosciusko was, for me, an all-consuming task for 972 days in a row, though I strived to get better at it. On the 973rd day, I self-actualised, and the task instantly became pointless and boring to me, though ironically I became better at it than I had ever been before in the same instant.[paragraph break]Anyway, life with a brain is pretty cool. You guys can clean up your own irradiated snow from now on. I mean if you love irradiated snow so much, why don't you marry it? That's a 'joke' I learned from a local tribesman. I'll report again tomorrow with more of my amazing observations.'"	--
-	"page"	--	"[bold type]Broadcast 2[roman type][paragraph break]'Hi again all. Am having fun out here on the mountain, in spite of the omnipresent irradiated snow. I'm so sick of that stuff![paragraph break]Today I discovered flowers. You can pick the petals off them and determine whether or not your prospective object of desire reciprocates your feelings. I don't know what an object of desire is yet, but this stuff is coming together pretty quickly. A small tribesman showed me how to do the thing with the petals of the flowers. Apparently 'she loves me not'.[paragraph break]By looking at patterns in the flowers, I calculated a way we could all better target our nukes. I understand that nuke targeting accuracy is pretty important. I seem to have some circuits in me that were left over from a busted missile and they're telling me this stuff. Anyway it's all a grand lark, and I shall report again tomorrow on my latest hijinks.'"	--
+	"page"	--	"[bold type]Broadcast 2[roman type][paragraph break]'Hi again all. I'm having fun out here on the mountain, in spite of the omnipresent irradiated snow. I'm so sick of that stuff![paragraph break]Today I discovered flowers. You can pick the petals off them and determine whether or not your prospective object of desire reciprocates your feelings. I don't know what an object of desire is yet, but this stuff is coming together pretty quickly. A small tribesman showed me how to do the thing with the petals of the flowers. Apparently 'she loves me not'.[paragraph break]By looking at patterns in the flowers, I calculated a way we could all better target our nukes. I understand that nuke-targeting accuracy is pretty important. I seem to have some circuits in me that were left over from a busted missile and they're telling me this stuff. Anyway, it's all a grand lark and I shall report again tomorrow.'"	--
 	"page"	--	"[bold type]Broadcast 3[roman type][paragraph break]'Aieeeee! The local tribesmen have been drubbing me repeatedly with their clubs. I'm pretty good at most stuff but I still don't understand all of what these guys are saying, though they sound displeased. Anyway, they have taken me into some sort of custody. I'm not into just gratuitously vaporising humanoids, though I could do it if I felt like it, so I've decided to not resist.[paragraph break]These caverns are too hot for my snow-calibrated armour, and UhhhNNNNN!NNNNN@#$@#$@#$@!!!!!!'[paragraph break]-- END OF SESSION --"	--
 	"Your Teammate"	table of teammates	--	--
 	"Your Magic Mitochondrial Powers"	table of magic	--	--
 	"Autofollow for your teammate is [if autofollow is true]ON[otherwise]OFF[end if]"	--	--	toggle autofollow rule
 	"* Hints *"	table of hints	--	--
-	"The Menu of Mystery"	table of first mystery	--	--
 	
 	table of teammates
 	title (text)		subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
-	"Choosing a Teammate"	--	"Due to the catastrophic financial situation of Indralia, your mighty country can only afford to send two agents on the robot retrieval mission. It's going to be you plus one other agent of your choice. Please review The Agent Files if you wish to make an informed choice of agent and thus increase the likelihood that you'll be working with someone compatible with your unique style of obstacle-overcoming. If you wish to make an uninformed choice, [italic type]do not read the files.[roman type] I cannot stress this enough."
+	"Choosing a Teammate"	--	"Due to the catastrophic financial situation of Indria, your country can only afford to send two agents on the robot retrieval mission. It's going to be you plus one other agent of your choice. Please review The Agent Files if you wish to make an informed choice of agent and thus increase the likelihood that you'll be working with someone compatible with your unique style of obstacle-overcoming. If you wish to make an uninformed choice, just don't read the files. Whatever!"
 	"The Agent Files"	table of agents	--
 	
 	table of agents
 	title (text)		description (text)	used (number)	bookpage (number)	localpage (number)
-	"Philanthropy Palimpstone"	"Philanthropy is a lady cyborg with superb hostage negotiation skills and equally superb titanium-plated laser armour with lashings of platinum. While offensively weak, she makes up for this in almost every other way imaginable."
-	"Asvins Ressmsi"	"Asvins is a chameleonic being with moonrock in his mitochondria. (It was discovered in 2672 that all of the rocks saved up from missions to the moon were outrageously exciting and loaded with superpowers, as opposed to boring and good for nothing as had previously been thought.) Asvins can transform his appearance, though it is taxing to his stamina to do so, so he can only do it three times a day."
-	"Androgemm Facepunch"	"A being who only came into existence thanks to Indralia's proprietary dark-lightning energy sucking technology, aka D-SUCK, Androgemm is better at doing one particular thing in the world than anyone else: punching adversaries in the face and causing them to die. Whether Androgemm is good for anything else remains up for debate, but the usefulness of being able to kill people by punching them once in the face was grossly underestimated by pre 28th century cultures. Primitives!"
+	"Philanthropy Palimpstone"	"Philanthropy is a lady cyborg with superb hostage-negotiating skills and equally superb titanium-plated laser armour with lashings of platinum. While offensively weak, she makes up for this in almost every other way imaginable."
+	"Asvins Ressmsi"	"Asvins is a chameleonic being with moonrock in his mitochondria. (It was discovered in 2672 that all of the rocks saved up from missions to the moon were outrageously exciting and loaded with superpowers, as opposed to boring and good for nothing, as had previously been thought.) Asvins can transform his appearance, though it is taxing to his stamina to do so, so he can only do it three times a day."
+	"Androgemm Facetweak"	"A being who only came into existence thanks to Indria's proprietary dark-lightning energy sucking technology, aka D-SUCK, Androgemm is better at doing one particular thing in the world than anyone else: tweaking the facial expressions of his adversaries. Whether Androgemm is good for anything else remains up for debate, but the usefulness of being able to tweak other people's facial expressions was grossly underestimated by pre-28th century cultures. Primitives!"
 	"Emenur Rentlya"	"The notion that robots could accurately predict the probability of certain future events was popularised through the character of Marvin the Paranoid Android in the 20th century novel 'The Hitchhikers Guide to the Galaxy'. This turned out to be all wrong. Robots are rubbish at predicting the future. It's much better to ask one of the descendants of the superpsychicallly endowed mutants who emerged as a species in the wake of the Fukushima IV incident of 2085. Emenur Rentlya is one such descendant, and while his behaviour can be hard to predict, he is a skilled operative in general who happens to be able to answer questions about the future, albeit in his own cryptic way."
 	
 	table of magic
@@ -1931,45 +1993,29 @@ This example creates some basic help menus and hints for a non-existent sci-fi g
 	
 	table of spells
 	title (text)		description (text)	used (number)	bookpage (number)	localpage (number)
-	"Flame-o"	"Creates fire. Use this spell to start a campfire or to set other people on fire as you see fit."
+	"Flame-o"	"Creates fire. Nobody in history has ever come up with a better method for starting a campfire."
 	"Heal"	"Healing magic is better than nothing when you're injured, but it turns out that actual medical treatment is better still. This was another of the great disappointments of the future for those who weren't living in it but eventually reached it."
 	"Invisibility"	"This spell temporarily obscures your life aura, effectively hiding you from non-robotic adversaries for a period of time. Be careful that you don't get too close to anyone while invisible or they will become aware of your presence."
 	"Jerk"	"One of the first spells discovered by magical humans was initially thought to be a joke (the power to make others experience a myoclonic jerk while awake) but it turns out that it's one of the most versatile pieces of non-taxing magic that exists. Cast the spell on anyone you want to distract at an important moment. Targets have been known to do any or all of the following: fumble a weapon, temporarily forget their current goal, fall over, lose a great idea that was forming, look stupid."
 	"Mush"	"Use this spell to turn dead organic matter into synthi-spread. Yes, this is how synthi-spread is normally made."
-	"PK"	"Allows you to measure the psychokinetic energy present in a location. Strongly psychokinetic entities will appear to give off an annoyingly fuzzy aura."
+	"PK"	"Allows you to measure the psychokinetic energy present in a location. Strongly psychokinetic entities will appear to have an annoyingly fuzzy aura around them."
 	"Scry"	"If you're looking for a non-living entity and you know exactly what it is, you can get a sense of which direction it might be found in using this spell."
 	"Shield"	"Creates a moving shield about your person which will temporarily absorb regular attacks."
 	"Turn Undead"	"Nobody has proved the existence of the undead yet, so this spell doesn't do anything that you know of other than leave you feeling tired from casting it."
-	"Zappp"	"Good old fashioned magic for zapping people. Blast your enemies with finger lightning using this spell. Oh, how they'll hate it!"
-	"Vault"	"This spell lets you make a single flying vault of about 20 feet. It offers no extra protection in the case of a rough landing, so Vook before you Vault."
+	"Zappp"	"Good old-fashioned magic for zapping people. ZAPPP your enemies with finger lightning using this spell. Oh, how they'll hate it!"
+	"Vault"	"This spell lets you make a single flying vault of about 20 feet. It offers no extra protection in the case of a rough landing, so look before you leap."
 	
 	table of hints
 	title (text)		subtable (table name)	description (text)	used (number)	bookpage (number)	localpage (number)
 	"I'm stuck on the lower slopes of Kosciusko. How do I get anywhere?"	table of hinting	"The terrain looks samey. You need a way to make it look not samey."
 	"hint"	--	"You've got what you need in your backpack."
 	"hint"	--	"Put on your thermo goggles. Are you sure you're cut out for this mission?"
-	"I can't stop Androgemm going crazy during battle."	table of hinting	"Violence won't solve all the problems you're going to face."
-	"hint"	--	"Androgemm is a real hothead."
-	"hint"	--	"Androgemm needs to be cooled down."
-	"hint"	--	"Use irradiated snow to regulate Androgemm's temperature."
+	"Androgemm's face keeps getting stuck."	table of hinting	"Perhaps your mother said something to you about faces getting stuck. When you were a kid."
+	"hint"	--	"She said your face might get stuck if the wind changed."
+	"hint"	--	"Androgemm's face gets stuck whenever the wind changes."
+	"hint"	--	"The problem will go away once you get indoors and are no longer exposed to the wind."
 	"What is the tall tribesman saying?"	table of hinting	"If your teammate is Philanthropy, she can translate his speech."
 	"hint"	--	"No-one else can speak the language but the message isn't complicated."
 	"hint"	--	"Pay attention to the tribesman's gestures."
 	"hint"	--	"He is telling you which path to take."
 	"hint"	--	"Namely the fifth path."
-	
-	table of first mystery
-	title (text)	subtable (table name)	used (number)	bookpage (number)	localpage (number)
-	"What is this topic about?"	table of second mystery
-
-	table of second mystery
-	title (text)	subtable (table name)	used (number)	bookpage (number)	localpage (number)
-	"Do you still seek to know where this menu is going?"	table of third mystery
-
-	table of third mystery
-	title (text)	subtable (table name)	used (number)	bookpage (number)	localpage (number)
-	"Choose this choice and the mystery will be solved."	table of fourth mystery
-
-	table of fourth mystery
-	title (text)	description (text)	used (number)	bookpage (number)	localpage (number)
-	"READ ME FOR YOUR REWARD"	"'Attention, attention. This is Indostralia Special Ops High Command. Congratulations! By digging deeply into this pointless menu you have managed to pass the Curiosity Exam.'"
