@@ -1,4 +1,4 @@
-Version 1/160919 of Glk Events (for Glulx only) by Dannii Willis begins here.
+Version 2/200807 of Glk Events (for Glulx only) by Dannii Willis begins here.
 
 "A low level event handling system"
 
@@ -56,8 +56,11 @@ Include (-
 	GE_Event_Struct_val1 = event_struct-->2;
 	GE_Event_Struct_val2 = event_struct-->3;
 	
-	! Run the glulx input handling rules
+	! Run the glulx input handling rules (but disable rules debugging because it crashes if keyboard input events are pending)
+	@push debug_rules; @push say__p; @push say__pc;
+	debug_rules = false; ClearParagraphing(1);
 	FollowRulebook( (+ the glulx input handling rules +), GE_Event_Struct_type, true );
+	@pull say__pc; @pull say__p; @pull debug_rules;
 
 	! Copy back to the original event structure
 	event_struct-->0 = GE_Event_Struct_type;
