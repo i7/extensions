@@ -1,4 +1,4 @@
-Version 15/200719 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/200828 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -422,7 +422,7 @@ To set (win - a g-present textual g-window) as the acting main window:
 Chapter - Grid window cursors
 
 To set (win - a text grid g-window) cursor to row (row - a number) column (col - a number):
-	(-  glk_window_move_cursor({win}.(+ ref number +), {row}, {col}); -).
+	(-  glk_window_move_cursor({win}.(+ ref number +), {row} - 1, {col} - 1); -).
 
 
 
@@ -1085,7 +1085,7 @@ To set the cursor co-ordinates of a grid window, use this phrase:
 
 	set status window cursor to row 1 column 5
 
-Note that co-ordinate values are 0-indexed, ie. the top left is row 0, column 0.
+Note that co-ordinate values are 1-indexed, ie. the top left is row 1, column 1.
 
 
 Section: Clearing a Window
