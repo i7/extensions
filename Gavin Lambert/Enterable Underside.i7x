@@ -1,4 +1,4 @@
-Version 1/200926 of Enterable Underside by Gavin Lambert begins here.
+Version 2/200925 of Enterable Underside by Gavin Lambert begins here.
 
 "Adds the ability to enter 'under' some object, such as hiding under a bed."
 
@@ -10,8 +10,6 @@ Include Prepositional Correctness by Gavin Lambert.
 Section - Misc Patches to other extensions
 
 The clever looking under rule response (A) is "Under [the noun] [is-are a list of locale-supportable things in the underpart]."
-
-The printed name of an underside is usually "under [the holder of the item described]".
 
 Carry out placing something under something closed (this is the reveal underside contents when placing under rule):
 	[This doesn't actually list the contents of the underside, as the player has pushed an object in without looking.  But we
@@ -44,7 +42,28 @@ Check an actor dropping (this is the can't drop what won't fit by bulk rule):
   
 Section - Prepositional Correctness
 
-Room description heading description for a thing (called the surrounding) when the player is under the surrounding and an underside (called the underpart) is part of the surrounding (this is the standard underside preposition rule): say "under [the surrounding]".
+The verb to get under means the reversed containment relation.
+The verb to get out from under means the reversed containment relation.
+
+The preposition of an underside is usually "under".
+The printed name of an underside is usually "[preposition of the item described] [the holder of the item described]".
+The entering preposition of an underside is usually the verb get under.
+The exiting preposition of an underside is usually the verb get out from under.
+
+To say enter underneath to the (O - underside) -- running on:
+	say "[adapt entering preposition of O] [the holder of O]".
+
+To say entering underneath to the (O - underside) -- running on:
+	say "[present participle of entering preposition of O] [the holder of O]".
+
+To say exit underneath from the (O - underside) -- running on:
+	say "[adapt exiting preposition of O] [the holder of O]".
+
+To say exiting underneath from the (O - underside) -- running on:
+	say "[present participle of exiting preposition of O] [the holder of O]".
+
+Rule for room heading describing a thing (called the surrounding) when the player is enclosed under the surrounding (this is the standard underside preposition rule):
+	say printed name of the associated underside of surrounding.
 
 Section - Entering the Underside
 
@@ -95,9 +114,9 @@ Carry out an actor entering underneath (this is the standard enter underneath ru
 Report an actor entering underneath (this is the standard report enter underneath rule):
 	if the actor is the player:
 		if the action is not silent:
-			say "[We] [get] under [the noun]." (A);
+			say "[We] [enter underneath to the underside being entered]." (A);
 	otherwise:
-		say "[The actor] [get] under [the noun]." (B);
+		say "[The actor] [enter underneath to the underside being entered]." (B);
 	continue the action.
 
 Report an actor entering underneath (this is the describe contents entered underneath rule):
@@ -105,22 +124,32 @@ Report an actor entering underneath (this is the describe contents entered under
 
 Section - Exiting the Underside
 
-[Mostly the standard 'exit' action works fine, but we need to fix up the response.]
+[Mostly the standard 'exit' action works fine for exiting *from* an underside, but we need to fix up the response.]
 
 Report an actor exiting when the container exited from is an underside (this is the standard report exiting underneath rule):
 	if the action is not silent:
 		if the actor is the player:
-			say "[We] [get] out from under [the holder of the container exited from]." (B);
+			say "[We] [exit underneath from the container exited from]." (B);
 		otherwise:
- 			say "[The actor] [get] out from under [the holder of the container exited from]." (C);
+ 			say "[The actor] [exit underneath from the container exited from]." (C);
 		stop the action;
 	continue the action.
+	
+[We also need a bit of extra work to correctly exit *to* an underside, since normally Inform doesn't like exiting to parts.]
+
+Carry out an actor exiting when the holder of the container exited from is an underside (this is the standard underside exiting rule):
+	let the former exterior be the holder of the container exited from;
+	surreptitiously move the actor to the former exterior;
+	stop the action. [this still reports, it just prevents the standard carry out from running]
+
+Carry out an actor getting off when the holder of the noun is an underside (this is the standard underside getting off rule):
+	let the former exterior be the holder of the noun;
+	surreptitiously move the actor to the former exterior;
+	stop the action. [this still reports, it just prevents the standard carry out from running]
 
 Section - Underside Indirection
 
 [It really feels like there ought to be a better way to restructure Inform's world model than this.]
-
-The implicitly pass through other barriers rule is not listed in the check entering rulebook.
 
 Check an actor entering (this is the implicitly pass through other barriers including undersides rule):
 	if the holder of the actor is the holder of the noun, continue the action;
@@ -129,11 +158,11 @@ Check an actor entering (this is the implicitly pass through other barriers incl
 		let the current home be the holder of the actor;
 		if the player is the actor:
 			if the current home is an underside:
-				say "(getting out from under [the holder of the current home])[command clarification break]" (F);
+				say "([exiting underneath from the current home])[command clarification break]" (F);
 			otherwise if the current home is a supporter or the current home is an animal:
-				say "(getting off [the current home])[command clarification break]" (A);
+				say text of implicitly pass through other barriers rule response (A);
 			otherwise:
-				say "(getting out of [the current home])[command clarification break]" (B);
+				say text of implicitly pass through other barriers rule response (B);
 		silently try the actor trying exiting;
 		if the holder of the actor is the current home, stop the action;
 	if the holder of the actor is the noun, stop the action;
@@ -142,7 +171,7 @@ Check an actor entering (this is the implicitly pass through other barriers incl
 	if the noun is part of the target, let the target be the holder of the target;
 	while the target is a thing:
 		if the target is an underside and the holder of the target is in the local ceiling:
-			if the player is the actor, say "(getting under [the holder of the target])[command clarification break]" (G);
+			if the player is the actor, say "([entering underneath to the target])[command clarification break]" (G);
 			silently try the actor trying entering underneath the holder of the target;
 			if the holder of the actor is not the target, stop the action;
 			convert to the entering action on the noun;
@@ -150,16 +179,18 @@ Check an actor entering (this is the implicitly pass through other barriers incl
 		otherwise if the holder of the target is the local ceiling:
 			if the player is the actor:
 				if the target is a supporter:
-					say "(getting onto [the target])[command clarification break]" (C);
+					say text of implicitly pass through other barriers rule response (C);
 				otherwise if the target is a container:
-					say "(getting into [the target])[command clarification break]" (D);
+					say text of implicitly pass through other barriers rule response (D);
 				otherwise:
-					say "(entering [the target])[command clarification break]" (E);
+					say text of implicitly pass through other barriers rule response (E);
 			silently try the actor trying entering the target;
 			if the holder of the actor is not the target, stop the action;
 			convert to the entering action on the noun;
 			continue the action;
-		let the target be the holder of the target;
+		let the target be the holder of the target.
+		
+The implicitly pass through other barriers including undersides rule is listed instead of the implicitly pass through other barriers rule in the check entering rulebook.
 
 Section - Describing the Underside
 
@@ -171,7 +202,7 @@ For printing a locale paragraph about a thing (called the roof) when the player 
 			if the possibility is mentioned:
 				now the possibility is not marked for listing;
 		increase the locale paragraph count by 1;
-		say "Under [the roof] " (A);
+		say "[capital preposition of the underpart] [the roof] " (A);
 		list the contents of the underpart, as a sentence, including contents,
 			giving brief inventory information, tersely, not listing
 			concealed items, prefacing with is/are, listing marked items only;
@@ -209,9 +240,9 @@ You may also want to override the default response text to make it more suitable
 	
 Have a look at the "entering underneath" action in the Index for all the standard responses (and to quickly edit them using the 'set' link).
 
-Section: Known Bugs
+Since this builds on top of Prepositional Correctness, you're also able to customise the "under" preposition used in the room heading when the player is underneath, or in room descriptions when other objects are:
 
-The Underside extension implements the undersides as a part of the object that they're under.  When this object is itself a container or supporter, then Inform's model of the world gets a bit confused by the whole idea of a thing that contains things directly while having another part that contains different things.  This is mostly a bug in the Standard Library itself (or at least an overly simplistic world view).  How it currently manifests in practice is that if you put one container or supporter (call it B) underneath another (call it A), then entering B causes Inform to believe that you are now in/on both A and B (and in particular, no longer under A, even though B is still under A).  Currently, you should just try to avoid getting into that sort of situation.
+	The preposition of under#bed is "beneath".
 
 Example: * Hide and Seek
 
@@ -223,7 +254,7 @@ Example: * Hide and Seek
 	The bed is an enterable fixed in place supporter.
 	The table is an enterable fixed in place supporter.
 	The chair is an enterable fixed in place supporter.
-	A room description heading description rule for the bed: say "lying on a comfortable bed".
+	Rule for room heading describing the bed: say "lying on a comfortable bed".
 
 	A fluffy pillow is on the bed.  The bulk is 2.
 
@@ -275,22 +306,20 @@ Example: * The Sweet Life
 
 	Test me with "exit / look under bed / hide under bed / take shoebox / hide under bed / exit".
 	
-Example: *** A Faulty World
+Example: * A Nice Picnic
 
-This is a demonstration of the Known Bugs and is mostly just an example of the sort of thing to try to avoid.
+Undersides are not really intended to model large spaces like this, since they deliberately conceal what lies underneath unless you're actively looking under.  But they can -- and until version 2 this sort of thing didn't work due to some quirks in how Inform handles entering and exiting things with component parts, so this serves as a demonstration that this has been worked around successfully.
 
-	*: "A Faulty World"
+	*: "A Nice Picnic"
 	
 	Include Enterable Underside by Gavin Lambert.
 	
 	Picnic Area is a room.  "A bright open area close to a large tree.  [if the blanket is carried]You can either set up your picnic out in the open or under the tree.[end if]".
 	A large tree is scenery in Picnic Area.  The description is "An oak, you think."
-	An underside called under#tree is part of the tree.  It is enterable and transparent.
+	An underside called under#tree is part of the tree.  It is enterable and transparent.  The preposition is "beneath".
 	
 	The player carries a large checkered blanket and a small picnic basket.  The blanket is an enterable supporter.  The basket is a locked container.
 	
 	Understand "sit under/beneath [tree]" as entering underneath.
 
-	Test me with "put blanket under tree / sit on blanket / l".
-
-This works, thanks to the 'implicitly pass through other barriers including undersides rule', but now claims that in addition to being on the blanket you're also in the tree, not under it, despite it not even being enterable.
+	Test me with "put blanket under tree / sit on blanket / drop basket / l / exit / exit".
