@@ -1,4 +1,4 @@
-Version 1/200925 of Enterable Underside by Gavin Lambert begins here.
+Version 1/200926 of Enterable Underside by Gavin Lambert begins here.
 
 "Adds the ability to enter 'under' some object, such as hiding under a bed."
 
@@ -10,6 +10,21 @@ Include Prepositional Correctness by Gavin Lambert.
 Section - Misc Patches to other extensions
 
 The clever looking under rule response (A) is "Under [the noun] [is-are a list of locale-supportable things in the underpart]."
+
+The printed name of an underside is usually "under [the holder of the item described]".
+
+Carry out placing something under something closed (this is the reveal underside contents when placing under rule):
+	[This doesn't actually list the contents of the underside, as the player has pushed an object in without looking.  But we
+	 do need to allow the objects underneath to be considered in scope, to let them refer to the object they just put there.]
+   now the u-side is open.
+
+To decide whether (obj - an object) is enclosed under/underneath/beneath (targetobj - a thing):
+	if the targetobj encloses an underside (called the underpart) which is part of the targetobj,  decide on whether or not the obj is enclosed by the underpart;
+	decide no.
+	
+Notionally-indirectly-underlying relates  a thing (called X) to a thing (called Y) when X is enclosed under Y.
+
+The verb to be enclosed under implies the notionally-indirectly-underlying relation.
 
 [This is a little bit of hammerspace logic -- if the player is somewhere where a large object won't fit, and yet are
  still carrying that large object, they still shouldn't be allowed to drop it there.]
@@ -70,7 +85,7 @@ Check an actor entering underneath (this is the can't fit underneath something r
 Check an actor entering underneath (this is the implicitly pass underneath other barriers rule):
 	let the original noun be the noun;
 	now the noun is the underside being entered;
-	follow the implicitly pass through other barriers rule;
+	follow the implicitly pass through other barriers including undersides rule;
 	now the noun is the original noun;
 	if the rule failed, stop the action.
 
@@ -88,8 +103,6 @@ Report an actor entering underneath (this is the standard report enter underneat
 Report an actor entering underneath (this is the describe contents entered underneath rule):
 	if the actor is the player, try looking under the noun.
 
-the implicitly pass through other barriers rule response (D) is "(getting [if the target is an underside]under [the holder of the target][otherwise]into [the target][end if])[command clarification break]".
-
 Section - Exiting the Underside
 
 [Mostly the standard 'exit' action works fine, but we need to fix up the response.]
@@ -103,7 +116,50 @@ Report an actor exiting when the container exited from is an underside (this is 
 		stop the action;
 	continue the action.
 
-the implicitly pass through other barriers rule response (B) is "(getting out [if the current home is an underside]from under [the holder of the current home][otherwise]of [the current home][end if])[command clarification break]".
+Section - Underside Indirection
+
+[It really feels like there ought to be a better way to restructure Inform's world model than this.]
+
+The implicitly pass through other barriers rule is not listed in the check entering rulebook.
+
+Check an actor entering (this is the implicitly pass through other barriers including undersides rule):
+	if the holder of the actor is the holder of the noun, continue the action;
+	let the local ceiling be the common ancestor of the actor with the noun;
+	while the holder of the actor is not the local ceiling:
+		let the current home be the holder of the actor;
+		if the player is the actor:
+			if the current home is an underside:
+				say "(getting out from under [the holder of the current home])[command clarification break]" (F);
+			otherwise if the current home is a supporter or the current home is an animal:
+				say "(getting off [the current home])[command clarification break]" (A);
+			otherwise:
+				say "(getting out of [the current home])[command clarification break]" (B);
+		silently try the actor trying exiting;
+		if the holder of the actor is the current home, stop the action;
+	if the holder of the actor is the noun, stop the action;
+	if the holder of the actor is the holder of the noun, continue the action;
+	let the target be the holder of the noun;
+	if the noun is part of the target, let the target be the holder of the target;
+	while the target is a thing:
+		if the target is an underside and the holder of the target is in the local ceiling:
+			if the player is the actor, say "(getting under [the holder of the target])[command clarification break]" (G);
+			silently try the actor trying entering underneath the holder of the target;
+			if the holder of the actor is not the target, stop the action;
+			convert to the entering action on the noun;
+			continue the action;
+		otherwise if the holder of the target is the local ceiling:
+			if the player is the actor:
+				if the target is a supporter:
+					say "(getting onto [the target])[command clarification break]" (C);
+				otherwise if the target is a container:
+					say "(getting into [the target])[command clarification break]" (D);
+				otherwise:
+					say "(entering [the target])[command clarification break]" (E);
+			silently try the actor trying entering the target;
+			if the holder of the actor is not the target, stop the action;
+			convert to the entering action on the noun;
+			continue the action;
+		let the target be the holder of the target;
 
 Section - Describing the Underside
 
@@ -183,3 +239,58 @@ Example: * Hide and Seek
 	Understand "hide under/beneath [something]" as entering underneath.
 
 	Test me with "look under bed / get blanket / hide under bed / l / exit".
+
+Example: * The Sweet Life
+
+	*: "The Sweet Life"
+	[by Eric Conrad]	
+
+	Include Enterable Underside by Gavin Lambert.
+
+	Understand "hide under/underneath [something]" as entering underneath.
+
+	Bedroom is a room.
+
+	The bed is an enterable supporter.  It is in the bedroom.  The player is on the bed.  Angelina is a woman on the bed.
+
+	The under#bed is an underside.  It is part of the bed.  It is enterable and transparent.
+
+	The shoebox is a container.  It is in the under#bed.  Roberto is a man.  He is in the under#bed.
+
+	After looking under the bed for the first time:
+		say "'Angelina?  How could you -- with Roberto?'".
+
+	[ Two normal people can just fit under the bed provided there is nothing else there. ]
+	The bulk of a person is usually 5.
+
+	When play begins:
+		now the story viewpoint is first person singular;
+		say "[italic type](Dedicated to those dubbed Italian comedies from the early 1970s)[roman type][paragraph break]The door to the apartment slams shut.  From the hallway, the voice calls out 'Mi amore, I'm home.'  Panic-stricken, Angelina looks at me and whispers 'It's Giovanni.  Quickly, you must hide!'  Giovanni's steps grow softer as he walks toward the kitchen.  She breathes a sigh of relief as we hear the refrigerator open.  'Now hide.'  She points down, under the bed.".
+
+	Arrival is a scene.  Arrival begins when the player is in the under#bed.
+
+	When arrival begins:
+		say "As Giovanni enters the bedroom, he says, 'Mia cara!  It's so fine to be home.'  Angelina answers, 'O Giovanni, I missed you so.  Please buy some wine to celebrate!'[paragraph break]As her husband leaves for the store, she says, 'Both of you, out!'";
+		try Roberto exiting.
+
+	Test me with "exit / look under bed / hide under bed / take shoebox / hide under bed / exit".
+	
+Example: *** A Faulty World
+
+This is a demonstration of the Known Bugs and is mostly just an example of the sort of thing to try to avoid.
+
+	*: "A Faulty World"
+	
+	Include Enterable Underside by Gavin Lambert.
+	
+	Picnic Area is a room.  "A bright open area close to a large tree.  [if the blanket is carried]You can either set up your picnic out in the open or under the tree.[end if]".
+	A large tree is scenery in Picnic Area.  The description is "An oak, you think."
+	An underside called under#tree is part of the tree.  It is enterable and transparent.
+	
+	The player carries a large checkered blanket and a small picnic basket.  The blanket is an enterable supporter.  The basket is a locked container.
+	
+	Understand "sit under/beneath [tree]" as entering underneath.
+
+	Test me with "put blanket under tree / sit on blanket / l".
+
+This works, thanks to the 'implicitly pass through other barriers including undersides rule', but now claims that in addition to being on the blanket you're also in the tree, not under it, despite it not even being enterable.
