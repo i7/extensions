@@ -45,8 +45,8 @@ The describe room gone into rule response (M) is "[at the vehicle gone by]".
 The describe room gone into rule response (N) is "[at the vehicle gone by]".
 The examine containers rule response (A) is "[At the noun] ".
 The examine supporters rule response (A) is "[At the noun] ".
-The standard search containers rule response (A) is "[at the noun] ".
-The standard search supporters rule response (A) is "[at the noun] ".
+The standard search containers rule response (A) is "[At the noun] ".
+The standard search supporters rule response (A) is "[At the noun] ".
 
 Section - Room Description Headings
 
