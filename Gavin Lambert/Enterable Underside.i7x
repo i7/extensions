@@ -1,4 +1,4 @@
-Version 2/200925 of Enterable Underside by Gavin Lambert begins here.
+Version 2/200926 of Enterable Underside by Gavin Lambert begins here.
 
 "Adds the ability to enter 'under' some object, such as hiding under a bed."
 
@@ -160,9 +160,11 @@ Check an actor entering (this is the implicitly pass through other barriers incl
 			if the current home is an underside:
 				say "([exiting underneath from the current home])[command clarification break]" (F);
 			otherwise if the current home is a supporter or the current home is an animal:
-				say text of implicitly pass through other barriers rule response (A);
+				[say text of implicitly pass through other barriers rule response (A);]
+				say "([exiting the current home])[command clarification break]" (A);
 			otherwise:
-				say text of implicitly pass through other barriers rule response (B);
+				[say text of implicitly pass through other barriers rule response (B);]
+				say "([exiting the current home])[command clarification break]" (B);
 		silently try the actor trying exiting;
 		if the holder of the actor is the current home, stop the action;
 	if the holder of the actor is the noun, stop the action;
@@ -179,11 +181,14 @@ Check an actor entering (this is the implicitly pass through other barriers incl
 		otherwise if the holder of the target is the local ceiling:
 			if the player is the actor:
 				if the target is a supporter:
-					say text of implicitly pass through other barriers rule response (C);
+					[say text of implicitly pass through other barriers rule response (C);]
+					say "([entering the target])[command clarification break]" (C);
 				otherwise if the target is a container:
-					say text of implicitly pass through other barriers rule response (D);
+					[say text of implicitly pass through other barriers rule response (D);]
+					say "([entering the target])[command clarification break]" (D);
 				otherwise:
-					say text of implicitly pass through other barriers rule response (E);
+					[say text of implicitly pass through other barriers rule response (E);]
+					say "(entering [the target])[command clarification break]" (E);
 			silently try the actor trying entering the target;
 			if the holder of the actor is not the target, stop the action;
 			convert to the entering action on the noun;
@@ -317,6 +322,7 @@ Undersides are not really intended to model large spaces like this, since they d
 	Picnic Area is a room.  "A bright open area close to a large tree.  [if the blanket is carried]You can either set up your picnic out in the open or under the tree.[end if]".
 	A large tree is scenery in Picnic Area.  The description is "An oak, you think."
 	An underside called under#tree is part of the tree.  It is enterable and transparent.  The preposition is "beneath".
+	The verb to go beneath means the reversed containment relation.  The entering preposition of under#tree is verb go beneath.
 	
 	The player carries a large checkered blanket and a small picnic basket.  The blanket is an enterable supporter.  The basket is a locked container.
 	
