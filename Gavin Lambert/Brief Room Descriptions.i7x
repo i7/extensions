@@ -1,5 +1,7 @@
 Version 1/200926 of Brief Room Descriptions by Gavin Lambert begins here.
 
+"Alters BRIEF mode to display a room's brief description instead of nothing."
+
 Use authorial modesty.
 
 Section - Default Setting

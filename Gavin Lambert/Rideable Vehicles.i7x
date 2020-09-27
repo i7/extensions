@@ -1,5 +1,7 @@
 Version 1/200619 of Rideable Vehicles by Gavin Lambert begins here.
 
+"Improves how rideable vehicles and animals interact with other supporters."
+
 Use authorial modesty.
 
 Include Rideable Vehicles by Graham Nelson.
