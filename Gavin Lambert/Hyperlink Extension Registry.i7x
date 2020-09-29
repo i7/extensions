@@ -1,4 +1,4 @@
-Version 1/200929 of Hyperlink Extension Registry (for Glulx only) by Gavin Lambert begins here.
+Version 1/200930 of Hyperlink Extension Registry (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a framework to allow multiple hyperlink-processing extensions to co-exist without stepping on each others' toes."
 
@@ -8,71 +8,71 @@ Include Hyperlinks by Gavin Lambert.
 
 Section - Bit Space
 
-Use hyperlink registry bitsize of at least 4 translates as (- Constant GHER_EXT_BITS = {N}; Constant GHER_PL_BITS = 31 - {N}; -).
+Use hyperlink registry bitsize of at least 4 translates as (- Constant GHER_TAG_BITS = {N}; Constant GHER_DATA_BITS = 32 - {N}; -).
 
-To decide which number is the maximum possible hyperlink extensions: (- MaxHyperlinkRegistrySize() -).
+To decide which number is the maximum possible hyperlink tags: (- MaxHyperlinkRegistrySize() -).
 
-To decide which number is the hyperlink id for extension (E - number) and payload (V - value): (- HyperlinkRegistry_Encode({E}, {V}) -).
-To decide which number is the hyperlink id extension part for (N - number): (- HyperlinkRegistry_ExtensionId({N}) -).
-To decide which number is the hyperlink id payload part for (N - number): (- HyperlinkRegistry_PayloadId({N}) -).
+To decide which number is the hyperlink id for tag (tag - number) and data (data - value): (- HyperlinkRegistry_Encode({tag}, {data}) -).
+To decide which number is the hyperlink id tag part for (id - number): (- HyperlinkRegistry_TagId({id}) -).
+To decide which number is the hyperlink id data part for (id - number): (- HyperlinkRegistry_DataId({id}) -).
 
 Include (-
 
 [ MaxHyperlinkRegistrySize  n;
-	@shiftl 1 GHER_EXT_BITS n;
+	@shiftl 1 GHER_TAG_BITS n;
 	return n - 1;
 ];
 
-[ HyperlinkRegistry_Encode ex n  id;
-	@shiftl ex GHER_PL_BITS ex;
-	@shiftl 1 GHER_PL_BITS id;
-	--id;
-	@bitand n id n;
-	@bitor ex n id;
+[ HyperlinkRegistry_Encode tag id  n;
+	@shiftl tag GHER_DATA_BITS tag;
+	@shiftl 1 GHER_DATA_BITS n;
+	--n;
+	@bitand id n id;
+	@bitor tag id id;
 	return id;
 ];
 
-[ HyperlinkRegistry_ExtensionId id  n;
-	@ushiftr id GHER_PL_BITS n;
-	return n;
+[ HyperlinkRegistry_TagId id;
+	@ushiftr id GHER_DATA_BITS id;
+	return id;
 ];
 
-[ HyperlinkRegistry_PayloadId id  n;
-	@shiftl 1 GHER_PL_BITS n;
+[ HyperlinkRegistry_DataId id  n;
+	@shiftl 1 GHER_DATA_BITS n;
 	--n;
-	@bitand id n n;
-	return n;
+	@bitand id n id;
+	return id;
 ];
 
 -).
 
 Section - Core Registry
 
-To decide what number is a new hyperlink tag id:
-	increment gher_last_id;
-	if gher_last_id is greater than the maximum possible hyperlink extensions:
-		say "[bold type]ERROR[roman type]: too many hyperlink extensions have been registered; include fewer or increase the limit.[paragraph break]";
-	decide on gher_last_id.
+To decide what number is a new hyperlink tag:
+	increment gher_last_tag;
+	if gher_last_tag is greater than the maximum possible hyperlink tags:
+		say "[bold type]ERROR[roman type]: too many hyperlink tags have been registered; include fewer extensions or increase the limit.[paragraph break]";
+	decide on gher_last_tag.
 
 Section - Processing
 
-Hyperlink extension processing rules are a number based rulebook producing text.
+Hyperlink tag processing rules are a number based rulebook producing text.
 
-To decide what K is hyperlink payload as (K - name of kind of value of kind K): (- (+gher_cur_payload+) -).
+To decide what K is current hyperlink data as (K - name of kind of value of kind K): (- (+gher_cur_data+) -).
 
 Last hyperlink id processing rule for number (called id) (this is the hyperlink extension registry processing rule):
-	let extension id be the hyperlink id extension part for id;
-	now gher_cur_payload is the hyperlink id payload part for id;
-	if the extension id is greater than gher_last_id:
-		say "[bold type]ERROR[roman type]: hyperlink extension id [extension id] is not registered.[paragraph break]";
-	let command be the text produced by the hyperlink extension processing rules for extension id;
-	now gher_cur_payload is 0;
+	let tag be the hyperlink id tag part for id;
+	now gher_cur_data is the hyperlink id data part for id;
+	if the tag is greater than gher_last_tag:
+		say "[bold type]ERROR[roman type]: hyperlink tag [tag] is not registered.[paragraph break]";
+	let command be the text produced by the hyperlink tag processing rules for tag;
+	now gher_cur_data is 0;
 	if command is not empty, rule succeeds with result command.
 
 Section - Internals - unindexed
 
-The gher_last_id is a number that varies.
-The gher_cur_payload is a number that varies.
+The gher_last_tag is a number that varies.
+The gher_cur_data is a number that varies.
 
 Hyperlink Extension Registry ends here.
 
@@ -82,9 +82,9 @@ This is a framework extension intended to be used by other extensions that want 
 
 It is based on some ideas hashed out in a discussion thread started by Dannii Willis.
 
-Low-numbered links (those with a hyperlink id extension part of zero) are not used by this framework, so they can be used as manually set links by the final author.  It is not recommended to use these links in an extension.
+Low-numbered links (those with a hyperlink tag part of zero) are not used by this framework, so they can be used as manually set links by the final author.  It is not recommended to use these links in an extension.
 
-NOTE: hyperlinks generated by this extension are only compatible with interpreters that support 32-bit hyperlink ids.  As of 6M62, this does not include the interpreter built into the IDE, but does include external interpreters such as Git.
+NOTE: hyperlinks generated by this extension are only compatible with interpreters that support 32-bit hyperlink ids.  As of 2020, at least the Windows IDE is one of the interpreters that does not support these.
 
 Section - Generating links
 
@@ -92,26 +92,26 @@ To register a new extension that can generate hyperlinks, include code like the 
 
 	My awesome extension link tag is a number that varies.
 	After starting the virtual machine:
-		now my awesome extension link tag is a new hyperlink tag id.
+		now my awesome extension link tag is a new hyperlink tag.
 		
 To actually generate the hyperlinks, create some kind of new phrase for your authors to use that eventually ends up doing something like:
 	
 	let P be 42;
-	let id be hyperlink id for extension my awesome extension link tag and payload P;
+	let id be hyperlink id for tag my awesome extension link tag and data P;
 	say "[set link id]this is a link[clear link]";
 	
-Where P is a value that you want to carry along in the hyperlink.  It can theoretically be of any kind (but not text), although a number is the safest option.  If you want to be able to transport multiple different kinds of value, the best idea is to register multiple separate extension tag ids.
+Where P is a value that you want to carry along in the hyperlink.  It can theoretically be of any kind (but not text), although a number is the safest option.  If you want to be able to transport multiple different kinds of value, the best idea is to register multiple separate hyperlink tags.
 
 Section - Processing links
 
 To process what happens when a link is clicked, simply add a rule like so:
 	
-	Hyperlink extension processing rule for my awesome extension link tag (this is my awesome link processing rule):
-		let N be hyperlink payload as number;
+	Hyperlink tag processing rule for my awesome extension link tag (this is my awesome link processing rule):
+		let N be current hyperlink data as a number;
 		do something interesting with N;
 		rule succeeds with result "z".
 		
-At the end of your rule, you include this line:
+You must be careful to read the data using the same kind that was used when the link was set, otherwise you'll get a garbage value.  (This is why it's a good idea to use separate tags for separate kinds.)  At the end of your rule, you can include this line:
 	
 	rule succeeds with result "abcd"
 	
@@ -119,15 +119,15 @@ This will enter the specified text (which can be a variable, of course) as playe
 
 Alternatively, you can "stop the action", "make no decision", "rule succeeds with result """, or just say nothing at all, and these will not enter any player input.
 
-It's safe to "say" things or do any other kind of processing you like in these rules.  The only thing that isn't safe is to do something that will wait for more player input before continuing your rule.  (Actually that's not quite true, if the story is waiting for line input when the link is clicked then you can safely prompt for character input inside a link rule.  But it's not a good idea, and getting things wrong can lead to wedging the VM, so it's best avoided.)  Instead of doing that, simply end your rule and have another link (or other action) pick it up later, rather than directly waiting for input.
+It's safe to "say" things or do any other kind of processing you like in these rules.  The only thing that isn't safe is to do something that will wait for more player input before continuing your rule.  (Actually that's not quite true, if the story is waiting for line input when the link is clicked then you can safely prompt for character input inside a link rule, and vice versa.  But it's not a good idea, and getting things wrong can lead to wedging the VM, so it's best avoided.)  Instead of doing that, simply end your rule and have another link (or other action) pick it up later, rather than directly waiting for input.
 
-Section - Increasing the extension limit
+Section - Increasing the tag limit
 
-By default a maximum of 15 extension tags can be registered (this is using 4 bits for the extension tag).  This limit can be increased (typically by the final author, depending on how many different hyperlink extensions they want to include) by including a line such as the following:
+By default a maximum of 15 tags can be registered (this is using 4 bits for the tag).  This limit can be increased (typically by the final author, depending on how many different hyperlink extensions they want to include) by including a line such as the following:
 	
 	Use hyperlink registry bitsize of at least 6.
 	
-If multiple such lines appear, the one with the highest value will win.  Each extra bit will double the number of possible extensions that can be registered.
+If multiple such lines appear, the one with the highest value will win.  Each extra bit will double the number of possible tags that can be registered.
 
 Example: * - test
 
@@ -138,36 +138,36 @@ Example: * - test
 	Choice extension tag is a number that varies.
 	Weird link tag is a number that varies.
 
-	A hyperlink extension processing rule for choice extension tag:
-		let N be hyperlink payload as number;
+	A hyperlink tag processing rule for choice extension tag:
+		let N be current hyperlink data as a number;
 		say "You clicked hyperlink [N].[paragraph break]";
 		if N is 13, rule succeeds with result "z".
 		
-	A hyperlink extension processing rule for weird link tag:
-		let N be hyperlink payload as number;
-		let T be hyperlink payload as a thing;
+	A hyperlink tag processing rule for weird link tag:
+		let N be current hyperlink data as a number;
+		let T be current hyperlink data as a thing;
 		say "You clicked [N], or [the T].[paragraph break]";
 		
 	To show choice (C - number) as (T - text):
-		let id be hyperlink id for extension choice extension tag and payload C;
+		let id be hyperlink id for tag choice extension tag and data C;
 		say "[set link id][T][clear link]".
 		
 	To show weird (C - thing) as (T - text):
-		let id be hyperlink id for extension weird link tag and payload C;
+		let id be hyperlink id for tag weird link tag and data C;
 		say "[set link id][T][clear link] (id=[id], payload=[cast C as number])".
 
 	To decide what K is cast (V - value) as (K - name of kind of value of kind K): (- {V} -).
 
 	After starting the virtual machine:
-		now choice extension tag is a new hyperlink tag id;
-		now weird link tag is a new hyperlink tag id.
+		now choice extension tag is a new hyperlink tag;
+		now weird link tag is a new hyperlink tag.
 		
 	When play begins:
-		say "[set link 1]link 1[clear link]   [set link 34]link 34[clear link]   [set link 39]link 39[clear link]    [set link 66]link 66[clear link]   [set link 269026327]link 269026327[clear link][paragraph break]";
-		say "[set link hyperlink id for extension choice extension tag and payload 13]my link 13[clear link]   ";
+		[say "[set link 1]link 1[clear link]   [set link 34]link 34[clear link]   [set link 39]link 39[clear link]    [set link 66]link 66[clear link]   [set link 269026327]link 269026327[clear link][paragraph break]";]
+		say "[set link hyperlink id for tag choice extension tag and data 13]my link 13[clear link]   ";
 		show choice 16 as "foo";
 		say "  ";
-		show weird apple as "hello";
+		show weird apple as "apple";
 		say paragraph break;
 		let AN be cast apple as number;
 		let AT be cast AN as thing;
