@@ -64,6 +64,7 @@ Example: * Description of Diminishing Returns
 
 	*: "Description of Diminishing Returns"
 
+	Include Rideable Vehicles by Graham Nelson.
 	Include Contextual Descriptions by Jeff Nyman.
 	Include Description Decay by Jeff Nyman.
 
