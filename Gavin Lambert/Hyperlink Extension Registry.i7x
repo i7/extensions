@@ -60,8 +60,7 @@ Section - Core Registry
 
 To decide what number is a new hyperlink tag:
 	increment gher_last_tag;
-	if gher_last_tag is greater than the maximum possible hyperlink tags:
-		say "[bold type]ERROR[roman type]: too many hyperlink tags have been registered; include fewer extensions or increase the limit.[paragraph break]";
+	if the main window's ref is not zero, follow the hyperlink extension registry range check rule;
 	decide on gher_last_tag.
 
 Section - Processing
@@ -86,6 +85,10 @@ Section - Sanity Check
 When play begins (this is the hyperlink extension registry sanity check rule):
 	if the maximum possible hyperlink data is less than maximum possible internal object id:
 		say "[bold type]WARNING[roman type]: the hyperlink registry bitsize is too large and cannot transport object ids.[paragraph break]".
+
+When play begins (this is the hyperlink extension registry range check rule):
+	if gher_last_tag is greater than the maximum possible hyperlink tags:
+		say "[bold type]ERROR[roman type]: too many hyperlink tags have been registered; include fewer extensions or increase the limit.[paragraph break]";
 
 Section - Internals - unindexed
 
