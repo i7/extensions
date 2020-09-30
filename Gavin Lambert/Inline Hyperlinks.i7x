@@ -1,8 +1,8 @@
-Version 1/200824 of Inline Hyperlinks (for Glulx only) by Gavin Lambert begins here.
+Version 2/200930 of Inline Hyperlinks (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a simple HTML-inspired syntax for adding hyperlinks within any say phrases."
 
-Include Hyperlinks by Gavin Lambert.
+Include Hyperlink Extension Registry by Gavin Lambert.
 Include Text Capture by Eric Eve.
 
 Section - Link Management
@@ -17,33 +17,16 @@ To decide which number is the hyperlink index of (command - text), adding if nee
 		increment count;
 	unless adding if needed, decide on 0;
 	add command to the hyperlink list;
+	if count is greater than the maximum possible hyperlink data, say "[bold type](ERROR: too many hyperlinks)[roman type]";
 	decide on count.
 
-To decide which text is the hyperlink command (N - number):
+To decide which text is the hyperlink command at (N - number):
 	if N is less than 1, decide on "";
 	if N is greater than the number of entries in the hyperlink list, decide on "";
 	decide on entry N of the hyperlink list.
 
-Section - Link Reservation
-
-[Sadly, use options aren't allowed to default to 0, as that makes Inform think they don't have values.]
-Use first inline hyperlink id of at least 1 translates as (- Constant GIH_RESERVED_IDS = {N}-1; -).
-
-[And this is annoying, but the values of use options don't appear to be visible to I7 code by default.]
-To decide which number is the number of reserved hyperlink ids: (- GIH_RESERVED_IDS -).
-
-After starting the virtual machine (this is the reserve hyperlink ids rule):
-	reserve the number of reserved hyperlink ids slots in the hyperlink list.
-
 To clear the hyperlink list:
-	now the hyperlink list is {};
-	follow the reserve hyperlink ids rule.
-
-To reserve (N - a number) slots in/of/at the/-- beginning/-- of/-- the/-- hyperlink command/-- list:
-	if the number of entries of the hyperlink list is greater than 0:
-		say "***Error: Attempted to manually add entries to the hyperlink list when there are already entries present. The list must be empty in order to reserve slots. The best time to reserve entries is in the 'after starting the virtual machine' activity, or immediately after using 'clear the hyperlink list'.";
-		rule fails;
-	change the hyperlink list to have N entries.
+	now the hyperlink list is {}.
 
 Section - Link Declaration
 
@@ -65,21 +48,30 @@ To say end link -- ending say_link -- running on:
 	if the hyperlinked text is empty, now the hyperlinked text is the substituted form of "[captured text]";
 	now the hyperlinked command is the substituted form of "[captured text]";
 	let index be the hyperlink index of the hyperlinked command, adding if needed;
+	let id be the hyperlink id for tag gih_tag with data index;
 	if index is 0, say hyperlinked text;
-	otherwise say "[set link index][hyperlinked text][clear link]".
+	otherwise say "[set link id][hyperlinked text][clear link]".
 
 Section - Link Processing
 
 The hyperlink command processing rules are a text based rulebook producing text.
 
-Last hyperlink id processing rule for number (called id) (this is the default hyperlink id processing rule):
-	let command be the hyperlink command id;
+Last hyperlink command processing rule for text (called command) (this is the default hyperlink command processing rule):
+	rule succeeds with result command.
+
+Section - Framework Registration - unindexed
+
+gih_tag is a number that varies.
+
+After starting the virtual machine (this is the inline hyperlinks registration rule):
+	now gih_tag is a new hyperlink tag.
+
+Hyperlink tag processing rule for gih_tag (this is the inline hyperlinks processing rule):
+	let index be the current hyperlink data as a number;
+	let command be the hyperlink command at index;
 	if command is not empty:
 		let command be the text produced by the hyperlink command processing rules for command;
 		if command is not empty, rule succeeds with result command.
-
-Last hyperlink command processing rule for text (called command) (this is the default hyperlink command processing rule):
-	rule succeeds with result command.
 
 Section - Debugging (not for release)
 
@@ -113,7 +105,9 @@ Inline Hyperlinks allows us to specify text hyperlinks that provide a replacemen
 
 This version of Inline Hyperlinks was completely rewritten, but borrows heavily from both Inline Hyperlinks by Daniel Stelzer (with modifications by Eric Temple) and Hyperlinks by Dannii Willis.  It was written for Inform 7 6M62.
 
-Inline Hyperlinks requires Text Capture by Eric Eve and Hyperlinks by Gavin Lambert.
+Version 2 was updated to remove the old id reservation system in favour of using the Hyperlink Extension Registry instead.
+
+Inline Hyperlinks requires Text Capture by Eric Eve, and Hyperlinks and Hyperlink Extension Registry by Gavin Lambert.
 
 Section: Basic Usage
 
@@ -169,19 +163,15 @@ If you want to write a more generic rule that can perform more complex tests on 
 
 See the example "Magic Words" for a demonstration of this. Note that the hyperlink command need not be anything actually parsable as a player command if you always "stop the action" or substitute an alternative command instead.
 
-Another rulebook ("hyperlink id processing rules") allows you to hook into the raw hyperlink id. Using this is a bit more perilous, but may sometimes be useful. See the example "Systematic Derangement of the Inner Compass" below for an example of this.
-
 Section: Internals
 
-Internally, Glk refers to each link only by a numeric identifier. Inline Hyperlinks keys that identifier to a list of texts (the "hyperlink list"); for example, if the ID for a given link is 10, Inline Hyperlinks will look up the 10th entry in the list for the linked command. Commands are not repeated, so if we repeatedly print a link with the replacement command "go north" then the same number will be assigned to the link each time. This helps keep the hyperlink list as short as it can be. 
+Internally, Glk refers to each link only by a numeric identifier. Inline Hyperlinks keys that identifier to a list of texts (the "hyperlink list"); for example, if the ID for a given link is 10, Inline Hyperlinks will look up the 10th entry in the list for the linked command. Commands are not repeated, so if we repeatedly print a link with the replacement command "go north" then the same number will be assigned to the link each time. This helps keep the hyperlink list as short as it can be.
 
-This also means that by default Inline Hyperlinks assumes that all hyperlink ids (starting from 1) are available for its use.  If you are making use of another extension that sets some manual hyperlink ids, or you want to do so yourself, then you should reserve a sufficient number of ids.  The simplest way to do this is to declare:
-	
-	Use first inline hyperlink id of at least 20.
-	
-This will reserve ids 1-19 for your own use and inline hyperlinks will start at id 20.  Multiple extensions can specify different values and the highest will "win", but of course each extension would need to have some other means to avoid stepping on each others' link ids.  It's usually preferred to avoid using link ids directly and stick with link commands instead.
+In actual fact, thanks to the Hyperlink Extension Registry, this extension doesn't really start at link id 1, but rather uses some high bits as a "tag" to indicate that it's a link from this extension, with the remaining bits encoding the link id 1 (or whatever it is).  These tag values are automatically chosen based on the extensions that have been included, so as long as all hyperlink extensions are using the same registry then there can't be any collisions or mixing-up of the links.
 
-Performance will gradually decrease (though usually quite slowly) as unique commands are added to the list.  If you are concerned about the size of the hyperlink list, you may want to clean it out periodically. Inline Hyperlinks doesn't do this automatically, since different games may have different needs. But keep in mind that (because most interpreters offer scrollback functionality) the entire game text is theoretically accessible to the player at any time: if you make changes to the hyperlink list, a player who scrolls back to click on a link may find that the link does not work as expected. The safest way to flush the list is probably to clear the screen periodically, resetting the scrollback buffer on most interpreters. At the same time that the screen is cleared, empty the hyperlink list, e.g:
+This also means that you're free to use manually numbered links as well if you wish, since Hyperlink Extension Registry keeps the "low numbers" (those with high bits all zero) free for the author's use.  You can see an example of this in the "Systematic Derangement of the Inner Compass" example below.
+
+Performance will gradually decrease (though usually quite slowly) as unique commands are added to the list.  If you are concerned about the size of the hyperlink list, you may want to clean it out periodically. Inline Hyperlinks doesn't do this automatically, since different stories may have different needs. But keep in mind that (because most interpreters offer scrollback functionality) the entire story text is theoretically accessible to the player at any time: if you make changes to the hyperlink list, a player who scrolls back to click on a link may find that the link does not work as expected.  (While most links will probably be context-sensitive anyway and not be *useful* outside of the room where they were first printed, that is at least unsurprising behaviour, whereas if clicking a link produced a completely different command then it would be another matter.) The safest way to flush the list is probably to clear the screen periodically, resetting the scrollback buffer on most interpreters. At the same time that the screen is cleared, empty the hyperlink list, e.g:
 
 	To clear the screen and hyperlink list:
 		clear the screen;
@@ -427,7 +417,7 @@ In this example, we know that the only links available while the player is deran
 
 Example: **** Systematic Derangement of the Inner Compass
 
-This example further changes the "Derangement of the Inner Compass" example by using another method of custom link actions; we set aside a few hyperlink ID numbers for manual use, and write a new hyperlink processing rule that will respond when hyperlinks with these IDs are activated. Other hyperlinks will react normally.
+This example further changes the "Derangement of the Inner Compass" example by using another method of custom link actions; we use some manually numbered link ids, and write a new hyperlink processing rule that will respond when hyperlinks with these IDs are activated. Other hyperlinks will react normally.
 
 Most of the mechanics of derangement are the same, but instead of picking a direction entirely at random, the hyperlinks behave a bit more systematic, and will instead pick a single direction at the time they are printed and will stick with that if clicked again. (This does mean that at times none of the printed links will ever successfully lead anywhere.) This could have been done simply by setting the link command accordingly, but we needed something to demonstrate reserved ids.
 
@@ -437,8 +427,6 @@ Also, rather than changing the going action directly, we instead use a different
 
 	Include Basic Screen Effects by Emily Short.
 	Include Inline Hyperlinks by Gavin Lambert.
-
-	Use first inline hyperlink id of at least 13.
 
 	The derangement is initially zero.  Definition: yourself is deranged if the derangement is greater than zero.
 
@@ -469,9 +457,9 @@ Also, rather than changing the going action directly, we instead use a different
 			increment count;
 		if count is greater than zero, say ". ".
 			
-	Hyperlink id processing rule for a number (called id) when id is less than 13:
-		if the player is not deranged, rule succeeds with result " ";
+	Hyperlink id processing rule for a number (called id):
 		if there is an ID of id in the Table of Ways:
+			if the player is not deranged, rule succeeds with result " ";
 			choose row with ID of id in the Table of Ways;
 			show the glk input event replacement "go ???";
 			replace the current glk input event with text input "go [direction entry]", silently;

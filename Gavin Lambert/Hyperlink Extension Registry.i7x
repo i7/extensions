@@ -11,8 +11,10 @@ Section - Bit Space
 Use hyperlink registry bitsize of at least 4 translates as (- Constant GHER_TAG_BITS = {N}; Constant GHER_DATA_BITS = 32 - {N}; -).
 
 To decide which number is the maximum possible hyperlink tags: (- MaxHyperlinkRegistrySize() -).
+To decide which number is the maximum possible hyperlink data: (- MaxHyperlinkRegistryData() -).
+To decide which number is the maximum possible internal object id: (- MaxObjectId() -).
 
-To decide which number is the hyperlink id for tag (tag - number) and data (data - value): (- HyperlinkRegistry_Encode({tag}, {data}) -).
+To decide which number is the hyperlink id for tag (tag - number) and/with data (data - value): (- HyperlinkRegistry_Encode({tag}, {data}) -).
 To decide which number is the hyperlink id tag part for (id - number): (- HyperlinkRegistry_TagId({id}) -).
 To decide which number is the hyperlink id data part for (id - number): (- HyperlinkRegistry_DataId({id}) -).
 
@@ -23,10 +25,19 @@ Include (-
 	return n - 1;
 ];
 
+[ MaxHyperlinkRegistryData  n;
+	@shiftl 1 GHER_DATA_BITS n;
+	return n - 1;
+];
+
+[ MaxObjectId  n;
+	@aload HDR_ENDMEM 0 n;
+	return n;
+];
+
 [ HyperlinkRegistry_Encode tag id  n;
 	@shiftl tag GHER_DATA_BITS tag;
-	@shiftl 1 GHER_DATA_BITS n;
-	--n;
+	n = MaxHyperlinkRegistryData();
 	@bitand id n id;
 	@bitor tag id id;
 	return id;
@@ -38,8 +49,7 @@ Include (-
 ];
 
 [ HyperlinkRegistry_DataId id  n;
-	@shiftl 1 GHER_DATA_BITS n;
-	--n;
+	n = MaxHyperlinkRegistryData();
 	@bitand id n id;
 	return id;
 ];
@@ -68,6 +78,14 @@ Last hyperlink id processing rule for number (called id) (this is the hyperlink 
 	let command be the text produced by the hyperlink tag processing rules for tag;
 	now gher_cur_data is 0;
 	if command is not empty, rule succeeds with result command.
+
+Section - Sanity Check
+
+[This is not perfect, as it doesn't account for dynamically allocated memory -- so you may have trouble sooner than this.
+ However in most stories most objects are statically allocated, and this will be sufficient for them.]
+When play begins (this is the hyperlink extension registry sanity check rule):
+	if the maximum possible hyperlink data is less than maximum possible internal object id:
+		say "[bold type]WARNING[roman type]: the hyperlink registry bitsize is too large and cannot transport object ids.[paragraph break]".
 
 Section - Internals - unindexed
 
@@ -102,6 +120,8 @@ To actually generate the hyperlinks, create some kind of new phrase for your aut
 	
 Where P is a value that you want to carry along in the hyperlink.  It can theoretically be of any kind (but not text), although a number is the safest option.  If you want to be able to transport multiple different kinds of value, the best idea is to register multiple separate hyperlink tags.
 
+(If you prefer, you can also use "hyperlink id for tag T with data P".)
+
 Section - Processing links
 
 To process what happens when a link is clicked, simply add a rule like so:
@@ -129,11 +149,46 @@ By default a maximum of 15 tags can be registered (this is using 4 bits for the 
 	
 If multiple such lines appear, the one with the highest value will win.  Each extra bit will double the number of possible tags that can be registered.
 
+Section - Querying the limits
+
+If you're curious which limits are currently in effect -- or you want to sanity check that someone hasn't made the data space too small for your needs -- you can ask how much room there is in each part of the link ids:
+	
+"the maximum possible hyperlink tags" tells you how many unique tags can be created (in total).  This is approximately how many different hyperlink extensions can be used at once, although some extensions may register more than one tag for various purposes.
+
+"the maximum possible hyperlink data" tells you the maximum possible number that can be carried as the data value within a hyperlink id.  If this is smaller than some value that you want to transport, then it will get cut off and a different value will come out the other end when you access "the current hyperlink data".
+
+Each increase of 1 in the hyperlink registry bitsize will double the former and halve the latter.
+
+Section - Manual Hyperlinks
+
+This extension deliberately never assigns tag 0 to anything, which means that all of the low-numbered link ids (ranging from 1 to "the maximum possible hyperlink data") are left free.  Other extensions should avoid using these (register a tag instead) so that these remain free for the final author to use however they wish.
+
+The process of using these links is documented in the base "Hyperlinks by Gavin Lambert" extension, but the short version is that you create links the same way as above (either explicitly using 0 for the tag, or just using your number data directly as the id, e.g:
+	
+	say "[set link 15]This is hyperlink 15[clear link]";
+	
+To process these hyperlinks, you can either use this rule:
+	
+	Hyperlink tag processing rule for 0:
+		let id be current hyperlink data as a number;
+		do something interesting with id;
+		
+Or you can instead use a rule like this:
+	
+	Hyperlink id processing rule for 15:
+		say "You clicked hyperlink 15![paragraph break]".
+		
+Use caution if you write a generic hyperlink id processing rule, however, as the links with wacky ids from this registry will also pass through that rulebook, and you should avoid interfering with them.
+
 Example: * - test
+
+This is an internal test solely for the purpose of sanity checking in development; have a look at the Inline Hyperlinks extension for an actually meaningful example.
 
 	*: "test"
 	
 	Include Hyperlink Extension Registry by Gavin Lambert.
+	
+	[Use hyperlink registry bitsize of at least 5.]
 
 	Choice extension tag is a number that varies.
 	Weird link tag is a number that varies.
@@ -163,6 +218,7 @@ Example: * - test
 		now weird link tag is a new hyperlink tag.
 		
 	When play begins:
+		say "There are [maximum possible hyperlink tags] possible tags and [maximum possible hyperlink data] possible data values.[paragraph break]";
 		[say "[set link 1]link 1[clear link]   [set link 34]link 34[clear link]   [set link 39]link 39[clear link]    [set link 66]link 66[clear link]   [set link 269026327]link 269026327[clear link][paragraph break]";]
 		say "[set link hyperlink id for tag choice extension tag and data 13]my link 13[clear link]   ";
 		show choice 16 as "foo";
