@@ -26,7 +26,11 @@ Section - Handle Looking
 
 This is the modified room description body text rule:
 	if the location is unvisited:
-		say "[the description of the location][paragraph break]";
+		if the description of the location is "":
+			follow the room description paragraphs about objects rule;
+			continue the action;
+		otherwise:
+			say "[the description of the location][paragraph break]";
 	otherwise:
 		if the visited-count of the location is less than 3:
 			if the summary description of the location is "":
