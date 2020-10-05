@@ -23,12 +23,13 @@ How to download *all* the extensions
 ------------------------------------
 1. Locate your current Extensions folder -- from within I7, select File -> Show Installed Extensions Folder -- then close I7.
 2. Go up to the parent directory and rename the `Extensions` folder to `Extensions Old` (for now).
-3. Open a shell / command prompt at this location (the parent folder where the Extensions folder used to be) and run this (or use your favourite Git GUI interface to do the equivalent):
+3. Download [this zip file](https://github.com/i7/extensions/archive/master.zip) and extract it into that location.
+4. Rename the `extensions-master` folder that it just created to just `Extensions` (such that this now contains subfolders with peoples' names).
+5. Start up I7 again, and go to the Extensions -> Public Library tab.
+6. Click the yellow DOWNLOAD EXTENSIONS button at the bottom.  (Don't click the blue or purple buttons, they will both downgrade things.)
+7. Close and restart I7 (otherwise it gets very confused about which extensions are installed).
+8. You now have a merge of both the Public Library and all of the extensions in this repository.
+9. If there's any extensions from your `Extensions Old` folder that you need to "rescue" (perhaps some you've written yourself, or installed from elsewhere), you can use File -> Install Extension to copy them from that folder into the new Extensions folder (or close down I7 and move them manually).
+10. To update in the future, you can either update the extensions one-by-one as above or you can download a fresh zip and install the whole thing over the top.
 
-       git clone https://github.com/i7/extensions.git Extensions
-
-4. Start up I7 again, and go to the Extensions -> Public Library tab.
-5. Click the yellow DOWNLOAD EXTENSIONS button at the bottom.  (Don't click the blue or purple buttons, they will both downgrade things.)
-6. Close and restart I7 (otherwise it gets very confused about which extensions are installed).
-7. You now have a merge of both the Public Library and all of the extensions in this repository.
-8. If there's any extensions from your `Extensions Old` folder that you need to "rescue" (perhaps some you've written yourself, or installed from elsewhere), you can use File -> Install Extension to copy them from that folder into the new Extensions folder (or close down I7 and move them manually).
+(Alternatively, if you're familiar with Git then you can use a Git clone in place of downloading the zip, if you prefer.)
