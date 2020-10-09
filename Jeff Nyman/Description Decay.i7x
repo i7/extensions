@@ -47,25 +47,6 @@ This is the modified room description body text rule:
 			if the current action is looking:
 				say "[the summary description of the location][paragraph break]".
 
-[
-This is the modified room description body text rule:
-	if the location is unvisited:
-		if the description of the location is "":
-			follow the room description paragraphs about objects rule;
-			continue the action;
-		otherwise:
-			say "[the description of the location][paragraph break]";
-	otherwise:
-		if the visited-count of the location is less than 3:
-			if the summary description of the location is "":
-				follow the room description paragraphs about objects rule;
-				continue the action;
-			say "[the summary description of the location][paragraph break]";
-			follow the room description paragraphs about objects rule instead;
-		if the current action is looking:
-			say "[the summary description of the location][paragraph break]".
-]
-
 The modified room description body text rule substitutes for the room description body text rule.
 
 Section - Handle Descriptions as Part of Going
