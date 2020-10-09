@@ -25,6 +25,30 @@ A room has some text called the summary description.
 Section - Handle Looking
 
 This is the modified room description body text rule:
+	if in darkness:
+		begin the printing the description of a dark room activity;
+		if handling the printing the description of a dark room activity:
+			say "It is entirely too dark to see anything.";
+		end the printing the description of a dark room activity;
+	otherwise:
+		if the location is unvisited:
+			if the description of the location is "":
+				follow the room description paragraphs about objects rule;
+				continue the action;
+			otherwise:
+				say "[the description of the location][paragraph break]";
+		otherwise:
+			if the visited-count of the location is less than 3:
+				if the summary description of the location is "":
+					follow the room description paragraphs about objects rule;
+					continue the action;
+				say "[the summary description of the location][paragraph break]";
+				follow the room description paragraphs about objects rule instead;
+			if the current action is looking:
+				say "[the summary description of the location][paragraph break]".
+
+[
+This is the modified room description body text rule:
 	if the location is unvisited:
 		if the description of the location is "":
 			follow the room description paragraphs about objects rule;
@@ -40,6 +64,7 @@ This is the modified room description body text rule:
 			follow the room description paragraphs about objects rule instead;
 		if the current action is looking:
 			say "[the summary description of the location][paragraph break]".
+]
 
 The modified room description body text rule substitutes for the room description body text rule.
 
@@ -102,7 +127,7 @@ Example: * Description of Diminishing Returns
 
 	The initial appearance of the soccer ball is "You can see a soccer ball half-hidden among the blossoms."
 
-	Lancaster Walk is a room. "An impressive of a horse and rider dominates this bustling intersection. The Walk continues north and south; lesser paths curve off in many directions.[paragraph break]A broad field of grass, meticulously manicured, extends to the east. Beyond it you can see the Long Water glittering between the trees."
+	Lancaster Walk is a room. "An impressive sculpture of a horse and rider dominates this bustling intersection. The Walk continues north and south; lesser paths curve off in many directions.[paragraph break]A broad field of grass, meticulously manicured, extends to the east. Beyond it you can see the Long Water glittering between the trees."
 
 	The summary description of Lancaster Walk is "[if the sculpture is proper-named]The[else]An[end if] impressive [sculpture] [if the sculpture is not proper-named]of a horse and rider [end if]is a focal point of the busy walk."
 
