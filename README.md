@@ -10,6 +10,10 @@ http://www.emshort.com/pl/payloads/
 
 If you find a bug in any of these extensions, or indeed in any Inform 7 extension at all, please make a new issue and we may be able to help. The purpose of the group is that we can all work together to maintain and develop these extensions. Sharing the load will make it easier on us all, while experienced programmers can help those just starting out.
 
+Public Library
+-------------
+This repository now includes all of the extensions in the Public Library as of 2020-10-10, so you don't need to download them separately.  Sadly they're not organised by theme any more, so you'll have to use other means to find the particular extensions that you want to use.
+
 How to download a few extensions
 --------------------------------
 1. Locate the extension that you want to use via the GitHub website.
@@ -25,11 +29,8 @@ How to download *all* the extensions
 2. Go up to the parent directory and rename the `Extensions` folder to `Extensions Old` (for now).
 3. Download [this zip file](https://github.com/i7/extensions/archive/master.zip) and extract it into that location.
 4. Rename the `extensions-master` folder that it just created to just `Extensions` (such that this now contains subfolders with peoples' names).
-5. Start up I7 again, and go to the Extensions -> Public Library tab.
-6. Click the yellow DOWNLOAD EXTENSIONS button at the bottom.  (Don't click the blue or purple buttons, they will both downgrade things.)
-7. Close and restart I7 (otherwise it gets very confused about which extensions are installed).
-8. You now have a merge of both the Public Library and all of the extensions in this repository.
-9. If there's any extensions from your `Extensions Old` folder that you need to "rescue" (perhaps some you've written yourself, or installed from elsewhere), you can use File -> Install Extension to copy them from that folder into the new Extensions folder (or close down I7 and move them manually).
-10. To update in the future, you can either update the extensions one-by-one as above or you can download a fresh zip and install the whole thing over the top.
+5. You now have all of the extensions in this repository, which includes those from the Public Library.  (Don't touch the blue or purple buttons in the Public Library tab, or you'll downgrade something.)
+6. If there's any extensions from your `Extensions Old` folder that you need to "rescue" (perhaps some you've written yourself, or installed from elsewhere), you can use File -> Install Extension to copy them from that folder into the new Extensions folder (or close down I7 and move them manually).
+7. To update in the future, you can either update the extensions one-by-one as above or you can download a fresh zip and install the whole thing over the top.
 
 (Alternatively, if you're familiar with Git then you can use a Git clone in place of downloading the zip, if you prefer.)
