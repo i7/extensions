@@ -251,7 +251,7 @@ Example: * Hello log - A minimal example. Just include and "debug", "warn" etc.
 
 Example: ** Controlled Logging - an example with some more features.
 
-	*: "Controlled Logging"
+	*: "Don't forget the fridge!"
 
 	Include Flexible Logger by Peter Orme.
 
@@ -259,12 +259,17 @@ Example: ** Controlled Logging - an example with some more features.
 
 	The Fridge is a fixed in place openable closed container in the Kitchen.
 
-	The fridge logger is a logger.
+	The temperature logger is a logger.
 
 	The Living Room is room. It is south from the Kitchen.
 
 	After going to the Living Room when the fridge is open:
-		debug to the fridge logger saying "Leaving the Kitchen with the door open.";
+		debug to the temperature logger saying "Leaving the kitchen with the door open.";
 	
 	Test me with "open fridge / go south"
-]
+
+When we test this, we should see the debug log about leaving the fridge door open. Let's pretend we have a big project with lots of logging going on, and we have been following this pattern of using different loggers for different things. In this case, it's not specific to the fridge, but there's some sort of temperature puzzle going on, and we have all the log messages related to that going to the "temperature logger". Ok, let's say we're not done with that, but there's something else wrong with the cat control puzzle. OK, easy: we just mute the low-severity logging about the temperature:
+	
+	The level of the temperature logger is error level.
+
+
