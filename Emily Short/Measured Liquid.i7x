@@ -1,4 +1,4 @@
-Version 6 of Measured Liquid by Emily Short begins here.
+Version 6/201125 of Measured Liquid by Emily Short begins here.
 
 "Measured Liquid provides a concept of volume, together with the ability to fill containers, pour measured amounts of liquid, and drink from containers. It handles mixtures as well, if desired. It is compatible with, but does not require, the Metric Units extension by Graham Nelson."
 
@@ -681,7 +681,7 @@ Last setting action variables for pouring something into something when the mixe
 		make no decision;
 	if the liquid poured is not the liquid of the second noun: 
 		if amount poured is greater than null volume and the second noun is non-empty:
-			let L be the value produced by the liquid-mixing rules for the amount poured;
+			let L be the liquid produced by the liquid-mixing rules for the amount poured;
 			now the resulting liquid is L.
 
 Section 3 - Liquid-mixing Rulebook
