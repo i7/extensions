@@ -1,4 +1,4 @@
-Version 6 of Measured Liquid by Emily Short begins here.
+Version 6/201125 of Measured Liquid by Emily Short begins here.
 
 "Measured Liquid provides a concept of volume, together with the ability to fill containers, pour measured amounts of liquid, and drink from containers. It handles mixtures as well, if desired. It is compatible with, but does not require, the Metric Units extension by Graham Nelson."
 
