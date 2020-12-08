@@ -1,6 +1,8 @@
-Version 1/160509 of Spelling for Screenreaders by Alice Grove begins here.
+Version 1/201208 of Spelling for Screenreaders by Alice Grove begins here.
 
-"Gives players the option to have unusual words spelled letter-by-letter so they'll be more screenreader-friendly."
+"This extension is unfinished. It is not recommended for general use."
+
+["Gives players the option to have unusual words spelled letter-by-letter so they'll be more screenreader-friendly."]
 
 
 Section - Spelling Mode
@@ -117,7 +119,9 @@ Spelling for Screenreaders ends here.
 
 ---- DOCUMENTATION ---- 
 
-This extension is intended for stories with many unusually-spelled things. Stories with only a few unusually-spelled things may want to handle them with footnotes that allow the player to request the spelling of particular words (see this thread: http://www.intfiction.org/forum/viewtopic.php?f=6&t=19617&start=30#p109201).
+This extension was an experiment. I do not plan to finish it.
+
+[This extension is intended for stories with many unusually-spelled things. Stories with only a few unusually-spelled things may want to handle them with footnotes that allow the player to request the spelling of particular words (see this thread: http://www.intfiction.org/forum/viewtopic.php?f=6&t=19617&start=30#p109201).
 
 To make a thing spellable, we declare it to be "spellable." If we want things to be spelled out when they appear in descriptions, we'll need to put them in square brackets so that Inform knows when it is printing the name of a particular thing.
 
@@ -139,4 +143,4 @@ Example: * Spelling Lab - A tiny game featuring some spellable items. Please typ
 
 	Test me with "stop spelling gurphlub / look / spell all / look / spelling / look".
 
-
+]
