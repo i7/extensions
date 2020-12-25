@@ -1,58 +1,62 @@
-Version 2/140430 of Vorple Notifications (for Z-Machine only) by Juhana Leinonen begins here.
+Version 3/181103 of Vorple Notifications (for Glulx only) by Juhana Leinonen begins here.
 
-"Notifications and dialogs."
+"Notifications that display a short message on the screen and disappear after a few seconds."
 
-Include Vorple by Juhana Leinonen.
+Include version 3 of Vorple by Juhana Leinonen.
+
 Use authorial modesty.
 
-Chapter 1 - Locations
 
-An element position has some text called noty name. 
+Chapter 1 - Displaying notifications
 
-The noty name of top banner is "top".
-The noty name of bottom banner is "bottom".
-The noty name of top left is "topLeft".
-The noty name of top center is "topCenter".
-The noty name of top right is "topRight".
-The noty name of center left is "centerLeft".
-The noty name of screen center is "center".
-The noty name of center right is "centerRight".
-The noty name of bottom left is "bottomLeft".
-The noty name of bottom center is "bottomCenter".
-The noty name of bottom right is "bottomRight".
+Notification type is a kind of value. Notification types are info notification, success notification, warning notification and error notification.
+
+Default notification duration is a number that varies. Default notification duration is usually 7.
+
+To display a/an/-- (type - notification type) with the/a/-- title (header - text) reading (msg - text) for (sec - real number) second/seconds:
+	let method be text;
+	if type is:
+		-- info notification:
+			now method is "info";
+		-- success notification:
+			now method is "success";
+		-- warning notification:
+			now method is "warning";
+		-- error notification:
+			now method is "error";
+	execute JavaScript command "toastr.[method]('[escaped msg]',[if header is not empty]'[escaped header]',[end if]{timeOut: [sec]*1000, escapeHtml: true})";
+	add "[if header is not empty][header] - [end if][msg]" to the displayed notifications.
+
+To display a/an/-- (type - notification type) with the/a/-- title (header - text) reading (msg - text):
+	display a type with title header reading msg for default notification duration seconds.
+
+To display a/an/-- (type - notification type) reading (msg - text) for (sec - real number) second/seconds:
+	display a type with title "" reading msg for sec seconds.
+
+To display a/an/-- (type - notification type) reading (msg - text):
+	display a type with title "" reading msg for default notification duration seconds.
+
+To display a/-- notification with the/a/-- title (header - text) reading (msg - text) for (sec - real number) second/seconds:
+	display an info notification with title header reading msg for sec seconds.
+
+To display a/-- notification with the/a/-- title (header - text) reading (msg - text):
+	display an info notification with title header reading msg for default notification duration seconds.
+
+To display a/-- notification reading (msg - text) for (sec - real number) second/seconds:
+	display an info notification with title "" reading msg for sec seconds.
+
+To display a/-- notification reading (msg - text):
+	display an info notification with title "" reading msg for default notification duration seconds.
 
 
-Chapter 2 - Vorple wrappers
-
-To show notification (msg - text):
-	execute JavaScript command "vorple.notify.show('[escaped msg]')";
-	add msg to the displayed notifications.
-
-To hide all/-- notifications:
-	execute JavaScript command "vorple.notify.closeAll()".
-
-To show notification (msg - text) at/in (pos - element position):
-	execute JavaScript command "vorple.notify.show('[escaped msg]',{layout:'[noty name of pos]'})";
-	add msg to the displayed notifications.
-
-To show alert (msg - text):
-	execute JavaScript command "vorple.notify.alert('[escaped msg]')";
-	add msg to the displayed notifications.
-
-To set the/-- default notification position to (pos - element position):
-	execute JavaScript command "vorple.notify.defaults.layout='[noty name of pos]'".
-
-
-Chapter 3 - Fallback
+Chapter 2 - Fallback
 
 Displayed notifications is a list of text that varies.
 
 Before reading a command (this is the print notifications fallback rule):
 	if Vorple is not supported:
 		repeat with note running through displayed notifications:
-			say "[italic type][bracket]" (A);
-			say note;
-			say "[close bracket][roman type][paragraph break]" (B).
+			say "[italic type][bracket][note][close bracket][roman type][paragraph break]" (A).
 
 Before reading a command (this is the empty displayed notifications list rule):
 	truncate displayed notifications to 0 entries.
@@ -65,49 +69,39 @@ Vorple Notifications ends here.
 
 Chapter: Notifications
 
-Notifications are messages that show briefly on the screen and then fade away. A notification can be displayed simply with:
+Notifications are messages that show briefly in the top right corner of the page and then fade away. A notification can be displayed with:
 
-	show notification "Hello World!";
+	display a notification reading "Hello World!";
+	
+Notifications can have a title that's shown in bold type above the notification text:
+	
+	display a notification with title "Welcome" reading "Have fun!";
+	
+The notification is shown for seven seconds before it disappears. The duration can be changed per notification:
 
+	display a notification reading "Time passes..." for 10 seconds;
+	
+or globally by changing the "default notification duration" number variable:
+	
+	now the default notification duration is 10;
 
-Chapter: Positioning
+There are four different notification types that have different background colors and icons: info, success, warning and error. The default notification type is info.
 
-There are 11 possibilities for positioning notifications: top banner, bottom banner, top left, top center, top right, center left, center, center right, bottom left, bottom center, and bottom right. The default position is bottom right. It can be changed individually:
-
-	show notification "Up here!" in top banner;
-
-...or globally:
-
-	*: When play begins:
-		set the default notification position to top banner.
-
-
-Chapter: Alerts
-
-An alert is a notification that comes with an "OK" button that must be clicked to dismiss the notification. It's always in the middle of the screen.
-
-	When play begins:
-		show alert "If you need assistance, type HELP at the prompt."
-
-
-Chapter: Clearing notifications
-
-Multiple notifications are shown on the screen at the same time; a new notification in the same position pushes the old notification down (or up) if it hasn't had time to clear away yet. Sometimes you might want to make sure that the old notifications are cleared before showing new ones. All notifications currently on the screen can be removed with:
-
-	hide notifications;
-
+	display a warning notification reading "Tread carefully!";
+	display a success notification with title "Achievement unlocked" reading "You found the secret passage";
+	
 
 Chapter: Fallback
 
 If Vorple isn't available, the fallback is to display the notifications at the end of turn as plain text. The feature can be overridden by checking Vorple's availability:
 
 	if Vorple is available:
-		show notification "Click on your inventory items to examine them more closely";
+		display a notification reading "Click on your inventory items to examine them more closely";
 	otherwise:
 		say "Type EXAMINE followed by an inventory item's name to examine them more closely.";
 		
 	if Vorple is available:
-		show notification "Welcome to Vorple-enhanced [story title]!";
+		display a notification reading "Welcome to Vorple-enhanced [story title]!";
 
 The default fallback can also be turned off completely:
 
@@ -128,17 +122,17 @@ Example: * How To I - Showing small tips to new players who might not be familia
 	A trolley is in the lab. It is pushable between rooms.
 
 	When play begins:
-		show notification "Type LOOK (or just L) to see the room description again".
+		display a notification reading "Type LOOK (or just L) to see the room description again".
 
 	After taking something for the first time:
-		show notification "Type INVENTORY (or just I) to see a list of what you're carrying";
+		display a notification reading "Type INVENTORY (or just I) to see a list of what you're carrying";
 		continue the action.
 
 	After examining the trolley for the first time:
-		show notification "You can push the trolley between rooms by commanding PUSH TROLLEY followed by a compass direction".
+		display a notification reading "You can push the trolley between rooms by commanding PUSH TROLLEY followed by a compass direction".
 
 	After reading a command when the player's command includes "examine":
-		show notification "Tip: You can abbreviate EXAMINE to just X".
+		display a notification reading "Tip: You can abbreviate EXAMINE to just X".
 			
 	Test me with "take test tube / examine test tube / x trolley".
 
@@ -163,7 +157,7 @@ We'll create a rule that will show the score change as a Vorple notification, or
 	This is the enhanced notify score changes rule:
 		if Vorple is supported:
 			if the last notified score is not the score:
-				show notification "[score notification message]" at top center;
+				display a notification reading "[score notification message]";
 				now the last notified score is the score;
 		otherwise:
 			follow the notify score changes rule.
