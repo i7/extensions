@@ -106,14 +106,14 @@ To decide what number is (I - an arithmetic value) logically shifted (D - a numb
 
 Chapter - Version Numbers
 
-A version number is a kind of value.
-65535.255.255 specifies a version number.
+A terp version number is a kind of value.
+65535.255.255 specifies a terp version number.
 
-To say (N - a version number):
-	let the major version number be N logically shifted 16 bits right;
-	let the minor version number be the bitwise and of N logically shifted 8 bits right and 255;
+To say (N - a terp version number):
+	let the major terp version number be N logically shifted 16 bits right;
+	let the minor terp version number be the bitwise and of N logically shifted 8 bits right and 255;
 	let the patch level be the bitwise and of N and 255;
-	say "[the major version number].[no line break][the minor version number].[no line break][the patch level]".
+	say "[the major terp version number].[no line break][the minor terp version number].[no line break][the patch level]".
 
 Chapter - Glulx Version
 
@@ -124,7 +124,7 @@ Include (-
 ];
 -).
 
-To decide what version number is current Glulx version number: (- is_glulx_version() -).
+To decide what terp version number is current Glulx version number: (- is_glulx_version() -).
 
 Chapter - Interpreter Version
 
@@ -135,7 +135,7 @@ Include (-
 ];
 -).
 
-To decide what version number is current interpreter version number: (- is_interpreter_version() -).
+To decide what terp version number is current interpreter version number: (- is_interpreter_version() -).
 
 Chapter - Glk Test (unindexed)
 
@@ -190,7 +190,7 @@ Include (-
 ];
 -).
 
-To decide what version number is the current IO version number: (- is_io_version() -).
+To decide what terp version number is the current IO version number: (- is_io_version() -).
 
 Part - Action for Getting Substrate Information
 
