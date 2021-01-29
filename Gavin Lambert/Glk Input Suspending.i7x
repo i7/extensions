@@ -1,9 +1,8 @@
-Version 1/200807 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
+Version 1/200930 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a mechanism to 'suspend' line and character inputs in progress to allow something to be printed, and then input resumed afterwards."
 
 Include Version 2/200807 of Glk Events by Dannii Willis.
-Include Version 10 of Glulx Entry Points by Emily Short.
 
 Use authorial modesty.
 
@@ -72,10 +71,11 @@ Section - Input Display
 
 [ note that this unavoidably is printed on a new line, not on the same line as the command prompt.
    the Glk spec specifies that cancelled line input must print a newline unless echo was off before the
-   line input request was first started (and at that point we didn't know we'd be getting a hyperlink).
+   line input request was first started (and at that point we didn't know we'd be getting interrupted).
    we could turn echo off always, and handle printing the command ourselves as needed, but that
    may cause issues if interpreters treat that as password entry or something and conceal typed text. ]
 To show the glk input event replacement (command - text):
+	print prompt;
 	say "[input-style-for-glulx][command][roman type][line break]".
 
 Section - Event Acknowledgement
@@ -86,10 +86,23 @@ First glulx input handling rule for a line-event (this is the acknowledge succes
 First glulx input handling rule for a char-event (this is the acknowledge successful char-event rule):
 	acknowledge pending glk char-event for window ref glk event window ref.
 
-Section - Low Level - unindexed
+Section - Compatibility code (for use without Glulx Entry Points by Emily Short)
+
+To update/redraw the/-- status line:
+	(- DrawStatusLine(); -)
+
+To print prompt:
+	(- PrintPrompt(); -)
+
+To say input-style-for-Glulx: 
+	(- glk_set_style(style_Input); -)
+
+Section - Utility
 
 To decide what number is keycode (N - number) of (T - text):
 	(- TEXT_TY_GetCharacterNumber({T}, {N}) -).
+
+Section - Low Level - unindexed
 
 To cancel pending glk line-event for window ref (W - number):
 	(- glk_cancel_line_event({W}, GLK_NULL); -).
@@ -257,7 +270,7 @@ According to the Glk spec, it is illegal for anything to be printed to a window 
 
 Unfortunately, that can at times be quite inconvenient, for example if you're trying to debug these rules by printing things, or if Inform randomly decides that it wants to output a paragraph break for reasons known only to itself.
 
-This extension monitors line and character input events, allows you to detect if they're in progress.  It also allows you to cancel an event, do something else (such as printing text), and then resume the event.
+This extension monitors line and character input events, allowing you to detect if they're in progress.  It also allows you to cancel an event, do something else (such as printing text), and then resume the event.
 
 (It does not presently intercept the Unicode-specific input events, but then currently the Inform library does not make use of these anyway.)
 
@@ -265,7 +278,7 @@ This is not invisible to the player (so do it sparingly) and outside of specific
 
 This extension also introduces an alternative method to replace the player's command from a Glk event than the one provided by Glulx Entry Points.  This method should be preferred as the latter has been broken at some point and doesn't actually work anyway.
 
-Further documentation is not provided; read the source.  If you can't understand the source, you shouldn't be using this extension.
+Further documentation is not provided; read the source.  If you can't understand the source, you shouldn't be using this extension directly.
 
 Example: * Compilation Check
 
