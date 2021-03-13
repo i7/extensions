@@ -556,7 +556,8 @@ Unsuccessful attempt by someone trying giving something enterable to (this is th
 	otherwise:
 		make no decision.  [continue the action may be a synonym for make no decision here, but play it safe]
 
-The suppress second error for giving things with people in them rule is listed in the unsuccessful attempt rulebook.
+[ The below does not work: ]
+[ The suppress second error for giving things with people in them rule is listed in the unsuccessful attempt rulebook. ]
 
 Section - Unimplemented Actions
 
