@@ -1,4 +1,4 @@
-Version 2/171007 of Compliant Characters by Nathanael Nerode begins here.
+Version 3/210313 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires Parser Error Number Bugfix and version 4 of Neutral Standard Responses.  Tested with Inform 6M62."
 
@@ -8,9 +8,13 @@ Include Neutral Standard Responses by Nathanael Nerode.  [This includes most of 
 Volume - Parser Errors
 
 [
-Problematically, "Barbie, take hat" will fail if "hat" isn't recognized.  We want to make it clear what went wrong.
+Problematically, "Jane, take hat" will fail if "hat" isn't recognized.  We want to make it clear what went wrong.
 We have to replicate most of the I6 code in "Parser Letter I".  Wonderful.
-Since "check an actor answering something that" ONLY happens in case of a parser error, there's always a latest parser error and it's from the most recent command.
+"Check an actor answering something that" usually happens in case of a parser error.
+There's always a latest parser error and it's from the most recent command.
+
+Unfortunately, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser, and leaves the error set to STUCK_PE.
+This requires special implementation.  FIXME.
 ]
 
 Section - Patch the I6 Parser
@@ -58,6 +62,18 @@ Check an actor answering something (called the commandee) that (this is the debu
 	If the parser error debugging option is active:
 		say "- saved_oops [the misunderstood word] - oops_from [the other misunderstood word] - wn [the extraneous word] -";
 	continue the action;
+
+Section - Order of Parser Error Printing Rules
+
+[By default we want these errors to come last.  Any earlier check rule written by the author can have "success" and authorize the otherwise-parser-error command.]
+The print nothing to do error for commands to actors rule is listed last in the check answering it that rulebook.
+The command to actor includes word not in scope rule is listed last in the check answering it that rulebook.
+The command to actor includes word not in dictionary rule is listed last in the check answering it that rulebook.
+The print parser errors for commands to actors rule is listed last in the check answering it that rulebook. [The last one likely to trigger]
+
+[These two should never trigger, so we put them even further last]
+The command to actor can't see any such thing fallback rule is listed last in the check answering it that rulebook. 
+The print referred to a determination of scope error for commands to actors rule is listed last in the check answering it that rulebook.
 
 Section - You can't see any such thing
 
@@ -107,26 +123,6 @@ This leaves only one message.  It's "B" to match up with the parser error nothin
 Check an actor answering something (called the commandee) that when the latest parser error is the nothing to do error (this is the print nothing to do error for commands to actors rule): [NOTHING_PE]
 	say "[as the parser][if command includes except]That excludes everything available to [the commandee].[otherwise]There is nothing available for [the commandee] to [the quoted verb].[end if][as normal][line break]" (B);
 	rule fails.
-
-Section - Order of Parser Error Printing Rules
-
-[By default we want these errors to come last.  Any earlier check rule written by the author can have "success" and authorize the otherwise-parser-error command.]
-
-The command to actor includes word not in scope rule is listed last in the check answering it that rulebook. [5th to last]
-The command to actor includes word not in dictionary rule is listed last in the check answering it that rulebook. [4th to last]
-The command to actor can't see any such thing fallback rule is listed last in the check answering it that rulebook. [3rd to last]
-
-The print nothing to do error for commands to actors rule is listed last in the check answering it that rulebook. [2nd to last]
-The print parser errors for commands to actors rule is listed last in the check answering it that rulebook. [Really last]
-
-Section - Answering it that with NO parser error
-
-
-[ The player typed 'say "foo" to Jane' or something similar ]
-[
-Check an actor answering something (called the commandee) that (this is the explicit say rule):
-	[ We want to attempt a full scale redirect to the parser; this is VERY HARD ]
-]
 
 Section - Parser Errors with simple implementation
 
@@ -194,7 +190,28 @@ Check an actor answering something (called the commandee) that (this is the prin
 			make no decision;
 	rule fails.
 
-Volume - Unsuccessful Actions
+Volume - Determination of All for Actor
+
+[For some reason the Standard Rules only restrict the definition of all for the player, not for all actors.  We fix this.]
+
+[These are exact copies of the Standard Rules version with "an actor" added]
+Rule for deciding whether all includes scenery 
+	while an actor taking or taking off or removing
+	(this is the general exclude scenery from take all rule): it does not.
+Rule for deciding whether all includes people
+	while an actor taking or taking off or removing
+	(this is the general exclude people from take all rule): it does not.
+Rule for deciding whether all includes fixed in place things
+	while an actor taking or taking off or removing
+	(this is the general exclude fixed in place things from take all rule): it does not.
+Rule for deciding whether all includes things enclosed by the person reaching
+	while an actor taking or taking off or removing
+	(this is the general exclude indirect possessions from take all rule): it does not.
+Rule for deciding whether all includes a person
+	while an actor dropping or throwing or inserting or putting
+	(this is the general exclude people from drop all rule): it does not.
+
+Volume - Actions
 
 Chapter - Taking
 
@@ -240,15 +257,59 @@ Check an actor taking (this is the general can't take people's possessions rule)
 			if the actor is the player:
 				say "[regarding the noun][Those] [seem] to belong to [the owner]." (A);
 			otherwise if the owner is the player:
-				say "[The actor] [can't] take [regarding the noun][those] because [those] [seem] to belong to [us]." (B);
+				say "[The actor] [can't] take [regarding the noun][those] because [those] [seem] to belong to [us].[single action line break]" (B);
 			otherwise:
-				say "[The actor] [can't] take [regarding the noun][those] because [those] [seem] to belong to [the owner]." (C);
+				say "[The actor] [can't] take [regarding the noun][those] because [those] [seem] to belong to [the owner].[single action line break]" (C);
 			stop the action;
 		let the owner be the not-counting-parts holder of the owner;
 
+Section - Taking things with people in them
+
+[
+Prohibit taking an enterable with a person in it.
+
+Taking an enterable containing a character can cause really weird results.
+* The description of the location of the player becomes odd and suggestive: "(inside the box) (inside Jane)"
+* The character can "exit" and end up held by another character -- "(inside Jane)" -- which has poor implementation
+* The player can end up holding another character in inventory, which also has poor implementation
+
+So we prohibit this.
+However, since this isn't a logical restriction -- it's more of a missing implementation issue -- print the message in parser-style.
+
+Note that entering a held object requires entering the character holding it first, which is already prohibited.  Though the error message could be made less suggestive than "(entering Jane)".
+]
+
+Check an actor taking something enterable (this is the don't take things with people in them rule):
+	if the noun encloses a person (called spoiler):
+		if the actor is the player:
+			if the noun is a supporter:
+				say "[as the parser]In this story, [we] [can't] carry [the noun] while [the spoiler] is on [regarding the noun][them].[as normal]" (A); [No line break suppression here]
+			otherwise:
+				say "[as the parser]In this story, [we] [can't] carry [the noun] while [the spoiler] is in [regarding the noun][them].[as normal]" (B); [No line break suppression here]
+		otherwise if actor is visible:
+			if the noun is a supporter:
+				say "[as the parser]In this story, [the actor] [can't] carry [the noun] while [the spoiler] is on [regarding the noun][them].[as normal][single action line break]" (C); [Here we need to do the line break suppression]
+			otherwise:
+				say "[as the parser]In this story, [the actor] [can't] carry [the noun] while [the spoiler] is in [regarding the noun][them].[as normal][single action line break]" (D); [Here we need to do the line break suppression]
+		stop the action.
+
+[This should be really late in the check rules; try everything else first, except the holdall.]
+The don't take things with people in them rule is listed after the can't take what's fixed in place rule in the check taking rules.
+
+Unsuccessful attempt by someone trying taking something enterable (this is the suppress second error for taking things with people in them rule):
+	if the reason the action failed is the don't take things with people in them rule:
+		do nothing; [We have already emitted the error message.  Avoid a bogus "John is unable to do that."]
+	otherwise:
+		make no decision.  [continue the action may be a synonym for make no decision here, but play it safe]
+
+Section - Reorder checks for taking things you're inside
+
+[If the player or an actor tries to take something they're inside which they can't take anyway, we want the "You can't carry that" message, not the other message.]
+The can only take things rule is listed before the can't take what you're inside rule in the check taking rules.
+
 Section - Holdall when taking
 
-[This one actually does require replacing the check rule in order to explain what's happening -- because it isn't an unsuccessful attempt]
+[This one requires replacing the check rule in order to explain what's happening -- because it isn't an unsuccessful attempt]
 
 The general use holdall to avoid exceeding carrying capacity rule is listed instead of the use player's holdall to avoid exceeding carrying capacity rule in the check taking rulebook.
 
@@ -270,13 +331,14 @@ Check an actor taking (this is the general use holdall to avoid exceeding carryi
 
 Chapter - Removing
 
-Section - Removing
+Section - Debug Removing (not for release)
 
 Unsuccessful attempt by an actor removing something from (this is the debug removing rule):
 	If the parser error debugging option is active:
 		say "- saved_oops [the misunderstood word] - oops_from [the other misunderstood word] - wn [the extraneous word] -";
 	continue the action;
 
+Section - Removing
 
 Unsuccessful attempt by an actor removing something from (this is the actor failed to remove rule):
 	if the reason the action failed is:
@@ -465,47 +527,198 @@ Section - Don't Block Giving
 
 [Compliant characters accept gifts and will give things to other people.]
 
-[However!  We do not allow gifts of enterables.  These cause tricky display issues because one person can end up inside another.]
-
-The don't accept enterables rule is listed instead of the block giving rule in the check giving it to rulebook.
 The block giving rule is not listed in any rulebook.
+
+Section - Block Gifts with people in them - Should not trigger
+
+[This usually can't trigger.  With taking of enterables prohibited, it should be impossible for someone to *have* an enterable with a person in it to *give*.]
+[This can be defeated with "purloin", however, or by the author, so this is left as a backup.]
+
+[We do not allow gifts of enterables with people in them.  These cause tricky display issues because one person can end up inside another.]
+
+The don't accept things with people in them rule is listed last in the check giving it to rulebook.
 
 To offer is a verb.  To decline is a verb.
 
-Check an actor giving something enterable to (this is the don't accept enterables rule):
-	if the second noun is the player:
-		say "[The noun] [look] too large for [us] to carry." (A);
-	otherwise if the actor is the player:
-		say "[We] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too large to carry.'" (B);
-	otherwise if actor is visible:
-		say "[The actor] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too large to carry.'" (C);
-	stop the action.
+Check an actor giving something enterable to (this is the don't accept things with people in them rule):
+	if the noun contains a person:
+		if the second noun is the player:
+			say "[The noun] [look] too heavy for [us] to carry." (A);
+		otherwise if the actor is the player:
+			say "[We] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too heavy to carry.'" (B);
+		otherwise if actor is visible:
+			say "[The actor] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too heavy to carry.'" (C);
+		stop the action;
 
-Unsuccessful attempt by someone trying giving something enterable to:
-	if the reason the action failed is the don't accept enterables rule:
+Unsuccessful attempt by someone trying giving something enterable to (this is the suppress second error for giving things with people in them rule):
+	if the reason the action failed is the don't accept things with people in them rule:
 		do nothing; [We have already emitted the error message.  Avoid a bogus "John is unable to do that."]
 	otherwise:
 		make no decision.  [continue the action may be a synonym for make no decision here, but play it safe]
+
+The suppress second error for giving things with people in them rule is listed in the unsuccessful attempt rulebook.
+
+Section - Unimplemented Actions
+
+[
+	These are the unimplemented actions.
+	0 indicates that probably no implementation is needed.
+	1 indicates that implementation is important.
+
+Going - may be OK in standard rules
+Pushing it to - 
+
+Entering (a container) - 1
+Exiting (a container) - 1
+Getting off (a supporter) - 1
+Opening - may be OK in standard rules
+Closing - may be OK in standard rules
+
+Taking inventory - 0
+Looking - 0
+Examining - 0
+Looking under - 0
+Searching - 0
+Consulting
+
+Listening to - (sense implementation)
+Tasting - (sense implementation)
+Smelling - (sense implementation) 
+Touching - (sense implementation)
+
+Answering it that ("ella, answer something to joe" -- needs a serious blocking implementation)
+Telling it about ("ella, tell joe about something")
+Asking it about ("ella, ask joe about something")
+Asking it for ("ella, ask joe for something")
+Showing
+
+Eating
+Drinking
+
+Locking
+Unlocking
+
+Switching on
+Switching off
+Setting it to
+
+Waking
+Throwing
+Attacking (disable at verb level)
+Kissing (disable and replace at verb level)
+Waiting - may be OK in standard rules
+Waving -
+Pulling -
+Pushing - 
+Turning - 
+Squeezing - 
+Burning -
+Waking up -
+Thinking -
+Jumping -
+Cutting -
+Tying it to -
+Swinging - 
+
+Rubbing - 1
+Waving hands - 
+Buying -
+Climbing -
+Sleeping -
+
+Saying yes - (disable at verb level)
+Saying no - (disable at verb level)
+Saying sorry - (disable at verb level)
+
+]
+
+Volume - Additional Ways To Give Orders
+
+Section - Command Debugging
+
+Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+
+Section - Reparsing orders
+
+[This is done when the action decides to kick the command back to reparse.  Sometimes we can't decide to do that until after the action has triggered.]
+
+The special reparse flag is a truth state that varies.
+The revised command text is a text that varies.
+
+[Replace the command reading routine with one which simply processes our prepackaged command.]
+For reading a command when the special reparse flag is true (this is the parse revised command rule):
+	if the command debugging option is active:
+		say "Revised command: [revised command text][line break]";
+	change the text of the player's command to the revised command text;
+	now the special reparse flag is false;
+
+Ordering it that is an action applying to one thing and one topic.
+
+[Avoid bogus "John is unable to do that."  If this fails it will either give an error message or reparse, period.]
+Unsuccessful attempt by someone trying ordering something that:
+	do nothing;
+
+[We need a separate case for the hilarious "actor, tell me to do something"... though arguably in some sort of S&M game this order might make sense.]
+Check an actor ordering something that (this is the block ordering yourself rule):
+	if the noun is the player:
+		say "[as the parser]In this story [we] don't need to have someone tell [us] to do something.  Just type '[the topic understood]'.[no line break][as normal][line break]" (A);
+		stop the action;
+
+[We need separate cases for "actor, tell other person to do something", which is seriously problematic.]
+Check an actor ordering something that (this is the block indirect ordering rule):
+	if the actor is not the player:
+		say "[as the parser]In this story you can't tell [the actor] to tell [the noun] to do something.  Try telling [the noun] to do something directly, with '[noun], [the topic understood]'.[no line break][as normal][line break]" (A);
+		stop the action;
+
+Check ordering something that (this is the reparse as command rule):
+	now the revised command text is the substituted form of "[the noun], [the topic understood]";
+	now the special reparse flag is true;
+	stop the action;	
+	[TODO: Need to make sure turn count does not go up and time does not pass -- hard]
+
+Understand "tell [someone] to [text]" as ordering it that.
+Understand "order [someone] to [text]" as ordering it that.
+Understand "instruct [someone] to [text]" as ordering it that.
+
+Section - Say quoted text
+
+Original say verb name is a text that varies.  [You can check this in other rules for successful or failed orders.]
+
+[It's essentially impossible to match quotation marks with standard grammar tokens, or at least I've never figured out how to; so these can't be done with the reparsing trick above.  Accordingly, preprocess quoted text with regular expressions to convert it to command form.]
+After reading a command (this is the say quoted text conversion rule):
+	let cmdline be text;
+	let cmdline be the player's command;
+	let command found be false;
+	now original say verb name is "";
+	let commandee name be text;
+	let quoted order be text;
+	if cmdline exactly matches the regular expression "(?i)\s*(say)\s*[quotation mark](.*)[quotation mark]\s*to\s*(.*)":
+		[ "say 'something' to someone"]
+		now command found is true;
+		now original say verb name is "[text matching subexpression 1]";
+		now commandee name is "[text matching subexpression 3]";
+		now quoted order is "[text matching subexpression 2]";
+	otherwise if cmdline exactly matches the regular expression "(?i)\s*(tell)\s*(<^[quotation mark]>*)[quotation mark](.*)[quotation mark]\s*":
+		[ "tell someone 'something' "]
+		now command found is true;
+		now original say verb name is "[text matching subexpression 1]";
+		now commandee name is "[text matching subexpression 2]";
+		now quoted order is "[text matching subexpression 3]";
+	if command found is true:
+		let new_cmdline be the substituted form of "[commandee name], [quoted order]";
+		if the command debugging option is active:
+			say "Original verb: [original say verb name].  Command: [new_cmdline][line break]";
+		change the text of the player's command to new_cmdline;
 
 Compliant Characters ends here.
 
 ---- DOCUMENTATION ----
 
-Chapter - How to use
-
-This extension will report parsing errors to the player when ordering other characters to do things.  
-
-To use it, download:
-	Parser Error Number Bugfix by Nathanael Nerode 
-	Neutral Standard Responses by Nathanael Nerode
-	and this extension
-
-Then add to your story file:
-	Include Compliant Characters by Nathanael Nerode.
-
 Chapter - Why to use
 
-When writing an IF story with compliant characters, it is somewhat frustrating to type
+Suppose you're writing an IF story with several compliant characters who do whatever you tell them to.  (Such as Infocom's Suspended.)
+
+When writing an IF story with compliant characters who generally do what they're told, it is somewhat frustrating to type
 	John, get the hat
 and get the response:
 	There is no reply.
@@ -515,7 +728,7 @@ Inform 7 normally redirects parser errors from commands like this to 'answer <to
 
 This extension instead reports those parser errors.  It uses variants of the messages from Neutral Standard Responses, adapted to the context of giving other characters orders.  (It depends on Neutral Standard Responses partly because the default responses in the Standard Rules don't work very well for a Suspended-style game focused on ordering other characters around, and partly to use the low-level code there.)
 
-This extension produces the sort of the parser errors which would be given to the player by Neutral Standard Responses if she had tried to 'get the hat' herself:
+This extension produces the sort of parser errors which would be given to the player by Neutral Standard Responses if she had tried to 'get the hat' herself:
 	[You don't need to use the word 'hat' in this story.]
 	
 For the same reason, it is frustrating in a game with compliant characters to type
@@ -532,6 +745,58 @@ So far, "take", "remove", "drop", "put on (supporter)", "insert into (container)
 
 I haven't finished the rest of the verbs yet, though I plan to.
 
+Chapter - How to Use
+
+First, download:
+	Parser Error Number Bugfix by Nathanael Nerode 
+	Neutral Standard Responses by Nathanael Nerode
+	and this extension
+
+Then add to your story file:
+	Include Compliant Characters by Nathanael Nerode.
+
+You will still have to write a persuasion rule (as documented in Writing With Inform), such as:
+	Persuasion rule for asking John to try taking or removing or dropping or putting on or inserting into:
+		persuasion succeeds.
+	Persuasion rule for asking John to try wearing or taking off or giving:
+		persuasion succeeds.
+
+You'll also still need to write an implementation for the verbs which aren't implemented in the standard rules; but many are implemented in the Standard Rules.
+
+Chapter - Notable restrictions
+
+One additional restriction has been added.  A character can't pick up an enterable container which contains a person.  This is to avoid certain rather tricky situations where a person is inside a container carried by another person, which requires a complicated implementation to work right.
+
+Chapter - Additional Ways To Give Orders
+
+If the characters in your story are mostly there to be ordered around, it's nice if several ways of giving orders work.  While "character, command" has been the standard for a long time, Zork II used a completely different syntax -- 'tell robot "command"', which is perhaps more natural.
+
+This extension translates
+	say "command" to person [with the quotes]
+	tell person "command" [with the quotes]
+	order person to command
+	instruct person to command
+	tell person to command
+
+Into the standard form:
+	person, command
+	
+It also catches and rejects
+	person, order/instruct/tell other person to command
+	tell person to tell other person to command
+
+It won't catch
+	tell person "other person, command"
+	say "other person, command" to person
+
+These will turn into
+	person, other person, command
+
+And then fail with the usual error for that.
+
+You can disable all of these with:
+	Volume - Disabled (in place of Volume - Additional Ways To Give Orders in Compliant Characters by Nathanael Nerode)
+
 Chapter - Holdall Enhancements
 
 This extension makes sure a message is emitted for an actor putting something in the actor's holdall, which it isn't in the Standard Rules.
@@ -540,7 +805,9 @@ It also allows the actor to put things in the holdall to make room for clothes b
 
 Chapter - Giving
 
-As you might expect, compliant characters accept gifts and give gifts when ordered to.  This extension eliminates the "block giving" rule and gives parser error feedback for all other gifts.   However, to avoid some real complications, people cannot give enterables to other people, as this could create a situation where one person was being carried by another.
+As you might expect, compliant characters accept gifts and give gifts when ordered to.  This extension eliminates the "block giving" rule and gives parser error feedback for all other gifts.
+
+However, to avoid some real complications, a character cannot give an enterable containing a person to another person.  This is usually impossible because the character couldn't take the enterable in the first place, but if the author has overridden that, the giving rules still prohibit it.
 
 Chapter - How to change and extend the extension's behavior
 
@@ -552,7 +819,7 @@ This sort of rule is where the parser messages are printed:
 
 This also short-circuits the answering process; no carry out answering or report answering rules will be run.
 
-If you make your own check answering rules, they will go before the rules in this extension and can overrride them.  If your own check answering rule returns success, it will allow the carry out answering and report answering rules to take place.  
+If you make your own check answering rules, they will go before the rules in this extension and can overrride them.  If your own check answering rule returns success, it will allow the carry out answering and report answering rules to take place.
 
 By default the report answering rulebook contains one rule, the "block answering rule", which simply says "You speak."  But if you write your own rules, you can use this technique to allow a character to respond to one specific arbitrary topic which isn't a command (such as "veronica, 17") -- while still using this extension to check for parser errors all other commands given to veronica.
 
@@ -609,8 +876,31 @@ This actually works and is the form you should use.  The actual code in this ext
 				say "[The actor] [are] carrying too many things already." (B);
 			-- otherwise:
 				make no decision;
+
+If you've already printed a failure message in a check rule, you'll need to suppress the unsuccessful attempt message, such as this example:
+	Check an actor giving something enterable to (this is the don't accept things with people in them rule):
+		if the noun contains a person:
+			if the second noun is the player:
+				say "[The noun] [look] too heavy for [us] to carry." (A);
+			otherwise if the actor is the player:
+				say "[We] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too heavy to carry.'" (B);
+			otherwise if actor is visible:
+				say "[The actor] [offer] [the noun] to [the second noun], but [the second noun] [decline], saying '[The noun] [look] too heavy to carry.'" (C);
+			stop the action;
+
+	Unsuccessful attempt by someone trying giving something enterable to:
+		if the reason the action failed is the don't accept things with people in them rule:
+			do nothing; [We have already emitted the error message.  Avoid a bogus "John is unable to do that."]
+		otherwise:
+			make no decision.
 				
-If you want to override the rules in this extension, make sure your rules are listed earlier in the rulebook. [TODO: the unsuccessful attempt rulebook... I THINK... must check.]
+If you want to override the rules in this extension, make sure your rules are listed earlier in the unsuccessful attempt rulebook.
+
+Section - Disabling rules
+
+Obviously, you can also turn off or replace the enhanced holdall rules or the rules prohibiting taking enterables containing people, by the usual methods described in Writing With Inform: "not listed in any rulebook" or "listed instead of".
+
+The additonal ways to give orders can be disabled as noted above.
 
 Chapter - Interactions with other Extensions
 
@@ -619,28 +909,33 @@ This extension depends on version 4 or later Neutral Standard Responses by Natha
 
 Chapter - Changelog
 
-2/171007 - Update in association with version 4 of Neutral Standard Responses.  Fix misunderstood word reporting.  Fix several tricky paragraph break errors.
+3/210313 - Additional handling for "say 'x' to jane", "tell jane 'x'"
+         - Additional handling for indirect orders
+         - Additional handling for "jane, take all"
+         - Additional handling for other corner cases 
+2/171007 - Update in association with version 4 of Neutral Standard Responses
+         - Fix misunderstood word reporting. 
+         - Fix several tricky paragraph break errors.
 1/171003 - Fix line break issue in scenery message.
 1/171002 - First version.
 
-Example: *** Barbie - Regression test
+Example: *** Jane - Regression test
 
-	*: "Barbie"
+	*: "Jane"
 
 	Include Neutral Standard Responses by Nathanael Nerode.
 	Include Compliant Characters by Nathanael Nerode.
 
-	Barbie's house is a room. "It's Barbie's house."
-	Barbie is a person in the house.  The description of Barbie is "It's Barbie!"
+	Jane's house is a room. "It's Jane's house."
+	Jane is a person in the house. The description of Jane is "It's Jane!"
+	Persuasion rule for asking Jane to try doing something:
+		persuasion succeeds.
 
-	The furniture is a plural-named scenery thing in the house.  The description of the furniture is "The furniture is not meant to be used."
-	The decorations is a plural-named scenery thing in the house.  The description of the decorations is "Decorative."
+	The furniture is a plural-named scenery thing in the house. The description of the furniture is "The furniture is not meant to be used."
+	The decorations is a plural-named scenery thing in the house. The description of the decorations is "Decorative."
 
-	A banana is a thing.  [The banana stays off stage to test dictionary word / non-dictionary word responses.]
-	A red dress is a thing in the house.  The description of the dress is "A slinky red minidress."
+	A banana is a thing.
+	A red dress is a thing in the house.
 
-	[Test line break issues]
-	test scenery with "take furniture/take furniture and decorations".
-
-	[Test dictionary word / non-dictionary word responses]
-	test cantsee with "barbie, take banana/barbie, take glorph/barbie, take dress".
+	test scenery with "jane, take furniture/jane, take furniture and decorations".
+	test cantsee with "jane, take banana/jane, take asdf/jane, take dress".
