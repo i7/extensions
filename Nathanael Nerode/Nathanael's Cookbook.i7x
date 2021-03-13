@@ -28,7 +28,6 @@ Example: * Mention Unmention -- controlling whether something is mentioned
 
 	The banana and the orange are in the fruit room.
 
-
 Example: * Examine Room -- putting the room in scope
 
 If you're in a room called "Main Street", you probably want "look at main street" to work.  By default, it doesn't.
@@ -41,7 +40,10 @@ If you're in a room called "Main Street", you probably want "look at main street
 	After deciding the scope of an object (called character) (this is the put room in scope rule):
 		Place the location of the character in scope, but not its contents.
 
-	test me with "examine street/examine main street".
+	Rule for deciding whether all includes rooms:
+		it does not.
+
+	test me with "examine street/examine main street/take all".
 
 Example: * Meeting Place -- using arbitrary binary relations
 
@@ -73,3 +75,56 @@ Use the full power of arbitrary binary relations, which are poorly documented in
 			say "[Who] [say] 'Great country, I'd love to live there.'";
 		else:
 			say "[Who] [say] 'Nice people there, but I wouldn't want to live under their government.'";
+
+Example: *** Confusion -- polite responses for failed commands to actors
+
+The default "There is no reply" is completely surreal for certain types of games.  This gives a reply which a *compliant* person might give.
+
+	*: "Confusion"
+
+	The Lounge is a room.  "It's a lounge."
+
+	Alan is a man in the lounge.  Ella is a woman in the lounge.
+
+	Persuasion rule for asking Alan to try doing something: persuasion succeeds.
+	Persuasion rule for asking Ella to try doing something: persuasion succeeds.
+
+	The confused by command rule is listed before the block answering rule in the report answering it that rulebook.
+
+	Report an actor answering someone that (this is the confused by command rule):
+		["noun, gibberish" is converted into "answer noun with the topic understood"]
+		if the actor is the player:
+			[The alternative is ordering someone else to say something]
+			now the prior named object is nothing;
+			say "[Noun] [seem] confused by your request." (A);
+		stop the action.
+
+	Table of Alan's Confusion Responses
+	Response
+	"[Noun] [look] at [us], perplexed, and [regarding noun][say] 'I don't know what you mean by ['][the topic understood]['].'"
+	"[Noun] [say] 'I didn't understand that, dear.'"
+	"[Noun] [say] 'Did you say ['][the topic understood][']?'  [They] [look] confused."
+
+	Report an actor answering Alan that (this is the Alan is confused by command rule):
+		["noun, gibberish" is converted into "answer noun with the topic understood"]
+		if the actor is the player:
+			[The alternative is ordering someone else to say something]
+			now the prior named object is nothing;
+			choose a random row from the Table of Alan's Confusion Responses;
+			say response entry;
+		stop the action.
+
+	Table of Ella's Confusion Responses
+	Response
+	"[Noun] [look] at [us], perplexed, and [regarding noun][say] 'I don't get what you mean by ['][the topic understood]['].'"
+	"[Noun] [say] 'I didn't understand that, darling.'"
+	"[Noun] [say] 'Did you say ['][the topic understood][']?'  [They] [look] puzzled."
+
+	Report an actor answering Ella that (this is the Ella is confused by command rule):
+		["noun, gibberish" is converted into "answer noun with the topic understood"]
+		if the actor is the player:
+			[The alternative is ordering someone else to say something]
+			now the prior named object is nothing;
+			choose a random row from the Table of Ella's Confusion Responses;
+			say response entry;
+		stop the action.
