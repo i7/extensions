@@ -1,6 +1,6 @@
-Version 1/171007 of Tab Removal by Nathanael Nerode begins here.
+Version 1/210314 of Tab Removal by Nathanael Nerode begins here.
 
-"Rejects commands with tabs in them."
+"For commands with tabs in them, replaces tabs with spaces before passing them on to the game."
 
 [
 Many interpreters unfortunately pass tabs through into the command.  Tabs are treated as *letters* which are part of a word, unhelpfully, which leads to confusing error responses with embedded tabs.  Worse, when Glulxe goes to print the error message with the embedded tab, it issues a runtime error saying that it can't print character 9* (the tab character) -- in the middle of this "word"!  This is a pretty cryptic error message.
@@ -140,3 +140,6 @@ Tabs can appear in commands when typed at the keyboard by the player.  Tabs are 
 The Z-machine implementation is pretty clean and should continue to work in all versions.
 
 The Glulx implementation has been tested with Inform 6M62, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
+
+Changelog:
+	1/210314: Change short description.
