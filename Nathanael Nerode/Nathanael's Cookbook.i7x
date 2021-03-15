@@ -8,6 +8,50 @@ Nathanael's Cookbook ends here.
 
 This is just a collection of examples.
 
+Example: * Careful Startup -- displaying messages at the right time during startup
+
+	*: "Careful Startup"
+
+	Bedroom is a room.
+
+	The description of Bedroom is "There's a double bed here."
+
+	A bed is a kind of supporter.
+	The latticework double bed is a bed in the bedroom.
+	The description of the latticework double bed is "It's a double bed with a latticework headboard."
+	
+	The player is on the latticework double bed.  [This is the correct way to set a starting location.]
+
+	This is the teaser rule:
+		say "Nightmares.  Fear.  Running."
+
+	The teaser rule is listed before the display banner rule in the startup rulebook.
+
+	This is the introduce the game rule:
+		say "You blearily open your eyes, shaking away dreams.  You're in your bed."
+
+	The introduce the game rule is listed before the initial room description rule in the startup rulebook.
+	[Note: "After the display banner rule" won't work, it'll end up after the initial room description.]
+
+	This is the just before the prompt rule:
+		say "Maybe you should get up.";
+	The just before the prompt rule is listed after the initial room description rule in the startup rulebook.
+
+	[ This is the default order of the startup rulebook:
+	First come the very basic rules:
+		initalize memory rule
+		seed random number generator rule
+		update chronological records rule
+		declare everything initially unmentioned rule
+		position player in model world rule
+		start in the correct scenes rule
+	Then come the so-called "mid-placed rules":
+		when play begins stage rule
+		fix baseline scoring rule
+		display banner rule
+		initial room description rule
+	]
+
 Example: * Mention Unmention -- controlling whether something is mentioned
 
 	*: "Mention Unmention"
