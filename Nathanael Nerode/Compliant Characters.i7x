@@ -1,4 +1,4 @@
-Version 3/210313 of Compliant Characters by Nathanael Nerode begins here.
+Version 3/210320 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires Parser Error Number Bugfix and version 4 of Neutral Standard Responses.  Tested with Inform 6M62."
 
@@ -13,8 +13,7 @@ We have to replicate most of the I6 code in "Parser Letter I".  Wonderful.
 "Check an actor answering something that" usually happens in case of a parser error.
 There's always a latest parser error and it's from the most recent command.
 
-Unfortunately, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser, and leaves the error set to STUCK_PE.
-This requires special implementation.  FIXME.
+Unfortunately, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser, and leaves the error set to STUCK_PE.  This requires special implementation.  See the last volume; it's passed through the new "ordering it that" action, which reparses it into an order.
 ]
 
 Section - Patch the I6 Parser
@@ -52,7 +51,7 @@ Include (-
 
 -) instead of "Parser Letter H" in "Parser.i6t".
 
-Section - Debug (not for release)
+Section - Debug Parser Errors For Commands (not for release)
 
 [This is too useful not to have it in place, but should never be in a published game.]
 
@@ -681,11 +680,26 @@ Understand "tell [someone] to [text]" as ordering it that.
 Understand "order [someone] to [text]" as ordering it that.
 Understand "instruct [someone] to [text]" as ordering it that.
 
+Section - Diverting Explicit Answer
+
+[In Standard Rules, "answering it that" triggers in an unfortunate way, direct from the "answer" or 'say' command -- when we want it to mainly trigger after parsing failure.]
+
+[It is almost impossible to execute an action using "try" if the action takes a topic as an argument.  I haven't figured out how after SEVERAL tries.  It won't parse it.  However, we can direct such commands directly through the "order" rules.]
+
+Understand the command "answer" as something new. [This is the diversion.]
+Understand the command "say" as something new.
+Understand the command "shout" as something new.
+Understand the command "speak" as something new.
+
+Understand "answer [text] to [someone]" as ordering it that (with nouns reversed).
+Understand the commands "say", "shout", and "speak" as "answer". [Same as Standard Rules.]
+
 Section - Say quoted text
 
 Original say verb name is a text that varies.  [You can check this in other rules for successful or failed orders.]
 
 [It's essentially impossible to match quotation marks with standard grammar tokens, or at least I've never figured out how to; so these can't be done with the reparsing trick above.  Accordingly, preprocess quoted text with regular expressions to convert it to command form.]
+[It is quite impossible to do this with single quotes due to the confusion with apostrophes.  But we can do it with double quotes.]
 After reading a command (this is the say quoted text conversion rule):
 	let cmdline be text;
 	let cmdline be the player's command;
@@ -694,13 +708,13 @@ After reading a command (this is the say quoted text conversion rule):
 	let commandee name be text;
 	let quoted order be text;
 	if cmdline exactly matches the regular expression "(?i)\s*(say)\s*[quotation mark](.*)[quotation mark]\s*to\s*(.*)":
-		[ "say 'something' to someone"]
+		[ say "something" to someone -- with the double quotation marks ]
 		now command found is true;
 		now original say verb name is "[text matching subexpression 1]";
 		now commandee name is "[text matching subexpression 3]";
 		now quoted order is "[text matching subexpression 2]";
 	otherwise if cmdline exactly matches the regular expression "(?i)\s*(tell)\s*(<^[quotation mark]>*)[quotation mark](.*)[quotation mark]\s*":
-		[ "tell someone 'something' "]
+		[ tell someone "something" -- with the double quotation marks ]
 		now command found is true;
 		now original say verb name is "[text matching subexpression 1]";
 		now commandee name is "[text matching subexpression 2]";
