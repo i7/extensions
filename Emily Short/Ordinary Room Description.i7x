@@ -1,4 +1,4 @@
-Version 3 of Ordinary Room Description by Emily Short begins here.
+Version 4/210322 of Ordinary Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, which emulates as closely as possible the behavior of Inform defaults, but allows the intervention of Room Description Control."
 
@@ -43,8 +43,8 @@ Section 2 - List Nondescript items
 A last description-priority rule (this is the nondescript items preparation rule):
 	now every thing is not marked for listing;
 	repeat through the Table of Seen things:
-		if the output entry is unmentioned:
-			now the output entry is marked for listing;
+		if the output subject entry is unmentioned:
+			now the output subject entry is marked for listing;
 	if a marked for listing thing is in the location:
 		carry out the listing nondescript items activity with the location.
 
@@ -83,6 +83,8 @@ This means that including Ordinary Room Description should, by itself, change no
 The advantage of including it is that we can then make use of Room Description Control to make slight tweaks to Inform's default behavior, as for instance by writing description-concealing rules or changing the priority of items so that they are listed in a different order from the usual within a room.
 
 For more detail on these abilities, see the documentation for Room Description Control.
+
+Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Quiet Shelf - A scenery supporter which does not list its contents in the room description. 
 

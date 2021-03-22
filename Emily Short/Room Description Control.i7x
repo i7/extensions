@@ -1,18 +1,24 @@
-Version 13/160517 of Room Description Control by Emily Short begins here.
+Version 14/210322 of Room Description Control by Emily Short begins here.
 
 "A framework by which the author can considerably change the listing of objects in a room description. Includes facilities for concealing objects arbitrarily and changing the order in which objects are listed."
+
+Section 0 - Data Structure
+
+[This is in its own section so authors can replace it with more or fewer rows.]	 
+
+Table of Seen Things
+output subject	current rank
+an object	a number
+with 60 blank rows. 
  
-
 Section 1 - Priority and Concealment Rules
-
-Include Complex Listing by Emily Short.
 
 The new object description rule is listed instead of the room description paragraphs about objects rule in the carry out looking rules.
 
-When play begins (this is the mark every thing as unmentioned rule):
+When play begins (this is the mark everything unmentioned when play begins rule):
 	now every thing is unmentioned.
 	
-Before reading a command:
+Before reading a command (this is the mark everything unmentioned rule):
 	now every thing is unmentioned.
 
 This is the new object description rule:
@@ -48,10 +54,10 @@ A description-concealing rule (this is the don't mention things out of play rule
 		if the holder of the special-target is nothing, now the special-target is not marked for listing.
 
 A description-priority rule (this is the loading table rule):
-	empty out the table of seen things;
+	blank out the whole of the Table of Seen Things;
 	repeat with item running through mentionable things:
-		choose a blank row in the Table of Seen things;
-		now output entry is item.
+		choose a blank row in the Table of Seen Things;
+		now output subject entry is item.
 
 lowest-rank is a number that varies.
 
@@ -59,45 +65,37 @@ A description-priority rule (this is the description-ranking rule):
 	now lowest-rank is 1000;
 	repeat through the Table of Seen Things
 	begin;  
-		now the description-rank of the output entry is 0;
-		follow the ranking rules for the output entry;
-		now the current rank entry is the description-rank of the output entry;
-		if description-rank of the output entry is less than lowest-rank, now lowest-rank is description-rank of the output entry;
+		now the description-rank of the output subject entry is 0;
+		follow the ranking rules for the output subject entry;
+		now the current rank entry is the description-rank of the output subject entry;
+		if description-rank of the output subject entry is less than lowest-rank, now lowest-rank is description-rank of the output subject entry;
 	end repeat;
 	sort the Table of Seen Things in reverse current rank order; 
 
 A description-priority rule (this is the reporting descriptions rule):
 	repeat through the Table of Seen things
 	begin; 
-		if the output entry is unmentioned, carry out the writing a paragraph about activity with the output entry;
+		if the output subject entry is unmentioned, carry out the writing a paragraph about activity with the output subject entry;
 	end repeat. 
 	
 [A description-priority rule (this is the final description rule):
 	say paragraph break.]
 
-After printing the name of something (called special-target) while writing a paragraph about something: 
+After printing the name of something (called special-target) while writing a paragraph about something (this is the don't write a paragraph about something twice rule):
 	now the special-target is not marked for listing;
 	now the special-target is mentioned.
 	
 A thing has a number called description-rank.
 
 Ranking rules are an object-based rulebook.
-	 
 
-Table of Seen Things
-output	current rank
-an object	a number
-with 60 blank rows. 
- 
 Definition: a thing is mentionable if it is marked for listing and it is unmentioned. Definition: a thing is unmentionable if it is not mentionable.
 
 Definition: a thing is descriptively dull if the description-rank of it is lowest-rank.
 
-
-
 [This portion makes sure that items that are listed together in groups get properly flagged 'mentioned':]
 
-After printing the plural name of something (called target):
+After printing the plural name of something (called target) (this is the write only one paragraph about a group of identical objects rule):
 	repeat with item running through things held by the holder of target
 	begin; 
 		if the item nominally matches the target
@@ -135,7 +133,7 @@ The new describe contents rule is listed instead of the describe contents entere
 This is the new describe contents rule:
 	if the person asked is the player, follow the description-priority rules.
 
-A description-concealing rule while entering a container (called special-target):
+A description-concealing rule while entering a container (called special-target) (this is the don't describe things outside the player's container rule):
 	repeat with item running through marked for listing things:
 		if item is not enclosed by special-target, now the item is not marked for listing.
 
@@ -157,11 +155,11 @@ The table-debugging rule is listed after the description-ranking rule in the des
 This is the table-debugging rule:
 	if paragraph-debug-state is 1:
 		repeat through the Table of Seen things:
-			if the output entry is unmentioned:
-				say "[output entry]: rank [current rank entry][line break]";
-				now output entry is unmentioned;
+			if the output subject entry is unmentioned:
+				say "[output subject entry]: rank [current rank entry][line break]";
+				now output subject entry is unmentioned;
 			otherwise:
-				say "[output entry]: rank [current rank entry] (already mentioned)[line break]";
+				say "[output subject entry]: rank [current rank entry] (already mentioned)[line break]";
 		say "[line break]";
 
 Room Description Control ends here.
@@ -255,3 +253,5 @@ Version 10 removes deprecated phrases.
 Version 12 does some cleanup and brings the extension in line with adaptive responses.
 
 Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurality.
+
+Vergion 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.

@@ -1,4 +1,4 @@
-Version 5 of Single Paragraph Description by Emily Short begins here.
+Version 6/210322 of Single Paragraph Description by Emily Short begins here.
 
 "A room description extension based on Room Description Control (which is required). All contents of a room are summarized in a single paragraph, starting with the regular room description."
 
@@ -47,18 +47,18 @@ This is the reporting items rule:
 		make no decision; 
 	now printed a room description is false; 
 	repeat through the Table of Seen things:
-		if the output entry is mentionable:
-			if the output entry is initially-described:
-				say "[initial appearance of output entry][run paragraph on]" (C);
-				now output entry is mentioned;
-			otherwise if output entry is in something (called special-vase):
+		if the output subject entry is mentionable:
+			if the output subject entry is initially-described:
+				say "[initial appearance of output subject entry][run paragraph on]" (C);
+				now output subject entry is mentioned;
+			otherwise if output subject entry is in something (called special-vase):
 				say "In [the special-vase] [regarding mentionable things in the special-vase][are] [list of mentionable things in the special-vase]. " (D);
-			otherwise if output entry is on something (called special-vase):
+			otherwise if output subject entry is on something (called special-vase):
 				say "On [the special-vase] [regarding mentionable things on the special-vase][are] [list of mentionable things on the special-vase]. " (F);
-			otherwise if output entry supports something mentionable:
-				say "On [a output entry] [regarding mentionable things on the output entry][are] [list of mentionable things on the output entry]. " (G);
-			otherwise if output entry contains something mentionable:
-				say "In [a output entry] [regarding mentionable things in the output entry][are] [list of mentionable things in the output entry]. " (H);
+			otherwise if output subject entry supports something mentionable:
+				say "On [a output subject entry] [regarding mentionable things on the output subject entry][are] [list of mentionable things on the output subject entry]. " (G);
+			otherwise if output subject entry contains something mentionable:
+				say "In [a output subject entry] [regarding mentionable things in the output subject entry][are] [list of mentionable things in the output subject entry]. " (H);
 			otherwise:
 				say "[We] also [see] here [a list of mentionable things]. " (I); 
 	say "[paragraph break]" (J).
@@ -92,6 +92,8 @@ Because these single-paragraph descriptions can grow quite long and hard to read
 If the game in question is set to BRIEF or SUPERBRIEF mode, Single Paragraph Description will omit the initial room description either when visiting the room for the second time (for brief) or always (for superbrief). Items in the room will still be mentioned.
 
 Version 3 removes a bug in which rooms with no description could crash the game.
+
+Version 6/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Scene Setting - The Amphitheater in full
 
