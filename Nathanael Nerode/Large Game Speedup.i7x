@@ -1,4 +1,4 @@
-Version 5/210322 of Large Game Speedup by Nathanael Nerode begins here.
+Version 5/210323 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with large numbers of objects, by avoiding looping over all objects."
 
@@ -347,53 +347,53 @@ Include (-
 -) after "WriteListOfMarkedObjects" in "ListWriter.i6t".
 
 To say a list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT, {parent});
-		@pull subst__v; -).
+	 -).
 To say A list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+CFIRSTART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+NOARTICLE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say the list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say The list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT+CFIRSTART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are a list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+ISARE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+ISARE_BIT+NOARTICLE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are the list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT+ISARE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 
 Chapter - Part Of
 
@@ -536,6 +536,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+Version 5/210323 adopted the Inform 6M62-safe code for the *in phrases from the version in Counterfeit Monkey by Andrew Plotkin, solving a glaring bug which I didn't catch since I didn't test the more complicated invocations of those phrases.
 Version 5/210322 was updated by Nathanael Nerode to omit unnecessary code when working with Room Description Control by Emily Short.
 Version 5/171007 of Large Game Speedup was updated by Nathanael Nerode, adding the "Parts" section.
 Version 5/171006 of Large Game Speedup was updated by Nathanael Nerode for Inform 6M62 and the responses system.  Code was simplifed by using the "choose row I in Table" syntax.
