@@ -1,4 +1,4 @@
-Version 5/171007 of Large Game Speedup by Nathanael Nerode begins here.
+Version 5/210322 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with large numbers of objects, by avoiding looping over all objects."
 
@@ -95,7 +95,9 @@ To sort (T - table name) up to row (N - number) in (TC - table column) order
         (documented at ph_sortcolumn):
         (- TableSortPartial({T}, {N}, {TC}, 1); -).
 
-Section - Set locale priority by building partial table
+Section - Set locale priority by building partial table (for use without Room Description Control by Emily Short)
+
+[Note that Room Description Control will never touch the locale priority code.  At all.]
 
 [We never want to search (or sort) through the entire Table of Locale Priorities, so we manually keep track of the number of "live" rows. We'll also avoid use of the I7 notion of blank rows. Unused rows will be marked by "nothing" in the object column.]
 The locale-table-count is a number that varies.
@@ -206,6 +208,23 @@ For printing the locale description
 				say ".[paragraph break]";
 			end the listing nondescript items activity with the domain;
 	continue the activity.
+
+Chapter - Room Description Control Speedups (for use with Room Description Control by Emily Short)
+
+Section SR3/4 Issuing Response Text (in place of Section SR3/4 - Locale descriptions - Unindexed in Standard Rules by Graham Nelson)
+
+[	This substitution removes the Locale descriptions section of Standard Rules since it is unused when Room Description Control is active.  This removes the unused Table of Locale Priorities, which has an entry for every single thing in the game, eliminating a gross waste of space. We need to leave a vestigial definition of "to describe locale for", which is called by other rules we are removing, in order to compile.]
+
+[	We also have to keep the response text section, which was in this section for some unknown reason. It should be in SR5/1/13 but it isn't.]
+
+to describe locale for (O - object):
+	do nothing;
+
+Issuing the response text of something -- documented at act_resp -- is an activity on responses. [33]
+
+The standard issuing the response text rule is listed last in for issuing the response text.
+
+The standard issuing the response text rule translates into I6 as "STANDARD_RESPONSE_ISSUING_R".
 
 Chapter - Improved WriteListFrom
 
@@ -517,6 +536,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+Version 5/210322 was updated by Nathanael Nerode to omit unnecessary code when working with Room Description Control by Emily Short.
 Version 5/171007 of Large Game Speedup was updated by Nathanael Nerode, adding the "Parts" section.
 Version 5/171006 of Large Game Speedup was updated by Nathanael Nerode for Inform 6M62 and the responses system.  Code was simplifed by using the "choose row I in Table" syntax.
 Version 4/140731 of Large Game Speedup was written by Andrew Plotkin for Inform 6G60 and was not tested with earlier or later releases.
