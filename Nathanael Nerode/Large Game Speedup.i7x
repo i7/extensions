@@ -1,4 +1,4 @@
-Version 5/210322 of Large Game Speedup by Nathanael Nerode begins here.
+Version 5/210325 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with large numbers of objects, by avoiding looping over all objects."
 
@@ -16,6 +16,8 @@ Definition: a container is empty rather than non-empty if the first thing held b
 Definition: a supporter is empty rather than non-empty if the first thing held by it is nothing.
 
 Chapter - Mentioned
+
+Section - Core Fast Functions
 
 [We have to clear these flags for every thing, almost every turn. It's worth having a routine that skips I7's usual SetEitherOrProperty() mechanism and all its safety checks.]
 
@@ -44,6 +46,10 @@ Include (-
 
 This is the optimized declare everything unmentioned rule:
 	rapidly set all things not mentioned;
+
+Section - Replacing the Unmentioning Rules
+
+[ Gets its own section for ease of overriding ]
 
 The optimized declare everything unmentioned rule is listed instead of
 	the declare everything initially unmentioned rule
@@ -97,7 +103,7 @@ To sort (T - table name) up to row (N - number) in (TC - table column) order
 
 Section - Set locale priority by building partial table (for use without Room Description Control by Emily Short)
 
-[Note that Room Description Control will never touch the locale priority code.  At all.]
+[Room Description Control never hits any of this code so don't bother fixing it.]
 
 [We never want to search (or sort) through the entire Table of Locale Priorities, so we manually keep track of the number of "live" rows. We'll also avoid use of the I7 notion of blank rows. Unused rows will be marked by "nothing" in the object column.]
 The locale-table-count is a number that varies.
@@ -208,23 +214,6 @@ For printing the locale description
 				say ".[paragraph break]";
 			end the listing nondescript items activity with the domain;
 	continue the activity.
-
-Chapter - Room Description Control Speedups (for use with Room Description Control by Emily Short)
-
-Section SR3/4 Issuing Response Text (in place of Section SR3/4 - Locale descriptions - Unindexed in Standard Rules by Graham Nelson)
-
-[	This substitution removes the Locale descriptions section of Standard Rules since it is unused when Room Description Control is active.  This removes the unused Table of Locale Priorities, which has an entry for every single thing in the game, eliminating a gross waste of space. We need to leave a vestigial definition of "to describe locale for", which is called by other rules we are removing, in order to compile.]
-
-[	We also have to keep the response text section, which was in this section for some unknown reason. It should be in SR5/1/13 but it isn't.]
-
-to describe locale for (O - object):
-	do nothing;
-
-Issuing the response text of something -- documented at act_resp -- is an activity on responses. [33]
-
-The standard issuing the response text rule is listed last in for issuing the response text.
-
-The standard issuing the response text rule translates into I6 as "STANDARD_RESPONSE_ISSUING_R".
 
 Chapter - Improved WriteListFrom
 
@@ -347,53 +336,53 @@ Include (-
 -) after "WriteListOfMarkedObjects" in "ListWriter.i6t".
 
 To say a list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT, {parent});
-		@pull subst__v; -).
+	 -).
 To say A list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+CFIRSTART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+NOARTICLE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say the list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say The list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT+CFIRSTART_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are a list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+ISARE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+ISARE_BIT+NOARTICLE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 To say is-are the list of (OS - description of objects) *in (parent - object):
-	(- @push subst__v;
-		objectloop (subst__v in {parent}) if ({-bind-variable:OS})
-		give subst__v workflag2; else give subst__v ~workflag2;
+	(-
+		objectloop ({-my:1} in {parent}) if ({-matches-description:1:OS})
+		give {-my:1} workflag2; else give {-my:1} ~workflag2;
 		WriteListOfMarkedContentsObjects(ENGLISH_BIT+DEFART_BIT+ISARE_BIT, {parent});
-		@pull subst__v; -).
+		 -).
 
 Chapter - Part Of
 
@@ -536,6 +525,9 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+Version 5/210325 added more section subdivision and reommitted some unnecessary code when Room Description Control is active.
+Version 5/210324 reverted the changes from 5/210322 as they caused unexpected errors.
+Version 5/210323 adopted the Inform 6M62-safe code for the *in phrases from the version in Counterfeit Monkey by Andrew Plotkin, solving a glaring bug which I didn't catch since I didn't test the more complicated invocations of those phrases.
 Version 5/210322 was updated by Nathanael Nerode to omit unnecessary code when working with Room Description Control by Emily Short.
 Version 5/171007 of Large Game Speedup was updated by Nathanael Nerode, adding the "Parts" section.
 Version 5/171006 of Large Game Speedup was updated by Nathanael Nerode for Inform 6M62 and the responses system.  Code was simplifed by using the "choose row I in Table" syntax.
