@@ -172,3 +172,45 @@ The default "There is no reply" is completely surreal for certain types of games
 			choose a random row from the Table of Ella's Confusion Responses;
 			say response entry;
 		stop the action.
+
+Example: *** Early Command Parsing -- process certain commands specially
+
+This is an offcut from Compliant Characters.i7x.  While I found a much better way to do what I needed there, the code pattern serves as reference for the hooks available in early parsing.  It probably won't compile.
+
+	*: "Early Command Parsing"
+
+	"Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+
+	Section - Say quoted text
+
+	Original say verb name is a text that varies.
+
+	[It's essentially impossible to match quotation marks with standard grammar tokens; they attach to neighboring words.  Must match with regexes.]
+	After reading a command (this is the say quoted text conversion rule):
+		let cmdline be text;
+		let cmdline be the player's command;
+		let command found be false;
+		now original say verb name is "";
+		let commandee name be text;
+		let quoted order be text;
+		if cmdline exactly matches the regular expression "(?i)\s*(say)\s*[quotation mark](.*)[quotation mark]\s*to\s*(.*)":
+			[ say "something" to someone -- with the double quotation marks ]
+			now command found is true;
+			now original say verb name is "[text matching subexpression 1]";
+			now commandee name is "[text matching subexpression 3]";
+			now quoted order is "[text matching subexpression 2]";
+		otherwise if cmdline exactly matches the regular expression "(?i)\s*(tell)\s*(<^[quotation mark]>*)[quotation mark](.*)[quotation mark]\s*":
+			[ tell someone "something" -- with the double quotation marks ]
+			now command found is true;
+			now original say verb name is "[text matching subexpression 1]";
+			now commandee name is "[text matching subexpression 2]";
+			now quoted order is "[text matching subexpression 3]";
+		if command found is true:
+			let new_cmdline be the substituted form of "[commandee name], [quoted order]";
+			if the command debugging option is active:
+				say "Original verb: [original say verb name].  Command: [new_cmdline][line break]";
+			change the text of the player's command to new_cmdline;
+
+	The testing location is a room.
+	Barbie is a person in the testing location.
+	The widget is a thing in the testing location.
