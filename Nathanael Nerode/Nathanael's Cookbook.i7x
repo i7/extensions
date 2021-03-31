@@ -61,7 +61,12 @@ Example: * Careful Startup -- displaying messages at the right time during start
 	[Note: "After the display banner rule" won't work, it'll end up after the initial room description.]
 
 	This is the just before the prompt rule:
-		say "Maybe you should get up.";
+		say "Maybe you should get up.[line break][paragraph break]";
+		[ Note: [paragraph break][line break] will give TWO blank lines after this.
+			[paragraph break] alone, [line break] alone, or neither will give NO blank lines.
+			This is the way to give the standard ONE blank line before the prompt.
+		]
+
 	The just before the prompt rule is listed after the initial room description rule in the startup rulebook.
 
 	[ This is the default order of the startup rulebook:
