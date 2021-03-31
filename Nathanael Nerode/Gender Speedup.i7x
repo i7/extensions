@@ -1,4 +1,4 @@
-Version 1/170816 of Gender Speedup by Nathanael Nerode begins here.
+Version 2/210331 of Gender Speedup by Nathanael Nerode begins here.
 
 "When using Gender Options, clean up some I6 internals with functions related to gender which are irrelevant to English or rendered obsolete with Gender Options.  Since these are called in the depths of ListWriter this should slightly improve speed.  Not included in Gender Options due to likely interference with other extensions.  Requires Gender Options.  Probably will not work with non-English languages.  Tested with Inform 6M62."
 
@@ -104,8 +104,8 @@ Constant PREFER_HELD;
         if (met < threshold) {
             #Ifdef DEBUG;
             if (parser_trace >= 4)
-            	print "   ", (The) match_list-->i, " (", match_list-->i, ") in ",
-            	    (the) its_owner, " is rejected (doesn't match descriptors)^";
+              print "   ", (The) match_list-->i, " (", match_list-->i, ") in ",
+                    (the) its_owner, " is rejected (doesn't match descriptors)^";
             #Endif; ! DEBUG
             match_list-->i = -1;
         }
@@ -126,9 +126,21 @@ Constant PREFER_HELD;
 
             !   A small bonus for having a matching GNA,
             !   for sorting out ambiguous articles and the like.
-			!   Patched by Gender Speedup by Nathanael Nerode.
+            !   Patched by Gender Speedup by Nathanael Nerode.
 
-            if (indef_cases & GetGNABitfield(obj) )
+            ! For this purpose, but *not* for pronouns, treat rooms, directions, 
+            ! and other objects which lack the GNA attributes entirely,
+            ! as inanimate neuter singular -- as the standard version does.
+
+            ! Fixes debugging commands like GONEAR Room Name in the situation
+            ! where there is also a thing with a similar name.
+
+            ! Since rooms are only added to scope manually, should have little effect on gameplay.
+            ! Directions are in scope, but SCORE__NOTCOMPASS is much larger than SCORE__GNA.
+            ! Everything else in default scope to non-meta verbs is a thing with attributes.
+
+            j = GetGNABitfield(obj) || $$000000001000 ; ! 0 -> inanimate neuter singular
+            if (indef_cases & j ) ! matched player's command on at least one GNA attribute
                 its_score = its_score + SCORE__GNA;
 
             match_scores-->i = match_scores-->i + its_score;
@@ -360,3 +372,7 @@ This requires rather invasive replacements of large sections of I6 template code
 
 One section exists solely to support other extensions which are patching the other sections, so you shouldn't replace it, but if you need to:
 	Section - Disabled 7 (in place of Section - Replace GetGNAOfObject in Gender Speedup by Nathanael Nerode)
+
+Changelog:
+2/210331: Change disambiguation treatment with names of rooms.  Should fix Counterfeit Monkey regtests.
+1/170816: first version
