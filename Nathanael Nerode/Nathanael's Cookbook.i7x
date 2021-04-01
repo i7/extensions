@@ -1,4 +1,4 @@
-Version 3/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 4/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of worked examples illustrating various features of Inform.  There isn't actually anything in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -7,33 +7,6 @@ Nathanael's Cookbook ends here.
 ---- DOCUMENTATION ----
 
 This is just a collection of examples.
-
-Example: * Debugging Startup -- turning rules debugging on before the first command is entered
-
-	*: "Debugging Startup"
-
-	Section - Startup Debugging
-
-	[ See RulesOnSub in Tests.i6t for reference ]
-	To turn rules tracing on:
-		(- debug_rules = 1; -)
-
-	This is the trace rules at startup rule:
-		turn rules tracing on;
-
-	[ We want to let the game initialize memory, start the virtual machine, and seed the RNG before tracing starts.]
-	The trace rules at startup rule is listed after the seed random number generator rule in the startup rulebook.
-	The trace rules at startup rule is listed before the update chronological records rule in the startup rulebook.
-
-	[ The first rule which will actually trace is the "start in the correct scenes" rule.  This is because NI doesn't instrument the earlier startup rules with the debug code, a problem we can't fix because NI is closed-source. ]
-	[ The untraceable rules in Standard Rules are, in order:
-			initialize memory
-			virtual machine startup
-			seed random number generator
-			update chronological records
-			declare everything initially unmentioned -- the one we might want to trace
-			position player in model world
-	]
 
 Example: * Careful Startup -- displaying messages at the right time during startup
 
@@ -45,7 +18,7 @@ Example: * Careful Startup -- displaying messages at the right time during start
 
 	A bed is a kind of supporter.
 	The latticework double bed is a bed in the bedroom.
-	The description of the latticework double bed is "It's a double bed with a latticework headboard."
+	The description of the latticework double bed is "It's a double bed with a latticework headboard.
 	
 	The player is on the latticework double bed.  [This is the correct way to set a starting location.]
 

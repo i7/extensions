@@ -1,4 +1,4 @@
-Version 1/210331 of Nathanael's Debug Tools by Nathanael Nerode begins here.
+Version 2/210331 of Nathanael's Debug Tools by Nathanael Nerode begins here.
 
 "Miscellaneous stuff I like to have built in when debugging and programming, but would never want to relase."
 
@@ -16,12 +16,15 @@ Include (-
 
 Section - Startup Debugging
 
+Use startup rules tracing translates as (- CONSTANT STARTUP_RULES_TRACING; -).
+
 [ See RulesOnSub in Tests.i6t for reference ]
 To turn rules tracing on:
 	(- debug_rules = 1; -)
 
 This is the trace rules at startup rule:
-	turn rules tracing on;
+	if the startup rules tracing option is active:
+		turn rules tracing on;
 
 [ We want to let the game initialize memory, start the virtual machine, and seed the RNG before tracing starts.]
 The trace rules at startup rule is listed after the seed random number generator rule in the startup rulebook.
@@ -42,6 +45,9 @@ Nathanael's Debug Tools ends here.
 
 ---- DOCUMENTATION ----
 
-To disable the tracing of startup rules:
+This is just a repository for ebugging code which I found I was copy-pasting between different work-in-progress games.  This is released in case it might help someone else.
 
-	The trace rules at startup rule is not listed in the startup rulebook.
+This eliminates the "Are you sure?" question when quitting; useful to speed up the command-line test/edit cycle.
+
+Tracing startup rules is important when you need it, and requires a lot of code to set up (included here) but rather annoying most of the time.  It's enabled with
+	Use startup rules tracing
