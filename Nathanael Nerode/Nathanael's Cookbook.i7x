@@ -1,12 +1,215 @@
-Version 4/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 5/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
-"This is just a collection of worked examples illustrating various features of Inform.  There isn't actually anything in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
+"This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
 Nathanael's Cookbook ends here.
 
 ---- DOCUMENTATION ----
 
-This is just a collection of examples.
+This is a collection of examples and documentation.  The documentation hopes to make up to some degree for the lack of an Inform reference manual.
+
+Chapter - Line Breaks and Paragraph Breaks
+
+Controlling Inform 7's line breaks is a well-known headache, and this is largely due to poor documentation, along with the compiler's ineffective attempts to guess what the game writer wanted.  This documentation should give you enough power to defeat it, though.
+
+Inform 7 has two separate and largely-independent systems for generating line breaks: the paragraph break system and the line break system.
+
+Section - The Line Break System
+
+(A) The line break system is supposed to generate a single newline, without any blank lines. The line break system is extremely rigid.  Things you need to know about it:
+
+(1) The clean way to invoke it is "[line break]".
+
+(2) Every time you invoke
+	say "Something with a period just before a closing quote.";
+Inform 7 will add an implicit [line break].
+
+(3) Nearly every time you invoke
+	say "Something with a period just before a left bracket.[if true] This one too.[end if]";
+Inform 7 will add an implicit [line break] just before the left bracket.
+
+(4) These can be suppressed with explicit [no line break]:
+	say "Something with a period.[no line break][if true] This one too.[no line break][end if]";
+
+(5) These can also be suppressed by adding a space after the period, since it only checks if the period is *immediately* before the close quote or left bracket.
+
+(6) The same happens with question marks or exclamation points.
+
+(7) Under the hood, what happens is that the left bracket usually breaks the text into multiple "blocks", each of which effectively gets its own say statement.  (But not always; the left bracket in "[no line break]" doesn't create extra "blocks", for example.)
+
+(8) This implicit line break only happens in the direct, immediate argument to a say statement.  You can avoid it reliably by assembling text in a "to decide what text is" routine:
+	to decide what text is the magic invocation:
+		decide on "Abracadabra!";
+This will not generate any line breaks at all when you write
+	say "[magic invocation]";
+
+Section - The Paragraph Break System
+
+The paragraph break system is designed to generate a full blank line between paragraphs.  Things you need to know about it:
+
+(1) The paragraph break system works by producing one extra newline.  So it only works as intended if the paragraph break comes *immediately after a line break*.  Otherwise it'll end up being a single newline rather than a blank line.  So you must be careful to emit a line break before your paragraph division point.
+
+(2) Unlike the line break which is emitted immediately, the paragaph break is delayed and admitted just *before* the next rule (such as printing the prompt).  Furthermore, it is typically only emitted before a rule of the sort which would emit a paragraph break, not the other sort.  This can lead to great confusion.
+
+(3) The paragraph break system is documented in Internal/I6T/Printing.i6t.  Not the most convenient location, but there is actually complete documentation there.  Search the file for "paragraph break", and read it.
+
+(4) Every action rule (but not activities rules) generates an implicit paragraph break at the end.  To suppress the implicit paragraph break, the action rule must say
+	"[run paragraph on]";
+as the very last say-statement in the rule.
+
+(5) In fact, every rulebook can be followed either with or without implicit paragraph breaks, in a manner which requires fancy I6 hacking.  Search "Internal/Extensions/Graham Nelson/Standard Rules.i7x" for "FollowRulebook" for more information.
+
+(6) By default, all action-based or nothing-based rulebooks, including those you write and all activities, will add the implicit paragraph break.
+
+(7) By default, all number-based, object-based, scene-based (etc.) rulebooks will NOT add implicit paragraph breaks.
+
+Section - Recommendations
+
+(A) Preventing unwanted single line breaks.
+
+(1) If you're assembling a line from individual words or sentences, from little pieces, use "to decide what text is ____", which avoids all the implicit line breaks.
+(2) Then use one say statement per intended output line.
+(3) If you have to use multiple say statements for stuff you want on one line (perhaps because they are generated by multiple rules):
+(3A) terminate them all with spaces.  The extra space before the final line break is usually invisible, though it may occasionally confuse interpreter word-wrap.
+(3B) keep track of whether you said anything at all (to avoid an extra line break if you said nothing);
+(3C) have a bit at the very end which does something like:
+	if something was printed, say "[line break]";
+(4) This is a decent use of an activity (or another object-based or value-based rulebook).
+
+(B) Preventing unwanted double line breaks.
+
+(1) Generate an entire paragraph in one action rule.
+(2) If you need multiple rules for one paragraph, set up an activity, or another object-based or value-based rulebook, to do so, and invoke it from one action rule.
+(3) If you have to use multiple action rules, have each one produce a line, and end every one with:
+	say "[run paragraph on with special look spacing]";
+and have one special rule which runs last and does not have that line -- this rule, by its existence, triggers the paragraph break.  You may want to try putting one of these lines into it, but they could mess up your text spacing:
+	say "[paragraph break]";
+	say "[conditional paragraph break]";
+(4) Unlike in the line break case, Inform is supposed to keep track of blanks here.
+
+(C) Preventing unwanted triple line breaks.
+
+(1) These are almost always due to "blanks": sets of rules which were supposed to produce text which produced nothing, but issued a paragraph break (often explicitly).
+
+(D) Making sure double line breaks happen where desired
+
+(1) Make sure the last say statement before any paragraph break emits a line break.
+(2) Make sure that every paragraph-generating machinery ends with a conditional paragraph break.
+
+(E) Making sure single line breaks happen where desired
+
+(1) Make sure there *isn't* a paragraph break.
+(2) Make sure there *is* a line break.
+(3) You can get a single line break from a paragraph break without a line break, but this is undesirable and always a bug.
+
+Example: * Line Breaks - Understand when Inform implicitly emits line breaks
+
+	*: "Line Breaks" by "Nathanael Nerode".
+
+	Section - Everyone's Favorite Test Verb
+
+	The bedroom is a room.
+	The bauble is a thing in the bedroom.
+
+	Learning Line Breaks is a scene.
+	Learning Line Breaks begins when play begins.
+
+	The block thinking rule is not listed in any rulebook.
+	test me with "think".
+
+	Carry out thinking (this is the first thinking rule):
+		[#1.  Generates 2 spurious line breaks, then one correct one at the end.]
+		say "I am tired of Inform's line break algorithm.[if the player has the bauble] So tired.[end if] It is confusing.";
+		[#2. Suppress line breaks.]
+		say "I am tired of Inform's line break algorithm.[no line break][if the player has the bauble] So tired.[no line break][end if] It is confusing.";
+		[#3. Suppress line breaks by putting trailing spaces instead of leading.]
+		say "I am tired of Inform's line break algorithm. [if the player has the bauble]So tired. [end if]It is confusing.";
+
+	Carry out thinking (this is the second thinking rule):
+		say "Inform's paragraph break system is almost as confusing."; [Note, line break at end.]
+		say "It adds a paragraph break, a.k.a. an extra line break, at the end of each action rule (but not activities rules)...";
+		say "But what if there is no line break at the end of the rule, as with";
+
+	Carry out thinking (this is the third thinking rule):
+		say "...what you just saw?  Then the paragraph break happens (looking like a line break) but not the line break.[no line break][run paragraph on]";
+
+	Carry out thinking (this is the fourth thinking rule):
+		say "..although there is a way to suppress the paragraph break.";
+
+	to decide what text is the first special sentence:
+		if the player has the bauble:
+			decide on "The automatic line breaking only applies in the immediate, direct argument to a say phrase.";
+		otherwise:
+			decide on "The automatic line breaking only applies in say phrases.";
+
+	to decide what text is the second special sentence:
+		decide on "If you assemble phrases using 'to decide what text is', you don't trigger it.";
+
+	Carry out thinking (this is the fifth thinking rule):
+		[ Fails to break line.]
+		say "[first special sentence] [second special sentence]";
+		[ Does break line.]
+		say "[first special sentence] [second special sentence][line break]";
+
+	Whinging is a rulebook. [action-based]
+
+	Whinging (this is the first whinging rule):
+		say "Does this generate a paragraph break?";
+	Whinging (this is the second whinging rule):
+		say "Looks like it!  But note that the paragraph break pending actually is executed at the start of the next action rule.";
+
+	Pondering is an object based rulebook.
+
+	Pondering a thing (called item) (this is the first pondering rule):
+		say "Does pondering [item] generate a paragraph break?";
+	Pondering  (this is the second pondering rule):
+		say "It doesn't!  And also leaves out the pending paragraph break from the other rulebook.";
+
+	Imagining is a number based rulebook.
+
+	Imagining a number (called n) (this is the first imagining rule):
+		say "Does imagining [n] generate a paragraph break?";
+	Imagining (this is the second imagining rule):
+		say "It doesn't!  And the pending paragraph break comes in at the very end.";
+
+	Visualizing is a scene based rulebook.
+	Visualizing a scene (called context) (this is the first visualizing rule):
+		say "Does visualizing [context] generate a paragraph break?";
+	Visualizing  (this is the second visualizing rule):
+		say "It doesn't!  And the pending paragraph break comes in at the very end.";
+
+	Woolgathering is a nothing based rulebook.
+	Woolgathering (this is the first woolgathering rule):
+		say "Does a nothing-based rulebook generate a paragraph break?";
+	Woolgathering (this is the second woolgathering rule):
+		say "It does!"
+
+	Carry out thinking (this is the sixth thinking rule):
+		say "It gets way complicated with extra rulebooks.";
+		follow the whinging rulebook;
+		follow the pondering rulebook for the bauble;
+		follow the imagining rulebook for 7;
+		follow the whinging rulebook;
+		follow the visualizing rulebook for Learning Line Breaks;
+		say "But the pending paragraph break doesn't happen if there's not an action rule starting! And for our final hurrah...";
+		follow the woolgathering rulebook;
+
+	Rubbernecking is an action-based rulebook.
+	[Action-based and nothing-based seem to be identical.]
+	Rubbernecking (this is the first rubbernecking rule):
+		say "Does rubbernecking generate a paragraph break?";
+	Rubbernecking (this is the second rubbernecking rule):
+		say "Looks like rubbernecking does!  But note that the paragraph break pending actually is executed at the start of the next action rule, ";
+		say "or in this case, by mysterious internal workings between the last specific action processing rule and 'a first turn sequence rule'. ";
+		say "Try RULES ON to see the details.";
+
+	Carry out thinking (this is the seventh thinking rule):
+		follow the rubbernecking rulebook;
+
+
+Chapter - Everything Else
+
+And now for the other examples.
 
 Example: * Careful Startup -- displaying messages at the right time during startup
 
