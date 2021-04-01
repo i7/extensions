@@ -1,6 +1,9 @@
-Version 14/210322 of Room Description Control by Emily Short begins here.
+Version 14/210401 of Room Description Control by Emily Short begins here.
 
 "A framework by which the author can considerably change the listing of objects in a room description. Includes facilities for concealing objects arbitrarily and changing the order in which objects are listed."
+
+[Need this for debugging code left in]
+Paragraph-debug-state is a number that varies. Paragraph-debug-state is 0.
 
 Section 0 - Data Structure
 
@@ -30,11 +33,12 @@ A description-priority rule (this is the marking rule):
 	now every thing is not marked for listing;
 	call the swift rule on everything in scope.
 
+[ Three loops through the entire object world.  Three!  Waste!]
 A description-priority rule (this is the mentioning tedious things rule):
-	now the player is not marked for listing;
+	now the player is not marked for listing; [ Needs to be corrected: should be undescribed things]
 	now every thing enclosed by the player is not marked for listing;
 	now every scenery thing is not marked for listing;
-	
+
 A description-priority rule (this is the determining concealment rule): 
 	follow the description-concealing rules.
 	
@@ -73,10 +77,12 @@ A description-priority rule (this is the description-ranking rule):
 	sort the Table of Seen Things in reverse current rank order; 
 
 A description-priority rule (this is the reporting descriptions rule):
-	repeat through the Table of Seen things
-	begin; 
-		if the output subject entry is unmentioned, carry out the writing a paragraph about activity with the output subject entry;
-	end repeat. 
+	repeat through the Table of Seen Things:
+		if the output subject entry is unmentioned:
+			if paragraph-debug-state is at least 2:
+				say "[bracket]reporting for: [output subject entry][close bracket]"; [debugging code]
+				now the output subject entry is unmentioned; [reset side effects of debugging code]
+			carry out the writing a paragraph about activity with the output subject entry;
 	
 [A description-priority rule (this is the final description rule):
 	say paragraph break.]
@@ -89,7 +95,8 @@ A thing has a number called description-rank.
 
 Ranking rules are an object-based rulebook.
 
-Definition: a thing is mentionable if it is marked for listing and it is unmentioned. Definition: a thing is unmentionable if it is not mentionable.
+Definition: a thing is mentionable if it is marked for listing and it is unmentioned.
+Definition: a thing is unmentionable if it is not mentionable.
 
 Definition: a thing is descriptively dull if the description-rank of it is lowest-rank.
 
@@ -139,21 +146,32 @@ A description-concealing rule while entering a container (called special-target)
 
 Section 3 - Debugging - Not for release
 
-Understand "paragraphs" or "paragraphs off" as paragraph-debugging. paragraph-debugging is an action out of world. 
+Paragraph-debugging is an action out of world applying to one number.
+Paragraph-debugging-off is an action out of world.
+Paragraph-debugging-on is an action out of world.
+Understand "paragraphs [number]" as paragraph-debugging.
 
-Paragraph-debug-state is a number that varies. Paragraph-debug-state is 0.
+Understand "paragraphs off" as paragraph-debugging-off. 
+Carry out paragraph-debugging-off (this is the paragraph debugging off redirect rule):
+	try paragraph-debugging 0 instead;
 
-Carry out paragraph-debugging (this is the default carry out paragraph debugging rule):
-	if paragraph-debug-state is 1, now paragraph-debug-state is 0;
-	otherwise now paragraph-debug-state is 1.
+Understand "paragraphs" or "paragraphs on" as paragraph-debugging-on.
+Carry out paragraph-debugging-on (this is the paragraph debugging on redirect rule):
+	try paragraph-debugging 1 instead;
+
+Carry out paragraph-debugging a number (called n) (this is the default carry out paragraph debugging rule):
+	if n < 0, now n is 0;
+	if n > 2, now n is 2;
+	now paragraph-debug-state is n.
 
 Report paragraph-debugging (this is the default report paragraph debugging rule):
-	say "Paragraph debugging is now [if paragraph-debug-state is 1]on[otherwise]off[end if]." (A)
+	say "Paragraph debugging is now [if paragraph-debug-state is 2]level 2[else if paragraph-debug-state is 1]on[otherwise]off[end if]." (A)
 
 The table-debugging rule is listed after the description-ranking rule in the description-priority rules.
+The table-debugging rule is listed before the reporting descriptions rule in the description-priority rules. [After isn't good enough; it comes too late.]
 
 This is the table-debugging rule:
-	if paragraph-debug-state is 1:
+	if paragraph-debug-state is at least 1:
 		repeat through the Table of Seen things:
 			if the output subject entry is unmentioned:
 				say "[output subject entry]: rank [current rank entry][line break]";
@@ -223,6 +241,7 @@ The minimalist "Single Paragraph Description" combines all description of all it
 
 If none of these suit, we may wish to craft our own set of writing a paragraph rules instead.
 
+
 Note also that under this system, the activity of listing nondescript items becomes irrelevant.
 
 An addendum about concealment. We may also find that we want TAKE ALL to attempt to take only items that are currently not concealed according to our concealment rules. We may in that case add the following bit to our code:
@@ -255,3 +274,5 @@ Version 12 does some cleanup and brings the extension in line with adaptive resp
 Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurality.
 
 Vergion 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.
+
+Version 14/210401: Improved paragraph debugging; comments and some style modernization.
