@@ -1,4 +1,4 @@
-Version 4/210332 of Ordinary Room Description by Emily Short begins here.
+Version 4/210333 of Ordinary Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, which emulates as closely as possible the behavior of Inform defaults, but allows the intervention of Room Description Control."
 
@@ -30,7 +30,7 @@ Rule for disclosing supported contents of something (called the target) which en
 	say ".[paragraph break]" (B). 
 
 Rule for disclosing supported contents of something (called the target) (this is the default contents description rule):
-	say "On [the target]" (A);
+	say "On [the target] " (A);
 	list the contents of the target, giving brief inventory information, as a sentence, including contents, tersely, prefacing with is/are, not listing concealed items;
 	say ".[paragraph break]" (B). 
 
@@ -84,7 +84,8 @@ The advantage of including it is that we can then make use of Room Description C
 
 For more detail on these abilities, see the documentation for Room Description Control.
 
-Version 4/210331 stopped trying to print initial descriptions when the initial description was ""
+Version 4/210333 added the missing space in "On the dresser are[ ]a set of sheets."
+Version 4/210332 stopped trying to print initial descriptions when the initial description was "".
 Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Quiet Shelf - A scenery supporter which does not list its contents in the room description. 
