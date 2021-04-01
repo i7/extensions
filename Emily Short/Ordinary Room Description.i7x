@@ -1,4 +1,4 @@
-Version 4/210322 of Ordinary Room Description by Emily Short begins here.
+Version 4/210332 of Ordinary Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, which emulates as closely as possible the behavior of Inform defaults, but allows the intervention of Room Description Control."
 
@@ -84,6 +84,7 @@ The advantage of including it is that we can then make use of Room Description C
 
 For more detail on these abilities, see the documentation for Room Description Control.
 
+Version 4/210331 stopped trying to print initial descriptions when the initial description was ""
 Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Quiet Shelf - A scenery supporter which does not list its contents in the room description. 
