@@ -36,7 +36,7 @@ Rule for disclosing supported contents of something (called the target) (this is
 
 Definition: a thing is initially-describable if it is initially-described and it is not handled.
 
-Definition: a thing is initially-described if it provides the property initial appearance.
+Definition: a thing is initially-described if it provides the property initial appearance and its initial appearance is not "".
 
 Section 2 - List Nondescript items
  
