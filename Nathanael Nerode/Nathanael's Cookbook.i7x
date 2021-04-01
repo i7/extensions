@@ -10,7 +10,7 @@ This is a collection of examples and documentation.  The documentation hopes to 
 
 Chapter - Line Breaks and Paragraph Breaks
 
-Controlling Inform 7's line breaks is a well-known headache, and this is largely due to poor documentation, along with a misguided attempt to guess what the game writer wanted.  This documentation should give you enough power to defeat it, though.
+Controlling Inform 7's line breaks is a well-known headache, and this is largely due to poor documentation, along with the compiler's ineffective attempts to guess what the game writer wanted.  This documentation should give you enough power to defeat it, though.
 
 Inform 7 has two separate and largely-independent systems for generating line breaks: the paragraph break system and the line break system.
 
@@ -201,7 +201,7 @@ Example: * Line Breaks - Understand when Inform implicitly emits line breaks
 	Rubbernecking (this is the second rubbernecking rule):
 		say "Looks like rubbernecking does!  But note that the paragraph break pending actually is executed at the start of the next action rule, ";
 		say "or in this case, by mysterious internal workings between the last specific action processing rule and 'a first turn sequence rule'. ";
- 	 say "Try RULES ON to see the details.";
+		say "Try RULES ON to see the details.";
 
 	Carry out thinking (this is the seventh thinking rule):
 		follow the rubbernecking rulebook;
