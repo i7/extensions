@@ -1,0 +1,97 @@
+Version 1/210328 of Extension Style Guide for Inform 7 by Nathanael Nerode begins here.
+
+After writing, and editing, a number of Inform 7 extensions, I have some advice for extension writers.  More like hard-and-fast rules, really.
+
+(1) Name EVERY rule.  Extensions should never, ever contain unnamed rules.
+
+No matter what rule you write, some game writer will want to override it, insert a rule before it, insert a rule after it, etc.  If you don't name the rule, the game writer will have to make a hacked version of your extension, creating version number confusion and problems (there are a dozen of these in Counterfeit Monkey).
+
+If you name the rules, the game writers can override them.  If you don't, they can't, unless they replace an entire Section.  Name every rule.
+
+(2) Use Volume, Book, Part, Chapter, and Section profligately.
+
+Again, game writers will want to override parts of your extension. Make it easy for them.  Divide the extension into little bite-sized chunks so that the game writer can delete just a little tiny piece.
+
+The headings go from biggest (Volume) to smallest (Section).  Every single thing in your extension, except the Include directives, should go inside a Section, or Chapter, or Part, or Book, or Volume.  No exceptions.
+
+After you've broken it into bite-sized sections, you can organize those bitses into large conceptually linked groups (Chapters), and so on up.  The Sections should be very small.
+
+Neutral Standard Responses is a good example here.
+
+(3) Every large data structure should get its own Section, with no rules in it.
+
+If you're defining a table, give it its own Section so that game writers who want to replace it (perhaps with a table with an extra column) can replace the table without deleting anything else.
+
+(4) A kind (type) definition should get its own Section, with no rules in it.
+
+Replacing a section is the only way to override definitions.
+The game writer may want to override definitions and keep all your rules.
+You might put some tightly linked code defining properties of the kind in the section with the kind.
+(5) Each set of Definitions should get their own Section, with no rules in it.
+
+Replacing a section is the only way to override definitions.
+The game writer may want to override definitions and keep all your rules.
+You might put a few related Definitions together.
+
+(6) Each related group of say-phrases should get their own Section, with no rules in it.
+
+Replacing a section is, again, the only way to override say-phrases.
+You probably want one section for each say-phrase, unless you have several closely related say-phrases.  It is OK to put "to say a blorb", "to say the blorb", and "to say blorb" in the same section.
+
+(7) Global variable definitions should often get their own Section.
+
+Replacing a section is, again, the only way to override global variable definitions.
+Are you sensing a pattern here?
+Sometimes you don't need to do this because global variables get overridden a lot less than the other things mentioned above.  It still doesn't hurt to give it its own section.
+
+(8) Never put unrelated things in the same Section.
+
+You want the game writer to be able to delete the machinery for one part of your extension without having to copy and rewrite the machinery for another part.
+
+As of Inform 6M62, The Standard Rules does not follow this advice, creating many headaches.
+
+(9) Name every Volume, Book, Chapter, Section, so they can be overridden -- but don't usually number them.
+
+You generally want to keep a section name the same when you update the extension, so that any game which overrides it will continue to do so in later versions of the extensions.
+
+Extension updates can make a numbering scheme get out of date, but you have to keep the numbers, since they're part of the section names.  A naming scheme without numbers won't get out of date.  
+
+So, you want "Section - Say Phrases For Bananas", not "Section 2 - Say Phrases For Bananas".
+
+You can see the perils of numbering in my Gender Options extension, which ended up with a "Part 2B".
+You can see the better choice in my Gender Speedup extension.
+
+(10) Increase the extension's major version for interface changes; minor version for implementation or other changes.
+
+The version number should be in the form (major version)/(minor version) .
+
+The minor version should be a date in the form (YYMMDD), typically the date of release or of writing -- there are no Inform 7 extensions from before the year 2000, so four-digit-years are unnecessary.  This is useful mostly to tell how obsolete an extension is (how badly it needs an update).
+
+The major version should be incremented whenever you make a change which might be likely to break existing games which use the extension -- that is, when you change the interface.  This would include changing any preexisting rule names, section names, etc.  You may use your discretion if you change something which could be used explicitly by story writers but *shouldn't* be (and you tell them not to in the Documentation).
+
+The minor version should be changed *every time you release a new version*, even if you think the change is insignificant.  If you have two or more versions released in one day, go ahead and increment the minor version to a day in the near future.  It's more important to increment the version than it is for it to be an accurate release date.
+
+Standard Rules did not follow this versioning rule, which is a pain; there are different versions floating around with identical version numbers.  Never do this!
+
+(11) Use longer, more verbose, more elaborate names for implementation details, including most rules, sections, internally-used global variables, column names in tables, etc.
+
+This is to avoid namespace conflicts with the game writer.  The game writer should get to use the nice short names.  Your internal workings have to have their own names, but the game writer shouldn't be at risk of duplicating them by accident (since this is the source of very confusing bugs).
+
+(12) Use short simple names for kinds and say-phrases intended to be used by the game writer.
+
+If you're defining a "drawer" kind, just call it a "drawer".  The game writer is going to have to write it repeatedly.  Likewise if you're defining a say-phrase for the game writer -- a say-phrase is a shorthand, so make its name short and clear.
+
+(13) To delete a section from another extension, replace it with a section containing nothing but a dummy variable.  Due to a bug in Inform 7 (6M62), you can't have a completely blank section.  There are examples of this in Gender Options ( search for dummy_variable_1234567890 ) and Title Case for Headings ( dummy_variable_97538642 ).
+
+(14) Document your extension.
+
+This should go without saying.
+
+But one specific thing you might want to document are how to override specific bits of the extension which people are likely to not want to use.  This might include the technique described above for deleting a section from an extension, or the method for removing a rule.
+
+----
+That's all the advice I have so far.  This will make your extension more maintanable, upgradeable, and generally useable.
+
+Thanks for reading.
+
+--Nathanael

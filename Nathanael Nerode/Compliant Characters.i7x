@@ -1,4 +1,4 @@
-Version 3/210320 of Compliant Characters by Nathanael Nerode begins here.
+Version 4/210328 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires Parser Error Number Bugfix and version 4 of Neutral Standard Responses.  Tested with Inform 6M62."
 
@@ -13,7 +13,9 @@ We have to replicate most of the I6 code in "Parser Letter I".  Wonderful.
 "Check an actor answering something that" usually happens in case of a parser error.
 There's always a latest parser error and it's from the most recent command.
 
-Unfortunately, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser, and leaves the error set to STUCK_PE.  This requires special implementation.  See the last volume; it's passed through the new "ordering it that" action, which reparses it into an order.
+Unfortunately, per default, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser,
+and leaves the error set to STUCK_PE.  This is addressed in a later Volume of this extension.
+It's passed through the new "ordering it that" action, which reparses it into an order.
 ]
 
 Section - Patch the I6 Parser
@@ -134,7 +136,9 @@ The really nasty bit here is line breaking.  The standard parser errors throw in
 Check an actor answering something (called the commandee) that (this is the print parser errors for commands to actors rule):
 	if the latest parser error is:
 		-- didn't understand error: [STUCK_PE]
-			[This will also be the case when the player actually typed 'say "blah" to Jane', so this needs to be fixed.  FIXME]
+			[In Standard Rules, this will be the case when, and only when, the player actually typed 'say "blah" to Jane' (including 'speak/answer/shout').]
+			[We redirect this in a later volume, so it should never trigger: should be dead code.]
+			[Code is left in in case the later volume is overriden by a game writer for their own reasons.]
 			say "[as the parser]I didn't understand that order, though I thought it was an instruction addressed to [the commandee].[as normal][line break]" (A);
 			set the oops target to the verb;
 		-- only understood as far as error: [UPTO_PE]
@@ -163,6 +167,7 @@ Check an actor answering something (called the commandee) that (this is the prin
 		-- can only do that to something animate error: [ANIMA_PE]
 			say "[as the parser][The commandee] [can] only do that to something animate.[as normal][line break]" (M);
 		-- not a verb I recognise error: [VERB_PE]
+			[Note that this one will catch arbitrary stuff like 'password', so it's a good hook for game writers.  Also note the British spelling of the error.]
 			set the oops target to the verb;
 			say "[text of the parser error internal rule response (N)][line break]" (N);
 [		-- not something you need to refer to error: ] [SCENERY_PE -- should never trigger, dead code in I6T & Standard Rules -- message O]
@@ -634,6 +639,22 @@ Saying sorry - (disable at verb level)
 
 Volume - Additional Ways To Give Orders
 
+Chapter - Utility Phrases for Additional Ways to Give Orders
+
+Section - Quote-stripping the topic understood
+
+[This is of general utility.  It will strip quotes off the topic understood.  We do this before sending it back to reparse as an order.]
+
+to say the/-- quote-stripped topic understood:
+	if the topic understood exactly matches the regular expression "[quotation mark](.*)[quotation mark]":
+		say "[text matching subexpression 1]";
+	else if the topic understood exactly matches the regular expression "['](.*)[']":
+		say "[text matching subexpression 1]";
+	else:
+		say "[the topic understood]";
+
+Chapter - Core Reparsing
+
 Section - Command Debugging
 
 Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
@@ -652,78 +673,79 @@ For reading a command when the special reparse flag is true (this is the parse r
 	change the text of the player's command to the revised command text;
 	now the special reparse flag is false;
 
-Ordering it that is an action applying to one thing and one topic.
+Part - Tell and Say as Orders
+
+[ PLEASE NOTE:
+	This Part contains a primer in how to transfer "the topic understood" through rules.
+	It's not straightforward.  The rules have been named very carefully.
+]
+
+Chapter - Ordering it to
+
+Section - Action and rules for ordering it to
+
+Ordering it to is an action applying to one thing and one topic.
 
 [Avoid bogus "John is unable to do that."  If this fails it will either give an error message or reparse, period.]
-Unsuccessful attempt by someone trying ordering something that:
+Unsuccessful attempt by someone trying ordering something to:
 	do nothing;
 
 [We need a separate case for the hilarious "actor, tell me to do something"... though arguably in some sort of S&M game this order might make sense.]
-Check an actor ordering something that (this is the block ordering yourself rule):
+Check an actor ordering something to (this is the block ordering yourself rule):
 	if the noun is the player:
 		say "[as the parser]In this story [we] don't need to have someone tell [us] to do something.  Just type '[the topic understood]'.[no line break][as normal][line break]" (A);
 		stop the action;
 
 [We need separate cases for "actor, tell other person to do something", which is seriously problematic.]
-Check an actor ordering something that (this is the block indirect ordering rule):
+Check an actor ordering something to (this is the block indirect ordering rule):
 	if the actor is not the player:
 		say "[as the parser]In this story you can't tell [the actor] to tell [the noun] to do something.  Try telling [the noun] to do something directly, with '[noun], [the topic understood]'.[no line break][as normal][line break]" (A);
 		stop the action;
 
-Check ordering something that (this is the reparse as command rule):
-	now the revised command text is the substituted form of "[the noun], [the topic understood]";
+[NOTE it isn't ordering something to something.  The topic is omitted from the rule spec.]
+Check ordering something to (this is the reparse as command rule):
+	now the revised command text is the substituted form of "[the noun], [the quote-stripped topic understood]";
 	now the special reparse flag is true;
 	stop the action;	
 	[TODO: Need to make sure turn count does not go up and time does not pass -- hard]
 
-Understand "tell [someone] to [text]" as ordering it that.
-Understand "order [someone] to [text]" as ordering it that.
-Understand "instruct [someone] to [text]" as ordering it that.
+Section - Understand lines for tell, order, instruct
+
+Understand "tell [someone] to [text]" as ordering it to.
+Understand "order [someone] to [text]" as ordering it to.
+Understand "instruct [someone] to [text]" as ordering it to.
+
+Chapter - Speaking it to
 
 Section - Diverting Explicit Answer
 
 [In Standard Rules, "answering it that" triggers in an unfortunate way, direct from the "answer" or 'say' command -- when we want it to mainly trigger after parsing failure.]
-
-[It is almost impossible to execute an action using "try" if the action takes a topic as an argument.  I haven't figured out how after SEVERAL tries.  It won't parse it.  However, we can direct such commands directly through the "order" rules.]
 
 Understand the command "answer" as something new. [This is the diversion.]
 Understand the command "say" as something new.
 Understand the command "shout" as something new.
 Understand the command "speak" as something new.
 
-Understand "answer [text] to [someone]" as ordering it that (with nouns reversed).
-Understand the commands "say", "shout", and "speak" as "answer". [Same as Standard Rules.]
+Section - Redefining explicit answer
 
-Section - Say quoted text
+[We use a different verb here, and redirect in the check stage, to allow for more intervention by the game writer. This isn't always an order, necessarily.]
 
-Original say verb name is a text that varies.  [You can check this in other rules for successful or failed orders.]
+[If we needed a second verb with the nouns in the other order, we would use:
+	Entreating it to is an action applying to one thing and one topic.
+But we don't!]
 
-[It's essentially impossible to match quotation marks with standard grammar tokens, or at least I've never figured out how to; so these can't be done with the reparsing trick above.  Accordingly, preprocess quoted text with regular expressions to convert it to command form.]
-[It is quite impossible to do this with single quotes due to the confusion with apostrophes.  But we can do it with double quotes.]
-After reading a command (this is the say quoted text conversion rule):
-	let cmdline be text;
-	let cmdline be the player's command;
-	let command found be false;
-	now original say verb name is "";
-	let commandee name be text;
-	let quoted order be text;
-	if cmdline exactly matches the regular expression "(?i)\s*(say)\s*[quotation mark](.*)[quotation mark]\s*to\s*(.*)":
-		[ say "something" to someone -- with the double quotation marks ]
-		now command found is true;
-		now original say verb name is "[text matching subexpression 1]";
-		now commandee name is "[text matching subexpression 3]";
-		now quoted order is "[text matching subexpression 2]";
-	otherwise if cmdline exactly matches the regular expression "(?i)\s*(tell)\s*(<^[quotation mark]>*)[quotation mark](.*)[quotation mark]\s*":
-		[ tell someone "something" -- with the double quotation marks ]
-		now command found is true;
-		now original say verb name is "[text matching subexpression 1]";
-		now commandee name is "[text matching subexpression 2]";
-		now quoted order is "[text matching subexpression 3]";
-	if command found is true:
-		let new_cmdline be the substituted form of "[commandee name], [quoted order]";
-		if the command debugging option is active:
-			say "Original verb: [original say verb name].  Command: [new_cmdline][line break]";
-		change the text of the player's command to new_cmdline;
+[ NOTE that the "it" here will represent the topic, and not an object.]
+Speaking it to is an action applying to one topic and one thing.
+
+[ NOTE it isn't "speaking something to something" or "speaking it to something".  The topic is omitted from the rule spec. ]
+Check speaking to something (called target) (this is the redirect speaking to ordering rule):
+	[ Thanks to Dr. Peter Bates for figuring out the syntax on this. ]
+	try ordering target to the topic understood instead; [This reverses the nouns]
+
+Section - Understand lines for say, speak, shout, answer
+
+Understand "speak [text] to [someone]" as speaking it to.
+Understand the commands "say", "shout", and "answer" as "speak". [Similar to Standard Rules.]
 
 Compliant Characters ends here.
 
@@ -911,6 +933,100 @@ If you've already printed a failure message in a check rule, you'll need to supp
 				
 If you want to override the rules in this extension, make sure your rules are listed earlier in the unsuccessful attempt rulebook.
 
+Chapter - Say, Tell, Answer, etc.	
+
+In addition to the usual "Jane, go north", several other ways to issue orders are implemented for player convenience:
+
+	tell Jane to go north
+	instruct Jane to go north
+	order Jane to go north
+	
+These all pass through the "ordering it to" action in the Check stage, which rewrites it as "Jane, go north" and tells it to reparse.  You can intercept it first if you like:
+	Check ordering something (called target) to (this is the new ordering rule):
+		... [you can use "the topic understood" for the potential order]
+	The new ordering rule is listed before the reparse as command rule in the ordering it to rulebook.
+
+Several other methods of talking are also rewritten as commands:
+	say go north to Jane
+	speak go north to Jane
+	answer go north to Jane
+	shout go north to Jane
+	
+These, however, are first run through the "speaking it to" action, which redirects to the "ordering it to" action.  So you can intercept only these if you like; perhaps you don't want these to be processed as orders:
+	Check speaking to something (called target) (this is the new speaking rule):
+		... [you can use "the topic understood" for the potential order]
+	The new speaking rule is listed before the redirect speaking to ordering rule in the speaking it to rulebook.
+
+The reparse as command rule will also strip quotation marks from the topic, so it can successfully handle:
+	tell Jane to "go north"
+	instruct Jane to 'go north'
+	say "go north" to Jane
+	answer 'go north' to Jane
+	shout "go north" to Jane
+
+...et cetera.
+
+
+Section - Stripping quotation marks from a topic
+
+In addition to its use within the reparse as command rule, stripping quotation marks from "the topic understood" may be a generally useful thing to do.	Accordingly, it is provided as a say-phrase:
+	[the/-- quote-stripped topic understood]
+
+This will turn all of the following:
+	"foo bar"
+	'foo bar'
+	foo bar
+into the same "foo bar" (without quotation marks).
+
+Section - Non-Commands
+
+Even in a game with a lot of commands, you may want to handle some things not as commands.  Note that the following will not be handled as commands; this extension does not change their behavior at all:
+	ask Jane about topic
+	tell Jane about topic
+
+More interesting are these cases:
+	say password to Jane
+	tell Jane password
+	Jane, password
+
+These will all end up in the "answering it that" action, and will be processed by this extension as a command, finally coming up with a parser error (assuming password isn't a verb!).
+You can deal with this in one of three ways.
+
+First, you could make password a verb.  
+
+Second, you can intercept "answering it that" before this extension gets to it, just for the word "password".  Note the British spelling of recognise in the error name:
+	Check an actor answering something (called the commandee) that when the latest parser error is the not a verb I recognise error (this is the divert the password rule):
+		let tmp be a text;	
+		now tmp is "[quote-stripped topic understood]";
+		if tmp exactly matches the text "password":
+			try passing the test with the commandee instead;
+
+	Passing the test with is an action applying to one thing.
+
+	Report passing the test with something (called the commandee):
+		say "[Commandee] accepts your password!";
+
+Third, you could intercept "answering it that" for all unknown verbs.  Again, remember the British spelling of recognise:
+	Check an actor answering something (called the commandee) that when the latest parser error is the not a verb I recognise error (this is the divert the password rule):
+		let tmp be a text;	
+		now tmp is "[quote-stripped topic understood]";
+		if tmp exactly matches the text "password":
+			try passing the test with the commandee instead;
+		otherwise:
+			try giving incorrect password the topic understood to the commandee instead;
+
+	Passing the test with is an action applying to one thing.
+
+	Giving incorrect password it to is an action applying to one topic and one thing.
+
+	Report passing the test with something (called the commandee):
+		say "[Commandee] accepts your password!";
+
+	Report giving incorrect password to something (called the commandee):
+		say "[Commandee] says, 'Sorry, ['][the quote-stripped topic understood]['] is not the right password.'";	
+		
+Note that in this context, the topic understood is the entire statement given to the commandee.  So if you write "Jane, alpha beta gamma", the topic understood will be "alpha beta gamma".  So you can check for multi-word passwords.
+
 Section - Disabling rules
 
 Obviously, you can also turn off or replace the enhanced holdall rules or the rules prohibiting taking enterables containing people, by the usual methods described in Writing With Inform: "not listed in any rulebook" or "listed instead of".
@@ -924,6 +1040,10 @@ This extension depends on version 4 or later Neutral Standard Responses by Natha
 
 Chapter - Changelog
 
+4/210328 - Slicker handling for "say take box to jane".
+         - Much slicker and faster handling for "say 'x' to jane" and other quotation marks typed by the player.
+         - Documentation of ways to handle passwords and similar special cases.
+         - More Chapters, Volumes, Parts, etc. for better overriding.
 3/210313 - Additional handling for "say 'x' to jane", "tell jane 'x'"
          - Additional handling for indirect orders
          - Additional handling for "jane, take all"

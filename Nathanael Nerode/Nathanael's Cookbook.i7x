@@ -1,4 +1,4 @@
-Version 2/171001 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 4/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of worked examples illustrating various features of Inform.  There isn't actually anything in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -18,7 +18,7 @@ Example: * Careful Startup -- displaying messages at the right time during start
 
 	A bed is a kind of supporter.
 	The latticework double bed is a bed in the bedroom.
-	The description of the latticework double bed is "It's a double bed with a latticework headboard."
+	The description of the latticework double bed is "It's a double bed with a latticework headboard.
 	
 	The player is on the latticework double bed.  [This is the correct way to set a starting location.]
 
@@ -34,7 +34,12 @@ Example: * Careful Startup -- displaying messages at the right time during start
 	[Note: "After the display banner rule" won't work, it'll end up after the initial room description.]
 
 	This is the just before the prompt rule:
-		say "Maybe you should get up.";
+		say "Maybe you should get up.[line break][paragraph break]";
+		[ Note: [paragraph break][line break] will give TWO blank lines after this.
+			[paragraph break] alone, [line break] alone, or neither will give NO blank lines.
+			This is the way to give the standard ONE blank line before the prompt.
+		]
+
 	The just before the prompt rule is listed after the initial room description rule in the startup rulebook.
 
 	[ This is the default order of the startup rulebook:
@@ -172,3 +177,45 @@ The default "There is no reply" is completely surreal for certain types of games
 			choose a random row from the Table of Ella's Confusion Responses;
 			say response entry;
 		stop the action.
+
+Example: *** Early Command Parsing -- process certain commands specially
+
+This is an offcut from Compliant Characters.i7x.  While I found a much better way to do what I needed there, the code pattern serves as reference for the hooks available in early parsing.  It probably won't compile.
+
+	*: "Early Command Parsing"
+
+	"Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+
+	Section - Say quoted text
+
+	Original say verb name is a text that varies.
+
+	[It's essentially impossible to match quotation marks with standard grammar tokens; they attach to neighboring words.  Must match with regexes.]
+	After reading a command (this is the say quoted text conversion rule):
+		let cmdline be text;
+		let cmdline be the player's command;
+		let command found be false;
+		now original say verb name is "";
+		let commandee name be text;
+		let quoted order be text;
+		if cmdline exactly matches the regular expression "(?i)\s*(say)\s*[quotation mark](.*)[quotation mark]\s*to\s*(.*)":
+			[ say "something" to someone -- with the double quotation marks ]
+			now command found is true;
+			now original say verb name is "[text matching subexpression 1]";
+			now commandee name is "[text matching subexpression 3]";
+			now quoted order is "[text matching subexpression 2]";
+		otherwise if cmdline exactly matches the regular expression "(?i)\s*(tell)\s*(<^[quotation mark]>*)[quotation mark](.*)[quotation mark]\s*":
+			[ tell someone "something" -- with the double quotation marks ]
+			now command found is true;
+			now original say verb name is "[text matching subexpression 1]";
+			now commandee name is "[text matching subexpression 2]";
+			now quoted order is "[text matching subexpression 3]";
+		if command found is true:
+			let new_cmdline be the substituted form of "[commandee name], [quoted order]";
+			if the command debugging option is active:
+				say "Original verb: [original say verb name].  Command: [new_cmdline][line break]";
+			change the text of the player's command to new_cmdline;
+
+	The testing location is a room.
+	Barbie is a person in the testing location.
+	The widget is a thing in the testing location.

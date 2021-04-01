@@ -1,4 +1,4 @@
-Version 3/170818 of Gender Options by Nathanael Nerode begins here.
+Version 3/210331 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform 6M62."
 
@@ -932,6 +932,7 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
+Version 3/210331 - Fix example / testsuite.
 Version 3/170818 - Small documentation and comment tweaks.
 Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Mboved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
 Version 2/170815 - First public release for gamma testing.
@@ -942,7 +943,7 @@ This consists of a room with items featuring most of the combinations of gender 
 
 	*: "Everyone Comes To City Park" by Nathanael Nerode
 	
-	The release number is 2. [Second released version of this test suite]
+	The release number is 3. [Third released version of this test suite]
 	Include Gender Options by Nathanael Nerode.
 	City Park is a room.
 	The description of City Park is "Everyone comes to City Park!"
@@ -960,7 +961,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	The description of Jane is "Jane is an elegant woman."
 	Understand "elegant woman" as Jane.
 	
-	A deity is an androgyne in the park.
+	A deity is a person in the park.
 	Understand "Hermaphroditus" as deity.
 	Description of deity is "A deity with both male and female characteristics."
 	Deity is male.
