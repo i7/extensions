@@ -81,8 +81,8 @@ The glulx input handling rules have outcomes replace player input (success) and 
 To decide what number is the value returned by glk event handling (this is the handle glk event rule):
 	now glulx replacement command is "";
 	follow the glulx input handling rules for the GEP internal current glk event;
-	if the outcome of the rulebook is the replace player input outcome:
-		decide on GEP internal input replacement;
+	[if the outcome of the rulebook is the replace player input outcome:
+		decide on GEP internal input replacement;]
 	if the outcome of the rulebook is the require input to continue outcome:
 		decide on GEP internal input continuation;
 	follow the command-counting rules;
@@ -91,22 +91,35 @@ To decide what number is the value returned by glk event handling (this is the h
 		follow the command-showing rules;
 		follow the command-pasting rules;
 		if the [command-pasting] rule succeeded:
-			decide on GEP internal input replacement.
+			decide on GEP internal input replacement;
+	decide on GEP internal input continuation.
+
+GEP internal glk event result is a number that varies.
+	GEP internal glk event result is initially 0.
+
+[Take over handling of glulx events]
+The glk event compatibility rule is not listed in the glk event handling rules.
+
+A glk event handling rule (this is the glulx event handling rule):
+	Now GEP internal glk event result is the value returned by glk event handling.
 
 
 Section - HandleGlkEvent routine
 
 Include (- Array evGlobal --> 4; -) before "Glulx.i6t".
 
-[Include (- 
+To decide what number is the value returned by glk event result recalling (this is the unstash glk event rule):
+	decide on GEP internal glk event result.
+
+Include (- 
 
   [ HandleGlkEvent ev context abortres newcmd cmdlen i ;
       for (i=0:i<3:i++) evGlobal-->i = ev-->i;
       (+ library input context +) = context;
-      return (+ value returned by glk event handling +) ;
+      return (+ value returned by glk event result recalling +) ;
   ];
 
--) before "Glulx.i6t".]
+-) before "Glulx.i6t".
 
 
 Section - Useful function wrappers

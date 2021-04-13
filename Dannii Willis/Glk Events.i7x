@@ -32,8 +32,15 @@ The glk event value 2 variable translates into I6 as "GE_Event_Struct_val2".
 
 Section - The glulx input handling rules
 
+[Event handling without any bells or whistles]
+The glk event handling rules are a g-event based rulebook.
+
+[This rulebook was originally part of Glulx Entry Points.]
 The glulx input handling rules are a g-event based rulebook.
 
+[If Glulx Entry Points is not included, treat input handling rules as event processing rules.]
+A glk event handling rule for a g-event (called the event) (this is the glk event compatibility rule):
+	abide by the glulx input handling rules for the event.
 
 
 Section - Intercepting glk_select()
@@ -59,7 +66,7 @@ Include (-
 	! Run the glulx input handling rules (but disable rules debugging because it crashes if keyboard input events are pending)
 	@push debug_rules; @push say__p; @push say__pc;
 	debug_rules = false; ClearParagraphing(1);
-	FollowRulebook( (+ the glulx input handling rules +), GE_Event_Struct_type, true );
+	FollowRulebook( (+ the glk event handling rules +), GE_Event_Struct_type, true );
 	@pull say__pc; @pull say__p; @pull debug_rules;
 
 	! Copy back to the original event structure
