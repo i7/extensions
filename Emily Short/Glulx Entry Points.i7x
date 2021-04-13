@@ -98,9 +98,9 @@ GEP internal glk event result is a number that varies.
 	GEP internal glk event result is initially 0.
 
 [Take over handling of glulx events]
-The glk event compatibility rule is not listed in the glk event handling rules.
+The glk event compatibility rule is not listed in the glk event processing rules.
 
-A glk event handling rule (this is the glulx event handling rule):
+A glk event processing rule (this is the glulx event handling rule):
 	Now GEP internal glk event result is the value returned by glk event handling.
 
 
