@@ -81,8 +81,8 @@ The glulx input handling rules have outcomes replace player input (success) and 
 To decide what number is the value returned by glk event handling (this is the handle glk event rule):
 	now glulx replacement command is "";
 	follow the glulx input handling rules for the GEP internal current glk event;
-	[if the outcome of the rulebook is the replace player input outcome:
-		decide on GEP internal input replacement;]
+	if the outcome of the rulebook is the replace player input outcome:
+		decide on GEP internal input replacement;
 	if the outcome of the rulebook is the require input to continue outcome:
 		decide on GEP internal input continuation;
 	follow the command-counting rules;
