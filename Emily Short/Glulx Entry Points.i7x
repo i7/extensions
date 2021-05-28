@@ -91,22 +91,35 @@ To decide what number is the value returned by glk event handling (this is the h
 		follow the command-showing rules;
 		follow the command-pasting rules;
 		if the [command-pasting] rule succeeded:
-			decide on GEP internal input replacement.
+			decide on GEP internal input replacement;
+	decide on GEP internal input continuation.
+
+GEP internal glk event result is a number that varies.
+	GEP internal glk event result is initially 0.
+
+[Take over handling of glulx events]
+The glk event compatibility rule is not listed in the glk event processing rules.
+
+A glk event processing rule (this is the glulx event handling rule):
+	Now GEP internal glk event result is the value returned by glk event handling.
 
 
 Section - HandleGlkEvent routine
 
 Include (- Array evGlobal --> 4; -) before "Glulx.i6t".
 
-[Include (- 
+To decide what number is the value returned by glk event result recalling (this is the unstash glk event rule):
+	decide on GEP internal glk event result.
+
+Include (- 
 
   [ HandleGlkEvent ev context abortres newcmd cmdlen i ;
       for (i=0:i<3:i++) evGlobal-->i = ev-->i;
       (+ library input context +) = context;
-      return (+ value returned by glk event handling +) ;
+      return (+ value returned by glk event result recalling +) ;
   ];
 
--) before "Glulx.i6t".]
+-) before "Glulx.i6t".
 
 
 Section - Useful function wrappers
