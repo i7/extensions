@@ -48,4 +48,35 @@ Include (-
 ];
 -) instead of "Show One to One" in "Relations.i6t".
 
+Volume intfiction.org/t/50338
+
+[Having a "rulebook producing a list of [something]" crashes the interpreter because only
+the "weak kind" (e.g. "list") is passed to the template functions, when a "strong kind"
+(e.g. "list of text") is expected. This replacement fixed the issue by making the compiler
+pass in the "strong kind" instead.]
+
+Section A - List Type fixes - in place of Section SR5/4/8 in Standard Rules by Graham Nelson
+
+To make no decision
+	(documented at ph_nodecision): (- rfalse; -) - in to only.
+To rule succeeds
+	(documented at ph_succeeds):
+	(- RulebookSucceeds(); rtrue; -) - in to only.
+To rule fails
+	(documented at ph_fails):
+	(- RulebookFails(); rtrue; -) - in to only.
+[Fix here:]
+To rule succeeds with result (val - a value)
+	(documented at ph_succeedswith):
+	(- RulebookSucceeds({-strong-kind:rule-return-kind},{-return-value-from-rule:val}); rtrue; -) - in to only.
+To decide if rule succeeded
+	(documented at ph_succeeded):
+	(- (RulebookSucceeded()) -).
+To decide if rule failed
+	(documented at ph_failed):
+	(- (RulebookFailed()) -).
+To decide which rulebook outcome is the outcome of the rulebook
+	(documented at ph_rulebookoutcome):
+	(- (ResultOfRule()) -).
+
 6M62 Patches ends here.
