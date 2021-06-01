@@ -62,7 +62,7 @@ Carry out requesting a recap (this is the perform recap rule):
 	if rq_index is 0, say "[RQ no options][paragraph break]".
 
 Responding with is an action applying to one number.
-Understand "[number]" or "say [number]" as responding with when RQ is active.
+Understand "say [number]" as responding with when RQ is active.
 
 [This rule Can't Run, as the Understand commands stand..]
 [Carry out responding with when the pertinent quip is quip_null (this is the can't talk out of conversations rule): 
