@@ -1,4 +1,4 @@
-Version 15/200828 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/210618 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -484,7 +484,13 @@ A glulx resetting-windows rule (this is the find existing windows rule):
 		if win is the quote window:
 			now gg_quotewin is the current glulx rock-ref;
 
+[ Recalibrate windows during GGRecoverObjects, however do not delete the main and status windows when restarting. ]
 A first glulx object-updating rule (this is the recalibrate windows rule):
+	if the starting the virtual machine activity is going on:
+		if the main window is g-present:
+			now the main window is g-required;
+		if the status window is g-present and the no status line option is not active:
+			now the status window is g-required;
 	calibrate windows;
 	focus the current focus window;
 
