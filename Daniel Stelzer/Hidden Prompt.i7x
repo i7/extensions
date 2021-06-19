@@ -1,4 +1,4 @@
-Version 1/20210618 of Hidden Prompt by Daniel Stelzer begins here.
+Version 1/210618 of Hidden Prompt by Daniel Stelzer begins here.
 
 "Provides a simple way to hide the command prompt during long stretches of text."
 

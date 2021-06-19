@@ -1,9 +1,10 @@
-Version 2.1 of Basic Literacy by Bart Massey begins here.
+Version 2/210618 of Basic Literacy by Bart Massey begins here.
 
 "Provides objects and actions for (proper) reading, writing and erasing."
 
 [ Copyright © 2012 Bart Massey]
 [ Released under the Creative Commons Attribution 3.0 United States license: http://creativecommons.org/licenses/by/3.0/us/ ]
+[ updated version number to a legitimate one -- Zed Lopez ]
 
 Chapter - Reading
 
