@@ -951,7 +951,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	The shadow is a person in the park.  "Someone skulks in the shadow."
 	Understand "skulker" as the shadow.
 	The description of the shadow is "[We] [can't get] a good look at [regarding the shadow][them]."
-        The shadow is neuter.
+	The shadow is neuter.
 	
 	John is a man in the park.
 	The description of John is "John is a dapper man."
@@ -990,7 +990,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	Understand "few sunbathers" as sunbathers.
 	Understand "group" as sunbathers.
 	Understand "mixed-gender group" as sunbathers.
-
+	
 	A deer-animal is a kind of animal.
 	Deer-animal usually have printed plural name "deer".
 	
@@ -1006,7 +1006,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	Description of the buck is "The buck is watching the does."
 	Buck is male.
 	Understand "deer" as buck.
-
+	
 	A cute puppy is an animal in the park.
 	Description of the puppy is "There's a cute puppy running around."
 	Puppy is female.
@@ -1036,7 +1036,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	The Unpronounable One is a thing in the park.
 	The description of the Unpronounable One is "[We] [may] not refer to the Unpronounable One by pronouns."
 	The Unpronounable One is not neuter.
-
+	
 	Analyzing is an action applying to one thing.
 	Understand "gender [something]" as analyzing.
 	Carry out analyzing:
@@ -1046,12 +1046,12 @@ This consists of a room with items featuring most of the combinations of gender 
 	Understand "matriarchy" as setting female default.
 	Carry out setting female default:
 		now preferred animate gender is feminine gender.
-
+	
 	setting male default is an action applying to nothing.
 	Understand "patriarchy" as setting male default.
 	Carry out setting male default:
 		now preferred animate gender is masculine gender.
-
+	
 	setting gendered default is an action applying to nothing.
 	Understand "anthropomorphize" as setting gendered default.	
 	Carry out setting gendered default:
@@ -1063,9 +1063,9 @@ This consists of a room with items featuring most of the combinations of gender 
 		now prefer neuter gender is true.
 	
 	test pronouns with "pronouns / x john / pronouns / x jane / pronouns / x deity / pronouns / x girls / pronouns / x boys / pronouns / x sunbathers / pronouns / x does / pronouns / x buck  / pronouns  / x dice / pronouns / x ship / pronouns / x unpronounable one / pronouns / x jumble / pronouns"  in City Park.
-
+	
 	test gender with "anthropomorphize / gender buck / gender puppy / gender shadow / objectify / gender buck / gender puppy / gender shadow / anthropomorphize / matriarchy / gender deity  / gender shadow  / x shadow / patriarchy / gender deity / gender shadow / x shadow" in City Park.
-
+	
 	test number with "gender girls / gender boys / gender sunbathers / gender dice" in City Park.
 	
 Example: ** It for All
@@ -1073,23 +1073,21 @@ Example: ** It for All
 Some authors have requested that "it" apply to anything, plural or singular, of any gender, for the convenience of their players.
 
 	"It for All"
-
+	
 	Include Gender Options by Nathanael Nerode.
-
+	
 	A person is neuter. A man is neuter.  A woman is neuter.  [Overrides "usually not neuter", makes people respond to IT]
 	A plural-named thing is ambiguously plural. [Makes all plural-named objects respond to IT]
 	Prefer neuter gender is false. [Printed text shouldn't refer to characters as "it" if they're male or female.]
-
+	
 	Marching Grounds is a room.  "The place for marching!"
-
+	
 	to march is a verb. to watch is a verb.
-
+	
 	The soldiers are plural-named men in Marching Grounds. 
 	The description of the soldiers is "[Regarding the soldiers][They] [march] up and down."
-
+	
 	An observer is a improper-named woman in Marching Grounds.
 	The description of the observer is "[Regarding the observer][They] [watch] the soldiers."
-
-	test pronouns with "x soldiers / pronouns / x observer / pronouns".
-
 	
+	test pronouns with "x soldiers / pronouns / x observer / pronouns".
