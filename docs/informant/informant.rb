@@ -106,7 +106,7 @@ p.omission { margin-bottom: .5rem; }
 </style>
 </head>
 <body><main>
-<h1 class="title"><a class="title" href="">Friends of I7 Extensions</a></h1>
+<h1 class="title"><a class="title" href="https://github.com/i7/extensions/">Friends of I7 Extensions</a></h1>
 <div class="ext-table">
 <% ext_hash.values.sort_by {|b| [ b[:name].downcase, b[:author].downcase ] }.each do |ext| -%>
   <hr class="border">
