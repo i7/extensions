@@ -1,8 +1,10 @@
-aHidden Prompt by Daniel Stelzer begins here.
+Version 1/20210618 of Hidden Prompt by Daniel Stelzer begins here.
 
 "Provides a simple way to hide the command prompt during long stretches of text."
 
 "inspired by Command Prompt On Cue by Ron Newcomb"
+
+[ Fixed typo in title and added version number -- Zed Lopez ]
 
 Include Basic Screen Effects by Emily Short.
 Include Command Preloading by Daniel Stelzer.
