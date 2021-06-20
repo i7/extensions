@@ -1,6 +1,8 @@
-Version 3/140513 of Basic Plans by Nate Cull begins here.
+Version 3/210620 of Basic Plans by Nate Cull begins here.
 
 "A library of basic relations, actions and plans for Planner."
+
+Include Planner by Nate Cull.
 
 Volume - Relations
 
@@ -300,7 +302,7 @@ Text of a demo game follows.
 
 Example: ** Alchemy - A demo game showing use of these basic actions.
 
-	"Alchemy" by Nate Cull
+	*: "Alchemy" by Nate Cull
 
 	[This is a demo game for Planner.]
 
@@ -308,7 +310,6 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 	The story creation year is 2006.
 	The story headline is "An Interactive Demonstration"
 
-	Include Planner by Nate Cull.
 	Include Basic Plans by Nate Cull.
 
 	The Laboratory is a room. The description of the Laboratory is "A chaos of glassware, dark sigils, spellcasting apparatus sprawled in disgusting confusion -- in other words, a perfectly normal research lab. A stone archway leads east and another south."
