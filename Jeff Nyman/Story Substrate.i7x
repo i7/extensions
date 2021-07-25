@@ -20,11 +20,11 @@ Include (-
 ];
 -).
 
-Chapter - Serial Number Phrase
+Chapter - Serial Number Phrase (unindexed)
 
 To say story serial number: (- SerialNumber(); -).
 
-Chapter - IFID
+Chapter - IFID (unindexed)
 
 The print ID number rule translates into I6 as "UUID_R".
 
@@ -38,7 +38,7 @@ To say story IFID number: (- UUID_R(); -).
 
 Part - Inform Information
 
-Chapter - I7 (NI) Build
+Chapter - I7 (NI) Build (unindexed)
 
 Include (-
 [ I7_Build;
@@ -48,7 +48,7 @@ Include (-
 
 To say I7 build: (- I7_Build(); -).
 
-Chapter - I6 Build
+Chapter - I6 Build (unindexed)
 
 Include (-
 [ I6_Build;
@@ -58,7 +58,7 @@ Include (-
 
 To say I6 build: (- I6_Build(); -).
 
-Chapter - I6 Library
+Chapter - I6 Library (unindexed)
 
 Include (-
 [ I6_Library;
@@ -68,7 +68,7 @@ Include (-
 
 To say I6 library: (- I6_Library(); -).
 
-Chapter - I7 Identifier
+Chapter - I7 Identifier (unindexed)
 
 Include (-
 [ I7_Identity;
@@ -106,7 +106,7 @@ To decide what number is the bitwise and of (I - an arithmetic value) and (J - a
 To decide what number is (I - an arithmetic value) logically shifted (D - a number) bit/bits right:
 	(- is_logical_right_shift({I}, {D}) -).
 
-Chapter - Version Numbers
+Chapter - Version Numbers (unindexed)
 
 A terp version number is a kind of value.
 65535.255.255 specifies a terp version number.
@@ -124,14 +124,14 @@ Section - Glulx Values
 A Glulx implementation is a kind of value.
 Unknown Glulx implementation is a Glulx implementation.
 
-Section - Glulx Detected (unindexed)
+Section - Glulx Detected
 
 Glulx implementation already detected is a truth state that varies.
 Glulx implementation already detected is false.
 
 The cached result of Glulx implementation detection is a Glulx implementation that varies.
 
-Section - Detecting Glulx
+Section - Detecting Glulx (unindexed)
 
 The Glulx implementation detection rulebook is a nothing based rulebook producing a Glulx implementation.
 
@@ -143,7 +143,7 @@ To decide what Glulx implementation is the current Glulx implementation:
 		now Glulx implementation already detected is true;
 	decide on the cached result of Glulx implementation detection.
 
-Section - Detecting Glulx Version
+Section - Detecting Glulx Version (unindexed)
 
 Include (-
 [ is_glulx_version;
@@ -154,7 +154,7 @@ Include (-
 
 To decide what terp version number is current Glulx version number: (- is_glulx_version() -).
 
-Chapter - Interpreter Version
+Chapter - Interpreter Version (unindexed)
 
 Include (-
 [ is_interpreter_version;
@@ -190,7 +190,7 @@ IO implementation already detected is false.
 
 The cached result of IO implementation detection is an IO implementation that varies.
 
-Section - Detecting IO
+Section - Detecting IO (unindexed)
 
 The IO implementation detection rulebook is a nothing based rulebook producing an IO implementation.
 
@@ -205,7 +205,7 @@ To decide what IO implementation is the current IO implementation:
 		now IO implementation already detected is true;
 	decide on the cached result of IO implementation detection.
 
-Section - Detecting IO Version
+Section - Detecting IO Version (unindexed)
 
 Include (-
 [ is_io_version
@@ -252,7 +252,7 @@ Unknown interpreter is an interpreter.
 
 Git-based interpreter are interpreters.
 
-Section - Determine Interpreter
+Section - Determine Interpreter (unindexed)
 
 To decide what interpreter is the current interpreter:
 	if the current IO implementation is:
