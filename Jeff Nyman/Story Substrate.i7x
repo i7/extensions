@@ -2,6 +2,8 @@ Version 1/200930 of Story Substrate by Jeff Nyman begins here.
 
 "Provides information about the substrate that a story is executing on."
 
+"utilizing some techniques from Interpreter Sniffing by Friends of I7"
+
 Chapter - Serial Number (for Glulx only)
 
 Include (-
@@ -117,6 +119,32 @@ To say (N - a terp version number):
 
 Chapter - Glulx Version
 
+Section - Glulx Values
+
+A Glulx implementation is a kind of value.
+Unknown Glulx implementation is a Glulx implementation.
+
+Section - Glulx Detected (unindexed)
+
+Glulx implementation already detected is a truth state that varies.
+Glulx implementation already detected is false.
+
+The cached result of Glulx implementation detection is a Glulx implementation that varies.
+
+Section - Detecting Glulx
+
+The Glulx implementation detection rulebook is a nothing based rulebook producing a Glulx implementation.
+
+To decide what Glulx implementation is the current Glulx implementation:
+	if Glulx implementation already detected is false:
+		now the cached result of Glulx implementation detection is the Glulx implementation produced by the Glulx implementation detection rulebook;
+		unless the rule succeeded:
+			now the cached result of Glulx implementation detection is Unknown Glulx implementation;
+		now Glulx implementation already detected is true;
+	decide on the cached result of Glulx implementation detection.
+
+Section - Detecting Glulx Version
+
 Include (-
 [ is_glulx_version;
 	@gestalt 0 0 sp;
@@ -192,6 +220,48 @@ Include (-
 
 To decide what terp version number is the current IO version number: (- is_io_version() -).
 
+Part - Specific Glulx Implementation
+	
+Chapter - Git
+
+Git Glulx is a Glulx implementation.
+
+Chapter - Git Test (unindexed)
+
+Include (-
+[ is_git;
+	@gestalt 31040 0 sp;
+	@return sp;
+];
+-).
+
+To decide whether the Git gestalt is set: (- is_git() -).
+
+Chapter - Git Rule (unindexed)
+
+Glulx implementation detection (this is the test for Git rule):
+	if the Git gestalt is set:
+		rule succeeds with result Git Glulx.
+
+Part - Specific Interpreter Implementation
+
+Chapter - Interpreters
+
+An interpreter is a kind of value.
+Unknown interpreter is an interpreter.
+
+Git-based interpreter are interpreters.
+
+Section - Determine Interpreter
+
+To decide what interpreter is the current interpreter:
+	if the current IO implementation is:
+		-- Unknown Glk implementation:
+			if the current Glulx implementation is:
+				-- Git Glulx:
+					decide on Git-based interpreter;
+	decide on Unknown interpreter.
+
 Part - Action for Getting Substrate Information
 
 Reporting the substrate is an action out of world.
@@ -206,7 +276,10 @@ Report reporting the substrate:
 	say "Inform 7 Identity: [I7 identity].";
 	say "Glulx version: [current Glulx version number].";
 	say "Interpreter version: [current interpreter version number].";
-	say "I/O version: [current IO version number]."
+	say "I/O version: [current IO version number].";
+	say "Current IO Implementation: [current IO implementation].";
+	say "Current Glulx Implementation: [current Glulx implementation].";
+	say "Current Interpreter: [current interpreter]."
 
 Story Substrate ends here.
 
@@ -269,3 +342,14 @@ There is yet one more level to consider which is the I/O implementation being us
 	say "I/O version: [current IO version number]."
 
 Whether the above information is useful really depends on whether you are using some effect or feature that is known to exist only within certain Glulx versions or with certain Glk I/O implementations. The interpreter version is less useful without knowing what the actual interpreter is so, for now, that's included for completeness of versioning information rather than as anything terribly useful.
+
+That said, I have implemented those parts of Interpreter Sniffing that attempt to look for the current implemenation of either the IO verison or the Glulx verison. You can have those displayed as such:
+	
+	say "Current IO Implementation: [current IO implementation].";
+	say "Current Glulx Implementation: [current Glulx implementation]."
+
+You can try to determine what the current interpreter is by the following:
+	
+	say "Current Interpreter: [current interpreter]."
+	
+However the mechanisms in place to be able to detect are extremely poor, at best. So it's unclear if this is has any real value.
