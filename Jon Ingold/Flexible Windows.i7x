@@ -1,4 +1,4 @@
-Version 15/210618 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/210811 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -489,6 +489,7 @@ A first glulx object-updating rule (this is the recalibrate windows rule):
 	if the starting the virtual machine activity is going on:
 		if the main window is g-present:
 			now the main window is g-required;
+			now the current focus window is the main window;
 		if the status window is g-present and the no status line option is not active:
 			now the status window is g-required;
 	calibrate windows;
@@ -1140,4 +1141,3 @@ Example: * Inventory Window - A simple example showing how to place a side windo
 	The Study is a room. In the study is an old oak desk. On the desk is a Parker pen, a letter, an envelope and twenty dollars.
 
 	Test me with "take pen/take letter/i/take all".
-
