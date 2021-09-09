@@ -1,4 +1,4 @@
-Version 5/210325 of Large Game Speedup by Nathanael Nerode begins here.
+Version 5/210908 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with large numbers of objects, by avoiding looping over all objects."
 
@@ -207,11 +207,11 @@ For printing the locale description
 						giving brief inventory information, tersely, not listing
 						concealed items, listing marked items only;
 				otherwise:
-					say "[a list of marked for listing things including contents]"; [loops through all things]
+					say "[a list of marked for listing things including contents]" (F); [loops through all things]
 				unfilter list recursion;
 				if the domain is the location:
-					say " here";
-				say ".[paragraph break]";
+					say " [here]" (G);
+				say ".[paragraph break]" (H);
 			end the listing nondescript items activity with the domain;
 	continue the activity.
 
@@ -525,6 +525,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+Version 5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
 Version 5/210325 added more section subdivision and reommitted some unnecessary code when Room Description Control is active.
 Version 5/210324 reverted the changes from 5/210322 as they caused unexpected errors.
 Version 5/210323 adopted the Inform 6M62-safe code for the *in phrases from the version in Counterfeit Monkey by Andrew Plotkin, solving a glaring bug which I didn't catch since I didn't test the more complicated invocations of those phrases.

@@ -1,4 +1,4 @@
-Version 4/171007 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 4/210908 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
 
@@ -273,7 +273,7 @@ The you-can-also-see rule response (B) is "On [the domain] [we] ".  [was "On [th
 The you-can-also-see rule response (C) is "In [the domain] [we] ".  [was "In [the domain] [we] "]
 The you-can-also-see rule response (D) is "[regarding the player][can] also see ".  [was "[regarding the player][can] also see "]
 The you-can-also-see rule response (E) is "[regarding the player][can] see ".  [was "[regarding the player][can] see "]
-The you-can-also-see rule response (F) is " here".  [was " here"]
+The you-can-also-see rule response (F) is " [here]".  [was " here"]
 The use initial appearance in room descriptions rule response (A) is "On [the item] ".  [was "On [the item] "]
 The describe what's on scenery supporters in room descriptions rule response (A) is "On [the item] ".  [was "On [the item] "]
 The describe what's on mentioned supporters in room descriptions rule response (A) is "On [the item] ".  [was "On [the item] "]
@@ -328,7 +328,7 @@ The can't drop yourself rule response (A) is "[We] [can't] drop [ourselves].".  
 
 [
 The can't drop body parts rule response (A) is "[We] [can't drop] part of [ourselves].".  [was "[We] [can't drop] part of [ourselves]."]
-The can't drop what's already dropped rule response (A) is "[The noun] [are] already here.".  [was "[The noun] [are] already here."]
+The can't drop what's already dropped rule response (A) is "[The noun] [are] already [here].".  [was "[The noun] [are] already here."]
 The can't drop what's not held rule response (A) is "[We] [haven't] got [regarding the noun][those].".  [was "[We] [haven't] got [regarding the noun][those]."]
 ]
 
@@ -637,7 +637,7 @@ The report turning rule response (B) is "[The actor] [turn] [the noun].".  [was 
 The can't push unpushable things rule response (A) is "[The noun] [cannot] be pushed from place to place.".  [was "[The noun] [cannot] be pushed from place to place."]
 The can't push to non-directions rule response (A) is "[regarding the noun][They] [aren't] a direction.".  [was "[regarding the noun][They] [aren't] a direction."]
 The can't push vertically rule response (A) is "[The noun] [cannot] be pushed up or down.".  [was "[The noun] [cannot] be pushed up or down."]
-The can't push from within rule response (A) is "[The noun] [cannot] be pushed from here.".  [was "[The noun] [cannot] be pushed from here."]
+The can't push from within rule response (A) is "[The noun] [cannot] be pushed from [here].".  [was "[The noun] [cannot] be pushed from here."]
 The block pushing in directions rule response (A) is "[The noun] [cannot] be pushed from place to place.".  [was "[The noun] [cannot] be pushed from place to place."]
 ]
 
@@ -1407,6 +1407,7 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+	Version 4/210908: in several rule responses, changed "here" to "[here]" (which will only ever matter outside of present tense) -- ZL
 	Version 4/171007:
 		Add line break helper phrases and documentation.  Fix several tricky line break errors correctly (including some from the Standard Rules).
 		New and much better I6 method for determining the misunderstood word and for determining whether it is a dictionary word.
