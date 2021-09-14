@@ -1,4 +1,4 @@
-6M62 Patches by Friends of I7 begins here.
+Version 2/210913 of 6M62 Patches by Friends of I7 begins here.
 
 Use authorial modesty.
 
@@ -79,4 +79,40 @@ To decide which rulebook outcome is the outcome of the rulebook
 	(documented at ph_rulebookoutcome):
 	(- (ResultOfRule()) -).
 
+Volume intfiction.org/t/50840
+
+[ A bug in TEXT_TY_BlobAccess can cause BlkValueWrite: writing to index out
+  of range errors when looping through words in a line or lines in a block
+  of text. Analysis and solution by Peter Bates. ]
+
+Include (-
+Replace TEXT_TY_BlobAccess;
+-) after "Definitions.i6t".
+
+Include (-
+
+[ TEXT_TY_BlobAccess txt blobtype ctxt wanted rtxt
+    p1 p2 cp1 cp2 r;
+    if (txt==0) return 0;
+    if (blobtype == CHR_BLOB) return TEXT_TY_CharacterLength(txt);
+    cp1 = txt-->0; p1 = TEXT_TY_Temporarily_Transmute(txt);
+    cp2 = rtxt-->0; p2 = TEXT_TY_Temporarily_Transmute(rtxt);
+    TEXT_TY_Transmute(ctxt);
+    ! ########### insertion begins ###########
+    if (ctxt) BlkMakeMutable(ctxt);
+    ! ########### insertion ends ###########
+    r = TEXT_TY_BlobAccessI(txt, blobtype, ctxt, wanted, rtxt);
+    TEXT_TY_Untransmute(txt, p1, cp1);
+    TEXT_TY_Untransmute(rtxt, p2, cp2);
+    return r;
+];
+
+-) after "Output.i6t".
+
 6M62 Patches ends here.
+
+---- Documentation ----
+
+Changelog
+
+v. 2/210913: Add TEXT_TY_BlobAccess fix by Peter Bates per intfiction.org/t/50840
