@@ -22,17 +22,15 @@ Part Tabulate Action (not for release)
 
 The table understood is a table name that varies.
 
-Tabulating is an action applying to one topic.
+Tabulating is an action out of world applying to one topic.
 Understand "tabulate [text]" as tabulating.
 
-Before tabulating:
+Check tabulating:
     let t be "[the topic understood]";
     now the table understood is t as a table name;
+    if the table understood is the null table, instead say "I can't find a table named [the topic understood]."
 
-check tabulating when the table understood is the null table:
-    instead say "I can't find a table named [the table understood]."
-
-carry out tabulating:
+Carry out tabulating:
   showme the contents of the table understood.
 
 Tabulate ends here.
