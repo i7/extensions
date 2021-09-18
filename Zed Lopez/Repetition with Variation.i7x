@@ -1,8 +1,7 @@
-Version 1 of Repetition with Variation by Zed Lopez begins here.
+Version 1/210918 of Repetition with Variation by Zed Lopez begins here.
 
-"Facilitates looping over words or lines in a text; provides an
-infinite loop; provides an indexed loop that counts down; allows
-more flexible syntax for existing loops. For 6M62."
+"Provides an infinite loop; provides an indexed loop that counts
+down; allows more flexible syntax for existing loops. For 6M62."
 
 Include 6M62 Patches by Friends of I7. [ need TEXT_TY_BlobAccess fix ]
 
@@ -13,80 +12,6 @@ Book Now with Index
   entirely subject to breaking on next release of I7 ]
 
 To decide what number is the loop index: (- tmp_1 -).
-
-Book Text manipulation
-
-Part Characters
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in chars/characters in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, CHR_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*2), {-by-reference:T}, {loopvar2}, CHR_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*2), {-by-reference:T}, {loopvar2}, CHR_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in chars/characters in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, CHR_BLOB);
-for ( {-my:word_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*2), {-by-reference:T}, word_index, CHR_BLOB))  : word_index <= rwc_count : word_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*2), {-by-reference:T}, word_index, CHR_BLOB)))
--)
-
-Part Words
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in words in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, WORD_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, WORD_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, WORD_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in words in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, WORD_BLOB);
-for ( {-my:word_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, WORD_BLOB))  : word_index <= rwc_count : word_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, WORD_BLOB)))
--)
-
-Part Pwords
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in pwords in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, PWORD_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, WORD_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, PWORD_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in pwords in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, PWORD_BLOB);
-for ( {-my:word_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, WORD_BLOB))  : word_index <= rwc_count : word_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, PWORD_BLOB)))
--)
-
-Part Uwords
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in uwords in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, UWORD_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, WORD_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, {loopvar2}, UWORD_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in uwords in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, UWORD_BLOB);
-for ( {-my:word_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, WORD_BLOB))  : word_index <= rwc_count : word_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*4), {-by-reference:T}, word_index, UWORD_BLOB)))
--)
-
-Part Lines
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in lines in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, LINE_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*8), {-by-reference:T}, {loopvar2}, LINE_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*8), {-by-reference:T}, {loopvar2}, LINE_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in lines in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, LINE_BLOB);
-for ( {-my:line_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*8), {-by-reference:T}, line_index, LINE_BLOB))  : line_index <= rwc_count : line_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*8), {-by-reference:T}, line_index, LINE_BLOB)))
--)
-
-Part Paragraphs
-
-To repeat with/for (loopvar - nonexisting text variable) and index (loopvar2 - nonexisting number variable) running/-- through/in paragraphs in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, PARA_BLOB);
-for ( {loopvar2} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*10), {-by-reference:T}, {loopvar2}, PARA_BLOB))  : {loopvar2} <= rwc_count : {loopvar2}++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*10), {-by-reference:T}, {loopvar2}, PARA_BLOB)))
--)
-
-To repeat with/for (loopvar - nonexisting text variable) running/-- through/in paragraphs in (T - text) begin -- end loop:
-    (- {-my:rwc_count} = TEXT_TY_BlobAccess({-by-reference:T}, PARA_BLOB);
-for ( {-my:word_index} = 1, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*10), {-by-reference:T}, word_index, PARA_BLOB))  : word_index <= rwc_count : word_index++, BlkValueCopy({-by-reference:loopvar}, TEXT_TY_GetBlob((I7SFRAME+WORDSIZE*10), {-by-reference:T}, word_index, PARA_BLOB)))
--)
 
 Book Infinite Loop
 
@@ -189,9 +114,6 @@ And these are equivalent:
 Repeat running through the Table of Ill-considered decisions
 Repeat for the Table of Ill-considered decisions
 
-Facilitates looping through characters, words, punctuated words, unpunctuated words, paragraphs, with or without an index:
+Section Changelog
 
-Repeat for char and index i in chars in str
-
-Repeat with p running through the paragraphs in T
-
+1/210918: removed some looping through text phrases that weren't working
