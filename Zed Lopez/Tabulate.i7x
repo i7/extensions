@@ -1,13 +1,15 @@
-Version 1 of Tabulate by Zed Lopez begins here.
+Version 1/210919 of Tabulate by Zed Lopez begins here.
 
 "Provides a phrase to go from a text to a table name, and a not-for-release
 tabulate action to show the contents of a table. For 6M62."
 
 Use authorial modesty.
 
-Part Text to Table Name
+Section Null (For use without Central Typecasting by Zed Lopez)
 
-To decide what table name is the null table: (- nothing -).
+To decide which K is the/a/-- null (name of kind of value K): (- nothing -)
+
+Part Text to Table Name
 
 To decide what table name is (T - a text) as a table name:
     let t be T in lower case;
@@ -16,19 +18,20 @@ To decide what table name is (T - a text) as a table name:
       let tbl-name be "[tbl-text in lower case]";
       if "[t]" is tbl-name or "table of [t]" is tbl-name, decide on tbl;
     end repeat;
-    decide on the null table.
+    decide on the null table name.
 
 Part Tabulate Action (not for release)
 
-The table understood is a table name that varies.
-
 Tabulating is an action out of world applying to one topic.
+
+The tabulating action has a table name called the table understood.
+
 Understand "tabulate [text]" as tabulating.
 
 Check tabulating:
-    let t be "[the topic understood]";
+    let t be the substituted form of "[the topic understood]";
     now the table understood is t as a table name;
-    if the table understood is the null table, instead say "I can't find a table named [the topic understood]."
+    if the table understood is the null table name, instead say "I can't find a table named [t]."
 
 Carry out tabulating:
   showme the contents of the table understood.
@@ -53,3 +56,8 @@ Example: * Table of Stats
 	"bar"	5	9
 	
 	Test me with "tabulate table of stats / tabulate stats".
+
+Section Changelog
+
+1/210919 Define null phrase only if Central Typecasting not included
+         Make Table Understood a Tabulating Action property instead of a global variable
