@@ -1,4 +1,4 @@
-Version 1 of Verbs by Zed Lopez begins here.
+Version 1/210921 of Verbs by Zed Lopez begins here.
 
 "Provides a phrase that, given a text, returns a corresponding verb
 if it exists. For 6M62."
@@ -37,14 +37,15 @@ To load-all-verbs:
   add 've-verb to all-verbs;
   add aren't-verb to all-verbs;
   add can't-verb to all-verbs;
-  add don't-verb to all-verbs;
   add haven't-verb to all-verbs;
+  add don't-verb to all-verbs;
   add mustn't-verb to all-verbs;
   add mightn't-verb to all-verbs;
   add mayn't-verb to all-verbs;
   add wouldn't-verb to all-verbs;
   add couldn't-verb to all-verbs;
   add shouldn't-verb to all-verbs;
+  add won't-verb to all-verbs;
 
 Chapter 4 Verb -- that's what's happenin'
 
@@ -90,3 +91,6 @@ Verbs ends here.
 
 ---- Documentation ----
 
+Changelog
+
+1/210921 adding won't
