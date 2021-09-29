@@ -1,7 +1,7 @@
-Version 1 of If True by Zed Lopez begins here.
+Version 1/210928 of If True by Zed Lopez begins here.
 
-"Allow if/unless to accept plain truth states instead of a full conditional.
-If Strange Loopiness is included, extend that to while and until loops."
+"Allow if/unless to accept plain truth states instead of a full conditional. If
+Strange Loopiness is included, extend that to while and until loops. For 6M62."
 
 Part if/unless with truth states
 
@@ -33,22 +33,26 @@ To repeat while (t - a truth state) with/using index (index - nonexisting number
 
 Chapter until truth state
 
-Section until truth state plain
-
 To repeat until (t - a truth state) begin -- end loop:
-(- .TopOfLoop;
-if (1) {-block}
-if (~~({t})) jump TopOfLoop;
+(-
+  do
+    {-block}
+  until ({t});
 -)
 
-Section until truth state with index
+Section until condition with index
 
 To repeat until (t - a truth state) with/using index (index - nonexisting number variable) begin -- end loop:
-(- {index} = 0;
-.TopOfLoop;
-if (++{index}) {-block}
-if (~~({t})) jump TopOfLoop;
+(-
+  {index} = 0;
+  do if (++{index}) {-block}  
+  until ({t});
 -)
 
 If True ends here.
 
+---- Documentation ----
+
+Section Changelog
+
+1/210928 Use I6-native do-until loop; prior implementation could break with multiple until loops

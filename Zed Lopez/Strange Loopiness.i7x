@@ -1,4 +1,4 @@
-Version 1 of Strange Loopiness by Zed Lopez begins here.
+Version 1/210928 of Strange Loopiness by Zed Lopez begins here.
 
 "Repeat variants for: while loop; until loop; loop counting down over a numeric
 range. For any loop optionally assign a loop counter variable; for looping
@@ -29,18 +29,19 @@ Section until condition plain
   the condition is tested at the end of the loop, not the
   beginning. ]
 To repeat until (c - a condition) begin -- end loop:
-(- .TopOfLoop;
-if (1) {-block}
-if (~~({c})) jump TopOfLoop;
+(-
+  do
+    {-block}
+  until ({c});
 -)
 
 Section until condition with index
 
 To repeat until (c - a condition) with/using index (index - nonexisting number variable) begin -- end loop:
-(- {index} = 0;
-.TopOfLoop;
-if (++{index}) {-block}
-if (~~({c})) jump TopOfLoop;
+(-
+  {index} = 0;
+  do if (++{index}) {-block}  
+  until ({c});
 -)
 
 Book Descending
@@ -290,7 +291,7 @@ Strange Loopiness ends here.
 
 This is experimental and mostly made out of the undocumented features in the Standard Rules the docs call on us not to use.
 
-Adds while and until loops. Among other things, this makes it easy to loop indefinitelyuntil a condition is met, which comes in handy sometimes. On the other hand, this makes it easy to loop indefinitely.
+Adds while and until loops. Among other things, this makes it easy to loop indefinitely until a condition is met, which comes in handy sometimes. On the other hand, this makes it easy to loop indefinitely.
 
 Inform 7's existing repeat statements make it hard to infinitely loop, which I'm guessing was a deliberate design decision. So be warned that these loops are powerful tools whose power is by default pointed at your foot: make sure your loop incrementally approaches its exit condition.
 
@@ -362,7 +363,7 @@ repeat for the-color from the first value in colors to the last value in colors 
 or:
 ```
 [ other than whole range: ]
-repeat for the-color from red to yellow with index:
+repeat for the-color from red to yellow with index i begin;
 
 repeat for c in list of infragreen colors with index i begin;
 
@@ -406,13 +407,13 @@ other examples:
 
 repeat through the table of regrets backwards by decision-badness using row number row-id
 
-Extensively uses undocumented features and is likely to break at next release.
-
 Section Example: What's in the box? *
 
 	*: "What's in the box?"
 
-	Box is a container in the lab. There is a spam musubi in the box. An action figure is in the box.
+	The Lab is a room.
+	   
+	Box is a container in the Lab. There is a spam musubi in the box. An action figure is in the box.
 	    
 	when play begins:
 	let item be the first thing held by box;
@@ -420,3 +421,8 @@ Section Example: What's in the box? *
 	  say "[item].";
 	  now item is the next thing held after item;      
 	end repeat.      
+
+
+Section Changelog
+
+1/210928 Use I6-native do-until loop; prior implementation could break with multiple until loops
