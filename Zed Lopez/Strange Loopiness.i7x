@@ -1,4 +1,4 @@
-Version 1/210928 of Strange Loopiness by Zed Lopez begins here.
+Version 1/210930 of Strange Loopiness by Zed Lopez begins here.
 
 "Repeat variants for: while loop; until loop; loop counting down over a numeric
 range. For any loop optionally assign a loop counter variable; for looping
@@ -126,6 +126,15 @@ To repeat with/for (loopvar - nonexisting K variable)
         (- {-my:1} = LIST_OF_TY_GetLength({L});
                 for ({index} = 1 : {index} <= {-my:1} : {index}++ )
                 if ({loopvar} = LIST_OF_TY_GetItem({L}, {index}))
+-).
+
+Section list of texts with index
+
+To repeat with/for (loopvar - nonexisting text variable)
+  running/-- through/in (L - list of texts) with/using index (index - nonexisting number variable) begin -- end loop:
+        (- {-my:1} = LIST_OF_TY_GetLength({L}); ! texts
+                for ({index} = 1 : {index} <= {-my:1} : {index}++ )
+if (BlkValueCopy({-by-reference:loopvar}, LIST_OF_TY_GetItem({L}, {index})))
 -).
 
 Chapter Table
@@ -424,5 +433,7 @@ Section Example: What's in the box? *
 
 
 Section Changelog
+
+1/210930 Add separate case for repeat through list of text with index case, which had been failing. Any list of a block-valued kind other than text will still fail.
 
 1/210928 Use I6-native do-until loop; prior implementation could break with multiple until loops
