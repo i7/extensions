@@ -27,8 +27,9 @@ Check meaning (this is the check meaning rule):
 
 Carry out meaning (this is the carry out meaning rule):
     if meaning-verb-understood is meaningful begin;
-      showme the meaning of meaning-verb-understood;
-      say "";
+      let the-meaning be "[the verb-meaning of meaning-verb-understood]";
+      if the-meaning is "relation of objects: relation", say "It means a property.";
+      else say "[the-meaning].";
     else;
       if "[verb meaning-verb-understood]" is "be", say "Relation of objects: equality relation.";
       else say "For saying only.";
@@ -166,12 +167,10 @@ Example: * Verbs
 	
 	Lab is a room.
 	
-	[To bring is a verb. To get is a verb. To creep is a verb. To lay is a verb. lesnerize is a verb.]
+	To bring is a verb. To get is a verb. To creep is a verb. To lay is a verb. To lesnerize is a verb.
 	Test me with "verbs / conjugate bring / conjugate get / conjugate creep / conjugate lay / conjugate lesnerize".
 
 Section but what about to lie, where it's lied if we're talking about a mistruth and lay if we're taking about lying down?
 
 We do not talk about lie!
 
-
-Verbs that mean properties just get: "meaning of meaning-verb-understood" = relation of objects:  relation

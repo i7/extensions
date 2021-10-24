@@ -1,4 +1,4 @@
-Version 1/210921 of Verbs by Zed Lopez begins here.
+Version 1 of Verbs by Zed Lopez begins here.
 
 "Provides a phrase that, given a text, returns a corresponding verb
 if it exists. For 6M62."
@@ -73,6 +73,18 @@ will output "have".
 To say verb (V - a verb):
     (- {V}(1); -).
 
+Chapter 6 - Meaning
+
+To say the/-- showme-meaning of (V - a verb):
+    showme the meaning of V.
+
+To decide what text is the verb-meaning of (V - a verb):
+  let result be "[showme-meaning of V]";
+  if result matches the text "relation of objects:  relation", decide on "Property";
+  replace the regular expression "\s*$" in result with "";
+  replace the text "'meaning of V' = r" in result with "R";
+  decide on result.
+
 Volume 2 - Initialization
 
 Section 1 (for use with Alternative Startup Rules by Dannii Willis)
@@ -91,6 +103,3 @@ Verbs ends here.
 
 ---- Documentation ----
 
-Changelog
-
-1/210921 adding won't
