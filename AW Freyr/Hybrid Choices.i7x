@@ -619,10 +619,6 @@ Section: Version History
 	Version 1, July 31st, 2014
 	-- Initial Release
 	
-Section: Contact
-
-You can contact me at anotherwannabe93@gmail.com with any questions/problems/suggestions you have. (Apparently, some people have been failing to reach me at that address. It is accurate, so I am not entirely sure what the issue is.)
-
 Section: Acknowledgements
 
 Thanks to Hanon Ondricek, who help test and draft this document. He wrote the funny stuff.
