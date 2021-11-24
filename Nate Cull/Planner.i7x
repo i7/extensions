@@ -1,7 +1,6 @@
-Version 2/140513 of Planner by Nate Cull begins here.
+Version 2/211124 of Planner by Nate Cull begins here.
 
 "A universal goal planner for self-directed NPCs."
-
 
 Section - Definitions and Globals
 
@@ -25,9 +24,8 @@ No-object is a thing.
 
 Table of Goals
 Parent	Plan	Step	Token	Param1	Param2
-0	0	0	a planning-token	no-object	no-object
+0	0	0	no-plan	no-object	no-object
 with 20 blank rows
-
 
 The planning actor is a person that varies.
 
@@ -72,10 +70,10 @@ To have (A - a person) plan an action for (C - a planning-relation) with (P1 - a
 	now the planned action is no-action;
 	now the planned param1 is no-object;
 	now the planned param2 is no-object;
-	if goal C with P1 and P2 is true begin;
+	if goal C with P1 and P2 is true:
 		now the planned action is success-action;
 		if debugging planner, say "true, no work to do[line break]";
-	otherwise;
+	otherwise:
 		if debugging planner, say "false, generating plans [run paragraph on]";
 		clear the goal table;
 		choose row 1 in the Table of Goals;
@@ -87,15 +85,11 @@ To have (A - a person) plan an action for (C - a planning-relation) with (P1 - a
 		now the Step entry is 0;
 		expand goal 1;
 		advance all goals;
-	end if;
-	if debugging planner begin;
+	if debugging planner:
 		if the planned action is no-action, say "Planner: no action chosen";
 		otherwise say "Planner: choosing [the planned action] [the planned param1] [the planned param2]";
 		say "[paragraph break]";
-	end if;
 	execute the planned action;
-
-
 
 [The core loop. Fill up the goal table line by line, reading goals as we come to them, considering each one, and if we can't satisfy it then spawning new subgoals and adding them to the end of the table. If we can fully satisfy a goal, then we end and return the action of that one as our chosen action.
 
@@ -498,20 +492,14 @@ This is a huge assumption, but it made the problem manageable enough to fit both
 (It may well be possible to layer some kind of feedback / learning / knowledge management layer over top of Planner's fairly stripped-down kernel. Or you might have better luck throwing it completely out and starting from scratch. Either way I suspect you will need a more powerful virtual machine than the Z-machine, and a language more meta-programmable than Inform 7, in order to start reinventing symbolic AI of the kind that was cutting edge in the 1970s. But the history of the Interactive Fiction community so far has been full of surprises, and the children of 
 SHRDLU may yet surpass their elders. We've come a long way from Blocks World as it is.)
 
+Section References
 
 [1] "Hap: A Reactive, Adaptive Architecture for Agents". A. Bryan Loyall and Joseph Bates. Technical Report CMU-CS-91-147, School of Computer Science, Carnegie Mellon University, Pittsburgh, PA, June 1991. Downloadable postscript version available as of 2006-05-28 from http://www.cs.cmu.edu/afs/cs.cmu.edu/project/oz/web/papers.html
 
-Section: 6L02 Compatibility Update
+Section Changelog
 
-This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+Version 2/211124: bug fixes per Version 3/211124: Bug fixes per [Planner/Basic Plans, NPC actions are invisible IntFiction thread](https://intfiction.org/t/planner-basic-plans-npc-actions-are-invisible/10034/)
+
+This extension differs from the author's original version. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
 
 This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
-
-
-
-
-
-
-
-
-

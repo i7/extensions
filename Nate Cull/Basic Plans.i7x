@@ -1,11 +1,10 @@
-Version 3/210620 of Basic Plans by Nate Cull begins here.
+Version 3/211124 of Basic Plans by Nate Cull begins here.
 
 "A library of basic relations, actions and plans for Planner."
 
 Include Planner by Nate Cull.
 
 Volume - Relations
-
 
 [Being-in is a complex relation. It can mean: the planning actor being in a room (triggering door opening, 
 pathfinding and travelling), another NPC being in a room (currently no plans for that), or an object being
@@ -33,7 +32,7 @@ Planning when the desired relation is being-in and the desired param1 is the pla
 
 [To get an ordinary portable object into a room, carry it, take it there, and drop it.]
 
-Planning-testing when the desired relation is being-in and the desired param1 is a portable thing and the desired param1 is not a person and the desired param2 is a room (this is the basic dropping objects in rooms rule):
+Planning when the desired relation is being-in and the desired param1 is a portable thing and the desired param1 is not a person and the desired param2 is a room (this is the basic dropping objects in rooms rule):
 	plan 1;
 	suggest being-carried-by with the desired param1 and the planning actor;
 	suggest being-in with the planning actor and the desired param2;
@@ -83,7 +82,6 @@ Planning when the desired relation is being-closed and the desired param1 is ope
 	suggest doing-closing with the desired param1;
 	rule succeeds;
 
-
 [Lockedness - much the same deal. Assumes that if it's a lockable thing that it uses the I7 'matching key' mechanism.
 This will need to be overridden for non-keyed locks.]
 
@@ -132,7 +130,6 @@ Planning when the desired relation is being-visible-by (this is the basic findin
 	plan 1;
 	suggest being-touchable-by with the desired param1 and the desired param2;
 	rule succeeds;
-
 
 [Touchability - this is a bit tricky, as it is the main requirement to manipulate most objects, so it triggers
 all our mechanisms of finding and picking up things.]
@@ -286,11 +283,6 @@ Doing-taking-off is a planning-action.
 Planning-acting when the planned action is doing-wearing (this is the basic executing taking off rule):
 	try the planning actor trying taking off the planned param1;
 
-
-
-
-
-
 Basic Plans ends here.
 
 ---- DOCUMENTATION ----
@@ -336,9 +328,8 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 
 	Broth is a thing.
 
-	The basic putting things in containers rule does nothing when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible:
-		
-		
+	The basic putting things in containers rule does nothing when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible.
+
 	Planning when the desired relation is being-in and the desired param1 is broth and the desired param2 is the crucible:
 		plan 1;
 		suggest being-in with the onion and the crucible;
@@ -437,7 +428,13 @@ Example: ** Alchemy - A demo game showing use of these basic actions.
 			stop the action;
 		end if;
 
-Section: 6L02 Compatibility Update
+Section Changelog
+
+Version 3/211124: Bug fixes per [Planner/Basic Plans, NPC actions are invisible IntFiction thread](https://intfiction.org/t/planner-basic-plans-npc-actions-are-invisible/10034/)
+
+Fixed a typo in Alchemy example
+
+Version 3/210620: Include Planner
 
 This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
 
