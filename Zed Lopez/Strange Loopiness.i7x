@@ -1,23 +1,16 @@
-Version 1/210930 of Strange Loopiness by Zed Lopez begins here.
+Version 1/211127 of Strange Loopiness by Zed Lopez begins here.
 
-"Repeat variants for: while loop; until loop; loop counting down over a numeric
-range. For any loop optionally assign a loop counter variable; for looping
-through tables optionally assign a row number variable. Allows more
-flexible syntax for the existing repeat loops. For 6M62."
+"Repeat variants for: until loop; loop counting down over a numeric or
+enumerated value range; loop n times. For any loop, optionally assign a loop
+counter variable; for looping through tables optionally assign a row number
+variable. Allows more flexible syntax for the existing repeat loops. For 6M62."
 
 Part while loop
 
-Chapter while conditional
-
-Section while conditional plain
-
-To repeat while (c - a condition) begin -- end loop:
-    (- while ({c}) -).
-
 Section while conditional with index
 
-To repeat while (c - a condition) with/using index (index - nonexisting number variable) begin -- end loop:
-    (- {index} = 0; while ({c} && ++{index}) -).
+To while (c - a condition) with/using index (index - nonexisting number variable) begin -- end loop:
+  (- {index} = 0; while ({c} && ++{index}) -).
 
 Part repeat until
 
@@ -48,12 +41,12 @@ Book Descending
 
 Part descent plain
 
-To repeat with/for (loopvar - nonexisting K variable) running/-- from/in (v - arithmetic value of kind K) down to (w - K) begin -- end loop:
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable) running/-- from/in (v - value of kind K) down to (w - K) begin -- end loop:
       (- for ({loopvar}={v}: {loopvar}>={w}: {loopvar}-- ) -).
 
 Part descent with index
 
-To repeat with/for (loopvar - nonexisting K variable) running/-- from/in (v - arithmetic value of kind K) down to (w - K) with/using index (index - a nonexisting number variable) begin -- end loop:
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable) running/-- from/in (v - value of kind K) down to (w - K) with/using index (index - a nonexisting number variable) begin -- end loop:
       (- for ({loopvar}={v}, {index} = 1: {loopvar}>={w}: {loopvar}--, {index}++ ) -).
 
 Book Overwriting Standard Rules 
@@ -64,39 +57,25 @@ Use ineffectual.
 
 Part Alternate Repetitions
 
-Chapter Specified numeric range
+Chapter Specified range
 
-To repeat with/for (loopvar - nonexisting K variable)
-  running/-- from/in (v - arithmetic value of kind K) to (w - K) begin -- end loop
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
+  running/-- from/in (v - value of kind K) to (w - K) begin -- end loop
   (documented at ph_repeat):
     (- for ({loopvar}={v}: {loopvar}<={w}: {loopvar}++ ) -).
 
-Section Specified numeric range with index
+Section Specified range with index
 
-To repeat with/for (loopvar - nonexisting K variable) 
-  running/-- from/in (v - arithmetic value of kind K) to (w - K) with/using index (index - a nonexisting number variable) begin -- end loop
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable) 
+  running/-- from/in (v - value of kind K) to (w - K) with/using index (index - a nonexisting number variable) begin -- end loop
   (documented at ph_repeat):
     (- for ({loopvar}={v}, {index} = 1: {loopvar}<={w}: {loopvar}++, {index}++ )  -).
-
-Chapter Specified enumerated value range
-
-To repeat with/for (loopvar - nonexisting K variable)
-  running/-- from/in (v - enumerated value of kind K) to (w - K) begin -- end loop
-  (documented at ph_repeat):
-    (- for ({loopvar}={v}: {loopvar}<={w}: {loopvar}++ )  -).
-
-Section Specified enumerated value range with index
-
-To repeat with/for (loopvar - nonexisting K variable)
-  running/-- from/in (v - enumerated value of kind K) to (w - K) with/using index (index - nonexisting number variable) begin -- end loop
-  (documented at ph_repeat):
-    (- for ({loopvar}={v}, {index}=1: {loopvar}<={w}: {loopvar}++, {index}++)  -).
 
 Chapter Description of objects
 
 [ this works with objects *or* values because -primitive-definition gets up to some
   magic ]
-To repeat with/for (loopvar - nonexisting K variable)
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
   running/-- through/in (OS - description of values of kind K) begin -- end loop
   (documented at ph_runthrough):
     (- {-primitive-definition:repeat-through} -).
@@ -105,7 +84,7 @@ Section Description of objects with index
 
 [ This only works with objects 'cause I can't reproduce the magic. See the documentation below for workarounds. ]
 
-To repeat with/for (loopvar - nonexisting K variable)
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
 running/-- through/in (OS - description of values of kind K) with index (index - nonexisting number variable) begin -- end loop
   (documented at ph_runthrough):
 (- {index} = 0; objectloop({loopvar} ofclass Object)
@@ -113,14 +92,14 @@ if ({-matches-description:loopvar:OS} && ++{index}) -).
 
 Chapter List of values
 
-To repeat with/for (loopvar - nonexisting K variable)
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
   running/-- through/in (L - list of values of kind K) begin -- end loop
   (documented at ph_repeatlist):
     (- {-primitive-definition:repeat-through-list} -).
 
 Section list of values with index
 
-To repeat with/for (loopvar - nonexisting K variable)
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
   running/-- through/in (L - list of values of kind K) with/using index (index - nonexisting number variable) begin -- end loop
   (documented at ph_repeatlist):
         (- {-my:1} = LIST_OF_TY_GetLength({L});
@@ -130,11 +109,50 @@ To repeat with/for (loopvar - nonexisting K variable)
 
 Section list of texts with index
 
-To repeat with/for (loopvar - nonexisting text variable)
+To repeat with/for the/a/an/-- (loopvar - nonexisting text variable)
   running/-- through/in (L - list of texts) with/using index (index - nonexisting number variable) begin -- end loop:
         (- {-my:1} = LIST_OF_TY_GetLength({L}); ! texts
                 for ({index} = 1 : {index} <= {-my:1} : {index}++ )
 if (BlkValueCopy({-by-reference:loopvar}, LIST_OF_TY_GetItem({L}, {index})))
+-).
+
+Chapter List of values backwards
+
+Section list of values backwards
+
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
+  running/-- through/in (L - list of values of kind K) in/-- reverse/backwards order/-- begin -- end loop:
+        (- {-my:1} = LIST_OF_TY_GetLength({L});
+                for ({-my:2} = {-my:1} : {-my:2} >= 1  : {-my:2}-- )
+                if ({loopvar} = LIST_OF_TY_GetItem({L}, {-my:2}))
+-).
+
+Section list of texts backwards
+
+To repeat with/for the/a/an/-- (loopvar - nonexisting text variable)
+  running/-- through/in (L - list of texts) in/-- reverse/backwards order/-- begin -- end loop:
+        (- {-my:1} = LIST_OF_TY_GetLength({L}); ! texts backward
+                for ({-my:2} = {-my:1} : {-my:2} >= 1  : {-my:2}-- )
+if (BlkValueCopy({-by-reference:loopvar}, LIST_OF_TY_GetItem({L}, {-my:2})))
+-).
+
+[ note: when looping backwards, index isn't entry number; it's a loop counter like usual ]
+
+Section list of values with index backwards
+
+To repeat with/for the/a/an/-- (loopvar - nonexisting K variable)
+  running/-- through/in (L - list of values of kind K) in/-- reverse/backwards order/-- with/using index (index - nonexisting number variable) begin -- end loop:
+        (- {-my:1} = LIST_OF_TY_GetLength({L});
+                for ({-my:2} = {-my:1},{index} = 1 : {-my:2} >= 1  : {-my:2}--, {index}++ )
+                if ({loopvar} = LIST_OF_TY_GetItem({L}, {-my:2}))
+-).
+
+Section list of texts with index backwards
+
+To repeat with/for the/a/an/-- (loopvar - nonexisting text variable) running/-- through/in (L - list of texts) in/-- reverse/backwards order/-- with/using index (index - nonexisting number variable) begin -- end loop:
+        (- {-my:1} = LIST_OF_TY_GetLength({L}); ! texts
+                for ({-my:2} = {-my:1},{index}=1 : {-my:2} >= 1  : {-my:2}--,{index}++ )
+if (BlkValueCopy({-by-reference:loopvar}, LIST_OF_TY_GetItem({L}, {-my:2})))
 -).
 
 Chapter Table
@@ -289,6 +307,20 @@ To repeat running/-- through/in (T - table name) sorted/-- in/by reverse/backwar
     @pull {-my:ct_1}; @pull {-my:ct_0};
   -).
 
+Part times
+
+Chapter times without index
+
+To repeat for/-- (N - a number) time/times begin -- end loop:
+  (- for ({-my:1}=1: {-my:1}<={N}: {-my:1}++ ) -).
+
+Chapter times with index
+
+[ there isn't a good reason to use this instead of ``repeat for i in 1 to 5`` but for consistency... ]
+
+To repeat for/-- (N - a number) time/times with/using index (index - nonexisting number variable) begin -- end loop:
+  (- for ({index}=1: {index}<={N}: {index}++ ) -).
+
 Book Casting (For use without Central Typecasting by Zed Lopez)
 
 To decide which K is the/a/an/-- (unknown - a value) cast as the/a/an/-- (name of kind of value K):
@@ -312,10 +344,14 @@ Infinitely loop (your obligation to break out):
 repeat while true:
 ```
 
-Repeat down across a numeric range:
+Repeat down across a range:
 
 ```
 repeat with x running from 12 down to 2:
+```
+
+```
+repeat with hue running from indigo down to orange:
 ```
 
 For all of the loops, you can also provide a loop index variable. Don't alter the loop index variable manually or it'll cease being a useful loop index variable.
@@ -337,6 +373,18 @@ Lists:
 
 ```
 repeat with item running through L with index i:
+```
+
+To save you the trouble of reversing a list you want to iterate through, you can specify backwards.
+
+```
+repeat for item in L backwards:
+```
+
+or
+
+```
+repeat for item in L in reverse:
 ```
 
 Tables with row number:
@@ -374,7 +422,9 @@ or:
 [ other than whole range: ]
 repeat for the-color from red to yellow with index i begin;
 
-repeat for c in list of infragreen colors with index i begin;
+[or:]
+
+Definition: a color (called C) is infragreen if C < green.
 
 let i be 0;
 repeat for c in infragreen colors begin; [works because unfair ni magic ]
@@ -388,7 +438,6 @@ repeat with drafty running through open containers with index i:
 ```
 
 Be warned that if you do try using it with enumerated values, there *won't* be an error: the body of the loop won't be executed; it will just return immediately.
-
 
 Also modifies existing syntax:
 
@@ -416,23 +465,9 @@ other examples:
 
 repeat through the table of regrets backwards by decision-badness using row number row-id
 
-Section Example: What's in the box? *
-
-	*: "What's in the box?"
-
-	The Lab is a room.
-	   
-	Box is a container in the Lab. There is a spam musubi in the box. An action figure is in the box.
-	    
-	when play begins:
-	let item be the first thing held by box;
-	repeat while item is not nothing begin;
-	  say "[item].";
-	  now item is the next thing held after item;      
-	end repeat.      
-
-
 Section Changelog
+
+1/211027 Added repeat n times loop. Improved documentation. Added looping through lists backwards.
 
 1/210930 Add separate case for repeat through list of text with index case, which had been failing. Any list of a block-valued kind other than text will still fail.
 
