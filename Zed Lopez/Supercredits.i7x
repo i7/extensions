@@ -1,4 +1,4 @@
-Version 1/211128 of Supercredits by Zed Lopez begins here.
+Version 1/211205 of Supercredits by Zed Lopez begins here.
 
 "Provides the Supercredits command to list the complete list of extension
 credits (i.e., including those that use authorial modesty) alphabetized by
@@ -91,12 +91,20 @@ Supercredits ends here.
 
 ---- Documentation ----
 
+Section Explanation
+
 Adds a "supercredits" command that lists all included extensions, including those marked with authorial modesty, alphabetized first by author, then by extension name. The whole extension is marked not for release.
 
-By default, it can work with a list of up to 50 extensions; replace the table definition
-if you need to extend it. There isn't catastrophic failure if you exceed that; extensions
-in excess of that will be reported, just not formatted and sorted with the others.
+By default, it can work with a list of up to 50 extensions. If you wanted to add 25 more, add this to your story:
 
+```
+Table of AuthExts (continued)
+with 25 blank rows.
+```
+
+There isn't catastrophic failure if you exceed the limit; extensions in excess of that will be reported, just not formatted and sorted with the others. 
+
+Section Example
 
 Example: * Supercredits
 
@@ -121,8 +129,12 @@ produces, e.g.:
  Friends of I7 / 6M62 Patches version 2/210913 *
  Graham Nelson / English Language version 1 *
  Graham Nelson / Standard Rules version 3/120430
-     Zed Lopez / Supercredits version 1/211128 *
+     Zed Lopez / Supercredits version 1/211205 *
      Zed Lopez / Text Loops version 1
 
 >
 ```
+
+Section Changelog
+
+1/211205: Added specific instructions for continuing table to documentation.
