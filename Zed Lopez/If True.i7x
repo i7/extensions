@@ -1,7 +1,8 @@
-Version 1/211127 of If True by Zed Lopez begins here.
+Version 1/211209 of If True by Zed Lopez begins here.
 
-"Allow if/unless to accept plain truth states instead of a full conditional. If
-Strange Loopiness is included, extend that to while and until loops. For 6M62."
+"Allow if/unless and while to accept plain truth states instead of
+a full conditional. If Strange Loopiness is included, extend that
+to until loops. For 6M62."
 
 Part if/unless with truth states
 
@@ -10,38 +11,26 @@ Chapter if with truth state
 To if (t - a truth state) begin -- end conditional:
     (- if ({t}) -)
 
-To if (t - a truth state valued table column) begin -- end conditional:
-    (- if ({t}) -)
-
 Chapter unless with truth state
 
 To unless (t - a truth state) begin -- end conditional:
     (- if (~~({t})) -)
 
-To unless (t - a truth state valued table column) begin -- end conditional:
-    (- if (~~{t}) -)
+Part while loops
 
-Book Repetition (for use with Strange Loopiness by Zed Lopez)
+Chapter while truth state plain
 
-Chapter while truth state
-
-Section while truth state plain
-
-[ for an infinite loop, just ``repeat while true:``.
+[ for an infinite loop, just ``while true:``.
   it's your responsibility to break out! ]
 To while (t - a truth state) begin -- end loop:
     (- while ({t}) -).
 
-To while (t - a truth state valued table column) begin -- end loop:
-    (- while ({t}) -).
-
-Section while truth state with index
+Chapter while truth state with index
 
 To while (t - a truth state) with/using index (index - nonexisting number variable) begin -- end loop:
     (- {index} = 0; while ({t} && ++{index}) -).
-
-To while (t - a truth state valued table column) with/using index (index - nonexisting number variable) begin -- end loop:
-    (- {index} = 0; while ({t} && ++{index}) -).
+    
+Book Repetition (for use with Strange Loopiness by Zed Lopez)
 
 Chapter until truth state
 
@@ -52,23 +41,9 @@ To repeat until (t - a truth state) begin -- end loop:
   until ({t});
 -)
 
-To repeat until (t - a truth state valued table column) begin -- end loop:
-(-
-  do
-    {-block}
-  until ({t});
--)
-
-Section until condition with index
+Chapter until truth state with index
 
 To repeat until (t - a truth state) with/using index (index - nonexisting number variable) begin -- end loop:
-(-
-  {index} = 0;
-  do if (++{index}) {-block}  
-  until ({t});
--)
-
-To repeat until (t - a truth state valued table column) with/using index (index - nonexisting number variable) begin -- end loop:
 (-
   {index} = 0;
   do if (++{index}) {-block}  
@@ -81,6 +56,8 @@ If True ends here.
 
 Section Changelog
 
+1/211209 remove truth state valued table columns
+1/211128 move while loops outside of For use with Strange Loopiness
 1/211127 add while loops
 1/211003 add truth state valued table columns
 1/210928 Use I6-native do-until loop; prior implementation could break with multiple until loops

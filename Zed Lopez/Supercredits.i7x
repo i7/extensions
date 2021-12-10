@@ -1,4 +1,4 @@
-Version 1/211205 of Supercredits by Zed Lopez begins here.
+Version 1/211206 of Supercredits by Zed Lopez begins here.
 
 "Provides the Supercredits command to list the complete list of extension
 credits (i.e., including those that use authorial modesty) alphabetized by
@@ -42,15 +42,15 @@ Understand "supercredits" as supercrediting.
 Chapter Action
 
 Supercrediting is an action out of world.
-Carry out supercrediting (this is the supercrediting rule): supercredit.
+Carry out supercrediting (this is the supercrediting rule): say supercredits.
   
 Part Output supercredits rule
 
-To supercredit: follow the output supercredits rule.
+To say supercredits: follow the output supercredits rule.
 
 This is the output supercredits rule:
   let L be a list of texts;
-  let ext-credits be  "[the list of extension credits]";
+  let ext-credits be "[the list of extension credits]";
   repeat for line in lines of ext-credits begin;
      add line to L;
   end repeat; 
@@ -61,7 +61,7 @@ This is the output supercredits rule:
   let overflow_warning be false;
   repeat for line in lines of complete-ext-credits with index i begin;
     if line matches the regular expression regexp begin;
-      let auth be substituted form of "[text matching subexpression 2]";
+      let auth be the text matching subexpression 2;
       if the number of blank rows in the Table of AuthExts is 0 begin;
         if overflow_warning is false begin;
           now overflow_warning is true;
@@ -80,7 +80,7 @@ This is the output supercredits rule:
     end if;
    end repeat;
    sort table of AuthExts in toa-auth order;
-   if overflow_warning is true, say "[line break]";
+   if overflow_warning is true, say line break;
    unless the number of entries in L is the number of rows in the Table of AuthExts, say "* indicates modesty[line break][line break]" (E);
    increment max_auth_length; [ one extra space on the left ]
    repeat through Table of AuthExts begin;
@@ -108,7 +108,7 @@ Section Example
 
 Example: * Supercredits
 
-	"Supercredits"
+	*: "Supercredits"
 
 	Include Supercredits by Zed Lopez.
 
@@ -129,12 +129,13 @@ produces, e.g.:
  Friends of I7 / 6M62 Patches version 2/210913 *
  Graham Nelson / English Language version 1 *
  Graham Nelson / Standard Rules version 3/120430
-     Zed Lopez / Supercredits version 1/211205 *
+     Zed Lopez / Supercredits version 1/211206 *
      Zed Lopez / Text Loops version 1
 
->
 ```
 
 Section Changelog
 
+1/211206: Added paste button; removed some gratuitous use of adaptive text
 1/211205: Added specific instructions for continuing table to documentation.
+
