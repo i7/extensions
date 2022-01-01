@@ -1,9 +1,10 @@
-Version 1 of Verbal Commands by Zed Lopez begins here.
+Version 1/211213 of Verbal Commands by Zed Lopez begins here.
 
-"Provides a 'verbs' command to output known verbs, a 'conjugate' command to
-demonstrate the conjugation of a given verb, and a 'meaning' command to
-report what relationship it means. Whole extension is marked Not for Release.
-For 6M62."
+"Provides a 'verbs' command to output known verbs, a 'conjugate' command
+to demonstrate the conjugation of a given verb, and a 'meaning' command
+to report whether a verb is for saying only, means a property or what
+relationship it means if it means a relationship. The whole extension
+is marked Not for Release. For 6M62."
 
 Use authorial modesty.
 
@@ -11,29 +12,19 @@ Include Verbs by Zed Lopez.
 
 Volume 1 - Informational commands (Not for release)
 
-The verb understood is a verb that varies.
-
 Book 0 - Meaning command
 
-Understand "meaning [text]" as meaning.
+Understand "meaning of/-- [text]" as request-meaning.
 
-Meaning is an action out of world applying to one topic.
-The meaning action has a verb called meaning-verb-understood.
+Request-meaning is an action out of world applying to one topic.
+The request-meaning action has a verb called meaning-verb-understood.
 
-Check meaning (this is the check meaning rule):
-    let t be the substituted form of "[the topic understood]";
-    now meaning-verb-understood is t as a verb;
-    if meaning-verb-understood is the null verb, instead say "I don't know the meaning of [t].";
+Check request-meaning (this is the check request-meaning rule):
+  now meaning-verb-understood is the topic understood as a verb;
+  if meaning-verb-understood is the null verb, instead say "I don't know the meaning of [topic understood].";
 
-Carry out meaning (this is the carry out meaning rule):
-    if meaning-verb-understood is meaningful begin;
-      let the-meaning be "[the verb-meaning of meaning-verb-understood]";
-      if the-meaning is "relation of objects: relation", say "It means a property.";
-      else say "[the-meaning].";
-    else;
-      if "[verb meaning-verb-understood]" is "be", say "Relation of objects: equality relation.";
-      else say "For saying only.";
-    end if;
+Carry out request-meaning (this is the carry out request-meaning rule):
+  say "[verb-meaning of the meaning-verb-understood].";
 
 Book 1 - Verbs command
 
@@ -56,7 +47,7 @@ Carry out verbing (this is the carry out verbing rule):
     now all-verb-texts is l;
     sort all-verb-texts;
   end if;
-    say "[all-verb-texts][line break]".
+  say "[all-verb-texts][line break]".
 
 Book 2 - Conjugating
 
@@ -66,7 +57,7 @@ Pronoun-list is initially { "I", "You", "She/he/it", "We", "You", "They" }.
 
 Part Conjugational understandings
 
-Understand "conjugate [text]" as conjugating.
+Understand "conjugate to/-- [text]" as conjugating.
 
 Part Conjugating action
 
@@ -76,18 +67,20 @@ The conjugating action has a verb called conjugating-verb-understood.
 Chapter Check conjugating
 
 Check conjugating (this is the check conjugating rule):
-    let t be the substituted form of "[the topic understood]";
-    now conjugating-verb-understood is t as a verb;
-    if conjugating-verb-understood is the null verb, instead say "I don't know how to conjugate [t]";
+  now conjugating-verb-understood is the topic understood as a verb;
+  if conjugating-verb-understood is the null verb, instead say "I don't know how to conjugate [topic understood].";
 
 Chapter Carry out conjugating
 
 Section Maximizing
 
-To decide what number is the larger of (N - number) and (M - number)
+To decide what number is a/-- max/maximum of/for (N - number) and (M - number)
     (this is maximizing):
     if N > M, decide on N;
     decide on M. 
+
+To decide what number is a/-- max/maximum of/for (L - a list of values):
+  decide on the maximizing reduction of L;
 
 Section Know your place
 
@@ -101,32 +94,34 @@ To decide what text is the-verb-space of (T - a text):
   if c is " " or c is "[']", decide on "";
   decide on " ".
 
-Carry out conjugating (this is the carry out conjugating rule):
+To say conjugation of/for/-- (V - a verb):
   let L be a list of texts;
-  let lens be a list of numbers;
+  let lengths be a list of numbers;
   let max-length be 0;
   repeat with g-num running through grammatical-numbers begin;
-    if g-num is plural, now max-length is the maximizing reduction of lens;
+    if g-num is plural, now max-length is maximum of lengths;
     repeat with tense running through the grammatical tenses begin;
       let tense-text be "[tense]";
       if g-num is plural, say "[line break][tense-text in sentence case]:[line break]";
       repeat with g-person running from 1 to 3 begin;
         let the-viewpoint be the viewpoint corresponding to g-person and g-num;
-        let n be the-viewpoint cast as a number;
-        let p be entry n of pronoun-list;
+        let p be entry (the-viewpoint cast as a number) of pronoun-list;
         if g-num is singular begin;
-           let c-v be the substituted form of "[adapt conjugating-verb-understood in tense from the-viewpoint]";
+          let c-v be the substituted form of "[adapt V in tense from the-viewpoint]";
           let c-text be the substituted form of "   [p][the-verb-space of c-v][c-v]";
           add c-text to L;
-          add the number of characters in c-text to lens;
-         else;
-           let entry_no be the place for g-person and tense;
-           let c-v be the substituted form of "[adapt conjugating-verb-understood in tense from the-viewpoint]";
-           say "[entry entry_no of L][(max-length - entry entry_no of lens) spaces]   [p][the-verb-space of c-v][c-v][line break]";
-         end if;  
+          add the number of characters in c-text to lengths;
+        else;
+          let entry_no be the place for g-person and tense;
+          let c-v be the substituted form of "[adapt V in tense from the-viewpoint]";
+          say "[entry entry_no of L][(max-length - entry entry_no of lengths) spaces]   [p][the-verb-space of c-v][c-v][line break]";
+        end if;  
       end repeat;
     end repeat;
   end repeat;
+
+Carry out conjugating (this is the carry out conjugating rule):
+  say conjugation of conjugating-verb-understood;
 
 Book 3 - Helper functions
 
@@ -157,20 +152,28 @@ Verbal Commands ends here.
 
 ---- Documentation ----
 
-Note that these verbs are what your game knows how to manipulate in adaptive text. They don't necessarily correspond to commands available to the player, to verbsb available to verb phrases to form sentences in your Inform 7 source, or to anything else!
+Note that these verbs are what your game knows how to manipulate in adaptive text. They don't necessarily correspond to commands available to the player, to verbs available to verb phrases to form sentences in your Inform 7 source, or to anything else!
 
 Example: * Verbs
 
 	*: "Verbs"
 	
-	Include Verbs by Zed Lopez.
+	Include Verbal Commands by Zed Lopez.
+	Use the serial comma.
 	
 	Lab is a room.
 	
-	To bring is a verb. To get is a verb. To creep is a verb. To lay is a verb. To lesnerize is a verb.
-	Test me with "verbs / conjugate bring / conjugate get / conjugate creep / conjugate lay / conjugate lesnerize".
+	A thing has a number called weight.
+	The verb to weigh means the weight property.
+	
+	To lay is a verb. To lesnerize is a verb.
+	
+	Test me with "verbs / conjugate weigh / conjugate lay / conjugate lesnerize / conjugate frobnicate / meaning be / meaning lesnerize / meaning contain / meaning weigh / meaning frobnicate".
 
 Section but what about to lie, where it's lied if we're talking about a mistruth and lay if we're taking about lying down?
 
 We do not talk about lie!
 
+Section Changelog
+
+1/211213 various bits of code cleanup

@@ -1,4 +1,4 @@
-Version 1 of Verbs by Zed Lopez begins here.
+Version 1/211231 of Verbs by Zed Lopez begins here.
 
 "Provides a phrase that, given a text, returns a corresponding verb
 if it exists. For 6M62."
@@ -11,7 +11,7 @@ Chapter 1 - All-verbs var
 
 All-verbs is a list of verbs variable.
 
-Chapter 2 - Evil hard-conding of contraction verbs
+Chapter 2 - Evil hard-coding of contraction verbs
 
 To decide what verb is 're-verb: (- ConjugateVerb_74 -).
 To decide what verb is 've-verb: (- ConjugateVerb_75 -).
@@ -79,9 +79,11 @@ To say the/-- showme-meaning of (V - a verb):
     showme the meaning of V.
 
 To decide what text is the verb-meaning of (V - a verb):
+  if "[V]" is "verb be", decide on "Relation of objects: equality relation";
   let result be "[showme-meaning of V]";
   if result matches the text "relation of objects:  relation", decide on "Property";
-  replace the regular expression "\s*$" in result with "";
+  if result matches the text "relation of objects: equality relation", decide on "For saying only";
+  now result is line number 1 in result; [trim whitespace]
   replace the text "'meaning of V' = r" in result with "R";
   decide on result.
 
@@ -103,3 +105,23 @@ Verbs ends here.
 
 ---- Documentation ----
 
+Provides these phrases:
+
+``<text> as a verb`` returns a verb. If it couldn't find a verb it returns "the null verb", i.e., the value 0 cast as a verb. If there's a possibility of this, your code should make a test like ``if v is the null verb`` after calling the phrase.
+
+``say showme-meaning of <verb>`` outputs one of:
+- Relation of objects: <relation name> relation
+- For saying only
+- Property
+- I don't know the meaning of <provided verb>
+
+This improves on the default behavior of ``showme the meaning of <verb>`` 
+which outputs "relation of objects: equality relation" for verbs that are for saying only and "relation of objects:  relation" for verbs that are properties.
+
+If v is the verb to be and you use the built-in say phrase ``say "[v]"``, the output is "verb be". This extension adds ``say verb <verb>`` which outputs just "be". 
+
+See Verbal Commands by Zed Lopez
+
+Section Changelog
+1/211231 added documentation, use "line number 1" instead of a regexp to trim whitespace
+1/211213 give verb-meaning more polished output
