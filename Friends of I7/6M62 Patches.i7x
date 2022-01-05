@@ -1,4 +1,4 @@
-Version 2/210913 of 6M62 Patches by Friends of I7 begins here.
+Version 2/220105 of 6M62 Patches by Friends of I7 begins here.
 
 Use authorial modesty.
 
@@ -109,10 +109,83 @@ Include (-
 
 -) after "Output.i6t".
 
+Volume https://intfiction.org/t/53835/3
+
+Include (- Replace HeapMakeSpace; -) before "Flex.i6t".
+
+Include (-
+
+[ HeapMakeSpace size multiple  newblocksize newblock B n hsize; ! MODIFIED
+        for (::) {
+                if (multiple) {
+		    hsize = BLK_DATA_MULTI_OFFSET; ! ADDED
+                        if (HeapNetFreeSpace(multiple) >= size) rtrue;
+                } else {
+		    hsize = BLK_DATA_OFFSET; ! ADDED
+                        if (HeapLargestFreeBlock(0) >= size) rtrue;
+                }
+                newblocksize = 1;
+                for (n=0: (n<SMALLEST_BLK_WORTH_ALLOCATING) || (newblocksize<(size+hsize)): n++) ! MODIFIED
+                        newblocksize = newblocksize*2;
+                ! while (newblocksize < size+hsize) { n++; newblocksize = newblocksize*2; } ! DELETED
+                newblock = VM_AllocateMemory(newblocksize);
+                if (newblock == 0) rfalse;
+                newblock->BLK_HEADER_N = n;
+                newblock-->BLK_HEADER_KOV = 0;
+                newblock-->BLK_HEADER_RCOUNT = 0;
+                newblock->BLK_HEADER_FLAGS = BLK_FLAG_MULTIPLE;
+                newblock-->BLK_NEXT = NULL;
+                newblock-->BLK_PREV = NULL;
+                for (B = Flex_Heap-->BLK_NEXT:B ~= NULL:B = B-->BLK_NEXT)
+                        if (B-->BLK_NEXT == NULL) {
+                                B-->BLK_NEXT = newblock;
+                                newblock-->BLK_PREV = B;
+                                jump Linked;
+                        }
+                Flex_Heap-->BLK_NEXT = newblock;
+                newblock-->BLK_PREV = Flex_Heap;
+                .Linked; ;
+                #ifdef BLKVALUE_TRACE;
+                print "Increasing heap to free space map: "; FlexDebugDecomposition(Flex_Heap, 0);
+                #endif;
+        }
+        rtrue;
+];
+
+-) after "Make Space" in "Flex.i6t".
+
+Volume https://intfiction.org/t/53835/4
+
+Include (-
+Array Flex_Heap -> MEMORY_HEAP_SIZE + BLK_DATA_MULTI_OFFSET; ! allow room for head-free-block
+-) instead of "The Heap" in "Flex.i6t".
+
+Include (-
+
+[ HeapInitialise n bsize blk2;
+        blk2 = Flex_Heap + BLK_DATA_MULTI_OFFSET; ! MODIFIED
+        Flex_Heap->BLK_HEADER_N = 4;
+        Flex_Heap-->BLK_HEADER_KOV = 0;
+        Flex_Heap-->BLK_HEADER_RCOUNT = MAX_POSITIVE_NUMBER;
+        Flex_Heap->BLK_HEADER_FLAGS = BLK_FLAG_MULTIPLE;
+        Flex_Heap-->BLK_NEXT = blk2;
+        Flex_Heap-->BLK_PREV = NULL;
+        for (bsize=1: bsize < MEMORY_HEAP_SIZE: bsize=bsize*2) n++;
+        blk2->BLK_HEADER_N = n;
+        blk2-->BLK_HEADER_KOV = 0;
+        blk2-->BLK_HEADER_RCOUNT = 0;
+        blk2->BLK_HEADER_FLAGS = BLK_FLAG_MULTIPLE;
+        blk2-->BLK_NEXT = NULL;
+        blk2-->BLK_PREV = Flex_Heap;
+];
+
+-) instead of "Initialisation" in "Flex.i6t".
+
 6M62 Patches ends here.
 
 ---- Documentation ----
 
 Changelog
 
+v. 2/220105: Add Heap Size fixes by Otis the Dog per https://intfiction.org/t/53835
 v. 2/210913: Add TEXT_TY_BlobAccess fix by Peter Bates per intfiction.org/t/50840
