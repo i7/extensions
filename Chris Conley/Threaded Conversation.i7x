@@ -1,4 +1,4 @@
-Version 7/180807 of Threaded Conversation by Chris Conley begins here.
+Version 7/220118 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -187,7 +187,7 @@ This is the recap of known facts rule:
 	say "[We] [think] back over the things that [we] [know]: [line break]  " (B);
 	repeat with item running through facts:
 		if the player knows the item:
-			say "[summary of the item][line break]  (C)";
+			say "[summary of the item][line break]  " (C);
 
 
 Book IV - Caching Dead Ends And Shallow Burials
@@ -1945,6 +1945,7 @@ Section: Versions 6/7
 
 	Fixing a few parser error issues
 	(date 180807: corrected invalid extension ending line)
+	(date 220118: fixed a typo)
 
 Section: Versions 4/5
 	
