@@ -1,4 +1,4 @@
-Version 7/220118 of Threaded Conversation by Chris Conley begins here.
+Version 8/220119 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -187,7 +187,7 @@ This is the recap of known facts rule:
 	say "[We] [think] back over the things that [we] [know]: [line break]  " (B);
 	repeat with item running through facts:
 		if the player knows the item:
-			say "[summary of the item][line break]  " (C);
+			say "[summary of the item][line break] " (C);
 
 
 Book IV - Caching Dead Ends And Shallow Burials
@@ -706,10 +706,8 @@ Understand "[a typable quip]" as discussing. [This originally read "a typable pe
 
 Chapter 2 - Setting discussing variables
 
-Break after reply is a truth state that varies. [If a character has multiple replies in a single turn, we don't want the final paragraph breaks to stack up.]
-
 Setting action variables for an actor discussing: 
-	now break after reply is true;
+[	now break after reply is true;]
 	if the current quip is not the noun and the noun is a quip: [Do not advance these records if an NPC is merely replying to a topic the PC introduced.]
 		now the grandparent quip is the previous quip;
 		now the previous quip is the current quip;
@@ -776,16 +774,17 @@ Carry out someone discussing something which is not quippishly-relevant (this is
 		[	Only when the NPC takes up and responds in the new thread has the subject been successfully changed.	]
 
 Carry out someone discussing a one-time character-tailored quip which quip-supplies the current interlocutor (this is the eliminate used quips rule):  
-	now the noun is nowhere; [This is so that we are steadily whittling away single-use quips after they are discussed.]
+	remove the noun from play; [This is so that we are steadily whittling away single-use quips after they are discussed.]
 
 Report someone discussing something (this is the interlocutor's reply rule):
 [	This is a report, rather than a carry out rule, so that in theory characters can discuss things in another room, exchanging information behind the player's back.	]
 [	It also means that we can override the report rule without messing up any of the other quip-machinery accounting that needs to happen during the action.	]
 	if the noun provides the property reply:
 		say "[reply of the noun]" (A);
-		if break after reply is true and the noun is strongly-phrased, say paragraph break;
-		if the noun is weakly-phrased, say " [run paragraph on]" (B);
-		now break after reply is false. [Even if one reply recursively induces this character to perform another immediately after, we still only want to print one paragraph break at the end.]
+		if the noun is strongly-phrased:
+			say paragraph break;
+		otherwise:
+			say " [run paragraph on]" (B).
 
 
 Chapter 6 - Marking Changes of Subject
@@ -1232,11 +1231,16 @@ Instead of non-speaking: try discussing the noun.
 
 [Book 4  (in place of Book 4 - Limiting what can be spoken about in Conversation Framework by Eric Eve)]
  
-Threaded Conversation ends here.
+Threaded Conversation v8 ends here.
 
 ---- Documentation ----
 
 NOTE: This extension depends upon the extension Conversation Framework by Eric Eve. The latest version should be available for download from the Inform website.
+
+Chapter: What's new in Version 8
+
+	Rewrote documentation explaining weakly-phrased quips to emphasize they are only for use with queued quips
+	
 
 Chapter: What's new in Version 5
 
@@ -1833,7 +1837,7 @@ If we want a character to respond atypically -- for instance, by ignoring all of
 		 otherwise:
 			 queue noun as immediate obligatory.
 
-	act-distracted is an NPC-directed performative quip. To continue is a verb. To ignore is a verb. To show is a verb.
+	act-distracted is a weakly-phrased NPC-directed performative quip. To continue is a verb. To ignore is a verb. To show is a verb.
 	The reply is "[Regarding the person asked][They] [one of][continue] [possessive] own line of thought[or][ignore] your remark[or][are] looking somewhat past your head[or][don't] [show] signs of following what you just said[at random]. [run paragraph on][awkward segue]"
 
 	 To say awkward segue:
@@ -1887,7 +1891,7 @@ Or, if the player will be making many such item requests:
 		if the current interlocutor has the item,
 			now the player holds the item.
 
-Note also that the system does not ensure that the interlocutor is remains present. If the player or the other person may be moving around somehow during a conversation, we might want to set up an every turn rule to check this condition, and reset the interlocutor if it does not hold.
+Note also that the system does not check to ensure that the characters remain present all throughout the conversation. If the player or the other person may be moving around somehow during a conversation, we might want to set up an every turn rule to check this condition, and reset the interlocutor if it does not hold.
 
 	Last every turn when the current interlocutor is a person and the current interlocutor is not in the location:
 		reset the interlocutor.
@@ -1896,11 +1900,11 @@ Section: Advanced beat and formatting control
 
 By default, when the conversational thread has been exhausted and the current interlocutor has something in her queue to say, the prevent talking heads activity will be called. This will print a grounding "[beat]" and a paragraph break before she discusses this new quip. 
 
-There are a few properties of quips we can define to control this behavior. By default, a quip is considered "strongly-phrased"; we may mark it "weakly-phrased" instead if its reply text is suitable for folding into the paragraph of the subsequent quip, as a transitional phrase or minor comment, before the character then moves on to her topic of interest. This property generally works best if the reply itself does not end with a grounding beat. (Note that if a weakly-phrased, dead-ended quip is followed by a character's queued change of subject, the prevent talking heads activity will be bypassed entirely.)
+There are a few properties of quips we can define to control this behavior. By default, a quip is considered "strongly-phrased"; we may mark it "weakly-phrased" instead if its reply text is merely a transitional phrase or minor comment, before the character then moves on to her topic of interest, so that the reply text from both quips can be combined into a single paragraph. The weakly-phrased property generally works best if the reply itself is not written with a grounding beat of its own at the end. (Note that if a weakly-phrased, dead-ended quip is followed by a character's queued change of subject, the prevent talking heads activity will be bypassed entirely.) However, this means that weakly-phrased quips should only be used when the interlocutor has a queue stocked with quips (and probably NPC-directed ones) of her own that she is itching to get to.
 
 Similarly, a quip may be defined as "beat-opened" rather than (the default) "speech-opened" when we want to craft a unique conversational beat at the start of this particular quip, rather than using the standard beat-producing rules. This property indicates that the quip's reply text begins with a grounding beat, rather than quoted speech. It is most useful for NPC-directed quips, as it does not affect text formatting unless the character has chosen the quip from her queue. 
 
-There is some random variation, but this system ensures that two instances of quoted speech will never be printed side by side without an intervening beat or a paragraph break. Of course, we can alter or expand this behavior by changing the prevent talking heads activity. Or if we ignore both of these properties entirely, the system will still function well.
+There is some random variation, but this system ensures that two instances of quoted speech will never be printed side by side without an intervening beat or a paragraph break. Of course, we can alter or expand this behavior by changing the prevent talking heads activity. Or, if we ignore both of these properties entirely, the system will still function well.
 
 See the Blackened Blue example, below, for a demonstration of how the formatting of these types of quips may interact in printing NPC dialog.
 
@@ -1941,11 +1945,15 @@ Rebuilding needs to happen every time we add new quips or change the way quips r
 
 Chapter: Release Notes
 
+Section: Version 8
+
+	Fix the recap of known facts rule, response (C), to make it labelled (C) properly
+	Explain weakly-phrased quips a bit better in the documentation
+
 Section: Versions 6/7
 
 	Fixing a few parser error issues
 	(date 180807: corrected invalid extension ending line)
-	(date 220118: fixed a typo)
 
 Section: Versions 4/5
 	
@@ -2372,14 +2380,14 @@ Character conversation queueuing and intentional conversation is also displayed,
 		The reply is "'Not happening.'".
 		It directly-follows protest.
 		
-	you understand is an informative quip, quip-supplying the Chief.
+	you understand is a weakly-phrased informative quip, quip-supplying the Chief.
 		The comment is "'Yes, sir. I understand.'".
 		The reply is "'Right. Glad to hear it, McGorsky. You're a good egg.'".
 		It indirectly-follows first spiel and protest.
 		Understand "I" or "I understand" as you understand.
 
 	second spiel is an npc-directed quip.
-		The reply is "'Now, McGorsky. I want you to meet your new partner.' [The Chief] picks up the phone, says 'You can send her in.'"
+		The reply is "'Now, McGorsky. I want you to meet your new partner.' [The Chief] picks up the phone and says 'Send her in.'"
 
 	Section 3 - Plot
 
