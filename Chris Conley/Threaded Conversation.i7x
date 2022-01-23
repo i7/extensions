@@ -1,4 +1,4 @@
-Version 8/220119 of Threaded Conversation by Chris Conley begins here.
+Version 8/220120 of Threaded Conversation by Chris Conley begins here.
 
 "A conversation system tracking facts known, phrases spoken, and subjects of conversation."
 
@@ -1231,7 +1231,7 @@ Instead of non-speaking: try discussing the noun.
 
 [Book 4  (in place of Book 4 - Limiting what can be spoken about in Conversation Framework by Eric Eve)]
  
-Threaded Conversation v8 ends here.
+Threaded Conversation ends here.
 
 ---- Documentation ----
 
