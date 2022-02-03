@@ -1,4 +1,4 @@
-Version 15/210811 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/220202 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -421,10 +421,8 @@ To set (win - a g-present textual g-window) as the acting main window:
 
 Chapter - Grid window cursors
 
-To set (win - a text grid g-window) cursor to row (row - a number) column (col - a number):
-	(-  glk_window_move_cursor({win}.(+ ref number +), {row} - 1, {col} - 1); -).
-
-
+To set (win - a text grid g-window) cursor to row (row - a number) and/-- column (col - a number):
+	(-  glk_window_move_cursor({win}.(+ ref number +), {col} - 1, {row} - 1); -).
 
 Chapter - Window measurements
 
@@ -944,6 +942,9 @@ Flexible Windows requires Alternative Startup Rules by Dannii Willis, Glulx Entr
 
 Note that Flexible Windows uses the container relation for windows. We'll need to keep this in mind if we iterate through all containers.
 
+Section: Change log
+
+15/220202: reverse parameters in To set <window> cursor's glk_window_move_cursor call
 
 Chapter: Window Types, Properties, and Styles
 
