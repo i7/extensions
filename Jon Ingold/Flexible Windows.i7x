@@ -942,9 +942,6 @@ Flexible Windows requires Alternative Startup Rules by Dannii Willis, Glulx Entr
 
 Note that Flexible Windows uses the container relation for windows. We'll need to keep this in mind if we iterate through all containers.
 
-Section: Change log
-
-15/220202: reverse parameters in To set <window> cursor's glk_window_move_cursor call
 
 Chapter: Window Types, Properties, and Styles
 
