@@ -1,4 +1,4 @@
-Inquiry by Zed Lopez begins here.
+Version 2 of Inquiry by Zed Lopez begins here.
 
 "A framework for asking the user questions at startup
  (or subsequently)."
@@ -23,7 +23,7 @@ A multiple-choice inquiry can be question-first or question-last.
 A multiple-choice inquiry has a list of numbers called the choice-list.
 The choice-list of a multiple-choice inquiry is usually {}.
 A multiple-choice inquiry has a number called the extent.
-A multiple-choice inquiry is usually key-input. [ switch to line-input as desired ]
+A multiple-choice inquiry is usually key-input. [ don't use line input if the choices will go as far as 'g' ]
 
 To decide what number is the number of choices in/of (m - a multiple-choice inquiry):
   decide on the number of entries in the multiple-choice-list of m.
@@ -36,6 +36,39 @@ Part inquiring activity
 
 Inquiring something is an activity on inquiries.
 
+Finish-inquiring something is an activity on inquiries.
+The finish-inquiring activity has a text called inquiry-user-input;
+
+
+Before finish-inquiring a line-input inquiry (called q) (this is the set inquiry-user-input rule):
+  now inquiry-user-input is the substituted form of "[the player's command]";
+
+For finish-inquiring a line-input multiple-choice inquiry (called q) (this is the answered multiple-choice inquiry rule):
+    let the raw choice be word number 1 in inquiry-user-input in title case;
+    if the numeric value of the player's command >= 0, now the raw choice is "[numeric value of the player's command]";
+    if the number of characters in raw choice is 1 begin;
+      let the choice be ord of raw choice;
+      repeat with i running from 1 to extent of q begin;
+        if choice is entry i in the choice-list of q begin;
+          now the answer of q is entry i in the multiple-choice-list of q;
+          now q is answered;
+          break;
+        end if;
+      end repeat;
+    end if;
+    if q is unanswered begin;
+      follow the inquiry-error rules for q;   
+    end if;
+
+For finish-inquiring a line-input inquiry (called q) (this is the answered free-form inquiry rule):
+  now the answer of the q is inquiry-user-input;
+  now q is answered;
+
+After finish-inquiring an answered inquiry (called q) (this is the answered free-form inquiry cleanup rule):
+   follow the scene changing rules;
+   now the command prompt is the original-command-prompt;
+   ask-q;
+    
 Section multichoice list constants
 
 [ lettered: after 26 choices, continue with numbers; start numbers at 0 if there are more than 35 choices;
@@ -103,78 +136,58 @@ After inquiring a key-input inquiry (this is the after key-input rule): say line
 To ask-q:
     let q be an inquiry;
     now q is the first unanswered inquiry;
+    let did-at-least-one be false;
     while q is not the null inquiry and q is key-input begin;
+      now did-at-least-one is true;
       carry out the inquiring activity with q;
       now q is the first unanswered inquiry;
     end while;
+    if did-at-least-one is true, follow the scene changing rules;
 
 Inquiry-error is an inquiry based rulebook.
 
 Inquiry-error an inquiry (called q) when q is a multiple-choice inquiry (this is the multi-choose wisely rule):
     say "Enter a choice from [(entry 1 in the choice-list of q) as a char] to [(entry (extent of q) in choice-list of q) as a char]." (A);
-   
-For printing a parser error during Inquiring Minds (this is the no blank answers rule):
-  if the latest parser error is the I beg your pardon error begin;
+
+For printing a parser error during Inquiring minds (this is the no blank inquiry answers rule):
   let q be the first unanswered inquiry;
-    if q is an optional inquiry begin;
-      now the answer of q is ""; [ just in case it had previously been answered...]
-      now q is answered;
-      follow the scene changing rules;
-    else;
-      if q is a multiple-choice inquiry, follow the inquiry-error rules for q;
-      else say "Please enter a response." (B);
-      reject the player's command;
-    end if;
+  if q is an optional inquiry begin;
+    carry out the finish-inquiring activity with q;
+  else;
+    if q is a multiple-choice inquiry, follow the inquiry-error rules for q;
+    else say "Please enter a response." (B);
   end if;
 
 After reading a command during Inquiring Minds (this is the process line-input inquiry answers rule):
-  let line be "[the player's command]";
-  let q be the first unanswered inquiry; [ we know this is line-input ]
-  if the q is a multiple-choice inquiry begin;
-    let the raw choice be word number 1 in line in title case;
-    if the numeric value of the player's command >= 0, now the raw choice is "[numeric value of the player's command]";
-    if the number of characters in raw choice is 1 begin;
-      let the choice be ord of raw choice;
-      repeat with i running from 1 to extent of q begin;
-        if choice is entry i in the choice-list of q begin;
-          now the answer of q is entry i in the multiple-choice-list of q;
-          now q is answered;
-          break;
-        end if;
-      end repeat;
-    end if;
-    if q is unanswered begin;
-      follow the inquiry-error rules for q;   
-    end if;
-  else;
-    now the answer of the q is the player's command;
-    now q is answered;
-  end if;
+  let q be the first unanswered inquiry;
+  carry out the finish-inquiring activity with q;
   now q is the first unanswered inquiry;
-  if q is not the null inquiry begin;
-    if q is key-input, ask-q;
-    else carry out the inquiring activity with q;
-  else;
-    follow the scene changing rules;
-  end if;
+  if q is not the null inquiry, carry out the inquiring activity with q;
   reject the player's command;
-
+  
 Initial-inquiry is initially true.
 
-Last startup rule (this is the confirm startup rules have run rule):
-  now initial-inquiry is false.
-
 This is the check for inquiring mindlessness rule:
-    if Inquiring Minds is not happening, now initial-inquiry is false.
+    if initial-inquiry is true and Inquiring Minds is not happening begin;
+      follow the final startup rules;
+      now initial-inquiry is false;
+    end if;
 
-The check for inquiring mindlessness rule is listed before the when play begins stage rule in the startup rules.
+The when play begins stage rule is not listed in the startup rules.
+The fix baseline scoring rule is not listed in the startup rules.
+The display banner rule is not listed in the startup rules.
+The initial room description rule is not listed in the startup rules.
+The check for inquiring mindlessness rule is listed last in the startup rules.
 
-The when play begins stage rule does nothing when initial-inquiry is true.
-The fix baseline scoring rule does nothing when initial-inquiry is true.
-The display banner rule does nothing when initial-inquiry is true.
-The initial room description rule does nothing when initial-inquiry is true.
-The confirm startup rules have run rule does nothing when initial-inquiry is true.
-  
+[This is the move on to final startup rule: if Inquiring minds has happened, follow the final startup rules.]
+
+Final Startup is a rulebook.
+
+The when play begins stage rule is listed in the final startup rules.
+The fix baseline scoring rule is listed in the final startup rules.
+The display banner rule is listed in the final startup rules.
+The initial room description rule is listed in the final startup rules.
+
 Inquiring Minds is a recurring scene.
 Inquiring Minds begins when there is an unanswered inquiry.
 Inquiring Minds ends when there is no unanswered inquiry.
@@ -201,11 +214,8 @@ When Inquiring Minds ends (this is the restore command prompt rule):
     
 Last when Inquiring Minds ends (this is the you only stop inquiring for the first time once rule):
   if initial-inquiry is true begin;
-    follow the when play begins stage rule;
-    follow the fix baseline scoring rule;
-    follow the display banner rule;
-    follow the initial room description rule;
     now initial-inquiry is false;
+    follow the final startup rules;
   end if;
   
 Part testing (not for release)
@@ -256,7 +266,7 @@ To decide if the/a/-- player agrees to/with a/an/-- (T - a text):
 
 Part clear windows (for use without Basic Screen Effects by Emily Short)
 
-To clear the/-- screen: do nothing. [ (- VM_ClearScreen(0); -).]
+To clear the/-- screen: (- VM_ClearScreen(0); -).
 
 Part shut that down
 
@@ -306,10 +316,6 @@ return x;
 
 To decide what number is an/-- ord of/-- a/an/-- (T - a text): (- unicodeValue({T},0) -).
 
-Part clear windows (for use without Basic Screen Effects by Emily Short)
-
-To clear the/-- screen: (- VM_ClearScreen(0); -).
-
 Inquiry ends here.
 
 ---- Documentation ----
@@ -326,7 +332,7 @@ initial inquiry assertion:
 
 	Name-q is an inquiry. "What is your name?"
 
-(It's not an error condition to leave the descirption blank, but it's also not useful.)
+(It's not an error condition to leave the description blank, but it's also not useful.)
 
 One of inquiries' properties is answered vs. unanswered. If there are any unanswered
 inquiries, the Inquiring Minds scene begins and governs answering them. It doesn't 
@@ -368,34 +374,43 @@ the user will have to hit enter after their selection, and they'll get an
 error message if they entered something that isn't a choice; whereas with
 key-input it'll just sit there if they enter wrong choices.
 
-Inquiring something is an activity on inquiries so there's a lot of
-opportunity to customize things for various types of inquiry or for
-some particular inquiry. But there's a bizarre detail here: key-input
-inquiries are wholly handled by the activity, but line-input inquiries
-can't be: displaying the question must happen at the end of one turn
-and its processing must happen after a command has been read. So key
-parts of the action occur in an After reading a command rule.
+There are two separate activities govering processing inquiries, with
+some awkward aspects to the split.
+
+	Inquiring something is an activity on inquiries.
+	Finish-inquiring something is an activity on inquiries.
+
+Key-input inquiries are wholly handled by the inquiring activity. But
+or line-input inquiries, the inquiring activity principally handles only
+printing the question. And that's because the line input is really a
+bogus command input, so the question has to happen at the end of a turn
+and the processing of it during the next turn.
+
+So there's an After reading a command rule that invokes the finish-inquiring
+activity on line-input inquiries. 
 
 An optional inquiry is the final sub-kind of inquiry. It's always line-input and
 thus gets a free-form text answer, but the game will accept a blank answer for
 an optional inquiry; in every other case, an answer is required. You may wish
 to add a response for the case of a user entering a blank response for an
 optional question or it looks a lot like nothing happened. Spreading out
-the action of this Extension further, optional inquiries get marked answered
-within a rule For printing a parser error.
+the action of this Extension further, it's a For printing a parser error rule
+that invokes the finish-inquiring activity when the user gives a blank
+answer for an optional inquiry.
 
 Section Startup / Inquiring Minds scene details
 
 I wanted any initial inquiries to come before other output, but it would be a pain
 to attempt line input any other way than to be in the turn processing loop. So
 the when play begins stage rule, fix baseline scoring rule, display banner rule,
-and initial room description rule all do nothing if Inquiring Minds is happening
-(the 7th rule in the startup rules, the start in the correct scenes rule,
-makes that the case if there are unanswered inquiries).
+and initial room description rule are all moved to a Final Startup rulebook.
 
-If there were unanswered inquiries at startup and thus an Inquiring Minds scene,
-a final When Inquiring Minds ends rule finally runs those rules (and sets the
-initial-inquiry global to ensure this only happens once.)
+If there are no unanswered inquiries at the start of the game and thus
+Inquiring Minds never starts, the Final Startup rulebook is followed.
+Otherwise, it's followed at the end of the first Inquiring Minds scene.
+
+When there are multiple unanswered inquiries to be made, they are always made
+in the inquiries' order of definition in the source.
 
 Chapter Examples
 
