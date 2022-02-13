@@ -1,8 +1,8 @@
-Version 2 of Inquiry by Zed Lopez begins here.
+Version 2/220213 of Inquiry by Zed Lopez begins here.
 
 "A framework for asking the user questions at startup
- (or subsequently)."
-
+ (or subsequently). For 6M62."
+ 
 An inquiry is a kind of object.
 An inquiry has a text called the answer.
 An inquiry has a text called the description.
@@ -23,7 +23,10 @@ A multiple-choice inquiry can be question-first or question-last.
 A multiple-choice inquiry has a list of numbers called the choice-list.
 The choice-list of a multiple-choice inquiry is usually {}.
 A multiple-choice inquiry has a number called the extent.
-A multiple-choice inquiry is usually key-input. [ don't use line input if the choices will go as far as 'g' ]
+
+[ sticking to key-input for multiple-choice is recommended.
+  definitely don't use line input if the choices will go as far as 'g' ]
+A multiple-choice inquiry is usually key-input. 
 
 To decide what number is the number of choices in/of (m - a multiple-choice inquiry):
   decide on the number of entries in the multiple-choice-list of m.
@@ -38,7 +41,6 @@ Inquiring something is an activity on inquiries.
 
 Finish-inquiring something is an activity on inquiries.
 The finish-inquiring activity has a text called inquiry-user-input;
-
 
 Before finish-inquiring a line-input inquiry (called q) (this is the set inquiry-user-input rule):
   now inquiry-user-input is the substituted form of "[the player's command]";
@@ -57,14 +59,15 @@ For finish-inquiring a line-input multiple-choice inquiry (called q) (this is th
       end repeat;
     end if;
     if q is unanswered begin;
-      follow the inquiry-error rules for q;   
+      now shared-global-inquiry is q;
+      say text of the no blank inquiry answers rule response (A);
     end if;
 
-For finish-inquiring a line-input inquiry (called q) (this is the answered free-form inquiry rule):
+For finish-inquiring a line-input inquiry (called q) (this is the answered line-input inquiry rule):
   now the answer of the q is inquiry-user-input;
   now q is answered;
 
-After finish-inquiring an answered inquiry (called q) (this is the answered free-form inquiry cleanup rule):
+After finish-inquiring an answered inquiry (called q) (this is the answered line-input inquiry cleanup rule):
    follow the scene changing rules;
    now the command prompt is the original-command-prompt;
    ask-q;
@@ -85,7 +88,7 @@ To say (n - a number) as a char: (- print (char) {n}; -)
 Chapter before rules
 
 Before inquiring an unanswered multiple-choice inquiry (called q) (this is the list the multiple choices rule):
-  if q is question-first, say "[the description of q][line break]";
+  if q is question-first, say "[description of q][line break]" (C);
   if choice-list of q is empty begin;
     if q is numbered begin;
       if the number of choices in q <= number of entries in number35, now choice-list of q is number35;
@@ -98,18 +101,15 @@ Before inquiring an unanswered multiple-choice inquiry (called q) (this is the l
   end if;
   if the number of choices in q < extent of q, now extent of q is the number of choices in q;
   repeat with i running from 1 to extent of q begin;
-    say "[entry i in choice-list of q as a char]. [entry i in the multiple-choice-list of q][line break]";
+    say "[entry i in choice-list of q as a char]. [entry i in the multiple-choice-list of q][line break]" (D);
   end repeat;
-  if q is question-last, say "[line break][the description of q] ";
+  if q is question-last, say "[line break][description of q] " (E);
 
 Before inquiring a line-input inquiry (called q) when q is not a multiple-choice inquiry (this is the set command prompt for line-input question rule):
-  now the command prompt is "[the description of the q] ";
+  now the command prompt is "[description of q] " (F);
 
-Before inquiring a multiple-choice inquiry:
-    now the command prompt is original-command-prompt.
-
-For inquiring a key-input multiple-choice inquiry (called q):
-   let choice be 0;
+For inquiring a key-input multiple-choice inquiry (called q) (this is the key-input multiple-choice inquiry rule):
+   let choice be 0; 
    let result be 0;
    while result is 0 begin;
      now choice is get key;
@@ -126,12 +126,14 @@ For inquiring a key-input multiple-choice inquiry (called q):
    now q is answered;
 
 For inquiring a y/n inquiry (called q) (this is the ask y/n question rule):
-  if the player agrees to "[the description of q] ", now the boolean-answer of q is true;
+  if the player agrees to "[description of q] ", now the boolean-answer of q is true;
   now q is answered;
 
-After inquiring an answered key-input inquiry: follow the scene changing rules.
+After inquiring an answered key-input inquiry (this is the after answered key-input inquiry rule):
+  follow the scene changing rules.
 
-After inquiring a key-input inquiry (this is the after key-input rule): say line break.
+After inquiring a key-input inquiry (this is the after key-input rule):
+  say line break.
 
 To ask-q:
     let q be an inquiry;
@@ -144,18 +146,19 @@ To ask-q:
     end while;
     if did-at-least-one is true, follow the scene changing rules;
 
-Inquiry-error is an inquiry based rulebook.
-
-Inquiry-error an inquiry (called q) when q is a multiple-choice inquiry (this is the multi-choose wisely rule):
-    say "Enter a choice from [(entry 1 in the choice-list of q) as a char] to [(entry (extent of q) in choice-list of q) as a char]." (A);
+shared-global-inquiry is an inquiry that varies.
 
 For printing a parser error during Inquiring minds (this is the no blank inquiry answers rule):
   let q be the first unanswered inquiry;
   if q is an optional inquiry begin;
     carry out the finish-inquiring activity with q;
   else;
-    if q is a multiple-choice inquiry, follow the inquiry-error rules for q;
-    else say "Please enter a response." (B);
+    if q is a multiple-choice inquiry begin;
+      now shared-global-inquiry is q;
+      say "Enter a choice from [(entry 1 in the choice-list of shared-global-inquiry) as a char] to [(entry (extent of shared-global-inquiry) in choice-list of shared-global-inquiry) as a char]." (A);
+    else;
+      say "Please enter a response." (B);
+    end if;
   end if;
 
 After reading a command during Inquiring Minds (this is the process line-input inquiry answers rule):
@@ -167,26 +170,23 @@ After reading a command during Inquiring Minds (this is the process line-input i
   
 Initial-inquiry is initially true.
 
-This is the check for inquiring mindlessness rule:
-    if initial-inquiry is true and Inquiring Minds is not happening begin;
-      follow the final startup rules;
-      now initial-inquiry is false;
-    end if;
-
 The when play begins stage rule is not listed in the startup rules.
 The fix baseline scoring rule is not listed in the startup rules.
 The display banner rule is not listed in the startup rules.
 The initial room description rule is not listed in the startup rules.
-The check for inquiring mindlessness rule is listed last in the startup rules.
 
-[This is the move on to final startup rule: if Inquiring minds has happened, follow the final startup rules.]
+Last startup rule (this is the check for inquiring mindlessness rule):
+  if Inquiring Minds is not happening and initial-inquiry is true, follow the conclude startup rules;
 
-Final Startup is a rulebook.
+Conclude Startup is a rulebook.
 
-The when play begins stage rule is listed in the final startup rules.
-The fix baseline scoring rule is listed in the final startup rules.
-The display banner rule is listed in the final startup rules.
-The initial room description rule is listed in the final startup rules.
+The when play begins stage rule is listed in the conclude startup rules.
+The fix baseline scoring rule is listed in the conclude startup rules.
+The display banner rule is listed in the conclude startup rules.
+The initial room description rule is listed in the conclude startup rules.
+
+Last conclude startup rule (this is the falsify initial-inquiry rule):
+  now initial-inquiry is false;
 
 Inquiring Minds is a recurring scene.
 Inquiring Minds begins when there is an unanswered inquiry.
@@ -208,22 +208,22 @@ When Inquiring Minds ends (this is the open status window after inquiring rule):
 
 When Inquiring Minds ends (this is the clear screen after inquiring rule):
   if initial-inquiry is true, clear screen;
-
-When Inquiring Minds ends (this is the restore command prompt rule):
-  now the command prompt is the original-command-prompt;
-    
+      
 Last when Inquiring Minds ends (this is the you only stop inquiring for the first time once rule):
-  if initial-inquiry is true begin;
-    now initial-inquiry is false;
-    follow the final startup rules;
-  end if;
-  
+  if initial-inquiry is true, follow the conclude startup rules;
+
 Part testing (not for release)
 
-To show-inquiry (q - a inquiry): say "[description of q] ";
+To show-inquiry (q - a inquiry):
   if q is not the null inquiry begin;
-  if q is unanswered, say "unanswered.";
-  else say "[if q is a y/n inquiry][boolean-answer of q][else][answer of q][end if].";
+    say "[if the description of q is empty]<[printed name of q]>[else][description of q][end if] ";
+    if q is answered begin;
+      if q is a y/n inquiry, say boolean-answer of q;
+      else say "[if answer of q is empty]<empty>[else][answer of q][end if]";
+    else;
+     say "<unanswered>";
+    end if;
+    say line break;
   end if;
   
 To show-inquiries:
@@ -381,7 +381,7 @@ some awkward aspects to the split.
 	Finish-inquiring something is an activity on inquiries.
 
 Key-input inquiries are wholly handled by the inquiring activity. But
-or line-input inquiries, the inquiring activity principally handles only
+for line-input inquiries, the inquiring activity principally handles only
 printing the question. And that's because the line input is really a
 bogus command input, so the question has to happen at the end of a turn
 and the processing of it during the next turn.
@@ -403,10 +403,10 @@ Section Startup / Inquiring Minds scene details
 I wanted any initial inquiries to come before other output, but it would be a pain
 to attempt line input any other way than to be in the turn processing loop. So
 the when play begins stage rule, fix baseline scoring rule, display banner rule,
-and initial room description rule are all moved to a Final Startup rulebook.
+and initial room description rule are all moved to a Conclude Startup rulebook.
 
 If there are no unanswered inquiries at the start of the game and thus
-Inquiring Minds never starts, the Final Startup rulebook is followed.
+Inquiring Minds never starts, the Conclude Startup rulebook is followed.
 Otherwise, it's followed at the end of the first Inquiring Minds scene.
 
 When there are multiple unanswered inquiries to be made, they are always made
