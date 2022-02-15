@@ -1,7 +1,14 @@
-Version 2/220213 of Inquiry by Zed Lopez begins here.
+Version 3 of Inquiry by Zed Lopez begins here.
 
-"A framework for asking the user questions at startup
- (or subsequently). For 6M62."
+"A framework for defining Y/N, multiple choice, or free-form
+ questions to be asked immediately on game startup or subsequently.
+ For 6M62."
+
+Book Main
+
+Part Objects and accessor phrases/definitions
+
+Chapter Inquiry object per se
  
 An inquiry is a kind of object.
 An inquiry has a text called the answer.
@@ -9,12 +16,22 @@ An inquiry has a text called the description.
 An inquiry can be answered or unanswered.
 An inquiry can be key-input or line-input.
 
+Chapter Optional inquiry
+
 An optional inquiry is a kind of inquiry.
 An optional inquiry is usually line-input. [ don't change ]
+
+Chapter Y/N inquiry
 
 A y/n inquiry is a kind of inquiry.
 A y/n inquiry is usually key-input. [ don't change ]
 A y/n inquiry has a truth state called boolean-answer.
+
+Section Confirmed/unconfirmed
+
+Definition: a y/n inquiry is confirmed rather than unconfirmed if it is answered and the boolean-answer of it is true.
+
+Chapter Multiple choice inquiry 
 
 A multiple-choice inquiry is a kind of inquiry.
 A multiple-choice inquiry has a list of texts called the multiple-choice-list.
@@ -28,51 +45,29 @@ A multiple-choice inquiry has a number called the extent.
   definitely don't use line input if the choices will go as far as 'g' ]
 A multiple-choice inquiry is usually key-input. 
 
+Section number of choices
+
 To decide what number is the number of choices in/of (m - a multiple-choice inquiry):
   decide on the number of entries in the multiple-choice-list of m.
 
-Definition: a y/n inquiry is confirmed rather than unconfirmed if it is answered and the boolean-answer of it is true.
+Book Inquiring Activity
 
-The original-command-prompt is a text that varies.
-
-Part inquiring activity
+Chapter Inquiring Activity declaration
 
 Inquiring something is an activity on inquiries.
+The inquiring activity has a snippet called the raw user input.
+The inquiring activity has a text called the user input.
 
-Finish-inquiring something is an activity on inquiries.
-The finish-inquiring activity has a text called inquiry-user-input;
+Chapter Inquiring Activity variable support phrases
 
-Before finish-inquiring a line-input inquiry (called q) (this is the set inquiry-user-input rule):
-  now inquiry-user-input is the substituted form of "[the player's command]";
+To solicit input for (S - a snippet):
+    (- {S} = getLine(); -)
+  
+To decide what text is the user-response for (S - a snippet):
+  solicit input for S;
+  decide on "[S]";
 
-For finish-inquiring a line-input multiple-choice inquiry (called q) (this is the answered multiple-choice inquiry rule):
-    let the raw choice be word number 1 in inquiry-user-input in title case;
-    if the numeric value of the player's command >= 0, now the raw choice is "[numeric value of the player's command]";
-    if the number of characters in raw choice is 1 begin;
-      let the choice be ord of raw choice;
-      repeat with i running from 1 to extent of q begin;
-        if choice is entry i in the choice-list of q begin;
-          now the answer of q is entry i in the multiple-choice-list of q;
-          now q is answered;
-          break;
-        end if;
-      end repeat;
-    end if;
-    if q is unanswered begin;
-      now shared-global-inquiry is q;
-      say text of the no blank inquiry answers rule response (A);
-    end if;
-
-For finish-inquiring a line-input inquiry (called q) (this is the answered line-input inquiry rule):
-  now the answer of the q is inquiry-user-input;
-  now q is answered;
-
-After finish-inquiring an answered inquiry (called q) (this is the answered line-input inquiry cleanup rule):
-   follow the scene changing rules;
-   now the command prompt is the original-command-prompt;
-   ask-q;
-    
-Section multichoice list constants
+Chapter Multichoice list constants
 
 [ lettered: after 26 choices, continue with numbers; start numbers at 0 if there are more than 35 choices;
   numbered: after 9 choices, continue with letters; start numbers at 0 if there are more than 35 choices;
@@ -83,11 +78,13 @@ letter36 is always { 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
 number35 is always { 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90 }. [ ascii for 1-9, A-Z ]
 number36 is always { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59 }. [ ascii for 0-9, A-Z ]
 
-To say (n - a number) as a char: (- print (char) {n}; -)
+Part Before inquiring
 
-Chapter before rules
+[ The Before Inquiring rules output the question ]
 
-Before inquiring an unanswered multiple-choice inquiry (called q) (this is the list the multiple choices rule):
+Chapter list the multiple choices rule
+
+Before inquiring a multiple-choice inquiry (called q) (this is the list the multiple choices rule):
   if q is question-first, say "[description of q][line break]" (C);
   if choice-list of q is empty begin;
     if q is numbered begin;
@@ -105,8 +102,39 @@ Before inquiring an unanswered multiple-choice inquiry (called q) (this is the l
   end repeat;
   if q is question-last, say "[line break][description of q] " (E);
 
-Before inquiring a line-input inquiry (called q) when q is not a multiple-choice inquiry (this is the set command prompt for line-input question rule):
-  now the command prompt is "[description of q] " (F);
+Chapter Ask question for mono-choice line-input question 
+
+Before inquiring a line-input inquiry (called q) when q is not a multiple-choice inquiry (this is the ask question for mono-choice line-input question rule):
+  say "[the description of q] ";
+
+Chapter Ask question for ask y/n inquiry
+
+Before inquiring a y/n inquiry (called q) (this is the ask question for ask y/n inquiry rule):
+  say "[the description of q] ";
+
+Chapter Assign variables for line-input inquiry rule
+
+Last before inquiring a line-input inquiry (this is the assign variables for line-input inquiry rule):
+  now user input is the user-response for the raw user input;
+
+Part For inquiring
+
+[ The For inquiring rules solicit user input. In the line-input case,
+  they also validate it. (Validation is irrelevant for key-input, which
+  won't exit until it has a valid response.) ]
+
+Chapter Ask y/n question
+
+For inquiring a y/n inquiry (called q) (this is the ask y/n question rule):
+  if ask y-or-n begin;
+    say "Y";
+    now the boolean-answer of q is true;
+  else;
+   say "N";
+   now the boolean-answer of q is false;
+  end if;
+
+Chapter Key-input multiple-choice inquiry 
 
 For inquiring a key-input multiple-choice inquiry (called q) (this is the key-input multiple-choice inquiry rule):
    let choice be 0; 
@@ -123,96 +151,129 @@ For inquiring a key-input multiple-choice inquiry (called q) (this is the key-in
    end while;
    say choice as a char;
    now the answer of q is entry result in the multiple-choice-list of q;
-   now q is answered;
 
-For inquiring a y/n inquiry (called q) (this is the ask y/n question rule):
-  if the player agrees to "[description of q] ", now the boolean-answer of q is true;
+Chapter Multi-choice line-input inquiry 
+
+For inquiring a line-input multiple-choice inquiry (called q) (this is the multi-choice line-input inquiry rule):
+    let the raw choice be word number 1 in user input in title case;
+    if the numeric value of raw user input >= 0, now the raw choice is "[numeric value of raw user input]";
+    if the number of characters in raw choice is 1 begin;
+      let the choice be ord of raw choice;
+      repeat with i running from 1 to extent of q begin;
+        if choice is entry i in the choice-list of q begin;
+          now the answer of q is entry i in the multiple-choice-list of q;
+        end if;
+      end repeat;
+    end if;
+
+Part After inquiring
+
+Chapter mark line-input inquiry answer 
+
+First after inquiring a line-input inquiry (called q) (this is the mark line-input inquiry answer rule):
+  now the answer of q is user input;
+  if q is an optional inquiry or the answer of q is not empty, now q is answered;
+
+Chapter mark key-input inquiry answer
+
+First after inquiring a key-input inquiry (called q) (this is the mark key-input inquiry answer rule):
   now q is answered;
 
-After inquiring an answered key-input inquiry (this is the after answered key-input inquiry rule):
-  follow the scene changing rules.
+Part After Inquiring
 
-After inquiring a key-input inquiry (this is the after key-input rule):
-  say line break.
+[ After inquiring rules are primarily for printing errors if validation failed ]
 
-To ask-q:
-    let q be an inquiry;
-    now q is the first unanswered inquiry;
-    let did-at-least-one be false;
-    while q is not the null inquiry and q is key-input begin;
-      now did-at-least-one is true;
-      carry out the inquiring activity with q;
-      now q is the first unanswered inquiry;
-    end while;
-    if did-at-least-one is true, follow the scene changing rules;
+Chapter linefeed for key-input
 
-shared-global-inquiry is an inquiry that varies.
+After inquiring a key-input inquiry (this is the line break after key-input rule): say line break;
 
-For printing a parser error during Inquiring minds (this is the no blank inquiry answers rule):
-  let q be the first unanswered inquiry;
-  if q is an optional inquiry begin;
-    carry out the finish-inquiring activity with q;
-  else;
-    if q is a multiple-choice inquiry begin;
-      now shared-global-inquiry is q;
-      say "Enter a choice from [(entry 1 in the choice-list of shared-global-inquiry) as a char] to [(entry (extent of shared-global-inquiry) in choice-list of shared-global-inquiry) as a char]." (A);
-    else;
-      say "Please enter a response." (B);
-    end if;
-  end if;
+Chapter multiple-choice inquiry error
 
-After reading a command during Inquiring Minds (this is the process line-input inquiry answers rule):
-  let q be the first unanswered inquiry;
-  carry out the finish-inquiring activity with q;
-  now q is the first unanswered inquiry;
-  if q is not the null inquiry, carry out the inquiring activity with q;
-  reject the player's command;
-  
-Initial-inquiry is initially true.
+After inquiring an unanswered multiple-choice inquiry (called q) (this is the multiple-choice inquiry error rule):
+  say "Enter a choice from [(entry 1 in the choice-list of q) as a char] to [(entry (extent of q) in choice-list of q) as a char]." (A);
 
-The when play begins stage rule is not listed in the startup rules.
-The fix baseline scoring rule is not listed in the startup rules.
-The display banner rule is not listed in the startup rules.
-The initial room description rule is not listed in the startup rules.
+Chapter you've got to give me something here
 
-Last startup rule (this is the check for inquiring mindlessness rule):
-  if Inquiring Minds is not happening and initial-inquiry is true, follow the conclude startup rules;
+After inquiring an unanswered inquiry (called q) when q is not a multiple-choice inquiry (this is the you've got to give me something here rule):
+  say "Please enter a response." (B);
 
-Conclude Startup is a rulebook.
+Chapter check scene change after answering rule
 
-The when play begins stage rule is listed in the conclude startup rules.
-The fix baseline scoring rule is listed in the conclude startup rules.
-The display banner rule is listed in the conclude startup rules.
-The initial room description rule is listed in the conclude startup rules.
+[ Notice if the last unanswered question was just answered so that Inquiring
+  Minds will end ]
+Last after inquiring an answered inquiry (this is the check scene change after answering rule):
+  if there is no unanswered inquiry, follow the scene changing rules.
 
-Last conclude startup rule (this is the falsify initial-inquiry rule):
-  now initial-inquiry is false;
+Part Support Functions
+
+Chapter Getline
+
+Include (-
+[ getLine;
+KeyboardPrimitive(buffer, parse);
+return 100 + WordCount();
+];
+
+-);
+
+To say (n - a number) as a char: (- print (char) {n}; -)
+
+Chapter Line input
+
+to decide what snippet is the line input: (- getLine(); -).
+
+Book Inquiring Minds scene
+
+Part track whether we're pregame
+
+pregame-inquiry is initially true.
+
+Chapter inquiries no longer pregame
+
+When play begins (this is the inquiries no longer pregame rule): now pregame-inquiry is false.
+
+Part Inquiring Minds declaration
 
 Inquiring Minds is a recurring scene.
 Inquiring Minds begins when there is an unanswered inquiry.
 Inquiring Minds ends when there is no unanswered inquiry.
 
+Part When Inquiring Minds begins
+
+Chapter close status window before initially inquiring 
+
 When Inquiring Minds begins (this is the close status window before initially inquiring rule):
-    if initial-inquiry is true, close status window.
+    if pregame-inquiry is true, close status window.
+
+Chapter clear screen before initially inquiring 
 
 When Inquiring Minds begins (this is the clear screen before initially inquiring rule):
-    if initial-inquiry is true, clear screen.
+    if pregame-inquiry is true, clear screen.
 
-When Inquiring Minds begins (this is the start inquiring rule):
-    now the original-command-prompt is the command prompt;
-    ask-q;
-    if there is an unanswered inquiry, carry out the inquiring activity with the first unanswered inquiry;
+Chapter main inquiry loop
+
+When Inquiring Minds begins (this is the main inquiry loop rule):
+  let q be the first unanswered inquiry;
+  while q is not the null inquiry begin;
+    carry out the inquiring activity with q;
+    now q is the first unanswered inquiry;
+  end while;
+
+Part When Inquiring Minds ends
 
 When Inquiring Minds ends (this is the open status window after inquiring rule):
-  if initial-inquiry is true, open status window;
+  if pregame-inquiry is true, open status window;
 
 When Inquiring Minds ends (this is the clear screen after inquiring rule):
-  if initial-inquiry is true, clear screen;
-      
-Last when Inquiring Minds ends (this is the you only stop inquiring for the first time once rule):
-  if initial-inquiry is true, follow the conclude startup rules;
+  if pregame-inquiry is true, clear screen;
 
-Part testing (not for release)
+Book testing (not for release)
+
+Part "inquiries" command and supporting phrases 
+
+Chapter output
+
+Section show-inquiry
 
 To show-inquiry (q - a inquiry):
   if q is not the null inquiry begin;
@@ -225,16 +286,22 @@ To show-inquiry (q - a inquiry):
     end if;
     say line break;
   end if;
-  
+
+Section show-inquiries
+
 To show-inquiries:
   repeat with q running through inquiries begin;
     show-inquiry q;
   end repeat;
 
+Chapter inquiries command
+
 Inquire-showing is an action out of world.
 Understand "inquiries" as inquire-showing.
 
 Carry out inquire-showing: show-inquiries.
+
+Book for use withouts
 
 Part agreement (for use without Agreeable by Zed Lopez)
 
@@ -258,12 +325,6 @@ To decide what number is get key: (- getKey() -).
 
 To decide if ask y-or-n: (- EnterYorN() -).
 
-To decide if ask y-or-n for/with a/an/-- (T - a text): (- EnterYorN({T}) -).
-
-To decide if the/a/-- player agrees to/with a/an/-- (T - a text):
-    now T is "[line number 1 in T] "; [strip spaces then add one back at the end]
-    decide on whether or not ask y-or-n for T.
-
 Part clear windows (for use without Basic Screen Effects by Emily Short)
 
 To clear the/-- screen: (- VM_ClearScreen(0); -).
@@ -277,16 +338,24 @@ To open the/-- status window: do nothing.
 
 Part cast (for use without Central Typecasting by Zed Lopez)
 
-To decide what K is a/an/-- (unknown - a value) cast as a/an/-- (name of kind of value K): (- {unknown} -).
+Chapter Generic
+
+Section Null K
 
 To decide what K is a/-- null (name of kind of value K): (- nothing -)
+
+Section First K
 
 To decide what K is the first (D - description of values of kind K):
    repeat with x running through D begin;
      decide on x;
    end repeat;
    decide on the null K.
-   
+
+Chapter Snippet to number
+
+Section SnippetToNumber
+
 [ https://intfiction.org/t/converting-a-snippet-to-number-or-a-string-to-number/49834/3 ]
 Include (-
 [SnippetToNumber snip   snippos sniplen;
@@ -297,10 +366,12 @@ Include (-
 ];
 -).
 
+Section I7 wrapper for SnippetToNumber
+
 To decide what number is the/a/-- numeric value of (S - a snippet):
     (- SnippetToNumber({S}) -)
 
-Chapter Char (For use without Char by Zed Lopez)
+Part Char (For use without Char by Zed Lopez)
 
 Include (-
 [ unicodeValue s n x cp1 p1 dsize;
@@ -320,10 +391,14 @@ Inquiry ends here.
 
 ---- Documentation ----
 
+Chapter Warnings
+
 If you include this module, you won't be able to compile without defining at least one inquiry.
 That could be a dummy, if for whatever reason you'd rather do that than comment out the Include.
 
 	dummy-inquiry is an answered inquiry.
+
+Chapter Inquiries
 
 Use of this extension is driven by creating inquiries. (I didn't use "question" just because I
 figure "inquiry" had somewhat less chance of name collision.) The actual text of the inquiry
@@ -345,12 +420,16 @@ to unanswered) during play. Inquiring Minds is recurring and it will start again
 Inquiries can be key-input or line-input. Key-input inquiries are answered with
 a single keystroke.
 
+Section Ask Y/N Inquiry
+
 An ask y/n inquiry is a subkind of inquiry that is always key-input (well,
 technically it's *usually* key-input but don't change that). It's answered
 when the users hits Y or N (case-insensitive). There's a specific pair of
 adjectives to test whether an ask y/n inquiry has been answered in the
 positive: confirmed vs. unconfirmed. Unonfirmed is false if the inquiry is
 either unanswered or was answered in the negative.
+
+Section Multiple-choice Inquiry
 
 Another subkind of inquiry is the multiple-choice inquiry. It can be key-input
 or line-input. Choices are specified in a multiple-choice-list list of texts.
@@ -374,43 +453,26 @@ the user will have to hit enter after their selection, and they'll get an
 error message if they entered something that isn't a choice; whereas with
 key-input it'll just sit there if they enter wrong choices.
 
-There are two separate activities govering processing inquiries, with
-some awkward aspects to the split.
+The Inquiring activity governs processing inquiries.
 
 	Inquiring something is an activity on inquiries.
 	Finish-inquiring something is an activity on inquiries.
-
-Key-input inquiries are wholly handled by the inquiring activity. But
-for line-input inquiries, the inquiring activity principally handles only
-printing the question. And that's because the line input is really a
-bogus command input, so the question has to happen at the end of a turn
-and the processing of it during the next turn.
-
-So there's an After reading a command rule that invokes the finish-inquiring
-activity on line-input inquiries. 
 
 An optional inquiry is the final sub-kind of inquiry. It's always line-input and
 thus gets a free-form text answer, but the game will accept a blank answer for
 an optional inquiry; in every other case, an answer is required. You may wish
 to add a response for the case of a user entering a blank response for an
-optional question or it looks a lot like nothing happened. Spreading out
-the action of this Extension further, it's a For printing a parser error rule
-that invokes the finish-inquiring activity when the user gives a blank
-answer for an optional inquiry.
+optional question or it looks a lot like nothing happened.
 
 Section Startup / Inquiring Minds scene details
 
-I wanted any initial inquiries to come before other output, but it would be a pain
-to attempt line input any other way than to be in the turn processing loop. So
-the when play begins stage rule, fix baseline scoring rule, display banner rule,
-and initial room description rule are all moved to a Conclude Startup rulebook.
-
-If there are no unanswered inquiries at the start of the game and thus
-Inquiring Minds never starts, the Conclude Startup rulebook is followed.
-Otherwise, it's followed at the end of the first Inquiring Minds scene.
-
 When there are multiple unanswered inquiries to be made, they are always made
 in the inquiries' order of definition in the source.
+
+Chapter Changelog
+
+Version 3: substantial rewrite to use KeyboardPrimitive for line-input, which
+turns out to be far less intrusive than hijacking the turn sequence. Who knew?
 
 Chapter Examples
 
@@ -423,7 +485,7 @@ Example: * Screenreader Question
 	Include Flexible Windows by Jon Ingold.
 	Include Inquiry by Zed Lopez.
 	
-	Lab is a room. "Still not alive."
+	Lab is a room. "Experiment still not alive."
 	
 	Screenreader-question is a y/n inquiry. "Are you using a screenreader?"
 	
@@ -431,7 +493,7 @@ Example: * Screenreader Question
 	Some interface-values are default-interface, screenreader.
 	The interface is an interface-value that varies.
 	
-	After inquiring an inquiry (called q) when q is screenreader-question:
+	After inquiring an answered inquiry (called q) when q is the screenreader-question:
 	  if screenreader-question is confirmed, now interface is screenreader.
 	
 	The open status window after inquiring rule does nothing when interface is screenreader.
@@ -448,7 +510,7 @@ Example: * Miscellaneous Inquiries
 	
 	Include Inquiry by Zed Lopez.
 	
-	Lab is a room. "Still not alive."
+	Lab is a room. "Experiment still not alive."
 	
 	Name-question is an inquiry. "What is your name?" 
 	
@@ -456,8 +518,7 @@ Example: * Miscellaneous Inquiries
 	
 	The multiple-choice-list of survey is { "Tea", "Coffee", "OJ", "water", "zima", "Dr. Pepper", "root beer", "vanilla cream soda", "beer", "wine" }.
 	
-	You really want to hurt me is a y/n inquiry. "Do you really want to hurt me?".
-	You really want to make me cry is a y/n inquiry. "Do you really want to make me cry?".
+	Self-reported-luck is a y/n inquiry. "Are you feeling lucky?"
 	
 	jump-passion is an answered y/n inquiry. "Do you love jumping?"
 	
