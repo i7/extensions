@@ -1,4 +1,4 @@
-Version 1/220216 of JSON (for Glulx only) by Dannii Willis begins here.
+Version 1/220217 of JSON (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for parsing and generating JSON"
 
@@ -294,6 +294,8 @@ To decide which JSON reference is parse (T - a text):
 
 To say (R - JSON reference):
 	(- JSON_Stringify({R}); -).
+To say (R - JSON reference) escaping non-ASCII:
+	(- JSON_Stringify({R}, 1); -).
 
 Include (-
 Global JSON_Parse_Progress = 0;
@@ -322,32 +324,32 @@ Global JSON_Parse_Progress = 0;
 	for (: i < length: i++) {
 		char = BlkValueRead(str, i);
 		! numbers - must start with minus or 0-9
-		if (char == 45 || (char >= 48 && char <= 57)) {
+		if (char == '-' || (char >= '0' && char <= '9')) {
 			return JSON_Parse_Number(str, i, length);
 		}
 		switch (char) {
 			! null
-			110:
+			'n':
 				JSON_Parse_Progress = i + 4;
 				return JSON_Create((+ JSON null type +));
 			! boolean
-			102:
+			'f':
 				JSON_Parse_Progress = i + 5;
 				return JSON_Create((+ JSON boolean type +), 0);
-			116:
+			't':
 				JSON_Parse_Progress = i + 4;
 				return JSON_Create((+ JSON boolean type +), 1);
 			! string
 			34:
 				return JSON_Parse_String(str, i, length);
 			! array
-			91:
+			'[':
 				i++;
 				res = JSON_Create((+ JSON array type +));
 				! Check for an empty array
 				i = JSON_Parse_Skip_Whitespace(str, i, length);
 				char = BlkValueRead(str, i);
-				if (char == 93) {
+				if (char == ']') {
 					JSON_Parse_Progress = i + 1;
 					return res;
 				}
@@ -361,12 +363,10 @@ Global JSON_Parse_Progress = 0;
 					LIST_OF_TY_InsertItem(res-->1, item);
 					i = JSON_Parse_Skip_Whitespace(str, i, length);
 					char = BlkValueRead(str, i);
-					! comma
-					if (char == 44) {
+					if (char == ',') {
 						continue;
 					}
-					! end of array
-					if (char == 93) {
+					if (char == ']') {
 						break;
 					}
 					JSON_Destroy(res);
@@ -375,13 +375,13 @@ Global JSON_Parse_Progress = 0;
 				JSON_Parse_Progress = i + 1;
 				return res;
 			! object
-			123:
+			'{':
 				i++;
 				res = JSON_Create((+ JSON object type +));
 				! Check for an empty object
 				i = JSON_Parse_Skip_Whitespace(str, i, length);
 				char = BlkValueRead(str, i);
-				if (char == 125) {
+				if (char == '}') {
 					JSON_Parse_Progress = i + 1;
 					return res;
 				}
@@ -396,13 +396,11 @@ Global JSON_Parse_Progress = 0;
 					LIST_OF_TY_InsertItem(res-->1, item);
 					i = JSON_Parse_Skip_Whitespace(str, i, length);
 					char = BlkValueRead(str, i++);
-					! colon
-					if (char ~= 58) {
+					if (char ~= ':') {
 						JSON_Destroy(res);
 						return 0;
 					}
 					! value
-					char = BlkValueRead(str, i);
 					item = JSON_Parse_Inner(str, i, length);
 					i = JSON_Parse_Progress;
 					if (item == 0) {
@@ -412,12 +410,10 @@ Global JSON_Parse_Progress = 0;
 					LIST_OF_TY_InsertItem(res-->1, item);
 					i = JSON_Parse_Skip_Whitespace(str, i, length);
 					char = BlkValueRead(str, i);
-					! comma
-					if (char == 44) {
+					if (char == ',') {
 						continue;
 					}
-					! end of object
-					if (char == 125) {
+					if (char == '}') {
 						break;
 					}
 					JSON_Destroy(res);
@@ -438,13 +434,13 @@ Array JSON_Parse_Number_Buffer -> 20;
 		char = BlkValueRead(str, i);
 		JSON_Parse_Number_Buffer->bufi = char;
 		bufi++;
-		if (char == 45) {
+		if (char == '-') {
 			negative = 1;
 		}
-		else if (char >= 48 && char <= 57) {
-			val = val * 10 + char - 48;
+		else if (char >= '0' && char <= '9') {
+			val = val * 10 + char - '0';
 		}
-		else if (char == 43 or 46 or 69 or 101) {
+		else if (char == '+' or '.' or 'E' or 'e') {
 			float = 1;
 		}
 		! End of number
@@ -462,7 +458,7 @@ Array JSON_Parse_Number_Buffer -> 20;
 	return JSON_Create((+ JSON number type +), val);
 ];
 
-[ JSON_Parse_String str i length cap char pos ref res;
+[ JSON_Parse_String str i length cap char j pos ref res;
 	! Handle whitespace and ensure this is actually a string
 	i = JSON_Parse_Skip_Whitespace(str, i, length);
 	char = BlkValueRead(str, i);
@@ -491,6 +487,9 @@ Array JSON_Parse_Number_Buffer -> 20;
 					'n': char = 10;
 					'f': char = 12;
 					'r': char = 13;
+					'u':
+						char = JSON_Hex_to_Dec(BlkValueRead(str, i + 1)) * $1000 + JSON_Hex_to_Dec(BlkValueRead(str, i + 2)) * $100 + JSON_Hex_to_Dec(BlkValueRead(str, i + 3)) * $10 + JSON_Hex_to_Dec(BlkValueRead(str, i + 4));
+						i = i + 4;
 				}
 				BlkValueWrite(res, pos++, char);
 			! end string
@@ -515,7 +514,19 @@ Array JSON_Parse_Number_Buffer -> 20;
 	return ref;
 ];
 
-[ JSON_Stringify ref i length val type;
+[ JSON_Hex_to_Dec val;
+	if (val >= '0' && val <= '9') {
+		return val - '0';
+	}
+	if (val >= 'A' && val <= 'F') {
+		return val - 'A' + 10;
+	}
+	if (val >= 'a' && val <= 'f') {
+		return val - 'a' + 10;
+	}
+];
+
+[ JSON_Stringify ref escape_non_ascii i length val type;
 	type = JSON_Get_Type(ref);
 	val = ref-->1;
 	switch (type) {
@@ -535,13 +546,13 @@ Array JSON_Parse_Number_Buffer -> 20;
 		(+ JSON real number type +):
 			JSON_Stringify_Real_Number(val, 8);
 		(+ JSON string type +):
-			JSON_Stringify_String(val);
+			JSON_Stringify_String(val, escape_non_ascii);
 		(+ JSON array type +):
 			! Based on LIST_OF_TY_Say
 			length = BlkValueRead(val, LIST_LENGTH_F);
 			print "[";
 			for (i = 0: i < length: i++) {
-				JSON_Stringify(BlkValueRead(val, i + LIST_ITEM_BASE));
+				JSON_Stringify(BlkValueRead(val, i + LIST_ITEM_BASE), escape_non_ascii);
 				if (i < length - 1) print ", ";
 			}
 			print "]";
@@ -549,9 +560,9 @@ Array JSON_Parse_Number_Buffer -> 20;
 			length = BlkValueRead(val, LIST_LENGTH_F);
 			print "{";
 			for (i = 0: i < length: i = i + 2) {
-				JSON_Stringify(BlkValueRead(val, i + LIST_ITEM_BASE));
+				JSON_Stringify(BlkValueRead(val, i + LIST_ITEM_BASE), escape_non_ascii);
 				print ": ";
-				JSON_Stringify(BlkValueRead(val, i + 1 + LIST_ITEM_BASE));
+				JSON_Stringify(BlkValueRead(val, i + 1 + LIST_ITEM_BASE), escape_non_ascii);
 				if (i < length - 2) print ", ";
 			}
 			print "}";
@@ -674,7 +685,7 @@ Array JSON_Parse_Number_Buffer -> 20;
 	rtrue;
 ];
 
-[ JSON_Stringify_String str char cp i length p;
+[ JSON_Stringify_String str escape_non_ascii char cp i length p;
 	cp = str-->0;
 	p = TEXT_TY_Temporarily_Transmute(str);
 	length = TEXT_TY_CharacterLength(str);
@@ -689,7 +700,13 @@ Array JSON_Parse_Number_Buffer -> 20;
 			13: print "@@92r"; ! \r
 			34: print "@@92~"; ! "
 			92: print "@@92@@92"; ! \
-			default: print (char) char;
+			default:
+				if ((escape_non_ascii && char > 127) || (char >= $D800 && char <= $DFFF)) {
+					print "@@92u", (BlkPrintHexadecimal) char;
+				}
+				else {
+					print (char) char;
+				}
 		}
 	}
 	print "~";
@@ -757,8 +774,9 @@ These two phrases will parse a text into a JSON reference, and a JSON reference 
 
 	parse (T - a text)
 	say (R - JSON reference)
+	say (R - JSON reference) escaping non-ASCII
 
-You can use the standard Inform phrases "text of (external file)" and "write (text) to (external file)" to read and write JSON files, but note that they will have the .glkdata extension, as well as the normal Inform file header.
+You can use the standard Inform phrases "text of (external file)" and "write (text) to (external file)" to read and write JSON files, but note that they will have the .glkdata extension, as well as the normal Inform file header. These file phrases only support ASCII, so use the "escaping non-ASCII" phrase if you have non-ASCII characters.
 
 Chapter - Cleaning up
 
