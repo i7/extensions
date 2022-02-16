@@ -287,12 +287,234 @@ Include (-
 
 
 
-Chapter - Stringifying JSON values
+Chapter - Parsing and stringifying JSON values
+
+To decide which JSON reference is parse (T - a text):
+	(- JSON_Parse({-by-reference:T}) -).
 
 To say (R - JSON reference):
 	(- JSON_Stringify({R}); -).
 
 Include (-
+Global JSON_Parse_Progress = 0;
+
+[ JSON_Parse str cp length p res;
+	cp = str-->0;
+	p = TEXT_TY_Temporarily_Transmute(str);
+	length = TEXT_TY_CharacterLength(str);
+	res = JSON_Parse_Inner(str, 0, length);
+	TEXT_TY_Untransmute(str, p, cp);
+	return res;
+];
+
+[ JSON_Parse_Skip_Whitespace str i length char;
+	for (: i < length: i++) {
+		char = BlkValueRead(str, i);
+		if (char ~= 9 or 10 or 11 or 12 or 13 or 32) {
+			break;
+		}
+	}
+	return i;
+];
+
+[ JSON_Parse_Inner str i length char item res;
+	i = JSON_Parse_Skip_Whitespace(str, i, length);
+	for (: i < length: i++) {
+		char = BlkValueRead(str, i);
+		! numbers - must start with minus or 0-9
+		if (char == 45 || (char >= 48 && char <= 57)) {
+			return JSON_Parse_Number(str, i, length);
+		}
+		switch (char) {
+			! null
+			110:
+				JSON_Parse_Progress = i + 4;
+				return JSON_Create((+ JSON null type +));
+			! boolean
+			102:
+				JSON_Parse_Progress = i + 5;
+				return JSON_Create((+ JSON boolean type +), 0);
+			116:
+				JSON_Parse_Progress = i + 4;
+				return JSON_Create((+ JSON boolean type +), 1);
+			! string
+			34:
+				return JSON_Parse_String(str, i, length);
+			! array
+			91:
+				i++;
+				res = JSON_Create((+ JSON array type +));
+				! Check for an empty array
+				i = JSON_Parse_Skip_Whitespace(str, i, length);
+				char = BlkValueRead(str, i);
+				if (char == 93) {
+					JSON_Parse_Progress = i + 1;
+					return res;
+				}
+				for (: i < length; i++) {
+					item = JSON_Parse_Inner(str, i, length);
+					i = JSON_Parse_Progress;
+					if (item == 0) {
+						JSON_Destroy(res);
+						return 0;
+					}
+					LIST_OF_TY_InsertItem(res-->1, item);
+					i = JSON_Parse_Skip_Whitespace(str, i, length);
+					char = BlkValueRead(str, i);
+					! comma
+					if (char == 44) {
+						continue;
+					}
+					! end of array
+					if (char == 93) {
+						break;
+					}
+					JSON_Destroy(res);
+					return 0;
+				}
+				JSON_Parse_Progress = i + 1;
+				return res;
+			! object
+			123:
+				i++;
+				res = JSON_Create((+ JSON object type +));
+				! Check for an empty object
+				i = JSON_Parse_Skip_Whitespace(str, i, length);
+				char = BlkValueRead(str, i);
+				if (char == 125) {
+					JSON_Parse_Progress = i + 1;
+					return res;
+				}
+				for (: i < length; i++) {
+					! key
+					item = JSON_Parse_Inner(str, i, length);
+					i = JSON_Parse_Progress;
+					if (item == 0) {
+						JSON_Destroy(res);
+						return 0;
+					}
+					LIST_OF_TY_InsertItem(res-->1, item);
+					i = JSON_Parse_Skip_Whitespace(str, i, length);
+					char = BlkValueRead(str, i++);
+					! colon
+					if (char ~= 58) {
+						JSON_Destroy(res);
+						return 0;
+					}
+					! value
+					char = BlkValueRead(str, i);
+					item = JSON_Parse_Inner(str, i, length);
+					i = JSON_Parse_Progress;
+					if (item == 0) {
+						JSON_Destroy(res);
+						return 0;
+					}
+					LIST_OF_TY_InsertItem(res-->1, item);
+					i = JSON_Parse_Skip_Whitespace(str, i, length);
+					char = BlkValueRead(str, i);
+					! comma
+					if (char == 44) {
+						continue;
+					}
+					! end of object
+					if (char == 125) {
+						break;
+					}
+					JSON_Destroy(res);
+					return 0;
+				}
+				JSON_Parse_Progress = i + 1;
+				return res;
+			default:
+				return 0;
+		}
+	}
+];
+
+Array JSON_Parse_Number_Buffer -> 20;
+[ JSON_Parse_Number str i length bufi char float negative res val;
+	! Copy the number to the buffer
+	for (: i < length: i++) {
+		char = BlkValueRead(str, i);
+		JSON_Parse_Number_Buffer->bufi = char;
+		bufi++;
+		if (char == 45) {
+			negative = 1;
+		}
+		else if (char >= 48 && char <= 57) {
+			val = val * 10 + char - 48;
+		}
+		else if (char == 43 or 46 or 69 or 101) {
+			float = 1;
+		}
+		! End of number
+		else {
+			break;
+		}
+	}
+	JSON_Parse_Progress = i;
+	if (float) {
+		return JSON_Create((+ JSON real number type +), FloatParse(JSON_Parse_Number_Buffer, bufi));
+	}
+	if (negative) {
+		val = val * -1;
+	}
+	return JSON_Create((+ JSON number type +), val);
+];
+
+[ JSON_Parse_String str i length cap char pos ref res;
+	! Handle whitespace and ensure this is actually a string
+	i = JSON_Parse_Skip_Whitespace(str, i, length);
+	char = BlkValueRead(str, i);
+	if (char ~= 34) {
+		return 0;
+	}
+	i++;
+	res = BlkValueCreate(TEXT_TY);
+	cap = BlkValueLBCapacity(res);
+	for (: i < length: i++) {
+		char = BlkValueRead(str, i);
+		switch (char) {
+			! Escaped
+			92:
+				if (pos + 1 >= cap) {
+					if (BlkValueSetLBCapacity(res, 2 * pos) == false) {
+						jump FinishedString;
+					}
+					cap = BlkValueLBCapacity(res);
+				}
+				i++;
+				char = BlkValueRead(str, i);
+				switch (char) {
+					'b': char = 8;
+					't': char = 9;
+					'n': char = 10;
+					'f': char = 12;
+					'r': char = 13;
+				}
+				BlkValueWrite(res, pos++, char);
+			! end string
+			34:
+				i++;
+				jump FinishedString;
+			default:
+				if (pos + 1 >= cap) {
+					if (BlkValueSetLBCapacity(res, 2 * pos) == false) {
+						jump FinishedString;
+					}
+					cap = BlkValueLBCapacity(res);
+				}
+				BlkValueWrite(res, pos++, char);
+		}
+	}
+	.FinishedString;
+	BlkValueWrite(res, pos, 0);
+	ref = JSON_Create((+ JSON string type +), res);
+	BlkValueFree(res);
+	JSON_Parse_Progress = i;
+	return ref;
+];
+
 [ JSON_Stringify ref i length val type;
 	type = JSON_Get_Type(ref);
 	val = ref-->1;
@@ -311,7 +533,7 @@ Include (-
 		(+ JSON number type +):
 			print val;
 		(+ JSON real number type +):
-			JSON_Stringify_Real_Number(val);
+			JSON_Stringify_Real_Number(val, 8);
 		(+ JSON string type +):
 			JSON_Stringify_String(val);
 		(+ JSON array type +):
@@ -466,7 +688,6 @@ Include (-
 			12: print "@@92f"; ! \f
 			13: print "@@92r"; ! \r
 			34: print "@@92~"; ! "
-			47: print "@@92/"; ! /
 			92: print "@@92@@92"; ! \
 			default: print (char) char;
 		}
@@ -479,3 +700,128 @@ Include (-
 
 
 JSON ends here.
+
+---- Documentation ----
+
+This extension provides support for parsing, processing, and generating JSON.
+
+Chapter - Creating JSON references
+
+The basic data structure in this extension is the JSON reference. You can create JSON references with these phrases:
+
+	JSON null
+	JSON true
+	JSON false/boolean
+	JSON number (N - number)
+	JSON real number (N - real number)
+	JSON string/text from (T - text)
+	JSON array
+	JSON object
+
+To determine which type a JSON reference has, use the phrase "type of (json reference)".
+
+Chapter - Reading and setting JSON references
+
+You can access the internal data of a JSON reference with these phrases. If you try to access a reference using the wrong type an error will be shown.
+
+	if (R - JSON reference) as a truth state:
+	(R - JSON reference) as a number
+	(R - JSON reference) as a real number
+	let (T  - nonexisting text variable) be (R - JSON reference) as a text/string
+	let (L - nonexisting list of JSON references variable) be (R - JSON reference) as a/an list/array
+
+To set a boolean, number, or real number, use these phrases:
+
+	set (R - JSON reference) to (V - truth state)
+	set (R - JSON reference) to (V - number)
+	set (R - JSON reference) to (V - real number)
+
+Strings and arrays can be modified in place using the standard Inform phrases. You do not need to update the JSON reference with the new text or list.
+
+Chapter - JSON objects
+
+There is no Inform data structure that fits a JSON object, but you can use these phrases to access them:
+	
+	if (R - JSON reference) has key (K - text):
+	set key (K - text) of (R - JSON reference) to (V - JSON reference)
+	get key (K - text) of (R - JSON reference)
+	delete key (K - text) of (R - JSON reference)
+
+You can also repeat through the keys of a JSON object with this phrase:
+
+	repeat with (loopvar - nonexisting text variable) of/in (R - JSON reference)
+
+Chapter - Parsing and stringifying JSON
+
+These two phrases will parse a text into a JSON reference, and a JSON reference into a text:
+
+	parse (T - a text)
+	say (R - JSON reference)
+
+You can use the standard Inform phrases "text of (external file)" and "write (text) to (external file)" to read and write JSON files, but note that they will have the .glkdata extension, as well as the normal Inform file header.
+
+Chapter - Cleaning up
+
+JSON references exist outside the normal Inform model, so you must manually destroy them in order to not leak memory. Destroying an array or object will clean up all of its contents as well.
+
+	destroy (R - JSON reference)
+
+Example: * Actions tracker
+
+	*: "Actions tracker"
+	
+	Include JSON by Dannii Willis.
+	
+	The Lab is a room.
+	In the lab is a coin.
+	
+	The File of Tracked Actions is called "actions".
+	
+	When play begins:
+		if the File of Tracked Actions exists:
+			let text data be "[text of File of Tracked Actions]";
+			let json data be parse text data;
+			if json data has key "restarted":
+				say "You have restarted this demo.[line break]";
+			otherwise:
+				say "You have not yet restarted this demo.[line break]";
+			if json data has key "jumped":
+				let jump count be get key "jumped" of json data;
+				say "You have jumped [jump count as a number] times.[line break]";
+			if json data has key "picked up coin":
+				let pick up coint count be get key "picked up coin" of json data;
+				say "You have picked up the coin [pick up coint count as a number] times.[line break]";
+			destroy json data;
+	
+	First carry out restarting the game rule:
+		let json data be a JSON reference;
+		if the File of Tracked Actions exists:
+			let text data be "[text of File of Tracked Actions]";
+			let json data be parse text data;
+		otherwise:
+			let json data be a new JSON object;
+		set key "restarted" of json data to JSON true;
+		write "[json data]" to File of Tracked Actions;
+		destroy json data;
+	
+	To increment (T - a text) in tracked actions:
+		let json data be a JSON reference;
+		if the File of Tracked Actions exists:
+			let text data be "[text of File of Tracked Actions]";
+			let json data be parse text data;
+		otherwise:
+			let json data be a new JSON object;
+		let count be 0;
+		if json data has key T:
+			now count is get key T of json data as a number;
+		increment count;
+		set key T of json data to JSON number count;
+		write "[json data]" to File of Tracked Actions;
+		destroy json data;
+		
+	Carry out jumping:
+		increment "jumped" in tracked actions;
+	
+	After taking the coin:
+		increment "picked up coin" in tracked actions;
+		continue the action;
