@@ -1,4 +1,4 @@
-Version 1/220215 of JSON (for Glulx only) by Dannii Willis begins here.
+Version 1/220216 of JSON (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for parsing and generating JSON"
 
@@ -19,6 +19,7 @@ The specification of a JSON reference is "A reference to a JSON value. JSON valu
 
 To decide what JSON type is type of (R - JSON reference):
 	(- JSON_Get_Type({R}) -).
+
 Include (-
 [ JSON_Get_Type ref;
 	if (ref == 0) {
@@ -76,9 +77,8 @@ To destroy (R - JSON reference):
 
 Section - unindexed
 
-[ We need to get a reference to KD0_list_of_json_references (but it could be named differently), so these variables are a list one level higher than the real ones are. ]
+[ We need to get a reference to KD0_list_of_json_references (but it could be named differently), so this is a list one dimension higher than the real ones are. ]
 Template JSON array is a list of list of JSON references variable.
-Template JSON object is a list of list of list of JSON references variable.
 
 Include (-
 [ JSON_Create type value ref;
@@ -93,10 +93,8 @@ Include (-
 			if (value) {
 				BlkValueCopy(ref-->1, value);
 			}
-		(+ JSON array type +):
+		(+ JSON array type +), (+ JSON object type +):
 			ref-->1 = BlkValueCreate(BlkValueRead((+ template JSON array +), LIST_ITEM_KOV_F));
-		(+ JSON object type +):
-			ref-->1 = BlkValueCreate(BlkValueRead((+ template JSON object +), LIST_ITEM_KOV_F));
 		default:
 			ref-->1 = value;
 	}
@@ -111,13 +109,12 @@ Include (-
 	switch (ref-->0) {
 		(+ JSON string type +):
 			BlkValueFree(inner);
-		(+ JSON array type +):
+		(+ JSON array type +), (+ JSON object type +):
 			length = BlkValueRead(inner, LIST_LENGTH_F);
 			for (i = 0: i < length: i++) {
 				JSON_Destroy(BlkValueRead(inner, i + LIST_ITEM_BASE));
 			}
 			BlkValueFree(inner);
-		(+ JSON object type +):
 	}
 	@mfree ref;
 ];
@@ -125,7 +122,7 @@ Include (-
 
 
 
-Chapter - Reading JSON references
+Chapter - Reading and setting JSON references
 
 To decide if (R - JSON reference) as a truth state:
 	(- JSON_Read((+ JSON boolean type +), {R}) -).
@@ -133,14 +130,10 @@ To decide what number is (R - JSON reference) as a number:
 	(- JSON_Read((+ JSON number type +), {R}) -).
 To decide what real number is (R - JSON reference) as a real number:
 	(- JSON_Read((+ JSON real number type +), {R}) -).
-[To let (T  - nonexisting variable) be (R - JSON reference) as a text/string:
-	(- {-unprotect:T} {T} = JSON_Read((+ JSON string type +), {R}); -).]
-To decide which text is (R - JSON reference) as a text/string:
-	(- JSON_Read((+ JSON string type +), {R}) -).
-[To let (L  - nonexisting variable) be (R - JSON reference) as a/an list/array:
-	(- {-unprotect:L} {L} = JSON_Read((+ JSON array type +), {R}); -).]
-To set (L  - list of JSON references) to (R - JSON reference) as a/an list/array:
-	(- {-by-reference:L} = JSON_Read((+ JSON array type +), {R}); -).
+To let (T  - nonexisting text variable) be (R - JSON reference) as a text/string:
+	(- {-lvalue-by-reference:T} = JSON_Read((+ JSON string type +), {R}); -).
+To let (L - nonexisting list of JSON references variable) be (R - JSON reference) as a/an list/array:
+	(- {-lvalue-by-reference:L} = JSON_Read((+ JSON array type +), {R}); -).
 
 Include (-
 [ JSON_Read type ref;
@@ -156,18 +149,12 @@ Include (-
 ];
 -).
 
-
-
-Chapter - Setting JSON references
-
 To set (R - JSON reference) to (V - truth state):
 	(- JSON_Write((+ JSON boolean type +), {R}, {V}); -).
 To set (R - JSON reference) to (V - number):
 	(- JSON_Write((+ JSON number type +), {R}, {V}); -).
 To set (R - JSON reference) to (V - real number):
 	(- JSON_Write((+ JSON real number type +), {R}, {V}); -).
-To set (R - JSON reference) to (V - text):
-	(- JSON_Write((+ JSON string type +), {R}, {-by-reference:V}); -).
 
 Include (-
 [ JSON_Write type ref value;
@@ -183,10 +170,118 @@ Include (-
 		(+ JSON string type +):
 			BlkValueCopy(ref-->1, value);
 		(+ JSON array type +), (+ JSON object type +):
-			! TODO
+			return;
 		default:
 			ref-->1 = value;
 	}
+];
+-).
+
+
+
+Chapter - JSON objects
+
+To decide if (R - JSON reference) has key (K - text):
+	(- JSON_Object_Has_Key({R}, {-by-reference:K}) -).
+To set key (K - text) of (R - JSON reference) to (V - JSON reference):
+	(- JSON_Object_Set_Key({R}, {-by-reference:K}, {V}); -).
+To decide which JSON reference is get key (K - text) of (R - JSON reference):
+	(- JSON_Object_Get_Key({R}, {-by-reference:K}) -).
+To delete key (K - text) of (R - JSON reference):
+	(- JSON_Object_Delete_Key({R}, {-by-reference:K}); -).
+To repeat with (loopvar - nonexisting text variable) of/in (R - JSON reference) begin -- end loop:
+	(-
+		{-my:2} = 0;
+		if (JSON_Get_Type({R}) == (+ JSON object type +)) {
+			{-my:2} = BlkValueRead({R}-->1, LIST_LENGTH_F);
+			{-lvalue-by-reference:loopvar} = BlkValueRead({R}-->1, {-my:1} + LIST_ITEM_BASE)-->1;
+		}
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1} = {-my:1} + 2, {-lvalue-by-reference:loopvar} = BlkValueRead({R}-->1, {-my:1} + LIST_ITEM_BASE)-->1)
+	-).
+
+Include (-
+[ JSON_Object_Delete_Key ref key i inner key_ref length;
+	if (ref == 0) {
+		print "Trying to access a JSON error reference^";
+		return;
+	}
+	if (ref-->0 ~= (+ JSON object type +)) {
+		JSON_Type_Mismatch((+ JSON object type +), ref-->0);
+		rfalse;
+	}
+	inner = ref-->1;
+	length = BlkValueRead(inner, LIST_LENGTH_F);
+	for (i = 0: i < length: i = i + 2) {
+		key_ref = BlkValueRead(inner, i + LIST_ITEM_BASE);
+		if (TEXT_TY_Replace_RE(CHR_BLOB, key_ref-->1, key, 0, 0, 1)) {
+			JSON_Destroy(key_ref);
+			JSON_Destroy(BlkValueRead(inner, i + 1 + LIST_ITEM_BASE));
+			LIST_OF_TY_RemoveItemRange(inner, i + 1, i + 2);
+			return;
+		}
+	}
+];
+
+[ JSON_Object_Get_Key ref key i inner length;
+	if (ref == 0) {
+		print "Trying to access a JSON error reference^";
+		return;
+	}
+	if (ref-->0 ~= (+ JSON object type +)) {
+		JSON_Type_Mismatch((+ JSON object type +), ref-->0);
+		rfalse;
+	}
+	inner = ref-->1;
+	length = BlkValueRead(inner, LIST_LENGTH_F);
+	for (i = 0: i < length: i = i + 2) {
+		if (TEXT_TY_Replace_RE(CHR_BLOB, BlkValueRead(inner, i + LIST_ITEM_BASE)-->1, key, 0, 0, 1)) {
+			return BlkValueRead(inner, i + 1 + LIST_ITEM_BASE);
+		}
+	}
+	return 0;
+];
+
+[ JSON_Object_Has_Key ref key i inner length;
+	if (ref == 0) {
+		print "Trying to access a JSON error reference^";
+		return;
+	}
+	if (ref-->0 ~= (+ JSON object type +)) {
+		JSON_Type_Mismatch((+ JSON object type +), ref-->0);
+		rfalse;
+	}
+	inner = ref-->1;
+	length = BlkValueRead(inner, LIST_LENGTH_F);
+	for (i = 0: i < length: i = i + 2) {
+		if (TEXT_TY_Replace_RE(CHR_BLOB, BlkValueRead(inner, i + LIST_ITEM_BASE)-->1, key, 0, 0, 1)) {
+			rtrue;
+		}
+	}
+	rfalse;
+];
+
+[ JSON_Object_Set_Key ref key val i inner length;
+	if (ref == 0) {
+		print "Trying to access a JSON error reference^";
+		return;
+	}
+	if (ref-->0 ~= (+ JSON object type +)) {
+		JSON_Type_Mismatch((+ JSON object type +), ref-->0);
+		rfalse;
+	}
+	inner = ref-->1;
+	length = BlkValueRead(inner, LIST_LENGTH_F);
+	for (i = 0: i < length: i = i + 2) {
+		if (TEXT_TY_Replace_RE(CHR_BLOB, BlkValueRead(inner, i + LIST_ITEM_BASE)-->1, key, 0, 0, 1)) {
+			! Updating existing key
+			JSON_Destroy(BlkValueRead(inner, i + 1 + LIST_ITEM_BASE));
+			BlkValueWrite(inner, i + 1 + LIST_ITEM_BASE, val);
+			return;
+		}
+	}
+	! New key
+	LIST_OF_TY_InsertItem(inner, JSON_Create((+ JSON string type +), key));
+	LIST_OF_TY_InsertItem(inner, val);
 ];
 -).
 
@@ -229,7 +324,15 @@ Include (-
 			}
 			print "]";
 		(+ JSON object type +):
-			print "TODO";
+			length = BlkValueRead(val, LIST_LENGTH_F);
+			print "{";
+			for (i = 0: i < length: i = i + 2) {
+				JSON_Stringify(BlkValueRead(val, i + LIST_ITEM_BASE));
+				print ": ";
+				JSON_Stringify(BlkValueRead(val, i + 1 + LIST_ITEM_BASE));
+				if (i < length - 2) print ", ";
+			}
+			print "}";
 	}
 ];
 
