@@ -1,84 +1,61 @@
-Version 1 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
+Version 2 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
 
-"Quick and dirty proof of concept of unicode file IO"
+"Experimental. For 6M62."
 
-To read unicode (filename - external file) into (T - table name):
-(- FileIO_GetTableUni({filename}, {T}); -).
+Include Alternative Startup Rules by Dannii Willis.
 
-To write unicode (filename - external file) from (T - table name):
-(- FileIO_PutTableUni({filename}, {T}); -).
+Extfile unicode array is a number that varies.
 
-To decide if unicode (filename - external file) exists:
-(- (FileIO_Exists({filename}, false)) -).
+Include (-
+[ CreateExtfileUnicodeArray addr;
+  addr = VM_AllocateMemory(NO_EXTERNAL_FILES);
+  @mzero NO_EXTERNAL_FILES addr;
+  (+ extfile unicode array +) = addr;
+];
 
-To decide if ready to read unicode (filename - external file):
-(- (FileIO_ReadyUni({filename}, false)) -).
-    
-To mark unicode (filename - external file) as ready to read:
-(- FileIO_MarkReadyUni({filename}, true); -).
+[SetExtfileUnicodeFlag extf val;
+  (+ extfile unicode array +)->extf = val;
+];
 
-To mark unicode (filename - external file) as not ready to read:
-(- FileIO_MarkReadyUni({filename}, false); -).
+[GetExtfileUnicodeFlag extf;
+  return (+ extfile unicode array +)->extf;
+];
 
-To write (T - text) to unicode (FN - external file):
-(- FileIO_PutContentsUni({FN}, {T}, false); -).
+-).
 
-To append (T - text) to unicode (FN - external file):
-(- FileIO_PutContentsUni({FN}, {T}, true); -).
+To initialize file unicode flags:
+    (- CreateExtfileUnicodeArray(); -).
 
-To say text of unicode (FN - external file):
-(- FileIO_PrintContentsUni({FN}); say__p = 1; -).
+To set (extf - an external file) to unicode:
+  (- SetExtfileUnicodeFlag({extf},true); -).  
+
+To set (extf - an external file) to ascii:
+  (- SetExtfileUnicodeFlag({extf},false); -).
+
+To decide if (extf - an external file) is unicode:
+  (- GetExtfileUnicodeFlag(extf) -).
+
+To decide if (extf - an external file) is ascii:
+  (- ~~(GetExtfileUnicodeFlag(extf)) -).
+
+To decide if (extf - an external file) is not unicode:
+  (- ~~GetExtfileUnicodeFlag(extf) -).
+
+To decide if (extf - an external file) is not ascii:
+  (- GetExtfileUnicodeFlag(extf) -).
+
+After starting the virtual machine:
+  initialize file unicode flags;
+
+Include (-
+
+-) after "Definitions.i6t".
+
 
 
 Include (-
-[ FileIO_PutTableUni extf tab rv  struc oldstream;
-	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
-		return FileIO_Error(extf, "tried to write table to a non-file");
-	struc = TableOfExternalFiles-->extf;
-	if (struc-->AUXF_BINARY)
-		return FileIO_Error(extf, "writing a table will not work with binary files");
-	oldstream = glk_stream_get_current();
-	if (FileIO_OpenUni(extf, true) == 0) rfalse;
-	rv = TablePrint(tab);
-	FileIO_CloseUni(extf);
-	if (oldstream) glk_stream_set_current(oldstream);
-	if (rv) return RunTimeProblem(RTP_TABLE_CANTSAVE, tab);
-	rtrue;
-];
 
-[ FileIO_GetTableUni extf tab  struc;
-	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
-		return FileIO_Error(extf, "tried to read table from a non-file");
-	struc = TableOfExternalFiles-->extf;
-	if (struc-->AUXF_BINARY)
-		return FileIO_Error(extf, "reading a table will not work with binary files");
-	if (FileIO_OpenUni(extf, false) == 0) rfalse;
-	TableRead(tab, extf);
-	FileIO_CloseUni(extf);
-	rtrue;
-];
-
-
-[ FileIO_PutContentsUni extf text append_flag  struc str ch oldstream;
-	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
-		return FileIO_Error(extf, "tried to access a non-file");
-	struc = TableOfExternalFiles-->extf;
-	if (struc-->AUXF_BINARY)
-		return FileIO_Error(extf, "writing text will not work with binary files");
-	oldstream = glk_stream_get_current();
-	str = FileIO_OpenUni(extf, true, append_flag);
-	if (str == 0) rfalse;
-	@push say__p; @push say__pc;
-	ClearParagraphing(19);
-	TEXT_TY_Say(text);
-	FileIO_CloseUni(extf);
-	if (oldstream) glk_stream_set_current(oldstream);
-	@pull say__pc; @pull say__p;
-	rfalse;
-];
-
-
-[ FileIO_ReadyUni extf  struc fref usage str ch;
+[ FileIO_Ready extf  struc fref usage str ch;
 if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 	struc = TableOfExternalFiles-->extf;
 	if ((struc == 0) || (struc-->AUXF_MAGIC ~= AUXF_MAGIC_VALUE)) rfalse;
@@ -90,15 +67,21 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		rfalse;
 	}
-	str = glk_stream_open_file_uni(fref, filemode_Read, 0);
-	ch = glk_get_char_stream_uni(str);
+    if ((+ extfile unicode array +)->extf) {
+      str = glk_stream_open_file_uni(fref, filemode_Read, 0);
+      ch = glk_get_char_stream_uni(str);
+    }
+    else {
+	  str = glk_stream_open_file(fref, filemode_Read, 0);
+      ch = glk_get_char_stream(str);
+    }
 	glk_stream_close(str, 0);
 	glk_fileref_destroy(fref);
 	if (ch ~= '*') rfalse;
 	rtrue;
 ];
 
-[ FileIO_MarkReadyUni extf readiness  struc fref str ch usage;
+[ FileIO_MarkReady extf readiness  struc fref str ch usage;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
 		return FileIO_Error(extf, "tried to open a non-file");
 	struc = TableOfExternalFiles-->extf;
@@ -115,15 +98,21 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		return FileIO_Error(extf, "only closed files can be marked");
 	}
-	str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
+    if ((+ extfile unicode array +)->extf) str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
+    else str = glk_stream_open_file(fref, filemode_ReadWrite, 0);
 	glk_stream_set_position(str, 0, 0); ! seek start
 	if (readiness) ch = '*'; else ch = '-';
-	glk_put_char_stream_uni(str, ch); ! mark as complete
+    if ((+ extfile unicode array +)->extf) glk_put_char_stream_uni(str, ch); ! mark as complete
+    else glk_put_char_stream(str, ch);
 	glk_stream_close(str, 0);
 	glk_fileref_destroy(fref);
 ];
 
-[ FileIO_OpenUni extf write_flag append_flag
+-) instead of "Readiness" in "FileIO.i6t".
+
+Include (-
+
+[ FileIO_Open extf write_flag append_flag
 	struc fref str mode ix ch not_this_ifid owner force_header usage;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
 		return FileIO_Error(extf, "tried to open a non-file");
@@ -149,7 +138,8 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 			return FileIO_Error(extf, "tried to open a file which does not exist");
 		}
 	}
-	str = glk_stream_open_file_uni(fref, mode, 0);
+    if ((+ extfile unicode array +)->extf) str = glk_stream_open_file_uni(fref, mode, 0);
+    else str = glk_stream_open_file(fref, mode, 0);
 	glk_fileref_destroy(fref);
 	if (str == 0) return FileIO_Error(extf, "tried to open a file but failed");
 	struc-->AUXF_STREAM = str;
@@ -209,7 +199,11 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 	return FileIO_Error(extf, "tried to open a file which seems to be malformed");
 ];
 
-[ FileIO_CloseUni extf  struc;
+-) instead of "Open File" in "FileIO.i6t".
+
+Include (-
+
+[ FileIO_Close extf  struc;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
 		return FileIO_Error(extf, "tried to open a non-file");
 	struc = TableOfExternalFiles-->extf;
@@ -222,20 +216,30 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		AUXF_STATUS_IS_OPEN_FOR_WRITE or
 		AUXF_STATUS_IS_OPEN_FOR_APPEND) {
 		glk_stream_set_position(struc-->AUXF_STREAM, 0, 0); ! seek start
-		glk_put_char_stream_uni(struc-->AUXF_STREAM, '*'); ! mark as complete
+    if ((+ extfile unicode array +)->extf) glk_put_char_stream_uni(struc-->AUXF_STREAM, '*'); ! mark as complete
+    else glk_put_char_stream(struc-->AUXF_STREAM, '*'); ! mark as complete
 	}
 	glk_stream_close(struc-->AUXF_STREAM, 0);
 	struc-->AUXF_STATUS = AUXF_STATUS_IS_CLOSED;
 ];
 
-[ FileIO_GetCUni extf  struc;
+-) instead of "Close File" in "FileIO.i6t".
+
+Include (-
+
+[ FileIO_GetC extf  struc;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) return -1;
 	struc = TableOfExternalFiles-->extf;
 	if (struc-->AUXF_STATUS ~= AUXF_STATUS_IS_OPEN_FOR_READ) return -1;
-	return glk_get_char_stream_uni(struc-->AUXF_STREAM);
+    if ((+ extfile unicode array +)->extf) return glk_get_char_stream_uni(struc-->AUXF_STREAM);
+    return glk_get_char_stream(struc-->AUXF_STREAM);
 ];
 
-[ FileIO_PutCUni extf char  struc;
+-) instead of "Get Character" in "FileIO.i6t".
+
+Include (-
+
+[ FileIO_PutC extf char  struc;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) return -1;
 		return FileIO_Error(extf, "tried to write to a non-file");
 	struc = TableOfExternalFiles-->extf;
@@ -244,46 +248,45 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		AUXF_STATUS_IS_OPEN_FOR_APPEND)
 		return FileIO_Error(extf,
 			"tried to write to a file which is not open for writing");
-	return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
+    if ((+ extfile unicode array +)->extf) return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
+    return glk_put_char_stream(struc-->AUXF_STREAM, char);
 ];
+-) instead of "Put Character" in "FileIO.i6t".
 
-[ FileIO_PrintLineUni extf ch  struc;
+Include (-
+
+[ FileIO_PrintLine extf ch  struc;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
 		return FileIO_Error(extf, "tried to write to a non-file");
 	struc = TableOfExternalFiles-->extf;
 	for (::) {
-		ch = FileIO_GetCUni(extf);
+    ch = FileIO_GetC(extf);
 		if (ch == -1) rfalse;
 		if (ch == 10 or 13) { print "^"; rtrue; }
-#iftrue (WORDSIZE==4);
-@streamunichar ch;
-#ifnot;
-		print (char) ch;
-#endif;
+        @streamunichar ch;
 	}
 ];
 
-
-[ FileIO_PrintContentsUni extf tab  struc;
-	if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
-		return FileIO_Error(extf, "tried to access a non-file");
-	struc = TableOfExternalFiles-->extf;
-	if (struc-->AUXF_BINARY)
-		return FileIO_Error(extf, "printing text will not work with binary files");
-	if (FileIO_OpenUni(extf, false) == 0) rfalse;
-	while (FileIO_PrintLineUni(extf)) ;
-	FileIO_CloseUni(extf);
-	rtrue;
-];
-
-
--)
-
-
+-) instead of "Print Line" in "FileIO.i6t".
 
 Unicode File IO ends here.
 
 ---- Documentation ----
 
-unicode files are not a separate type; they're just external files that you're obliged to access
-with the alternate phrases defined within.
+To treat a file as unicode:
+
+The file of reference is called "ref".
+
+When play begins:
+  set file of reference to unicode;
+
+To treat it as ascii (the default, so you don't need to do this unless you've previously set it to unicode):
+
+    set file of reference to ascii;
+
+To test mode:
+
+  if file of reference is unicode [...] 
+  if file of reference is ascii [...]
+
+If you've opened it in one mode, make sure you close (mark as not ready to read) it before changing it to the other mode.
