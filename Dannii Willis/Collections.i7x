@@ -33,15 +33,15 @@ To decide which collection reference is a/-- new/empty map:
 To decide if type of (R - collection reference) is (name of kind of sayable value K):
 	(- (Collections_Get_Type({R}) == {-printing-routine:K}) -).
 
-To decide if (R1 - collection reference) equals/matches/= (R2 - collection reference):
+To decide if (R1 - collection reference) equals/matches/=/== (R2 - collection reference):
 	(- Collections_Check_Equals({R1}, {R2}) -).
 
 To decide what K is (R - collection reference) as a/an (name of kind of sayable value K):
 	(- Collections_Read({-printing-routine:K}, {R}) -).
 To let (T  - nonexisting text variable) be (R - collection reference) as a text:
-	(- {-lvalue-by-reference:T} = Collections_Read(Collections_ID_Text, {R}); -).
+	(- {-lvalue-by-reference:T} = Collections_Read(Collections_ID_Text, {R}, 1); -).
 To let (L - nonexisting list of collection references variable) be (R - collection reference) as a list:
-	(- {-lvalue-by-reference:L} = Collections_Read(Collections_ID_Array, {R}); -).
+	(- {-lvalue-by-reference:L} = Collections_Read(Collections_ID_Array, {R}, 1); -).
 
 To set (R - collection reference) to/= (V - sayable value of kind K):
 	(- Collections_Write({-printing-routine:K}, {R}, {-by-reference:V}); -).
@@ -155,8 +155,16 @@ Include (-
 	return ref-->0;
 ];
 
-[ Collections_Read type ref;
+[ Collections_Read type ref safe;
 	if (Collections_Check_Type(type, ref)) {
+		rfalse;
+	}
+	if (type == Collections_ID_Array && ~~safe) {
+		print "Cannot directly read an array; use ~let L be R as a list;~^";
+		rfalse;
+	}
+	if (type == Collections_ID_Map) {
+		print "Cannot directly read a map^";
 		rfalse;
 	}
 	return ref-->1;
@@ -169,7 +177,12 @@ Include (-
 	if (type == Collections_ID_Text) {
 		BlkValueCopy(ref-->1, value);
 	}
-	else if (type == Collections_ID_Array or Collections_ID_Map) {
+	else if (type == Collections_ID_Array) {
+		print "Cannot directly write to an array^";
+		return;
+	}
+	else if (type == Collections_ID_Map) {
+		print "Cannot directly write to a map^";
 		return;
 	}
 	else {
@@ -185,10 +198,10 @@ Chapter - Maps
 To decide if (R - collection reference) has key (key - sayable value of kind K):
 	(- Collections_Map_Has_Key({R}, {-by-reference:key}, {-printing-routine:K}) -).
 
-To set key (key - sayable value of kind K) of (R - collection reference) to/= (V - collection reference):
-	(- Collections_Map_Set_Key({R}, {-by-reference:key}, {-printing-routine:K}, {V}); -).
-To (R - collection reference) => (key - sayable value of kind K) = (V - collection reference):
-	(- Collections_Map_Set_Key({R}, {-by-reference:key}, {-printing-routine:K}, {V}); -).
+To set key (key - sayable value of kind K) of (R - collection reference) to/= (val - sayable value of kind V):
+	(- Collections_Map_Set_Key({R}, {-by-reference:key}, {-printing-routine:K}, {val}, {-printing-routine:V}); -).
+To (R - collection reference) => (key - sayable value of kind K) = (val - sayable value of kind V):
+	(- Collections_Map_Set_Key({R}, {-by-reference:key}, {-printing-routine:K}, {val}, {-printing-routine:V}); -).
 
 To decide which collection reference is get key (key - sayable value of kind K) of (R - collection reference):
 	(- Collections_Map_Get_Key({R}, {-by-reference:key}, {-printing-routine:K}) -).
@@ -276,13 +289,16 @@ Include (-
 	rfalse;
 ];
 
-[ Collections_Map_Set_Key ref key keytype val i inner length;
+[ Collections_Map_Set_Key ref key keytype val valtype i inner length;
 	if (Collections_Check_Type(Collections_ID_Map, ref)) {
 		rfalse;
 	}
 	if (keytype == Collections_ID_ColRef) {
 		keytype = key-->0;
 		key = key-->1;
+	}
+	if (valtype ~= Collections_ID_ColRef) {
+		val = Collections_Create(valtype, val);
 	}
 	inner = ref-->1;
 	length = BlkValueRead(inner, LIST_LENGTH_F);
