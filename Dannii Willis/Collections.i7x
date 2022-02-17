@@ -39,7 +39,7 @@ To decide if (R1 - collection reference) equals/matches/=/== (R2 - collection re
 To decide what K is (R - collection reference) as a/an (name of kind of sayable value K):
 	(- Collections_Read({-printing-routine:K}, {R}) -).
 To let (T  - nonexisting text variable) be (R - collection reference) as a text:
-	(- {-lvalue-by-reference:T} = Collections_Read(Collections_ID_Text, {R}, 1); -).
+	(- {-lvalue-by-reference:T} = Collections_Read(Collections_ID_Text, {R}); -).
 To let (L - nonexisting list of collection references variable) be (R - collection reference) as a list:
 	(- {-lvalue-by-reference:L} = Collections_Read(Collections_ID_Array, {R}, 1); -).
 
@@ -47,6 +47,9 @@ To set (R - collection reference) to/= (V - sayable value of kind K):
 	(- Collections_Write({-printing-routine:K}, {R}, {-by-reference:V}); -).
 To (R - collection reference) = (V - sayable value of kind K):
 	(- Collections_Write({-printing-routine:K}, {R}, {-by-reference:V}); -).
+
+To say (R - collection reference):
+	(- Collections_Print({R}); -).
 
 To destroy (R - collection reference):
 	(- Collections_Destroy({R}); -).
@@ -153,6 +156,38 @@ Include (-
 		return Collections_ID_Error;
 	}
 	return ref-->0;
+];
+
+[ Collections_Print ref i length type val;
+	type = Collections_Get_Type(ref);
+	if (type == Collections_ID_Error) {
+		print "Collection error";
+	}
+	else if (type == Collections_ID_Array) {
+		val = ref-->1;
+		length = BlkValueRead(val, LIST_LENGTH_F);
+		print "[";
+		for (i = 0: i < length: i++) {
+			Collections_Print(BlkValueRead(val, i + LIST_ITEM_BASE));
+			if (i < length - 1) print ", ";
+		}
+		print "]";
+	}
+	else if (type == Collections_ID_Map) {
+		val = ref-->1;
+		length = BlkValueRead(val, LIST_LENGTH_F);
+		print "{";
+		for (i = 0: i < length: i = i + 2) {
+			Collections_Print(BlkValueRead(val, i + LIST_ITEM_BASE));
+			print ": ";
+			Collections_Print(BlkValueRead(val, i + 1 + LIST_ITEM_BASE));
+			if (i < length - 2) print ", ";
+		}
+		print "}";
+	}
+	else {
+		(ref-->0)(ref-->1);
+	}
 ];
 
 [ Collections_Read type ref safe;
