@@ -1,57 +1,45 @@
-Version 2 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
+Version 2/220217 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
 
-"Experimental. For 6M62."
+"Experimental support for reading and writing external files that may
+ include characters longer than a byte. For 6M62."
 
-Include Alternative Startup Rules by Dannii Willis.
+Book New Phrases
 
-Extfile unicode array is a number that varies.
+Part Properties
+
+Output-mode-value is a kind of value.
+The output-mode-values are ascii-mode and unicode-mode.
+An external file has an output-mode-value called output-mode.
+The output-mode property translates into I6 as "output_mode".
+
+Part test binary vs text
+
+Chapter I6 test binary vs text
+
+Section ExtfileIsMode
 
 Include (-
-[ CreateExtfileUnicodeArray addr;
-  addr = VM_AllocateMemory(NO_EXTERNAL_FILES);
-  @mzero NO_EXTERNAL_FILES addr;
-  (+ extfile unicode array +) = addr;
+[ ExtfileIsMode extf bin struc;
+  if ((extf < 1) || (extf > NO_EXTERNAL_FILES))
+    return FileIO_Error(extf, "tried to write table to a non-file");
+  struc = TableOfExternalFiles-->extf;
+  if (bin && struc-->AUXF_BINARY) rtrue;
+  if (~~bin && ~~struc-->AUXF_BINARY) rtrue;
+  rfalse;
 ];
-
-[SetExtfileUnicodeFlag extf val;
-  (+ extfile unicode array +)->extf = val;
-];
-
-[GetExtfileUnicodeFlag extf;
-  return (+ extfile unicode array +)->extf;
-];
-
 -).
 
-To initialize file unicode flags:
-    (- CreateExtfileUnicodeArray(); -).
+Chapter I6 test binary vs text
 
-To set (extf - an external file) to unicode:
-  (- SetExtfileUnicodeFlag({extf},true); -).  
+To decide if (extf - an external file) is text mode:
+  (- ~~(ExtfileIsMode({extf}, false)) -).
 
-To set (extf - an external file) to ascii:
-  (- SetExtfileUnicodeFlag({extf},false); -).
+To decide if (extf - an external file) is binary mode:
+  (- ~~(ExtfileIsMode({extf}, true)) -).
 
-To decide if (extf - an external file) is unicode:
-  (- GetExtfileUnicodeFlag(extf) -).
+Book Revising FileIO
 
-To decide if (extf - an external file) is ascii:
-  (- ~~(GetExtfileUnicodeFlag(extf)) -).
-
-To decide if (extf - an external file) is not unicode:
-  (- ~~GetExtfileUnicodeFlag(extf) -).
-
-To decide if (extf - an external file) is not ascii:
-  (- GetExtfileUnicodeFlag(extf) -).
-
-After starting the virtual machine:
-  initialize file unicode flags;
-
-Include (-
-
--) after "Definitions.i6t".
-
-
+Part Readiness
 
 Include (-
 
@@ -67,7 +55,7 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		rfalse;
 	}
-    if ((+ extfile unicode array +)->extf) {
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) {
       str = glk_stream_open_file_uni(fref, filemode_Read, 0);
       ch = glk_get_char_stream_uni(str);
     }
@@ -98,17 +86,19 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		return FileIO_Error(extf, "only closed files can be marked");
 	}
-    if ((+ extfile unicode array +)->extf) str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
     else str = glk_stream_open_file(fref, filemode_ReadWrite, 0);
 	glk_stream_set_position(str, 0, 0); ! seek start
 	if (readiness) ch = '*'; else ch = '-';
-    if ((+ extfile unicode array +)->extf) glk_put_char_stream_uni(str, ch); ! mark as complete
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) glk_put_char_stream_uni(str, ch); ! mark as complete
     else glk_put_char_stream(str, ch);
 	glk_stream_close(str, 0);
 	glk_fileref_destroy(fref);
 ];
 
 -) instead of "Readiness" in "FileIO.i6t".
+
+Part Open File
 
 Include (-
 
@@ -138,7 +128,7 @@ Include (-
 			return FileIO_Error(extf, "tried to open a file which does not exist");
 		}
 	}
-    if ((+ extfile unicode array +)->extf) str = glk_stream_open_file_uni(fref, mode, 0);
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) str = glk_stream_open_file_uni(fref, mode, 0);
     else str = glk_stream_open_file(fref, mode, 0);
 	glk_fileref_destroy(fref);
 	if (str == 0) return FileIO_Error(extf, "tried to open a file but failed");
@@ -201,6 +191,8 @@ Include (-
 
 -) instead of "Open File" in "FileIO.i6t".
 
+Part Close File
+
 Include (-
 
 [ FileIO_Close extf  struc;
@@ -216,8 +208,9 @@ Include (-
 		AUXF_STATUS_IS_OPEN_FOR_WRITE or
 		AUXF_STATUS_IS_OPEN_FOR_APPEND) {
 		glk_stream_set_position(struc-->AUXF_STREAM, 0, 0); ! seek start
-    if ((+ extfile unicode array +)->extf) glk_put_char_stream_uni(struc-->AUXF_STREAM, '*'); ! mark as complete
-    else glk_put_char_stream(struc-->AUXF_STREAM, '*'); ! mark as complete
+    ! mark as complete
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) glk_put_char_stream_uni(struc-->AUXF_STREAM, '*');
+    else glk_put_char_stream(struc-->AUXF_STREAM, '*');
 	}
 	glk_stream_close(struc-->AUXF_STREAM, 0);
 	struc-->AUXF_STATUS = AUXF_STATUS_IS_CLOSED;
@@ -225,17 +218,21 @@ Include (-
 
 -) instead of "Close File" in "FileIO.i6t".
 
+Part Get Character
+
 Include (-
 
 [ FileIO_GetC extf  struc;
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) return -1;
 	struc = TableOfExternalFiles-->extf;
 	if (struc-->AUXF_STATUS ~= AUXF_STATUS_IS_OPEN_FOR_READ) return -1;
-    if ((+ extfile unicode array +)->extf) return glk_get_char_stream_uni(struc-->AUXF_STREAM);
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) return glk_get_char_stream_uni(struc-->AUXF_STREAM);
     return glk_get_char_stream(struc-->AUXF_STREAM);
 ];
 
 -) instead of "Get Character" in "FileIO.i6t".
+
+Part Put Character
 
 Include (-
 
@@ -248,10 +245,12 @@ Include (-
 		AUXF_STATUS_IS_OPEN_FOR_APPEND)
 		return FileIO_Error(extf,
 			"tried to write to a file which is not open for writing");
-    if ((+ extfile unicode array +)->extf) return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
+    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
     return glk_put_char_stream(struc-->AUXF_STREAM, char);
 ];
 -) instead of "Put Character" in "FileIO.i6t".
+
+Part Print Line
 
 Include (-
 
@@ -263,7 +262,10 @@ Include (-
     ch = FileIO_GetC(extf);
 		if (ch == -1) rfalse;
 		if (ch == 10 or 13) { print "^"; rtrue; }
-        @streamunichar ch;
+        if (ch > 65535)
+          @streamunichar ch;
+        else
+          print (char) ch;
 	}
 ];
 
@@ -276,17 +278,5 @@ Unicode File IO ends here.
 To treat a file as unicode:
 
 The file of reference is called "ref".
+The output-mode of the file of reference is unicode-mode.
 
-When play begins:
-  set file of reference to unicode;
-
-To treat it as ascii (the default, so you don't need to do this unless you've previously set it to unicode):
-
-    set file of reference to ascii;
-
-To test mode:
-
-  if file of reference is unicode [...] 
-  if file of reference is ascii [...]
-
-If you've opened it in one mode, make sure you close (mark as not ready to read) it before changing it to the other mode.
