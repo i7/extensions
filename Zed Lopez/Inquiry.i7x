@@ -1,4 +1,4 @@
-Version 3 of Inquiry by Zed Lopez begins here.
+Version 4 of Inquiry by Zed Lopez begins here.
 
 "A framework for defining Y/N, multiple choice, or free-form
  questions to be asked immediately on game startup or subsequently.
@@ -109,8 +109,13 @@ Before inquiring a line-input inquiry (called q) when q is not a multiple-choice
 
 Chapter Ask question for ask y/n inquiry
 
-Before inquiring a y/n inquiry (called q) (this is the ask question for ask y/n inquiry rule):
-  say "[the description of q] ";
+First before inquiring a y/n inquiry (called q) (this is the ask question for ask y/n inquiry rule):
+  say "[the description of q]";
+
+Section Final space
+
+Last before inquiring a y/n inquiry (called q) (this is the final space for ask y/n inquiry rule):
+  say " ";
 
 Chapter Assign variables for line-input inquiry rule
 
@@ -133,6 +138,7 @@ For inquiring a y/n inquiry (called q) (this is the ask y/n question rule):
    say "N";
    now the boolean-answer of q is false;
   end if;
+  say line break;
 
 Chapter Key-input multiple-choice inquiry 
 
@@ -199,11 +205,29 @@ After inquiring an unanswered inquiry (called q) when q is not a multiple-choice
 
 Chapter check scene change after answering rule
 
-[ Notice if the last unanswered question was just answered so that Inquiring
-  Minds will end ]
-Last after inquiring an answered inquiry (this is the check scene change after answering rule):
-  if there is no unanswered inquiry, follow the scene changing rules.
+Part restart y/n
 
+Use restart y/n translates as (- Constant RESTART_YN; -).
+
+restart-game is an answered y/n inquiry.
+
+First before inquiring a y/n inquiry (called q) (this is the assign text of restart inquiry rule):
+  if q is restart-game, now the description of q is "[text of restart the game rule response (A)]Y/N" (C);
+
+Include (-
+[ RestartGame;
+  @restart;
+];
+-)
+
+To restart-game: (- RestartGame(); -).
+
+First carry out restarting the game when the restart y/n option is active:
+  now restart-game is unanswered;
+  carry out the inquiry handling activity;
+  if boolean-answer of restart-game is true, restart-game;
+  else stop the action.
+    
 Part Support Functions
 
 Chapter Getline
@@ -222,50 +246,38 @@ Chapter Line input
 
 to decide what snippet is the line input: (- getLine(); -).
 
-Book Inquiring Minds scene
+Book Inquiry Handling activity
 
-Part track whether we're pregame
-
+[ This has no default use; it just exists to make it easy to write before or after rules that
+know whether we're in the startup rules or during the turn sequence. ]
 pregame-inquiry is initially true.
 
-Chapter inquiries no longer pregame
+Inquiry handling is an activity.
 
-When play begins (this is the inquiries no longer pregame rule): now pregame-inquiry is false.
-
-Part Inquiring Minds declaration
-
-Inquiring Minds is a recurring scene.
-Inquiring Minds begins when there is an unanswered inquiry.
-Inquiring Minds ends when there is no unanswered inquiry.
-
-Part When Inquiring Minds begins
-
-Chapter close status window before initially inquiring 
-
-When Inquiring Minds begins (this is the close status window before initially inquiring rule):
-    if pregame-inquiry is true, close status window.
-
-Chapter clear screen before initially inquiring 
-
-When Inquiring Minds begins (this is the clear screen before initially inquiring rule):
-    if pregame-inquiry is true, clear screen.
-
-Chapter main inquiry loop
-
-When Inquiring Minds begins (this is the main inquiry loop rule):
+For inquiry handling:
   let q be the first unanswered inquiry;
   while q is not the null inquiry begin;
     carry out the inquiring activity with q;
     now q is the first unanswered inquiry;
   end while;
 
-Part When Inquiring Minds ends
+After inquiry handling when pregame-inquiry is true (this is the pregame inquiry no more rule):
+  now pregame-inquiry is false.
 
-When Inquiring Minds ends (this is the open status window after inquiring rule):
-  if pregame-inquiry is true, open status window;
+This is the handle inquiries rule: carry out the inquiry handling activity.
 
-When Inquiring Minds ends (this is the clear screen after inquiring rule):
-  if pregame-inquiry is true, clear screen;
+The handle inquiries rule is listed after the generate action rule in the turn sequence rules.
+
+This is the initially handle inquiries rule:
+  carry out the inquiry handling activity.
+
+Chapter Alternative (for use with Alternative Startup Rules by Dannii Willis)
+
+The initially handle inquiries rule is listed before the alternative start in the correct scenes rule in the after starting the virtual machine rules.
+
+Chapter Mainstream (for use without Alternative Startup Rules by Dannii Willis)
+
+The initially handle inquiries rule is listed before the start in the correct scenes rule in the startup rules.
 
 Book testing (not for release)
 
@@ -301,7 +313,7 @@ Understand "inquiries" as inquire-showing.
 
 Carry out inquire-showing: show-inquiries.
 
-Book for use withouts
+Book for use without parts
 
 Part agreement (for use without Agreeable by Zed Lopez)
 
@@ -315,13 +327,13 @@ Include (-
   }
 ];
 
-[ getKey key;
+[ getRelevantKey key;
   while((key = VM_KeyChar()) == -4 or -5 or -10 or -11 or -12 or -13) continue;
   return key;
 ];
 -).
 
-To decide what number is get key: (- getKey() -).
+To decide what number is get key: (- getRelevantKey() -).
 
 To decide if ask y-or-n: (- EnterYorN() -).
 
@@ -410,12 +422,15 @@ initial inquiry assertion:
 (It's not an error condition to leave the description blank, but it's also not useful.)
 
 One of inquiries' properties is answered vs. unanswered. If there are any unanswered
-inquiries, the Inquiring Minds scene begins and governs answering them. It doesn't 
-end until there are no unanswered inquiries.
+inquiries, they're asked in a loop that doesn't end until there are no unanswered
+inquiries. The rule triggering this loop comes between the action rulebooks and the
+(first) scene changing rules in the turn sequence, and before the start in the correct
+scenes rule in the startup rulebook.
 
 If you want inquiries to be asked later in the game, create them as initially answered
 and change them to unanswered (or change a previously asked and answered inquiry back
-to unanswered) during play. Inquiring Minds is recurring and it will start again.
+to unanswered) during play. You could carry out the Inquiry handling activity manually
+if you want, but otherwise it'll be asked immediately after the end of the next action.
 
 Inquiries can be key-input or line-input. Key-input inquiries are answered with
 a single keystroke.
@@ -453,10 +468,23 @@ the user will have to hit enter after their selection, and they'll get an
 error message if they entered something that isn't a choice; whereas with
 key-input it'll just sit there if they enter wrong choices.
 
-The Inquiring activity governs processing inquiries.
+There is an Inquiry handling activity that controls the whole loop,
+and a separate Inquiring activity, which is an activity on inquiries.
 
-	Inquiring something is an activity on inquiries.
-	Finish-inquiring something is an activity on inquiries.
+Displaying the inquiry text goes in  Before inquiring rules; For inquiring
+rules cover receiving the input and validation; After inquiring rules cover
+either error messages or actually storing the result and marking the inquiry
+answered.
+
+Y/n inquiries don't output "Y/N" by default, but the activity makes this
+easy to set up:
+
+	Last before inquiring a y/n inquiry: say "Y/N ".
+
+The Inquiring activity itself doesn't take any steps to ask again if an inquiry
+is unanswered at the end. When the activity is over, we're still in the
+Inquiry handling loop and since there's still at least an unanswered inquiry,
+the Inquiring activity is carried out again.
 
 An optional inquiry is the final sub-kind of inquiry. It's always line-input and
 thus gets a free-form text answer, but the game will accept a blank answer for
@@ -464,14 +492,23 @@ an optional inquiry; in every other case, an answer is required. You may wish
 to add a response for the case of a user entering a blank response for an
 optional question or it looks a lot like nothing happened.
 
-Section Startup / Inquiring Minds scene details
-
 When there are multiple unanswered inquiries to be made, they are always made
 in the inquiries' order of definition in the source.
 
+Chapter restart y/n
+
+Just to cater to my own personal preference, there's a provided use option
+that will convert the restart command's question to a Y/N inquiry.
+
+	Use restart y/n.
+
 Chapter Changelog
 
-Version 3: substantial rewrite to use KeyboardPrimitive for line-input, which
+v4: Having abandoned the turn sequence hijacking, there was no point left
+to having a scene control question asking, so introduced the inquiry
+handling activity. Also added the restart y/n use option.
+
+v3: substantial rewrite to use KeyboardPrimitive for line-input, which
 turns out to be far less intrusive than hijacking the turn sequence. Who knew?
 
 Chapter Examples

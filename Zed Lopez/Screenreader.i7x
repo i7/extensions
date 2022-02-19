@@ -1,4 +1,4 @@
-Screenreader by Zed Lopez begins here.
+Version 2 of Screenreader by Zed Lopez begins here.
 
 "On startup, asks user 'Are you using a screenreader?' and sets
  a global that can subsequently be tested. For 6M62."
@@ -9,17 +9,37 @@ Interface-value is a kind of value.
 Some interface-values are default-interface, screenreader.
 The interface is an interface-value that varies.
 
+Screenreader-toggling something is an activity on truth states.
+
+Screenreader-setting is an action out of world.
+Understand "screenreader on/--" or "screenreader off" as screenreader-setting.
+
+Carry out screenreader-setting:
+  if the player's command includes "off", carry out the screenreader-toggling activity with false;
+  else carry out the screenreader-toggling activity with true;
+
+Report screenreader-setting:
+  say "Screenreader mode is [if the interface is screenreader]on[else]off[end if].";
+
+For screenreader-toggling a truth state (called status):
+  if status is true, now the interface is screenreader;
+  else now the interface is default-interface.
+  
 Use screenreader query translates as (- Constant SCREENREADER_QUERY; -).
 
-First when play begins when the screenreader query option is active (this is the ask about screenreader rule):
-  close-status-window;
-  clear the screen;
-  let the screenreader-query-question be "Are you using a screenreader?" (A);
-  if the player agrees to the screenreader-query-question, now the interface is screenreader;
-  open-status-window;
-  clear the screen.
+Book without Inquiry or Agreeable (for use without Inquiry by Zed Lopez)
 
 Part agreement (for use without Agreeable by Zed Lopez)
+
+First when play begins when the screenreader query option is active (this is the ask about screenreader rule):
+  let the screenreader-query-question be "Are you using a screenreader? y/n" (A);
+  if the player agrees to the screenreader-query-question begin;
+    say "Y";
+    carry out the screenreader-toggling activity with true;
+  else;
+    say "N";
+  end if;
+  say line break;
 
 Include (-
 [ EnterYorN t key;
@@ -38,6 +58,29 @@ To decide if the/a/-- player agrees to/with a/an/-- (T - a text):
     now T is "[line number 1 in T] "; [strip spaces then add one back at the end]
     decide on whether or not ask y-or-n for T.
 
+Book Inquiries (for use with Inquiry by Zed Lopez)
+
+screenreader-inquiry is an answered y/n inquiry. 
+
+[ This is just to make the text modifiable as a rule response ]
+This is the ask screenreader question rule:
+  if the screenreader query option is active begin;
+    now the description of the screenreader-inquiry is "Are you using a screenreader? y/n" (B);
+    now screenreader-inquiry is unanswered;
+  end if;
+
+After inquiring an inquiry (called q) when q is the screenreader-inquiry:
+    carry out the screenreader-toggling activity with boolean-answer of q.
+
+Before inquiry handling when pregame-inquiry is true and screenreader query option is active:
+    follow the ask screenreader question rule.
+
+Book other extension interactions
+
+Part Alternative (for use with Alternative Startup Rules by Dannii Willis)
+
+The initial whitespace rule does nothing.
+
 Part Simple Spelling (for use with Simple Spelling by Alice Grove)
 
 The introduce the simple spelling features rule does nothing.
@@ -47,24 +90,20 @@ Use simple spelling features intro translates as (- Constant SIMPLE_SPELLING_INT
 Last when play begins (this is the conditionally introduce simple spelling features rule):
   if the simple spelling features intro option is active, say text of introduce the simple spelling features rule response (B).
 
-Part clear windows (for use without Basic Screen Effects by Emily Short)
-
-To clear the/-- screen: (- VM_ClearScreen(0); -).
-
 Part shut that down
 
 Section Flexible Status (for use with Flexible Windows by Jon Ingold)
 
-Use no status bar with screenreaders translates as (- Constant NO_SCREENREADER_STATUSBAR; -).
+Use no status bar with screenreaders translates as (- Constant NO_SCREENREADER_STATUSBAR; -). 
 
-To close-status-window: close the status window.
-To open-status-window:
-    unless the interface is screenreader and the no status bar with screenreaders option is active, open the status window.
-    
-Section Inflexible Status (for use without Flexible Windows by Jon Ingold)
+Before inquiry handling when pregame-inquiry is true and screenreader query option is active:
+  close the status window.
 
-To close-status-window: do nothing.
-To open-status-window: do nothing.
+After screenreader-toggling a truth state (called status):
+  if interface is screenreader and no status bar with screenreaders option is active, close the status window;
+  else open the status window.
+
+[The screenreader close status window rule does nothing if the no status bar with screenreaders option is active.]
 
 Volume Use screenreader (for release only)
 
@@ -112,6 +151,10 @@ If you include Simple Spelling at all, the "spell" command will exist; this Use 
 Use simple spelling features intro.
 First when play begins: now the introduce the simple spelling features rule response (B) is "Alternative text.[line break]"
 ```
+
+Chapter Changelog
+
+Version 2: created screenreader-toggling activity; added screenreader on/off commands; ceased clearing screen; added Inquiry support.
 
 Chapter Examples
 
