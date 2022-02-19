@@ -1,16 +1,20 @@
-Version 2/220217 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
+Version 2/220218 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
 
 "Experimental support for reading and writing external files that may
  include characters longer than a byte. For 6M62."
 
 Book New Phrases
 
+Part Can we unicode?
+
+To decide if unicode is supported: (- glk_gestalt(gestalt_Unicode, 0) -).
+
 Part Properties
 
 Output-mode-value is a kind of value.
-The output-mode-values are ascii-mode and unicode-mode.
+The output-mode-values are latin1-mode and unicode-mode.
 An external file has an output-mode-value called output-mode.
-The output-mode property translates into I6 as "output_mode".
+The output-mode property translates into I6 as "extf_output_mode".
 
 Part test binary vs text
 
@@ -31,10 +35,10 @@ Include (-
 
 Chapter I6 test binary vs text
 
-To decide if (extf - an external file) is text mode:
+To decide if (extf - an external file) is in/-- text mode:
   (- ~~(ExtfileIsMode({extf}, false)) -).
 
-To decide if (extf - an external file) is binary mode:
+To decide if (extf - an external file) is in/-- binary mode:
   (- ~~(ExtfileIsMode({extf}, true)) -).
 
 Book Revising FileIO
@@ -55,7 +59,7 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		rfalse;
 	}
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) {
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) {
       str = glk_stream_open_file_uni(fref, filemode_Read, 0);
       ch = glk_get_char_stream_uni(str);
     }
@@ -86,11 +90,11 @@ if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) rfalse;
 		glk_fileref_destroy(fref);
 		return FileIO_Error(extf, "only closed files can be marked");
 	}
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) str = glk_stream_open_file_uni(fref, filemode_ReadWrite, 0);
     else str = glk_stream_open_file(fref, filemode_ReadWrite, 0);
 	glk_stream_set_position(str, 0, 0); ! seek start
 	if (readiness) ch = '*'; else ch = '-';
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) glk_put_char_stream_uni(str, ch); ! mark as complete
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) glk_put_char_stream_uni(str, ch); ! mark as complete
     else glk_put_char_stream(str, ch);
 	glk_stream_close(str, 0);
 	glk_fileref_destroy(fref);
@@ -128,7 +132,7 @@ Include (-
 			return FileIO_Error(extf, "tried to open a file which does not exist");
 		}
 	}
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) str = glk_stream_open_file_uni(fref, mode, 0);
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) str = glk_stream_open_file_uni(fref, mode, 0);
     else str = glk_stream_open_file(fref, mode, 0);
 	glk_fileref_destroy(fref);
 	if (str == 0) return FileIO_Error(extf, "tried to open a file but failed");
@@ -209,7 +213,7 @@ Include (-
 		AUXF_STATUS_IS_OPEN_FOR_APPEND) {
 		glk_stream_set_position(struc-->AUXF_STREAM, 0, 0); ! seek start
     ! mark as complete
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) glk_put_char_stream_uni(struc-->AUXF_STREAM, '*');
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) glk_put_char_stream_uni(struc-->AUXF_STREAM, '*');
     else glk_put_char_stream(struc-->AUXF_STREAM, '*');
 	}
 	glk_stream_close(struc-->AUXF_STREAM, 0);
@@ -226,7 +230,7 @@ Include (-
 	if ((extf < 1) || (extf > NO_EXTERNAL_FILES)) return -1;
 	struc = TableOfExternalFiles-->extf;
 	if (struc-->AUXF_STATUS ~= AUXF_STATUS_IS_OPEN_FOR_READ) return -1;
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) return glk_get_char_stream_uni(struc-->AUXF_STREAM);
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) return glk_get_char_stream_uni(struc-->AUXF_STREAM);
     return glk_get_char_stream(struc-->AUXF_STREAM);
 ];
 
@@ -245,7 +249,7 @@ Include (-
 		AUXF_STATUS_IS_OPEN_FOR_APPEND)
 		return FileIO_Error(extf,
 			"tried to write to a file which is not open for writing");
-    if (GProperty(EXTERNAL_FILE_TY, extf, output_mode) > 1) return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
+    if (GProperty(EXTERNAL_FILE_TY, extf, extf_output_mode) > 1) return glk_put_char_stream_uni(struc-->AUXF_STREAM, char);
     return glk_put_char_stream(struc-->AUXF_STREAM, char);
 ];
 -) instead of "Put Character" in "FileIO.i6t".
@@ -277,6 +281,73 @@ Unicode File IO ends here.
 
 To treat a file as unicode:
 
-The file of reference is called "ref".
-The output-mode of the file of reference is unicode-mode.
+  The file of reference is called "ref".
+  The output-mode of the file of reference is unicode-mode.
 
+Glk has separate *_uni functions for several file and stream handling calls.
+
+For the non-uni ones, it's definitive that a character is one byte long, and
+a byte is the fundamental unit. In text mode, you may only output the values
+10, 32 to 126, 160 to 255: linefeed, space, and the printable Latin-1 characters.
+(Behavior is undefined, hence implementation dependent, if you try to output
+an illegal character.) In binary mode, you may output any value 0-255.
+
+With the uni calls, binary mode uses the UTF-32 encoding form: every
+character is a 4-byte word. In text mode, UTF-8 is used, but the Glk spec has
+only called for that since 0.7.5 from 2017-02-13. Prior to that, it called
+for UTF-32 for text mode, too.
+
+As of this writing, many interpreters are still using Glk implementations
+prior to 0.7.5; overall, few Glk implementations have been updated to 0.7.5.
+
+Some Glk implementations that *are* available for 0.7.5:
+
+- WindowsGlk
+- cheapglk
+- remglk
+- garglk
+
+Despite Glkote saying it implements 0.7.4, it has supported UTF-8 for unicode
+text output since version 2.2.0 from February 2016 (predating the 0.7.5 spec).
+
+The only IDE available that uses 0.7.5 is the beta release of the Windows
+IDE.
+
+Some interpreters that support 0.7.5:
+
+- Gargoyle 2022.1
+- Quixe 2.1.3+
+- Lectrote (since the earliest)
+
+If you would prefer to test for the Glk library's unicode capabilities
+at runtime you could do:
+
+  When play begins:
+    if unicode is supported, now the output-mode of the file of reference is unicode-mode.
+
+But if you wanted a Latin-1 fallback if unicode was unavailable, you'd probably
+be better off with:
+
+  The file of ref-uni is called "refuni".
+  The output-mode of the file of ref-uni is unicode mode.
+  The file of ref-latin is called "reflatin".
+
+  The output-file is initially the file of ref-latin.
+
+  When play begins: if unicode is supported, now the output-file is the file of ref-uni.
+
+Beyond the ``if unicode is supported`` phrase, this extension adds:
+
+``if <external file> is in/-- text mode``
+``if <external file> is in/-- binary mode``
+
+Otherwise, the extension only modifies functions from FileIO.i6t to use
+Glk unicode library functions for files whose output-mode is unicode-mode.
+
+Chapter Changelog
+
+Section 2/220218
+
+changed ascii-mode -> latin1-mode, output_mode -> extf_output_mode
+added some documentation
+ 
