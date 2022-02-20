@@ -295,7 +295,9 @@ an illegal character). In binary mode, you may output any value 0-255.
 With the uni calls, binary mode uses the UTF-32 encoding form: every character
 is a 4-byte word. In text mode, version 0.7.5 of the Glk spec calls for UTF-8;
 in 0.7.4 and prior versions, the spec defined the behavior as implementation
-dependent.
+dependent. (Note that any implementation will be able to read the files it
+itself wrote; where there could be an issue is reading a file a different
+terp wrote, or wanting some external application to read the file.)
 
 Glk implementations that use UTF-8 for unicode text include:
 
@@ -307,8 +309,8 @@ Glk implementations that use UTF-8 for unicode text include:
 
 Glk implementations that use UTF-32 for unicode text include:
 
-- glkterm 1.04
-- glktermw 1.04
+- glkterm
+- glktermw
 - CocoaGlk
 
 The only IDE available that uses UTF-8 for unicode text  is the beta release
@@ -348,7 +350,7 @@ Glk unicode library functions for files whose output-mode is unicode-mode.
 
 Chapter Changelog
 
-Section 2/220218
+2/220219 updated documentation
 
-changed ascii-mode -> latin1-mode, output_mode -> extf_output_mode
+2/220218 changed ascii-mode -> latin1-mode, output_mode -> extf_output_mode
 added some documentation
