@@ -1,4 +1,4 @@
-Version 2/220218 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
+Version 2/220219 of Unicode File IO (for Glulx only) by Zed Lopez begins here.
 
 "Experimental support for reading and writing external files that may
  include characters longer than a byte. For 6M62."
@@ -290,30 +290,32 @@ For the non-uni ones, it's definitive that a character is one byte long, and
 a byte is the fundamental unit. In text mode, you may only output the values
 10, 32 to 126, 160 to 255: linefeed, space, and the printable Latin-1 characters.
 (Behavior is undefined, hence implementation dependent, if you try to output
-an illegal character.) In binary mode, you may output any value 0-255.
+an illegal character). In binary mode, you may output any value 0-255.
 
-With the uni calls, binary mode uses the UTF-32 encoding form: every
-character is a 4-byte word. In text mode, UTF-8 is used, but the Glk spec has
-only called for that since 0.7.5 from 2017-02-13. Prior to that, it called
-for UTF-32 for text mode, too.
+With the uni calls, binary mode uses the UTF-32 encoding form: every character
+is a 4-byte word. In text mode, version 0.7.5 of the Glk spec calls for UTF-8;
+in 0.7.4 and prior versions, the spec defined the behavior as implementation
+dependent.
 
-As of this writing, many interpreters are still using Glk implementations
-prior to 0.7.5; overall, few Glk implementations have been updated to 0.7.5.
+Glk implementations that use UTF-8 for unicode text include:
 
-Some Glk implementations that *are* available for 0.7.5:
+- Glkote 2.20+
+- WindowsGlk 1.47+
+- cheapglk 1.05+
+- remglk 0.2.5+
+- garglk 2022.1+
 
-- WindowsGlk
-- cheapglk
-- remglk
-- garglk
+Glk implementations that use UTF-32 for unicode text include:
 
-Despite Glkote saying it implements 0.7.4, it has supported UTF-8 for unicode
-text output since version 2.2.0 from February 2016 (predating the 0.7.5 spec).
+- glkterm 1.04
+- glktermw 1.04
+- CocoaGlk
 
-The only IDE available that uses 0.7.5 is the beta release of the Windows
-IDE.
+The only IDE available that uses UTF-8 for unicode text  is the beta release
+of the Windows IDE.
 
-Some interpreters that support 0.7.5:
+Some interpreters that use UTF-8 for unicode text (which is to say that come
+bundled with Glk libraries that do so):
 
 - Gargoyle 2022.1
 - Quixe 2.1.3+
@@ -350,4 +352,3 @@ Section 2/220218
 
 changed ascii-mode -> latin1-mode, output_mode -> extf_output_mode
 added some documentation
- 
