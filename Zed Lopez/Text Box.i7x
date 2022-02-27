@@ -1,4 +1,4 @@
-Version 1/220226 of Text Box by Zed Lopez begins here.
+Version 1/220227 of Text Box by Zed Lopez begins here.
 
 "Flexible framework to define and display text boxes. For 6M62."
 
@@ -71,21 +71,27 @@ A text-box has a list of alignment-values called the tb-alignment-list.
 A text-box has a alignment-value called the horizontal-box-align.
 A text-box has a alignment-value called the vertical-box-align.
 A text-box has a box-status-value called the box-status.
-A text-box can be borderless or bordered.
+A text-box can be unbordered or bordered.
 A text-box has a list of numbers called the edge-locs.
 
 An active text-box is a kind of text-box.
 An active text-box has a phrase nothing -> nothing called the text-box-action.
 The text-box-action of an active text-box is usually pause-the-game-func.
 
+A borderless text-box is a kind of text-box.
+A borderless text-box is usually unbordered.
+The box-paddings of a borderless text-box is usually { 0, 0, 0, 0 }.
+The box-margins of a borderless text-box is usually { 1, 2, 1, 2 }.
+
 A box-layout is a kind of object.
 A box-layout can be fleeting or persistent.
 A box-layout has a list of text-boxes called the box-list.
 A box-layout has a box-status-value called the layout-outcome.
+A box-layout can be overlapping-allowed or overlapping-forbidden.
 
 default-box-layout is a box-layout.
 
-Prompt-box is a borderless active text-box.
+Prompt-box is a unbordered active text-box.
 The horizontal-box-align of prompt-box is center-align.
 The vertical-box-align of prompt-box is bottom-align.
 The box-paddings of prompt-box is { 0, 1, 1, 0 }.
@@ -284,7 +290,7 @@ To display box-layout (bl - a box-layout):
     display text-box box;
   end repeat;
 
-First before page-displaying:
+First before page-displaying (this is the setup windows before page-displaying rule):
   if the current box-layout is fleeting, add prompt-box to the box-list of the current box-layout;
   truncate restore-list to 0 entries;
   now page-display-target is spawned by the main window;
@@ -293,12 +299,12 @@ First before page-displaying:
   now the scale method of page-display-target is g-proportional;
   now the measurement of page-display-target is 100;
   repeat with w running through g-present g-windows begin;
-  if w is not the main window, add w to restore-list;
+    if w is not the main window, add w to restore-list;
   end repeat;
   [ we do it separately to avoid confusion stemming from changing the
   number of g-present g-windows during a loop over them ]
   repeat with w running through restore-list begin;
-  close w;
+    close w;
   end repeat;
   open page-display-target, as the acting main window;
   now page-display-target-height is the height of page-display-target;
@@ -306,7 +312,7 @@ First before page-displaying:
 
 validate layout is a box-layout based rulebook producing a box-status-value.
 
-Validate layout (this is the they're good boxes brent rule):
+First validate layout (this is the they're good boxes brent rule):
   repeat with box running through box-list of the current box-layout begin;
     carry out the box-planning activity with box;
   end repeat;
@@ -316,9 +322,9 @@ Validate layout (this is the they're good boxes brent rule):
     if status is not box-success, rule succeeds with result status;
   end repeat;
 
-Validate layout (this is the overlapping boxes check rule):
+Validate layout an overlapping-forbidden box-layout (this is the forbid overlapping boxes rule):
   repeat with index running from 1 to the number of entries in the box-list of the current box-layout - 1 begin;
-      repeat with inner-index running from index + 1 to the number of entries in the box-list of the current box-layout begin;
+    repeat with inner-index running from index + 1 to the number of entries in the box-list of the current box-layout begin;
       if entry index in the box-list of the current box-layout overlaps entry inner-index in the box-list of the current box-layout, rule succeeds with result box-overlap-error;
     end repeat;
   end repeat;
@@ -350,11 +356,11 @@ To decide if (b1 - a text-box) overlaps (b2 - a text-box):
   end repeat;
   no;
 
-For page-displaying:
+For page-displaying (this is the display good layout page-displaying rule):
   now the layout-outcome of the current box-layout is the box-status-value produced by the validate layout rules for the current box-layout;
   if the layout-outcome of the current box-layout is box-success, display box-layout current box-layout;
 
-After page-displaying:
+After page-displaying (this is the window cleanup after page-displaying rule):
   close page-display-target;
   now the scale method of page-display-target is old-page-display-target-scale;
   now the measurement of page-display-target is old-page-display-target-measurement;
@@ -363,7 +369,10 @@ After page-displaying:
   end repeat;
   refresh all windows;
   refresh main window;
-  if the layout-outcome of the current box-layout is not box-success, text-dump current box-layout;
+
+Last after page-displaying a box-layout (called layout) when the layout-outcome of layout is not box-success (this is the dump plain text after bad layout rule):
+  [if the layout-outcome of the current box-layout is not box-success,]
+  text-dump current box-layout;
 
 To page-display (bl - a box-layout):
   carry out the page-displaying activity with bl;
@@ -382,7 +391,7 @@ To text-dump (bl - a box-layout):
 To decide what grid-loc is the grid coordinate of/-- x (xpos - a number) and y (ypos - a number):
   decide on the grid-loc with x-pos part xpos y-pos part ypos.
 
-to display text-box (tb - a text-box):
+To display text-box (tb - a text-box):
   let index be 0;
   let tx be left-value edge-loc of tb;
   let ty be top-value edge-loc of tb;
@@ -397,37 +406,37 @@ Box-planning something is an activity on text-boxes.
 To decide what text-box is the/-- current box: (- parameter_value -).
 To decide what box-layout is the/-- current box-layout: (- parameter_value -).
 
-Before box-planning:
+Before box-planning (this is the prep boxes before box-planning rule):
   sanitize the current box;
   let len be 0;
   let tb-text-alignment be a alignment-value;
   repeat for p in paragraphs of epigraph of current box with index i begin;
-  unless i is 1 begin;
-  add "" to tb-line-list of current box;
-  add left-align to tb-alignment-list of current box;
-  end unless;
-  repeat for line in lines of p begin;
-    if line matches the regular expression "^\<(<LCR>)\>\s*", case insensitively begin;
-      let alignment-initial be the substituted form of the text matching subexpression 1 in lower case;
-      replace the text text matching regular expression in line with "";
-      if alignment-initial is "l", now tb-text-alignment is left-align;
-      if alignment-initial is "c", now tb-text-alignment is center-align;
-      if alignment-initial is "r", now tb-text-alignment is right-align;
-      end if;
-    if number of characters in line > len, now len is number of characters in line;
-    add line to tb-line-list of current box;
-    add tb-text-alignment to tb-alignment-list of current box;
-  end repeat;
+    unless i is 1 begin;
+      add "" to tb-line-list of current box;
+      add left-align to tb-alignment-list of current box;
+    end unless;
+    repeat for line in lines of p begin;
+      if line matches the regular expression "^\<(<LCR>)\>\s*", case insensitively begin;
+        let alignment-initial be the substituted form of the text matching subexpression 1 in lower case;
+        replace the text text matching regular expression in line with "";
+        if alignment-initial is "l", now tb-text-alignment is left-align;
+        if alignment-initial is "c", now tb-text-alignment is center-align;
+        if alignment-initial is "r", now tb-text-alignment is right-align;
+        end if;
+      if number of characters in line > len, now len is number of characters in line;
+      add line to tb-line-list of current box;
+      add tb-text-alignment to tb-alignment-list of current box;
+    end repeat;
   end repeat;
   now the tb-line-width of the current box is len;
   now the tb-height of the current box is the number of entries in tb-line-list of current box;
   if the tb-line-width of the current box > the page-display-target-width, now the box-status of the current box is width-overflow-error;
   if the tb-height of the current box > the page-display-target-height, now the box-status of the current box is height-overflow-error;
 
-For box-planning:
+For box-planning (this is the set parameters box-planning rule):
   if the box-status of the current box is box-success begin;
     let border-character-width be 2;
-    if the current box is borderless, now border-character-width is 0;
+    if the current box is unbordered, now border-character-width is 0;
     let first-row be 0;
     let first-column be 0;
     now the tb-width of the current box is the tb-line-width of the current box;
@@ -454,7 +463,7 @@ For box-planning:
     add first-column to edge-locs of the current box; [left]
   end if;
 
-After box-planning:
+After box-planning (this is the finish building boxes after box-planning rule):
   if the box-status of the current box is box-success begin;
     if the current box is bordered begin;
       add top-border to current box;
@@ -477,7 +486,7 @@ To add bottom-border to (tb - a text-box):
   if tb is bordered, now result is "[bottom-left-corner corner of tb][result][bottom-right-corner corner of tb]";
   add result to the box-text-lines of tb;
 
-to load contents into (tb - a text-box):
+To load contents into (tb - a text-box):
   let index be 0;
   repeat with line running through tb-line-list of tb begin;
     increment index;
@@ -557,7 +566,7 @@ Example: * Box demo
 	i7-credit-box is a borderless text-box.
 	banner-box is a text-box.
 	quote-box is a text-box.
-	chapter-box is a text-box.
+	chapter-box is a borderless text-box.
 	The epigraph of chapter-box is "Chapter [chapter-number]".
 	chapter-number is initially 0.
 	
@@ -571,8 +580,6 @@ Example: * Box demo
 	  add banner-box to layout;
 	  now epigraph of i7-credit-box is "<R>[I7 name-version][line break][I6T name-version][line break][I6 name-version]";
 	  set i7-credit-box position to top-right-corner;
-	  now the box-paddings of i7-credit-box is { 0, 0, 0, 0 };
-	  now the box-margins of i7-credit-box is { 1, 2, 0, 0 };
 	  add i7-credit-box to layout;
 	  carry out the page-displaying activity with layout;
 	
@@ -597,10 +604,6 @@ Example: * Box demo
 	  set line style of quote-box to double-line-style;
 	  now the epigraph of quote-box is title quote;
 	  add quote-box to layout;
-	  [set vertical line style of chapter-box to double-line-style;]
-	  now chapter-box is borderless;
-	  now the box-paddings of chapter-box is { 0, 0, 0, 0 };
-	  now the box-margins of chapter-box is { 1, 0, 0, 2 };
 	  now chapter-number is 3;
 	  set chapter-box position to top-left-corner;
 	  add chapter-box to layout;
