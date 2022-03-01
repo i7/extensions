@@ -1,4 +1,4 @@
-Version 1/220217 of JSON (for Glulx only) by Dannii Willis begins here.
+Version 1/220301 of JSON (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for parsing and generating JSON"
 
@@ -194,7 +194,7 @@ To repeat with (loopvar - nonexisting text variable) of/in (R - JSON reference) 
 		{-my:2} = 0;
 		if (JSON_Get_Type({R}) == (+ JSON object type +)) {
 			{-my:2} = BlkValueRead({R}-->1, LIST_LENGTH_F);
-			{-lvalue-by-reference:loopvar} = BlkValueRead({R}-->1, {-my:1} + LIST_ITEM_BASE)-->1;
+			{-lvalue-by-reference:loopvar} = BlkValueRead({R}-->1, LIST_ITEM_BASE)-->1;
 		}
 		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1} = {-my:1} + 2, {-lvalue-by-reference:loopvar} = BlkValueRead({R}-->1, {-my:1} + LIST_ITEM_BASE)-->1)
 	-).
@@ -458,7 +458,7 @@ Array JSON_Parse_Number_Buffer -> 20;
 	return JSON_Create((+ JSON number type +), val);
 ];
 
-[ JSON_Parse_String str i length cap char j pos ref res;
+[ JSON_Parse_String str i length cap char pos ref res;
 	! Handle whitespace and ensure this is actually a string
 	i = JSON_Parse_Skip_Whitespace(str, i, length);
 	char = BlkValueRead(str, i);
