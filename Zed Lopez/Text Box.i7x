@@ -1,11 +1,6 @@
-Version 2 of Text Box by Zed Lopez begins here.
+Version 2/220301 of Text Box by Zed Lopez begins here.
 
 "Flexible framework to define and display text boxes. For 6M62."
-
-[ one last crucial thing: separate displaying boxes and dumping
-  equivalents if overflow or overlap away from window handling stuff ]
-
-[ center-aligned boxes should still think about margins ]
 
 Include Version 15 of Flexible Windows by Jon Ingold.
 Include Text Loops by Zed Lopez. 
@@ -36,19 +31,17 @@ Line-style-value is a kind of value.
   the same effect ]
 The line-style-values are single-line-style, double-line-style, heavy-line-style.
 
-Orientation-value is a kind of value. The orientation-values are horizontal-value and vertical-value.
+[ box-alignments other than center render the opposing margin irrelevant. If you're top-aligned, bottom margin doesn't matter, etc. ]
+[ this is used for both line alignments and box alignments though top-align and bottom-align are meaningless for line alignments ]
+Alignment-value is a kind of value. The alignment-values are center-align, left-align, right-align, top-align, bottom-align.
+
+Extent-value is a kind of value. The extent-values are tb-none, tb-text, tb-padded, tb-bordered, tb-external.
 
 Position-value is a kind of value. The Position-values are top-value, right-value, bottom-value, left-value. 
 
-[ box-alignments other than center render the opposing margin irrelevant. If you're top-aligned, bottom margin doesn't matter, etc. ]
-[ this is used for both line alignments and box alignments though top-align and bottom-align are meaningless for line alignments ]
-alignment-value is a kind of value. The alignment-values are center-align, left-align, right-align, top-align, bottom-align.
-
-extent-value is a kind of value. The extent-values are tb-none, tb-text, tb-padded, tb-bordered, tb-external.
-
 A box-corner-value is a kind of value. The box-corner-values are top-left-corner,top-right-corner, bottom-left-corner, bottom-right-corner.
 
-A box-status-value is a kind of value. The box-status-values are box-success, width-overflow-error, height-overflow-error, box-overlap-error.
+A box-status-value is a kind of value. The box-status-values are box-success, overflow-error, box-overlap-error, box-invalid-error.
 
 The default-box-paddings are always { 0, 0, 0, 0 }.
 The default-box-margins are always { 1, 2, 1, 2 }.
@@ -81,8 +74,8 @@ To decide what number is the (pv - position-value) edge of/for (ev - extent-valu
   if pv is bottom-value, now result is first-row of tb + number of entries in tb-line-list of tb - 1;
   if ev is tb-text, decide on result;
   let modifier be 0;
-  if ev is tb-padded, now modifier is modifier + pv padding of tb;
-  if ev is tb-bordered, now modifier is modifier + border size of tb;
+  if ev >= tb-padded, now modifier is modifier + pv padding of tb;
+  if ev >= tb-bordered, now modifier is modifier + border size of tb;
   if ev is tb-external, now modifier is modifier + pv margin of tb;
   decide on result + (direction-modifier of pv * modifier);
 
@@ -109,8 +102,10 @@ The text-box-action of an active text-box is usually pause-the-game-func.
 Lined-box-padding-default is always { 1, 4, 1, 4 }.
 Lined-box-margin-default is always { 0, 1, 0, 1 }.
 
+The default-line-styles is always { single-line-style, single-line-style, single-line-style, single-line-style }.
 A bordered text-box is a kind of text-box.
 A bordered text-box has a list of line-style-values called the line-styles.
+The line-styles of a bordered text-box are usually the default-line-styles.
 A bordered text-box has a list of unicode characters called the edge-glyphs.
 A bordered text-box has a list of unicode characters called the corner-glyphs.
 The box-paddings of a bordered text-box is usually lined-box-padding-default.
@@ -123,11 +118,11 @@ A box-layout is a kind of object.
 A box-layout can be fleeting or persistent.
 A box-layout has a list of text-boxes called the box-list.
 A box-layout has a box-status-value called the layout-outcome.
-[ TODO: get rid of ]
-A box-layout can be overlapping-allowed or overlapping-forbidden.
 A box-layout has an extent-value called the layout-strictness.
+[ by default, margins can overlap without complaint. set to tb-external to forbid that ]
 The layout-strictness of a box-layout is usually tb-bordered.
 
+default-text-box is a bordered text-box.
 default-box-layout is a box-layout.
 
 Prompt-box is an active text-box.
@@ -148,22 +143,21 @@ To set (tb - a text-box) position to (cv - a box-corner-value):
   if cv is top-left-corner or cv is bottom-left-corner, now the horizontal-box-align of tb is left-align;
   if cv is top-right-corner or cv is bottom-right-corner, now the horizontal-box-align of tb is right-align;
 
-To decide what orientation-value is an/-- orientation of/-- a/an/-- (pv - a position-value):
-  if pv is top-value or pv is bottom-value, decide on horizontal-value;
-  decide on vertical-value.
-
 To wipe (box - a text-box):
   now horizontal-box-align of box is center-align;
   now vertical-box-align of box is center-align;
-  now box-paddings of box is default-box-paddings;
-  now box-margins of box is default-box-margins;
   change tb-line-list of box to have 0 entries;
   now the epigraph of box is "";
   now the tb-text-width of box is 0;
   if box is a bordered text-box begin;
     truncate corner-glyphs of box to 0 entries;
     truncate edge-glyphs of box to 0 entries;
-    truncate line-styles of box to 0 entries;
+    now the line-styles of box are the default-line-styles;
+    now the box-paddings of box are lined-box-padding-default;
+    now the box-margins of box are lined-box-margin-default;
+  else;
+    now the box-paddings of box are default-box-paddings;
+    now the box-margins of box are default-box-margins;
   end if;
 
 To wipe (bl - a box-layout):
@@ -173,14 +167,12 @@ To wipe (bl - a box-layout):
     
 To sanitize (box - a text-box):
   if box is a bordered text-box begin;
-    change line-styles of box to have 4 entries;
     if the number of entries in the edge-glyphs of box is not 4, set the edges for box;
     if the number of entries in the corner-glyphs of box is not 4, set the corners for box;
   end if;
   truncate the tb-line-list of box to 0 entries;
   
-To set the/-- line style of (box - a text-box) to (v - a line-style-value):
-  change line-styles of box to have 4 entries;
+To set the/-- line style of/for a/an/-- (box - a text-box) to a/an/-- (v - a line-style-value):
   repeat with i running from 1 to 4 begin;
     now entry i in line-styles of box is v;
   end repeat.
@@ -199,14 +191,18 @@ To set the/-- corners of (box - a bordered text-box) to rounded:
   now the corner-glyphs of box is num-to-char applied to rounded-corners;
 
 To set the/-- vertical line style of (box - a bordered text-box) to (v - a line-style-value):
-  if the number of entries in the line-styles of box is not 4, set the line style of box to single-line-style;
   now entry right-value cast as a number in the line-styles of box is v;
   now entry left-value cast as a number in the line-styles of box is v;
 
 To set the/-- horizontal line style of (box - a text-box) to (v - a line-style-value):
-  if the number of entries in the line-styles of box is not 4, set the line style of box to single-line-style;
   now entry top-value cast as a number in the line-styles of box is v;
   now entry bottom-value cast as a number in the line-styles of box is v;
+
+To decide what line-style-value is the line style of/for (pv - a position-value) of/for (box - a text-box):
+  decide on entry (pv cast as a number) in the line-styles of box.
+
+To set a/an/the/-- (pv - a position-value) line style of/for a/an/--  of/for a/an/-- (box - a text-box) to (v - a line-style-value):
+  now entry (pv cast as a number) in the line-styles of box is v.
 
 To decide what unicode character is a/an/-- (corner - a box-corner-value) corner of/for (box - a bordered text-box):
   decide on entry (corner cast as a number) of corner-glyphs of box;
@@ -226,16 +222,12 @@ To set the/-- corners for (box - a bordered text-box):
     add corner cv of box to the corner-glyphs of box;
   end repeat;
 
-To decide what line-style-value is the style of/for (pv - a position-value) of/for (box - a text-box):
-  decide on entry (pv cast as a number) in the line-styles of box.
-
 To decide what unicode character is the glyph for (pv - a position-value) of (box - a text-box):
-  let ov be the orientation of pv;
-  let ls be the style of pv for box;
+  let ls be the line style of pv for box;
   let result be 9472;
-  if ov is vertical-value, now result is result + 2;
+  if pv is left-value or pv is right-value, now result is result + 2;
   if ls is double-line-style begin;
-    if ov is horizontal-value, now result is result + 80;
+    if pv is top-value or pv is bottom-value, now result is result + 80;
     else now result is result + 79;
   else;
     if ls is heavy-line-style, now result is result + 1;
@@ -253,8 +245,8 @@ To decide what position-value is the vertical edge meeting (corner - a box-corne
 To decide what unicode character is corner (corner - a box-corner-value) of/for (box - a text-box):
   let h-pos be the horizontal edge meeting corner;
   let v-pos be the vertical edge meeting corner;
-  let h-edge be the style of h-pos for box;
-  let v-edge be the style of v-pos for box;
+  let h-edge be the line style of h-pos for box;
+  let v-edge be the line style of v-pos for box;
   let result be 9484;
   let corner-mod be 4;
   if h-edge is double-line-style or v-edge is double-line-style, now corner-mod is 3;
@@ -266,12 +258,16 @@ To decide what unicode character is corner (corner - a box-corner-value) of/for 
   if v-edge is heavy-line-style, now result is result + 2;
   decide on result cast as a unicode character;
 
+To display text box with (T - a text):
+  wipe default-text-box;
+  display single box default-text-box with T;
+
 To display single box (box - a text-box) with (T - a text) on (w - a text grid g-window):
   now page-display-target is w;
   display single box box with T;  
 
 To display single box (box - a text-box) with (T - a text):
-  truncate box-list of default-box-layout to 0 entries;
+  wipe default-box-layout;
   add box to default-box-layout;
   now the epigraph of box is T;
   carry out the page-displaying activity with default-box-layout.
@@ -326,10 +322,11 @@ First before page-displaying a box-layout (called bl) (this is the setup windows
   open page-display-target, as the acting main window;
   now page-display-target-height is the height of page-display-target;
   now page-display-target-width is the width of page-display-target;
+  now the layout-outcome of the bl is the box-status-value produced by the validate layout rules for the bl;
 
-validate layout is a box-layout based rulebook producing a box-status-value.
+Validate layout is a box-layout based rulebook producing a box-status-value.
 
-First validate layout  a box-layout (called bl) (this is the they're good boxes brent rule):
+First validate layout a box-layout (called bl) (this is the they're good boxes brent rule):
   repeat with box running through box-list of the bl begin;
     carry out the box-planning activity with box;
   end repeat;
@@ -338,31 +335,29 @@ First validate layout  a box-layout (called bl) (this is the they're good boxes 
     now status is the box-status of box;
     if status is not box-success, rule succeeds with result status;
   end repeat;
-
-Validate layout an overlapping-forbidden box-layout (called bl) (this is the forbid overlapping boxes rule):
   repeat with index running from 1 to the number of entries in the box-list of the bl - 1 begin;
     repeat with inner-index running from index + 1 to the number of entries in the box-list of the bl begin;
-      if entry index in the box-list of the bl overlaps entry inner-index in the box-list of the bl, rule succeeds with result box-overlap-error;
+      if entry index in the box-list of the bl intersects entry inner-index in the box-list of the bl by the layout-strictness of bl, rule succeeds with result box-overlap-error;
     end repeat;
   end repeat;
   rule succeeds with result box-success;
-
-To decide if (tb - a text-box) surrounds (x - a number) and (y - a number):
-  if x > left-value edge of tb-padded of tb and x < right-value edge of tb-padded of tb and y > top-value edge of tb-padded of tb and y < bottom-value edge of tb-padded of tb, yes;
+  
+To decide if the/-- (tb - a text-box) intersects (x - a number) and (y - a number) by (ev - an extent-value):
+  if x >= left-value edge of ev of tb and x <= right-value edge of ev of tb and y >= top-value edge of ev of tb and y <= bottom-value edge of ev of tb, yes;
   no.
 
-To decide if (b1 - a text-box) overlaps (b2 - a text-box):
+To decide if (b1 - a text-box) intersects (b2 - a text-box) by (ev - an extent-value):
   repeat with cv running through the box-corner-values begin;
-    if b2 surrounds ((the vertical edge meeting cv) edge of tb-padded of b1) and ((the horizontal edge meeting cv) edge of tb-padded of b1), yes;
+    if b2 intersects ((the vertical edge meeting cv) edge for ev of b1) and ((the horizontal edge meeting cv) edge for ev of b1) by ev, yes;
   end repeat;
-  if b1 surrounds the top-value edge of tb-bordered of b2 and the left-value edge of tb-bordered of b2, yes;
+  [ still possible that they don't intersect because b2 is entirely within the bounds of b1, so we check one corner the other way ]
+  if b1 intersects the bottom-value edge of ev of b2 and the right-value edge of ev of b2 by ev, yes;
   no.
 
-For page-displaying  a box-layout (called bl) (this is the display good layout page-displaying rule):
-  now the layout-outcome of the bl is the box-status-value produced by the validate layout rules for the bl;
+For page-displaying a box-layout (called bl) (this is the display good layout page-displaying rule):
   if the layout-outcome of the bl is box-success, display box-layout bl;
 
-After page-displaying  a box-layout (called bl) (this is the window cleanup after page-displaying rule):
+After page-displaying a box-layout (called bl) (this is the window cleanup after page-displaying rule):
   repeat with box running through the box-list of bl begin;
     now box is not currently-displayed;
   end repeat;
@@ -399,15 +394,15 @@ First box-displaying a bordered text-box (called tb):
   let tx be first-column of tb - (border size of tb + left-value padding of tb);
   put "[top-left-corner corner of tb][(top-value edge-glyph of tb) * tb-padded width of tb][top-right-corner corner of tb]" at x tx and y ty;
   repeat with i running from 1 to top-value padding of tb begin;
-    put bordered text "" for tb at x tx and y (ty + i);
+    put text line "" for tb at x tx and y (ty + i);
   end repeat;
 
 Box-displaying a text-box (called tb):
-  let index be 0;
   let tx be first-column of tb;
   if tb is a bordered text-box, now tx is tx - (border size of tb + left-value padding of tb);
+  let index be 0;
   repeat with line running through tb-line-list of tb begin;
-    put bordered text line for tb at x tx and y first-row of tb + index;
+    put text line line for tb at x tx and y first-row of tb + index;
     increment index;
   end repeat;
   now tb is currently-displayed;
@@ -416,7 +411,7 @@ Last box-displaying a bordered text-box (called tb):
   let ty be first-row of tb + tb-text height of tb - 1;
   let tx be first-column of tb - (border size of tb + left-value padding of tb);
   repeat with i running from 1 to bottom-value padding of tb begin;
-    put bordered text "" for tb at x tx and y (ty + i);
+    put text line "" for tb at x tx and y (ty + i);
   end repeat;
   put "[bottom-left-corner corner of tb][(bottom-value edge-glyph of tb) * tb-padded width of tb][bottom-right-corner corner of tb]" at x tx and y (ty + bottom-value padding of tb + 1);
 
@@ -427,16 +422,16 @@ Box-planning something is an activity on text-boxes.
 
 First before box-planning a text-box (called tb) (this is the prep boxes before box-planning rule):
   sanitize tb;
-  let len be 0;
+  let widest-line-length be 0;
   let tb-text-alignment be an alignment-value;
   let temp-alignment-list be a list of alignment-values;
   let temp-lines be a list of texts;
   repeat for p in paragraphs of epigraph of tb with index i begin;
-    unless i is 1 begin;
+    unless i is 1 begin; [ insert a blank link before new paragraphs (but not before the first paragraph) ]
       add "" to temp-lines;
       add left-align to temp-alignment-list;
     end unless;
-    repeat for line in lines of p begin;
+    repeat for line in lines of p begin; [ as a side effect of loop, lines have left and right whitespace trimmed ]
       if line matches the regular expression "^\<(<LCR>)\>\s*", case insensitively begin;
         let alignment-initial be the substituted form of the text matching subexpression 1 in lower case;
         replace the text text matching regular expression in line with "";
@@ -444,39 +439,55 @@ First before box-planning a text-box (called tb) (this is the prep boxes before 
         if alignment-initial is "c", now tb-text-alignment is center-align;
         if alignment-initial is "r", now tb-text-alignment is right-align;
         end if;
-      if number of characters in line > len, now len is number of characters in line;
+      if number of characters in line > widest-line-length, now widest-line-length is number of characters in line;
         add line to temp-lines;
       add tb-text-alignment to temp-alignment-list;
     end repeat;
     end repeat;
-    now the tb-text-width of tb is len;
+    now the tb-text-width of tb is widest-line-length;
     let i be 0;
+    [ we make every line the width of the widest-line-length, padding appropriately per the relevant text alignment ]
     repeat with line running through temp-lines begin;
       increment i;
       if entry i in temp-alignment-list is center-align begin;
-        let x be (len - number of characters in line) / 2;
+        let x be (widest-line-length - number of characters in line) / 2;
         add "[unicode-space * x][line][unicode-space * x]" to tb-line-list of tb;
         next;
       end if;
-      if entry i in temp-alignment-list is left-align, add "[line][unicode-space * (len - number of characters in line)]" to tb-line-list of tb;
-      else add "[unicode-space * (len - number of characters in line)][line]" to tb-line-list of tb; [ right-align ]
+      if entry i in temp-alignment-list is left-align, add "[line][unicode-space * (widest-line-length - number of characters in line)]" to tb-line-list of tb;
+      else add "[unicode-space * (widest-line-length - number of characters in line)][line]" to tb-line-list of tb; [ right-align ]
     end repeat;
 
-Before box-planning a text-box (called tb) (this is the set parameters box-planning rule):
-  if the horizontal-box-align of tb is center-align begin;
-    now first-column is ((the left-value margin of tb) + (the border size of tb) + (the left-value padding of tb) +  the page-display-target-width - (right-value margin of tb + border size of tb + right-value padding of tb + the tb-text-width of tb)) / 2;
-  else;
-   if the horizontal-box-align of tb is right-align, now first-column is the page-display-target-width - (left-value margin of tb + border size of tb + left-value padding of tb + tb-text-width of tb);
-   else now first-column is 1 + the left-value margin of tb + the border size of tb + the left-value padding of tb;
-  end if;
+For box-planning a text-box (called tb) (this is the set parameters box-planning rule):
+  if the horizontal-box-align of tb is center-align, now first-column is ((the left-value margin of tb) + (the border size of tb) + (the left-value padding of tb) +  the page-display-target-width - (right-value margin of tb + border size of tb + right-value padding of tb + the tb-text-width of tb)) / 2;
+  if the horizontal-box-align of tb is right-align, now first-column is the page-display-target-width - (left-value margin of tb + border size of tb + left-value padding of tb + tb-text-width of tb);
+  if the horizontal-box-align of tb is left-align, now first-column is 1 + the left-value margin of tb + the border size of tb + the left-value padding of tb;
   if the vertical-box-align of tb is center-align, now first-row of tb is the ((top-value margin of tb) + (the border size of tb) + (the top-value padding of tb) + (page-display-target-height) - (bottom-value margin of tb + border size of tb + bottom-value padding of tb + the number of entries in tb-line-list of tb)) / 2;
   if the vertical-box-align of tb is bottom-align, now first-row of tb is 1 + the page-display-target-height - (tb-text height of tb + the bottom-value margin of tb + the border size of tb + the bottom-value padding of tb);
   if the vertical-box-align of tb is top-align, now first-row of tb is 1 + the top-value margin of tb + the border size of tb + the top-value padding of tb;
 
+After box-planning a text-box (called tb):
+  if the tb-external width of tb > page-display-target-width or the tb-external height of tb > page-display-target-height, now the box-status of tb is overflow-error.
+
 [ TODO what if T is too long? ]
-To decide what text is bordered text (T - a text) of/for (tb - a text-box):
- if tb is unbordered, decide on T;
+To decide what text is text line (T - a text) of/for (tb - a text-box):
+ if tb is unbordered, decide on "[unicode-space * left-value padding of tb][T][unicode-space * (tb-text-width of tb - number of characters in T)][unicode-space * right-value padding of tb]";
  decide on "[left-value edge-glyph of tb][unicode-space * left-value padding of tb][T][unicode-space * (tb-text-width of tb - number of characters in T)][unicode-space * right-value padding of tb][right-value edge-glyph of tb]";
+
+Part debug (not for release)
+
+To debug-output (layout - a box-layout):
+repeat with box running through the box-list of layout begin;
+  say "[box] row: [first-row of box] col: [first-column of box] text-width: [tb-text-width of box] border size: [border size of box].";
+  say "  paddings: [box-paddings of box].";
+  say "  margins: [box-margins of box].";
+  repeat with pv running through the position-values begin;
+    say "  [pv] [direction-modifier of pv].";
+    repeat with ev running through the extent-values begin;
+      say "  [ev] : [the pv edge of ev of box].";
+    end repeat;
+  end repeat;
+end repeat;
 
 Part grid (for use without Text Griddle by Zed Lopez)
 
@@ -485,6 +496,11 @@ To put (t - a text) at x (col - a number) and/-- y (row - a number):
 
 To put (t - a text) at x (col - a number) and/-- y (row - a number) of (win - a g-window): 
 (- glk_window_move_cursor({win}.(+ ref number +), {col} - 1, {row} - 1); TEXT_TY_Say({t}); -).
+
+Part no boxes with screenreader (for use with Screenreader by Zed Lopez)
+
+Last before page-displaying a box-layout (called bl) when the interface is screenreader (this is the plain box text for screenreaders rule):
+  now the layout-outcome of bl is box-invalid-error.
 
 Part char (for use without Char by Zed Lopez)
 
@@ -510,6 +526,36 @@ To decide what K is a/-- null (name of kind of value K): (- nothing -)
 Text box ends here.
 
 ---- Documentation ----
+
+Chapter Introduction
+
+Text Box offers a lot of options, but the simplest usage is uncomplicated:
+
+When play begins:
+  display text box with "My object all sublime[line break]I shall achieve in time[line break]To make the punishment[line break]Fit the crime."
+
+
+Section Line Styles
+
+Bordered boxes' edges default to having single-line-style; other possibilities are double-line-style or heavy-line-style. To set all 4 edges to some style:
+
+set the line style of quote-box to double-line-style.
+
+To set either both horizontal or both vertical edges:
+
+set the horizontal line style of quote-box to heavy-line-style.
+set the vertical line style of quote-box to double-line-style.
+
+If you really want to set an individual line, or set all 4 to arbitrary values:
+
+set the top-value line style of quote-box to heavy-line style.
+now the line-styles of quote-box are { single-line-style, heavy-line-style, double-line-style, single-line-style }.
+
+
+To get the style of a given edge:
+
+line style of/for <position-value> of/for <text-box>
+
 
 Chapter Changelog
 
