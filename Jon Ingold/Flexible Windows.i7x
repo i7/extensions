@@ -1,4 +1,4 @@
-Version 15/220202 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/220305 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -72,6 +72,9 @@ A g-window has a number called minimum size.
 A g-window has a number called the rock number.
 
 A g-window has a number called ref number.
+
+A g-window has a truth state called the border hint.
+The border hint of a g-window is usually true.
 
 A g-window can be g-required or g-unrequired.
 A g-window is usually g-unrequired.
@@ -314,6 +317,7 @@ Include (-
 		{
 			size = win.(+ measurement +);
 		}
+		if ( ~~win.(+ border hint +) ) method = method | winmethod_NoBorder;
 	}
 	type = win.(+ type +) + 2;
 	rock = win.(+ rock number +);
