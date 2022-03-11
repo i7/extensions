@@ -49,13 +49,33 @@ heap-size-estimate:12
 small-block-size:3
 
 comparison-routine:BlkValueCompare
-!constant-compilation-method:special
 distinguisher:OPTION_TY_Distinguish
 i6-printing-routine:OPTION_TY_Say
 
 description:an option
 index-default-value:<i>none</i>
 specification-text:An optional value, either nothing, or a value of a specific kind.
+
+
+
+COUPLE_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:couple of k and l
+plural:couples of k and l
+constructor-arity:covariant, covariant
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:20
+small-block-size:5
+
+comparison-routine:BlkValueCompare
+distinguisher:COUPLE_TY_Distinguish
+i6-printing-routine:COUPLE_TY_Say
+
+description:a couple
+specification-text:A couple is a 2-tuple, grouping two values of any type.
 
 
 

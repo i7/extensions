@@ -11,6 +11,7 @@ Volume - Template changes
 Include (-
 Constant BLK_BVBITMAP_CUSTOM_BV = $80;
 Constant BLK_BVBITMAP_OPTION = $81;
+Constant BLK_BVBITMAP_COUPLE = $82;
 
 [ BlkValueWeakKind bv o;
 	if (bv) {
@@ -20,6 +21,7 @@ Constant BLK_BVBITMAP_OPTION = $81;
 			if (o & BLK_BVBITMAP_CUSTOM_BV) {
 				switch (o) {
 					BLK_BVBITMAP_OPTION: return OPTION_TY;
+					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
 				}
 				return 0;
 			}
@@ -164,6 +166,113 @@ To decide if (O - a value option) is some:
 
 To decide what K is value of (O - value of kind K option):
 	(- ({-by-reference:O}-->2) -).
+
+
+
+Volume - Couples
+
+[ We can't have variable length tuples, and also TUPLE is already an I7 kind, though it isn't useable.
+It doesn't seem possible to make a triple - Inform seems to trip over kinds generic over three other kinds. ]
+
+[ Couples are five word short block values.
+The first word is the short block header, $82.
+The 2nd-3rd words store the types of the values.
+The 4th-5th words store the values. ]
+
+Include (-
+[ COUPLE_TY_Support task arg1 arg2 arg3;
+	switch(task) {
+		COMPARE_KOVS: return COUPLE_TY_Compare(arg1, arg2);
+		COPY_KOVS: COUPLE_TY_Copy(arg1, arg2);
+		CREATE_KOVS: return COUPLE_TY_Create(arg1, arg2);
+		DESTROY_KOVS: COUPLE_TY_Destroy(arg1);
+	}
+	! We don't respond to the other tasks
+	rfalse;
+];
+
+[ COUPLE_TY_Compare c1 c2	cf delta;
+	! Compare the first values
+	cf = KOVComparisonFunction(c1-->1);
+	if (cf == 0 or UnsignedCompare) {
+		delta = c1-->3 - c2-->3;
+	}
+	else {
+		delta = cf(c1-->3, c2-->3);
+	}
+	if (delta) {
+		return delta;
+	}
+	! Compare the second values
+	cf = KOVComparisonFunction(c1-->2);
+	if (cf == 0 or UnsignedCompare) {
+		delta = c1-->4 - c2-->4;
+	}
+	else {
+		delta = cf(c1-->4, c2-->4);
+	}
+	if (delta) {
+		return delta;
+	}
+	return 0;
+];
+
+[ COUPLE_TY_Copy to from;
+	to-->1 = from-->1;
+	to-->2 = from-->2;
+	to-->3 = from-->3;
+	to-->4 = from-->4;
+];
+
+[ COUPLE_TY_Create skov short_block;
+	if (short_block == 0) {
+		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
+	}
+	short_block-->0 = BLK_BVBITMAP_COUPLE;
+	short_block-->1 = KindBaseTerm(skov, 0);
+	short_block-->2= KindBaseTerm(skov, 1);
+	short_block-->3 = 0;
+	short_block-->4 = 0;
+	return short_block;
+];
+
+[ COUPLE_TY_Destroy short_block;
+	if (KOVIsBlockValue(short_block-->1)) {
+		BlkValueFree(short_block-->3);
+	}
+	if (KOVIsBlockValue(short_block-->2)) {
+		BlkValueFree(short_block-->4);
+	}
+];
+
+[ COUPLE_TY_Distinguish c1 c2;
+	if (COUPLE_TY_Compare(c1, c2) == 0) rfalse;
+	rtrue;
+];
+
+[ COUPLE_TY_Say short_block	kov;
+	print "(";
+	PrintKindValuePair(short_block-->1, short_block-->3);
+	print ", ";
+	PrintKindValuePair(short_block-->2, short_block-->4);
+	print ")";
+];
+
+[ COUPLE_TY_Set short_block value1 value2;
+	short_block-->3 = value1;
+	short_block-->4 = value2;
+	return short_block;
+];
+-).
+
+To decide what couple of K and L is (V1 - value of kind K) and (V2 - value of kind L) as a couple:
+	(- COUPLE_TY_Set({-new:couple of K and L}, {V1}, {V2}) -).
+
+To decide what K is first value of (C - couple of value of kind K and value of kind L):
+	(- {C}-->3 -).
+
+To decide what L is second value of (C - couple of value of kind K and value of kind L):
+	(- {C}-->4 -).
 
 
 
