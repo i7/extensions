@@ -42,19 +42,20 @@ plural:k options
 constructor-arity:covariant
 
 instance-of:POINTER_VALUE_TY
-!instance-of:SAYABLE_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+can-exchange:yes
 default-value:0
 heap-size-estimate:12
 small-block-size:3
-can-exchange:yes
 
-!comparison-routine:BlkValueCompare
+comparison-routine:BlkValueCompare
 !constant-compilation-method:special
-!distinguisher:OPTION_TY_Distinguish
-!i6-printing-routine:OPTION_TY_Say
+distinguisher:OPTION_TY_Distinguish
+i6-printing-routine:OPTION_TY_Say
 
 description:an option
-specification-text:An option represents an optional value, storing either nothing, or a value of a specific kind.
+index-default-value:<i>none</i>
+specification-text:An optional value, either nothing, or a value of a specific kind.
 
 
 
