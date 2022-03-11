@@ -35,29 +35,6 @@ specification-text:When made with the Glulx setting, an Inform project can inclu
 
 ! New kinds from Custom Block Value Kinds by Dannii Willis
 
-OPTION_TY:
-apply-macro:#KIND-CONSTRUCTOR
-singular:k option
-plural:k options
-constructor-arity:covariant
-
-instance-of:POINTER_VALUE_TY
-instance-of:SAYABLE_VALUE_TY
-can-exchange:yes
-default-value:0
-heap-size-estimate:12
-small-block-size:3
-
-comparison-routine:BlkValueCompare
-distinguisher:OPTION_TY_Distinguish
-i6-printing-routine:OPTION_TY_Say
-
-description:an option
-index-default-value:<i>none</i>
-specification-text:An optional value, either nothing, or a value of a specific kind.
-
-
-
 COUPLE_TY:
 apply-macro:#KIND-CONSTRUCTOR
 singular:couple of k and l
@@ -76,6 +53,70 @@ i6-printing-routine:COUPLE_TY_Say
 
 description:a couple
 specification-text:A couple is a 2-tuple, grouping two values of any type.
+
+
+
+CRATE_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:crate
+plural:crates
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:12
+small-block-size:3
+
+comparison-routine:BlkValueCompare
+distinguisher:CRATE_TY_Distinguish
+i6-printing-routine:CRATE_TY_Say
+
+description:a crate
+index-priority:6
+specification-text:A crate stores a value and its type; the type cannot be determined at compile time, but can be read at run time.
+
+
+
+OPTION_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:k option
+plural:k options
+constructor-arity:covariant
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:12
+small-block-size:3
+
+comparison-routine:BlkValueCompare
+distinguisher:OPTION_TY_Distinguish
+i6-printing-routine:OPTION_TY_Say
+
+description:an option
+index-default-value:<i>none</i>
+specification-text:An optional value, either nothing, or a value of a specific kind.
+
+
+
+RESULT_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:k result
+plural:k results
+constructor-arity:covariant
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:12
+small-block-size:3
+
+comparison-routine:BlkValueCompare
+distinguisher:RESULT_TY_Distinguish
+i6-printing-routine:RESULT_TY_Say
+
+description:a result
+specification-text:A result contains either a wrapped value or an error message text.
 
 
 
