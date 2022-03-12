@@ -401,20 +401,20 @@ Include (-
 [ MAP_TY_Copy to from;
 	to-->1 = from-->1;
 	to-->2 = from-->2;
+	!BlkValueCopy(to-->1, from-->1);
+	!BlkValueCopy(to-->2, from-->2);
 ];
 
 Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 
-[ MAP_TY_Create skov short_block	keykov valkov;
-	keykov = KindBaseTerm(skov, 0);
-	valkov = KindBaseTerm(skov, 1);
+[ MAP_TY_Create skov short_block;
 	if (short_block == 0) {
 		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
 	}
 	short_block-->0 = BLK_BVBITMAP_MAP;
-	MAP_TY_Temp_List_Definition-->2 = keykov;
+	MAP_TY_Temp_List_Definition-->2 = KindBaseTerm(skov, 0);
 	short_block-->1 = BlkValueCreate(MAP_TY_Temp_List_Definition);
-	MAP_TY_Temp_List_Definition-->2 = valkov;
+	MAP_TY_Temp_List_Definition-->2 = KindBaseTerm(skov, 1);
 	short_block-->2 = BlkValueCreate(MAP_TY_Temp_List_Definition);
 	return short_block;
 ];
@@ -453,7 +453,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
 	keyslist = map-->1;
-	valslist = map-->1;
+	valslist = map-->2;
 	keyskov = BlkValueRead(keyslist, LIST_ITEM_KOV_F);
 	cf = KOVComparisonFunction(keyskov);
 	if (cf == 0) {
@@ -555,6 +555,13 @@ Array CBVK_Print_Missing_Key --> CONSTANT_PERISHABLE_TEXT_STORAGE CBVK_Print_Mis
 	print "}";
 ];
 -).
+
+
+
+Chapter - Maps - Creating
+
+To decide which map of value of kind K to value of kind L is a/-- new map of (name of kind of value K) to (name of kind of value L):
+	(- {-new:map of K to L} -);
 
 
 
