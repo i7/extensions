@@ -35,6 +35,27 @@ specification-text:When made with the Glulx setting, an Inform project can inclu
 
 ! New kinds from Custom Block Value Kinds by Dannii Willis
 
+ANY_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:any
+plural:anys
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:12
+small-block-size:3
+
+comparison-routine:BlkValueCompare
+distinguisher:ANY_TY_Distinguish
+i6-printing-routine:ANY_TY_Say
+
+description:an any
+index-priority:6
+specification-text:An any stores a value and its type; the type cannot be determined at compile time, but can be read at run time.
+
+
+
 COUPLE_TY:
 apply-macro:#KIND-CONSTRUCTOR
 singular:couple of k and l
@@ -56,10 +77,11 @@ specification-text:A couple is a 2-tuple, grouping two values of any type.
 
 
 
-CRATE_TY:
+MAP_TY:
 apply-macro:#KIND-CONSTRUCTOR
-singular:crate
-plural:crates
+singular:map of k to l
+plural:maps of k to l
+constructor-arity:covariant, covariant
 
 instance-of:POINTER_VALUE_TY
 instance-of:SAYABLE_VALUE_TY
@@ -67,13 +89,12 @@ default-value:0
 heap-size-estimate:12
 small-block-size:3
 
-comparison-routine:BlkValueCompare
-distinguisher:CRATE_TY_Distinguish
-i6-printing-routine:CRATE_TY_Say
+!comparison-routine:BlkValueCompare
+!distinguisher:MAP_TY_Distinguish
+i6-printing-routine:MAP_TY_Say
 
-description:a crate
-index-priority:6
-specification-text:A crate stores a value and its type; the type cannot be determined at compile time, but can be read at run time.
+description:a map
+specification-text:A map of key-value pairs.
 
 
 
