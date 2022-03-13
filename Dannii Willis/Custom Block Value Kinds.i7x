@@ -1,4 +1,4 @@
-Version 1/220312 of Custom Block Value Kinds (for Glulx only) by Dannii Willis begins here.
+Version 1/220313 of Custom Block Value Kinds (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some custom block value kinds"
 
@@ -107,13 +107,11 @@ Include (-
 	rtrue;
 ];
 
-[ ANY_TY_Get short_block type checked_bv	kov;
+[ ANY_TY_Get short_block type checked_bv	kov txt;
 	kov = short_block-->1;
 	if (kov == type) {
 		if (checked_bv) {
-			checked_bv-->1 = checked_bv-->1 | RESULT_IS_OKAY;
-			checked_bv-->2 = short_block-->2;
-			return checked_bv;
+			return RESULT_TY_Set(checked_bv, 1, short_block-->2);
 		}
 		else {
 			return short_block-->2;
@@ -122,9 +120,9 @@ Include (-
 	LocalParking-->0 = type;
 	LocalParking-->1 = short_block;
 	if (checked_bv) {
-		checked_bv-->2 = BlkValueCreate(TEXT_TY);
-		BlkValueCopy(checked_bv-->2, CBVK_Print_Any_Type_Mismatch);
-		return checked_bv;
+		txt = BlkValueCreate(TEXT_TY);
+		BlkValueCopy(txt, CBVK_Print_Any_Type_Mismatch);
+		return RESULT_TY_Set(checked_bv, 0, txt);
 	}
 	else {
 		CBVK_Print_Any_Type_Mismatch_I();
@@ -465,33 +463,22 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		if (cf(key, res) == 0) {
 			res = BlkValueRead(valslist, LIST_ITEM_BASE + i);
 			if (checked_bv) {
-				checked_bv-->1 = checked_bv-->1 | RESULT_IS_OKAY;
-				checked_bv-->2 = res;
-				return checked_bv;
+				return OPTION_TY_Set(checked_bv, 1, res);
 			}
 			else {
 				return res;
 			}
 		}
 	}
-	LocalParking-->0 = keyskov;
-	LocalParking-->1 = key;
 	if (checked_bv) {
-		checked_bv-->2 = BlkValueCreate(TEXT_TY);
-		BlkValueCopy(checked_bv-->2, CBVK_Print_Missing_Key);
-		return checked_bv;
+		return OPTION_TY_Set(checked_bv);
 	}
 	else {
-		CBVK_Print_Missing_Key_Inner();
+		print "Map has no key: ";
+		PrintKindValuePair(keyskov, key);
 		print "^";
 		return 0;
 	}
-];
-
-Array CBVK_Print_Missing_Key --> CONSTANT_PERISHABLE_TEXT_STORAGE CBVK_Print_Missing_Key_Inner;
-[ CBVK_Print_Missing_Key_Inner;
-	print "Map has no key: ";
-	PrintKindValuePair(LocalParking-->0, LocalParking-->1);
 ];
 
 [ MAP_TY_Has_Key map key keyany keytype	cf i keyslist length;
@@ -611,11 +598,11 @@ To decide what L is get key (key - K) in/from/of (M - map of value of kind K to 
 To decide what L is get key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}) -).
 
-To decide what L result is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L result}) -).
+To decide what L option is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L result is get key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L result}) -).
+To decide what L option is get key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L option}) -).
 
 To decide what L is (M - map of value of kind K to value of kind L) => (key - K):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}) -).
@@ -623,11 +610,11 @@ To decide what L is (M - map of value of kind K to value of kind L) => (key - K)
 To decide what L is (M - map of any to value of kind L) => (key - sayable value of kind K):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}) -).
 
-To decide what L result is (M - map of value of kind K to value of kind L) => (key - K) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L result}) -).
+To decide what L option is (M - map of value of kind K to value of kind L) => (key - K) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L result is (M - map of any to value of kind L) => (key - sayable value of kind K) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L result}) -).
+To decide what L option is (M - map of any to value of kind L) => (key - sayable value of kind K) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L option}) -).
 
 
 
