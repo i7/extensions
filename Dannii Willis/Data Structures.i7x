@@ -1,6 +1,6 @@
-Version 1/220313 of Custom Block Value Kinds (for Glulx only) by Dannii Willis begins here.
+Version 1/220315 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
-"Provides support for some custom block value kinds"
+"Provides support for some additional data structures"
 
 
 
@@ -40,7 +40,7 @@ Constant BLK_BVBITMAP_MAP = $85;
 ];
 -) instead of "Weak Kind" in "BlockValues.i6t".
 
-Include (- -) instead of "Stubs For Custom Block Value Kinds" in "Figures.i6t".
+Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
 
 
 
@@ -48,7 +48,7 @@ Chapter - Anys
 
 [ Anys are three word short block values.
 The 1st word is the short block header, $83.
-The 2nd word store the type of the value - but as a printing function address.
+The 2nd word store the type of the value.
 The 3rd word store the value. ]
 
 Include (-
@@ -71,7 +71,7 @@ Include (-
 		return delta;
 	}
 	! Then compare the contents
-	cf = CBVK_PrintingFunc_To_Comp_Func(c1kov);
+	cf = KOVComparisonFunction(c1kov);
 	if (cf == 0 or UnsignedCompare) {
 		delta = c1-->2 - c2-->2;
 	}
@@ -91,13 +91,13 @@ Include (-
 		short_block = FlexAllocate(3 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
 	}
 	short_block-->0 = BLK_BVBITMAP_ANY;
-	short_block-->1 = 0;
+	short_block-->1 = NULL_TY;
 	short_block-->2 = 0;
 	return short_block;
 ];
 
 [ ANY_TY_Destroy short_block;
-	if (CBVK_Is_PrintingFunc_BlockValue(short_block-->1)) {
+	if (KOVIsBlockValue(short_block-->1)) {
 		BlkValueFree(short_block-->2);
 	}
 ];
@@ -107,7 +107,7 @@ Include (-
 	rtrue;
 ];
 
-[ ANY_TY_Get short_block type checked_bv	kov txt;
+[ ANY_TY_Get short_block type checked_bv backup	kov txt;
 	kov = short_block-->1;
 	if (kov == type) {
 		if (checked_bv) {
@@ -121,29 +121,131 @@ Include (-
 	LocalParking-->1 = short_block;
 	if (checked_bv) {
 		txt = BlkValueCreate(TEXT_TY);
-		BlkValueCopy(txt, CBVK_Print_Any_Type_Mismatch);
+		BlkValueCopy(txt, ANY_TY_Print_Kind_Mismatch);
 		return RESULT_TY_Set(checked_bv, 0, txt);
 	}
 	else {
-		CBVK_Print_Any_Type_Mismatch_I();
+		ANY_TY_Print_Kind_Mismatch_Inner();
 		print "^";
-		return 0;
+		return backup;
 	}
 ];
 
-Array CBVK_Print_Any_Type_Mismatch --> CONSTANT_PERISHABLE_TEXT_STORAGE CBVK_Print_Any_Type_Mismatch_I;
-[ CBVK_Print_Any_Type_Mismatch_I;
+Array ANY_TY_Print_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<illegal (.+)@{5C}>$";
+
+[ ANY_TY_Print_Kind_Name skov val plural show_object_subkinds	basekov subkind str;
+	basekov = KindAtomic(skov);
+	if (plural) {
+		switch (basekov) {
+			COUPLE_TY: print "couples of ";
+			LIST_OF_TY: print "lists of ";
+			MAP_TY: print "maps of ";
+		}
+	}
+	switch (basekov) {
+		ACTION_NAME_TY: print "action name";
+		ACTIVITY_TY: print "activity";
+		ANY_TY: print "any";
+		COUPLE_TY:
+			if (~~plural) {
+				print "couple of ";
+			}
+			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
+			print " and ";
+			ANY_TY_Print_Subkind_Name(skov, 1, 0, show_object_subkinds);
+		DESCRIPTION_OF_TY: print "description";
+		EQUATION_TY: print "equation";
+		EXTERNAL_FILE_TY: print "external file";
+		FIGURE_NAME_TY: print "figure name";
+		LIST_OF_TY:
+			if (~~plural) {
+				print "list of ";
+			}
+			ANY_TY_Print_Subkind_Name(skov, 0, 1, show_object_subkinds);
+		MAP_TY:
+			if (~~plural) {
+				print "map of ";
+			}
+			ANY_TY_Print_Subkind_Name(skov, 0, 1, show_object_subkinds);
+			print " to ";
+			ANY_TY_Print_Subkind_Name(skov, 1, 1, show_object_subkinds);
+		NULL_TY: print "null";
+		NUMBER_TY: print "number";
+		OBJECT_TY: print "object";
+		OPTION_TY:
+			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
+			print " option";
+		PHRASE_TY: print "phrase";
+		PROPERTY_TY: print "property";
+		REAL_NUMBER_TY: print "real number";
+		RELATION_TY: print "relation";
+		RESPONSE_TY: print "response";
+		RESULT_TY:
+			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
+			print " result";
+		RULE_TY: print "rule";
+		RULEBOOK_OUTCOME_TY: print "rulebook outcome";
+		RULEBOOK_TY: print "rulebook";
+		SCENE_TY: print "scene";
+		SNIPPET_TY: print "snippet";
+		SOUND_NAME_TY: print "sound name";
+		STORED_ACTION_TY: print "stored action";
+		TABLE_TY: print "table";
+		TABLE_COLUMN_TY: print "table column";
+		TEXT_TY: print "text";
+		TIME_TY: print "time";
+		TRUTH_STATE_TY: print "truth state";
+		UNDERSTANDING_TY: print "topic";
+		UNICODE_CHARACTER_TY: print "unicode character";
+		USE_OPTION_TY: print "use option";
+		VERB_TY: print "verb";
+		default:
+			str = BlkValueCreate(TEXT_TY);
+			LocalParking-->0 = basekov;
+			LocalParking-->1 = val;
+			TEXT_TY_ExpandIfPerishable(str, ANY_TY_Print_Kind_Text);
+			if (TEXT_TY_Replace_RE(REGEXP_BLOB, str, ANY_TY_Print_Illegal_Pattern, 0, 0)) {
+				print (TEXT_TY_Say) TEXT_TY_RE_GetMatchVar(1);
+			}
+			else {
+				print (TEXT_TY_Say) str;
+			}
+			BlkValueFree(str);
+	}
+	if (plural) {
+		if (basekov == COUPLE_TY or LIST_OF_TY or MAP_TY) {
+			return;
+		}
+		print "s";
+	}
+];
+
+Array ANY_TY_Print_Kind_Mismatch --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Print_Kind_Mismatch_Inner;
+[ ANY_TY_Print_Kind_Mismatch_Inner;
 	print "Any type mismatch: expected ";
-	CBVK_Print_Name_Of_PrintingFunc(LocalParking-->0, 0);
+	ANY_TY_Print_Kind_Name(LocalParking-->0, 0, 0, 1);
 	print ", got ";
-	CBVK_Print_Name_Of_PrintingFunc((LocalParking-->1)-->1, (LocalParking-->1)-->2);
+	ANY_TY_Print_Kind_Name((LocalParking-->1)-->1, (LocalParking-->1)-->2, 0, 1);
+];
+
+Array ANY_TY_Print_Kind_Text --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Print_Kind_Text_Inner;
+[ ANY_TY_Print_Kind_Text_Inner;
+	PrintKindValuePair(LocalParking-->0, LocalParking-->1);
+];
+
+[ ANY_TY_Print_Subkind_Name skov subkind_num plural show_object_subkinds	subkind;
+	subkind = KindBaseTerm(skov, subkind_num);
+	ANY_TY_Print_Kind_Name(subkind, 0, plural, show_object_subkinds);
+	if (show_object_subkinds && subkind == OBJECT_TY) {
+		print " (subkind ", skov, ")";
+	}
 ];
 
 [ ANY_TY_Say short_block	kov;
 	print "Any<";
-	CBVK_Print_Name_Of_PrintingFunc(short_block-->1);
+	ANY_TY_Print_Kind_Name(short_block-->1);
 	print ": ";
-	(short_block-->1)(short_block-->2);
+	PrintKindValuePair(short_block-->1, short_block-->2);
 	print ">";
 ];
 
@@ -152,114 +254,22 @@ Array CBVK_Print_Any_Type_Mismatch --> CONSTANT_PERISHABLE_TEXT_STORAGE CBVK_Pri
 	short_block-->2 = value;
 	return short_block;
 ];
-
-[ CBVK_Is_PrintingFunc_BlockValue type;
-	switch (type) {
-		ANY_TY_Say: rtrue;
-		COUPLE_TY_Say: rtrue;
-		LIST_OF_TY_Say: rtrue;
-		MAP_TY_Say: rtrue;
-		OPTION_TY_Say: rtrue;
-		RELATION_TY_Say: rtrue;
-		STORED_ACTION_TY_Say: rtrue;
-		TEXT_TY_Say: rtrue;
-	}
-	rfalse;
-];
-
-[ CBVK_Print_Name_Of_PrintingFunc type val	str;
-	switch (type) {
-		ANY_TY_Say: print "any";
-		COUPLE_TY_Say: print "couple";
-		DA_TruthState: print "truth state";
-		DecimalNumber: print "number";
-		LIST_OF_TY_Say: print "list";
-		MAP_TY_Say: print "map";
-		OPTION_TY_Say: print "option";
-		PrintExternalFileName: print "external file";
-		PrintFigureName: print "figure name";
-		PrintResponse: print "response";
-		PrintSceneName: print "scene";
-		PrintShortName: print "object";
-		PrintSnippet: print "snippet";
-		PrintSoundName: print "sound name";
-		PrintTableName: print "table name";
-		PrintTimeOfDay: print "time";
-		PrintUseOption: print "use option";
-		PrintVerbAsValue: print "verb";
-		REAL_NUMBER_TY_Say: print "real number";
-		RELATION_TY_Say: print "relation";
-		RulebookOutcomePrintingRule: print "rulebook outcome";
-		RulePrintingRule: print "rulebook";
-		SayActionName: print "action name";
-		SayPhraseName: print "phrase";
-		STORED_ACTION_TY_Say: print "stored action";
-		TEXT_TY_Say: print "text";
-		default:
-			str = BlkValueCreate(TEXT_TY);
-			LocalParking-->0 = type;
-			LocalParking-->1 = val;
-			TEXT_TY_ExpandIfPerishable(str, CBVK_Print_Type_Text);
-			if (TEXT_TY_Replace_RE(REGEXP_BLOB, str, CBVK_Illegal_Pattern, 0, 0)) {
-				print (TEXT_TY_Say) TEXT_TY_RE_GetMatchVar(1);
-			}
-			else {
-				print (TEXT_TY_Say) str;
-			}
-			BlkValueFree(str);
-	}
-];
-
-Array CBVK_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<illegal (.+)@{5C}>$";
-Array CBVK_Print_Type_Text --> CONSTANT_PERISHABLE_TEXT_STORAGE CBVK_Print_Type_Inner;
-[ CBVK_Print_Type_Inner;
-	(LocalParking-->0)(LocalParking-->1);
-];
-
-[ CBVK_PrintingFunc_To_Comp_Func type val	str;
-	switch (type) {
-		ANY_TY_Say: return BlkValueCompare;
-		COUPLE_TY_Say: return BlkValueCompare;
-		DA_Number: return UnsignedCompare;
-		DA_TruthState: return UnsignedCompare;
-		DecimalNumber: return UnsignedCompare;
-		LIST_OF_TY_Say: return BlkValueCompare;
-		MAP_TY_Say: return BlkValueCompare;
-		OPTION_TY_Say: return BlkValueCompare;
-		PrintExternalFileName: return UnsignedCompare;
-		PrintFigureName: return UnsignedCompare;
-		PrintResponse: return UnsignedCompare;
-		PrintSceneName: return UnsignedCompare;
-		PrintShortName: return UnsignedCompare;
-		PrintSnippet: return UnsignedCompare;
-		PrintSoundName: return UnsignedCompare;
-		PrintTableName: return UnsignedCompare;
-		PrintUseOption: return UnsignedCompare;
-		PrintVerbAsValue: return UnsignedCompare;
-		REAL_NUMBER_TY_Say: return REAL_NUMBER_TY_Compare;
-		RulebookOutcomePrintingRule: return UnsignedCompare;
-		SayActionName: return UnsignedCompare;
-		STORED_ACTION_TY_Say: return BlkValueCompare;
-		TEXT_TY_Say: return BlkValueCompare;
-	}
-	return 0;
-];
 -).
 
-To decide which any is (V - sayable value of kind K) as an any:
-	(- ANY_TY_Set({-new:any}, {-printing-routine:K}, {V}) -).
+To decide which any is (V - value of kind K) as an any:
+	(- ANY_TY_Set({-new:any}, {-strong-kind:K}, {V}) -).
 
 To say kind/type of (A - any):
-	(- CBVK_Print_Name_Of_PrintingFunc({-by-reference:A}-->1); -).
+	(- ANY_TY_Print_Kind_Name({-by-reference:A}-->1); -).
 
-To decide if kind/type of (A - any) is (name of kind of sayable value K):
-	(- ({-by-reference:A}-->1 == {-printing-routine:K}) -).
+To decide if kind/type of (A - any) is (name of kind of value K):
+	(- ({-by-reference:A}-->1 == {-strong-kind:K}) -).
 
-To decide what K is (A - any) as a/an (name of kind of sayable value K):
-	(- ANY_TY_Get({-by-reference:A}, {-printing-routine:K}) -).
+To decide what K is (A - any) as a/an (name of kind of value K):
+	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {-new:K}) -).
 
-To decide what K result is (A - any) as a/an (name of kind of sayable value K) checked:
-	(- ANY_TY_Get({-by-reference:A}, {-printing-routine:K}, {-new:K result}) -).
+To decide what K result is (A - any) as a/an (name of kind of value K) checked:
+	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, {-new:K result}) -).
 
 
 
@@ -418,7 +428,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 ];
 
 [ MAP_TY_Delete_Key map key keyany keytype	cf i keyslist length;
-	if (keyany && keytype ~= ANY_TY_Say) {
+	if (keyany && keytype ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
 	keyslist = map-->1;
@@ -446,8 +456,8 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	rtrue;
 ];
 
-[ MAP_TY_Get_Key map key keyany keytype checked_bv	cf i keyskov keyslist length res valslist;
-	if (keyany && keytype ~= ANY_TY_Say) {
+[ MAP_TY_Get_Key map key keyany keytype checked_bv backup	cf i keyskov keyslist length res valslist;
+	if (keyany && keytype ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
 	keyslist = map-->1;
@@ -477,12 +487,12 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		print "Map has no key: ";
 		PrintKindValuePair(keyskov, key);
 		print "^";
-		return 0;
+		return backup;
 	}
 ];
 
 [ MAP_TY_Has_Key map key keyany keytype	cf i keyslist length;
-	if (keyany && keytype ~= ANY_TY_Say) {
+	if (keyany && keytype ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
 	keyslist = map-->1;
@@ -500,10 +510,10 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 ];
 
 [ MAP_TY_Set_Key map key keyany keytype val valany valtype	cf i keyslist length valslist;
-	if (keyany && keytype ~= ANY_TY_Say) {
+	if (keyany && keytype ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
-	if (valany && valtype ~= ANY_TY_Say) {
+	if (valany && valtype ~= ANY_TY) {
 		val = ANY_TY_Set(valany, valtype, val);
 	}
 	keyslist = map-->1;
@@ -557,26 +567,26 @@ Chapter - Maps - Writing
 To set key (key - K) in/of (M - map of value of kind K to value of kind L) to/= (val - L):
 	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
 
-To set key (key - K) in/of (M - map of value of kind K to any) to/= (val - sayable value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-printing-routine:V}); -).
+To set key (key - K) in/of (M - map of value of kind K to any) to/= (val - value of kind V):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
-To set key (key - sayable value of kind K) in/of (M - map of any to value of kind L) to/= (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-by-reference:val}); -).
+To set key (key - value of kind K) in/of (M - map of any to value of kind L) to/= (val - L):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
 
-To set key (key - sayable value of kind K) in/of (M - map of any to any) to/= (val - sayable value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-by-reference:val}, {-new:any}, {-printing-routine:V}); -).
+To set key (key - value of kind K) in/of (M - map of any to any) to/= (val - value of kind V):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 To (M - map of value of kind K to value of kind L) => (key - K) = (val - L):
 	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
 
-To (M - map of value of kind K to any) => (key - K) = (val - sayable value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-printing-routine:V}); -).
+To (M - map of value of kind K to any) => (key - K) = (val - value of kind V):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
-To (M - map of any to value of kind L) => (key - sayable value of kind K) = (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-by-reference:val}); -).
+To (M - map of any to value of kind L) => (key - value of kind K) = (val - L):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
 
-To (M - map of any to any) => (key - sayable value of kind K) = (val - sayable value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-by-reference:val}, {-new:any}, {-printing-routine:V}); -).
+To (M - map of any to any) => (key - value of kind K) = (val - value of kind V):
+	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 
 
@@ -585,36 +595,36 @@ Chapter - Maps - Checking keys
 To decide if (M - map of value of kind K to value of kind L) has key (key - K):
 	(- MAP_TY_Has_Key({-by-reference:M}, {-by-reference:key}) -).
 
-To decide if (M - map of any to value of kind L) has key (key - sayable value of kind K):
-	(- MAP_TY_Has_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}) -).
+To decide if (M - map of any to value of kind L) has key (key - value of kind K):
+	(- MAP_TY_Has_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}) -).
 
 
 
 Chapter - Maps - Reading
 
 To decide what L is get key (key - K) in/from/of (M - map of value of kind K to value of kind L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
 
-To decide what L is get key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}) -).
+To decide what L is get key (key - value of kind K) in/from/of (M - map of any to value of kind L):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
 
 To decide what L option is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) checked:
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L option is get key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L option}) -).
+To decide what L option is get key (key - value of kind K) in/from/of (M - map of any to value of kind L) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
 
 To decide what L is (M - map of value of kind K to value of kind L) => (key - K):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
 
-To decide what L is (M - map of any to value of kind L) => (key - sayable value of kind K):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}) -).
+To decide what L is (M - map of any to value of kind L) => (key - value of kind K):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
 
 To decide what L option is (M - map of value of kind K to value of kind L) => (key - K) checked:
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L option is (M - map of any to value of kind L) => (key - sayable value of kind K) checked:
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}, {-new:L option}) -).
+To decide what L option is (M - map of any to value of kind L) => (key - value of kind K) checked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
 
 
 
@@ -623,8 +633,8 @@ Chapter - Maps - Deleting keys
 To delete key (key - K) in/from/of (M - map of value of kind K to value of kind L):
 	(- MAP_TY_Delete_Key({-by-reference:M}, {-by-reference:key}); -).
 
-To delete key (key - sayable value of kind K) in/from/of (M - map of any to value of kind L):
-	(- MAP_TY_Delete_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-printing-routine:K}); -).
+To delete key (key - value of kind K) in/from/of (M - map of any to value of kind L):
+	(- MAP_TY_Delete_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}); -).
 
 
 
@@ -651,6 +661,21 @@ To repeat with (key - nonexisting K variable) and/to/=> (val - nonexisting L var
 		{-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE);
 		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead({-by-reference:M}-->1, LIST_ITEM_BASE + {-my:1}), {-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE + {-my:1}))
 	-).
+
+
+
+Chapter - Nulls
+
+[ Nulls are not block values, they're just an empty word of memory. ]
+
+Include (-
+[ NULL_TY_Say;
+	print "null";
+];
+-).
+
+To decide which null is null:
+	(- 0 -);
 
 
 
@@ -784,12 +809,6 @@ To decide what K option is (V - value of kind K) as an option:
 
 To decide what K option is a/an (name of kind of value K) none option:
 	(- OPTION_TY_Set({-new:K option}) -).
-
-[To set (O - value of kind K option) to (V - K):
-	(- OPTION_TY_Set({-by-reference:O}, 1, {V}); -).
-
-To set (O - value of kind K option) to none:
-	(- OPTION_TY_Set({-by-reference:O}); -).]
 
 To decide if (O - a value option) is some:
 	(- (({-by-reference:O}-->1) & OPTION_IS_SOME) -).
@@ -951,4 +970,4 @@ To decide what text is error message of (R - a value result):
 
 
 
-Custom Block Value Kinds ends here.
+Data Structures ends here.
