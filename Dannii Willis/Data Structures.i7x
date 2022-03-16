@@ -1,4 +1,4 @@
-Version 1/220315 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220316 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -107,7 +107,7 @@ Include (-
 	rtrue;
 ];
 
-[ ANY_TY_Get short_block type checked_bv backup	kov txt;
+[ ANY_TY_Get short_block type checked_bv backup or	kov txt;
 	kov = short_block-->1;
 	if (kov == type) {
 		if (checked_bv) {
@@ -125,8 +125,10 @@ Include (-
 		return RESULT_TY_Set(checked_bv, 0, txt);
 	}
 	else {
-		ANY_TY_Print_Kind_Mismatch_Inner();
-		print "^";
+		if (~~or) {
+			ANY_TY_Print_Kind_Mismatch_Inner();
+			print "^";
+		}
 		return backup;
 	}
 ];
@@ -135,19 +137,15 @@ Array ANY_TY_Print_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<i
 
 [ ANY_TY_Print_Kind_Name skov val plural show_object_subkinds	basekov subkind str;
 	basekov = KindAtomic(skov);
-	if (plural) {
-		switch (basekov) {
-			COUPLE_TY: print "couples of ";
-			LIST_OF_TY: print "lists of ";
-			MAP_TY: print "maps of ";
-		}
-	}
 	switch (basekov) {
 		ACTION_NAME_TY: print "action name";
 		ACTIVITY_TY: print "activity";
 		ANY_TY: print "any";
 		COUPLE_TY:
-			if (~~plural) {
+			if (plural) {
+				print "couples of ";
+			}
+			else {
 				print "couple of ";
 			}
 			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
@@ -158,12 +156,18 @@ Array ANY_TY_Print_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<i
 		EXTERNAL_FILE_TY: print "external file";
 		FIGURE_NAME_TY: print "figure name";
 		LIST_OF_TY:
-			if (~~plural) {
+			if (plural) {
+				print "lists of ";
+			}
+			else {
 				print "list of ";
 			}
 			ANY_TY_Print_Subkind_Name(skov, 0, 1, show_object_subkinds);
 		MAP_TY:
-			if (~~plural) {
+			if (plural) {
+				print "maps of ";
+			}
+			else {
 				print "map of ";
 			}
 			ANY_TY_Print_Subkind_Name(skov, 0, 1, show_object_subkinds);
@@ -265,11 +269,11 @@ To say kind/type of (A - any):
 To decide if kind/type of (A - any) is (name of kind of value K):
 	(- ({-by-reference:A}-->1 == {-strong-kind:K}) -).
 
-To decide what K is (A - any) as a/an (name of kind of value K):
-	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {-new:K}) -).
-
-To decide what K result is (A - any) as a/an (name of kind of value K) checked:
+To decide what K result is (A - any) as a/an (name of kind of value K):
 	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, {-new:K result}) -).
+
+To decide what K is (A - any) as a/an (name of kind of value K) or (backup - K):
+	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {backup}, 1) -).
 
 
 
@@ -456,7 +460,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	rtrue;
 ];
 
-[ MAP_TY_Get_Key map key keyany keytype checked_bv backup	cf i keyskov keyslist length res valslist;
+[ MAP_TY_Get_Key map key keyany keytype checked_bv backup or	cf i keyskov keyslist length res valslist;
 	if (keyany && keytype ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keytype, key);
 	}
@@ -484,9 +488,11 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		return OPTION_TY_Set(checked_bv);
 	}
 	else {
-		print "Map has no key: ";
-		PrintKindValuePair(keyskov, key);
-		print "^";
+		if (~~or) {
+			print "Map has no key: ";
+			PrintKindValuePair(keyskov, key);
+			print "^";
+		}
 		return backup;
 	}
 ];
@@ -602,29 +608,29 @@ To decide if (M - map of any to value of kind L) has key (key - value of kind K)
 
 Chapter - Maps - Reading
 
-To decide what L is get key (key - K) in/from/of (M - map of value of kind K to value of kind L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
-
-To decide what L is get key (key - value of kind K) in/from/of (M - map of any to value of kind L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
-
-To decide what L option is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) checked:
+To decide what L option is get key (key - K) in/from/of (M - map of value of kind K to value of kind L):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L option is get key (key - value of kind K) in/from/of (M - map of any to value of kind L) checked:
+To decide what L option is get key (key - value of kind K) in/from/of (M - map of any to value of kind L):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
 
-To decide what L is (M - map of value of kind K to value of kind L) => (key - K):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
+To decide what L is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) or (backup - L):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {backup}, 1) -).
 
-To decide what L is (M - map of any to value of kind L) => (key - value of kind K):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
+To decide what L is get key (key - value of kind K) in/from/of (M - map of any to value of kind L) or (backup - L):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {backup}, 1) -).
 
-To decide what L option is (M - map of value of kind K to value of kind L) => (key - K) checked:
+To decide what L option is (M - map of value of kind K to value of kind L) => (key - K):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
 
-To decide what L option is (M - map of any to value of kind L) => (key - value of kind K) checked:
+To decide what L option is (M - map of any to value of kind L) => (key - value of kind K):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
+
+To decide what L is (M - map of value of kind K to value of kind L) => (key - K) or/|| (backup - L):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {backup}, 1) -).
+
+To decide what L is (M - map of any to value of kind L) => (key - value of kind K) or/|| (backup - L):
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {backup}, 1) -).
 
 
 
@@ -729,18 +735,22 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 	return delta;
 ];
 
-[ OPTION_TY_Copy to from	tokov;
+[ OPTION_TY_Copy to from	kov tokov;
 	tokov = to-->1;
-	if ((tokov & OPTION_IS_SOME) && KOVIsBlockValue(tokov & OPTION_SOME_MASK)) {
+	kov = tokov & OPTION_SOME_MASK;
+	if ((tokov & OPTION_IS_SOME) && KOVIsBlockValue(kov)) {
 		BlkValueFree(to-->2);
 	}
-	tokov = tokov | ((from-->1) & OPTION_IS_SOME);
+	tokov = kov | ((from-->1) & OPTION_IS_SOME);
 	to-->1 = tokov;
 	if (tokov & OPTION_IS_SOME) {
-		to-->2 = from-->2;
-	}
-	else {
-		to-->2 = 0;
+		if (KOVIsBlockValue(kov)) {
+			to-->2 = BlkValueCreate(kov);
+			BlkValueCopy(to-->2, from-->2);
+		}
+		else {
+			to-->2 = from-->2;
+		}
 	}
 ];
 
@@ -766,13 +776,15 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 	rtrue;
 ];
 
-[ OPTION_TY_Get short_block	kov;
+[ OPTION_TY_Get short_block backup or	kov;
 	kov = short_block-->1;
 	if (kov & OPTION_IS_SOME) {
 		return short_block-->2;
 	}
-	print "Error! Trying to extract value from a none option.^";
-	return 0;
+	if (~~or) {
+		print "Error! Trying to extract value from a none option.^";
+	}
+	return backup;
 ];
 
 [ OPTION_TY_Say short_block	kov;
@@ -813,11 +825,20 @@ To decide what K option is a/an (name of kind of value K) none option:
 To decide if (O - a value option) is some:
 	(- (({-by-reference:O}-->1) & OPTION_IS_SOME) -).
 
+[ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
+To if (O - value of kind K option) is some let (V - nonexisting K variable) be the value begin -- end loop:
+	(- if (({-by-reference:O}-->1) & OPTION_IS_SOME && (
+		(KOVIsBlockValue({-strong-kind:K})
+			&& BlkValueCopy({-lvalue-by-reference:V}, OPTION_TY_Get({-by-reference:O}, 1))
+			|| ({-lvalue-by-reference:V} = OPTION_TY_Get({-by-reference:O}, 1))
+		)
+	, 1)) -).
+
 To decide if (O - a value option) is none:
 	(- (({-by-reference:O}-->1) & OPTION_IS_SOME == 0) -).
 
-To decide what K is value of (O - value of kind K option):
-	(- OPTION_TY_Get({-by-reference:O}) -).
+To decide what K is value of (O - value of kind K option) or (backup - K):
+	(- OPTION_TY_Get({-by-reference:O}, {backup}, 1) -).
 
 
 
@@ -872,14 +893,25 @@ Constant RESULT_MASK = $7FFFFFFF;
 	return delta;
 ];
 
-[ RESULT_TY_Copy to from	tokov;
+[ RESULT_TY_Copy to from	kov tokov;
 	tokov = to-->1;
-	if (((tokov & RESULT_IS_OKAY) && KOVIsBlockValue(tokov & RESULT_MASK)) || to-->2) {
+	kov = tokov & RESULT_MASK;
+	if (RESULT_TY_Val_Needs_Freeing(to)) {
 		BlkValueFree(to-->2);
 	}
-	tokov = tokov | ((from-->1) & RESULT_IS_OKAY);
+	tokov = kov | ((from-->1) & RESULT_IS_OKAY);
 	to-->1 = tokov;
-	to-->2 = from-->2;
+	if ((tokov & RESULT_IS_OKAY) && KOVIsBlockValue(kov)) {
+		to-->2 = BlkValueCreate(kov);
+		BlkValueCopy(to-->2, from-->2);
+	}
+	else if (tokov & RESULT_IS_OKAY == 0) {
+		to-->2 = BlkValueCreate(TEXT_TY);
+		BlkValueCopy(to-->2, from-->2);
+	}
+	else {
+		to-->2 = from-->2;
+	}
 ];
 
 [ RESULT_TY_Create skov short_block;
@@ -892,9 +924,8 @@ Constant RESULT_MASK = $7FFFFFFF;
 	return short_block;
 ];
 
-[ RESULT_TY_Destroy short_block	kov;
-	kov = short_block-->1;
-	if (((kov & RESULT_IS_OKAY) && KOVIsBlockValue(kov & RESULT_MASK)) || short_block-->2) {
+[ RESULT_TY_Destroy short_block;
+	if (RESULT_TY_Val_Needs_Freeing(short_block)) {
 		BlkValueFree(short_block-->2);
 	}
 ];
@@ -904,7 +935,7 @@ Constant RESULT_MASK = $7FFFFFFF;
 	rtrue;
 ];
 
-[ RESULT_TY_Get short_block get_okay	kov;
+[ RESULT_TY_Get short_block get_okay backup or	kov;
 	kov = short_block-->1;
 	if (kov & RESULT_IS_OKAY) {
 		if (get_okay) {
@@ -914,8 +945,10 @@ Constant RESULT_MASK = $7FFFFFFF;
 		return 0;
 	}
 	if (get_okay) {
-		print "Error! Trying to extract value from an error result.^";
-		return 0;
+		if (~~or) {
+			print "Error! Trying to extract value from an error result.^";
+		}
+		return backup;
 	}
 	return short_block-->2;
 ];
@@ -936,7 +969,7 @@ Constant RESULT_MASK = $7FFFFFFF;
 
 [ RESULT_TY_Set short_block ok value	kov;
 	kov = short_block-->1;
-	if ((kov & RESULT_IS_OKAY) && KOVIsBlockValue(kov & RESULT_MASK)) {
+	if (RESULT_TY_Val_Needs_Freeing(short_block)) {
 		BlkValueFree(short_block-->2);
 	}
 	if (ok) {
@@ -947,6 +980,17 @@ Constant RESULT_MASK = $7FFFFFFF;
 	}
 	short_block-->2 = value;
 	return short_block;
+];
+
+[ RESULT_TY_Val_Needs_Freeing short_block kov;
+	kov = short_block-->1;
+	if (kov & RESULT_IS_OKAY) {
+		if (KOVIsBlockValue(kov & RESULT_MASK)) {
+			rtrue;
+		}
+		rfalse;
+	}
+	rtrue;
 ];
 -).
 
@@ -959,13 +1003,52 @@ To decide what K result is a/an (name of kind of value K) error result with mess
 To decide if (R - a value result) is ok/okay:
 	(- (({-by-reference:R}-->1) & RESULT_IS_OKAY) -).
 
+[ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
+To if (R - value of kind K result) is ok/okay let (V - nonexisting K variable) be the value begin -- end loop:
+	(- if (({-by-reference:R}-->1) & RESULT_IS_OKAY && (
+		(KOVIsBlockValue({-strong-kind:K})
+			&& BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}, 1))
+			|| ({-lvalue-by-reference:V} = RESULT_TY_Get({-by-reference:R}, 1))
+		)
+	, 1)) -).
+
 To decide if (R - a value result) is an/-- error:
 	(- (({-by-reference:R}-->1) & RESULT_IS_OKAY == 0) -).
+	
+To if (R - value of kind K result) is an/-- error let (V - nonexisting text variable) be the error message begin -- end loop:
+	(- if ((({-by-reference:R}-->1) & RESULT_IS_OKAY == 0) && BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}))) -).
 
-To decide what K is value of (R - value of kind K result):
-	(- RESULT_TY_Get({-by-reference:R}, 1) -).
+To decide what K is value of (R - value of kind K result) or (backup - K):
+	(- RESULT_TY_Get({-by-reference:R}, 1, {backup}, 1) -).
 
-To decide what text is error message of (R - a value result):
+
+
+Chapter - Unchecked phrases
+
+[ Unchecked phrases should be used only with caution. ]
+
+To decide what K is (A - any) as a/an (name of kind of value K) unchecked:
+	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {-new:K}) -).
+
+To decide what L is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) unchecked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
+
+To decide what L is get key (key - value of kind K) in/from/of (M - map of any to value of kind L) unchecked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
+
+To decide what L is (M - map of value of kind K to value of kind L) => (key - K) unchecked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-new:L}) -).
+
+To decide what L is (M - map of any to value of kind L) => (key - value of kind K) unchecked:
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-new:L}) -).
+
+To decide what K is value of (O - value of kind K option) unchecked:
+	(- OPTION_TY_Get({-by-reference:O}, {-new:K}) -).
+
+To decide what K is value of (R - value of kind K result) unchecked:
+	(- RESULT_TY_Get({-by-reference:R}, 1, {-new:K}) -).
+
+To decide what text is error message of (R - a value result) unchecked:
 	(- RESULT_TY_Get({-by-reference:R}) -).
 
 
