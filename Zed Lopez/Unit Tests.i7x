@@ -1,4 +1,4 @@
-Version 1 of Unit Tests by Zed Lopez begins here.
+Version 1/220306 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -156,7 +156,9 @@ A unit-test can be text-capturing.
 Before testing a text-capturing unit-test (called ut):
   start capturing text.    
 
-Part text comparisons (For use without textile by zed lopez)
+Last for testing a text-capturing unit-test: stop capturing text.
+
+Part text comparisons (For use without Textile by zed lopez)
 
 To decide if (S - text) exactly matches (T - text): decide on whether or not S exactly matches the text T;
 To decide if (S - text) does not exactly match (T - text): if S exactly matches T, no; yes.
@@ -196,7 +198,9 @@ But if you're testing code in isolation that isn't about accepting player comman
 
 A unit test is a kind of object, with a text description property, which should
 be populated for the test to identify itself. (It *can* be left blank, in which
-case the test falls back on the object name itself.)
+case the test falls back on the object name itself.) Because the property is
+"description" it can be specified with just a stand-alone string immediately
+following the object definition.
 
 	Math-still-works is a unit-test. "Whether math still works".
 
@@ -204,17 +208,17 @@ case the test falls back on the object name itself.)
 you must define a corresponding ``For testing`` rule:
 
 	For testing math-still-works:
-		assert 2 + 2 is 4 or say "Math is broken.";
+		assert 2 + 2 is 4 or "Math is broken.";
 
 (More about assert statements later.)
 
 If you have setup to do, a ``Before testing`` rule is a good place for it. But
-you may need to establish global variables or activity variables for the ``for testing``
-rules to have access to information set up in the Before rule.
+you may need to establish global variables or activity variables for the ``For testing``
+and/or ``After testing`` rules to have access to information set up in the Before rule.
 
 If there's more reporting you want, you might use an ``After testing`` rule. But you shouldn't
 need to do any teardown: unit tests are idempotent. They save the game state before they
-start, and restore when they're finished... but on glulx one can protect memory from being
+start, and restore when they're finished. ut on glulx one can protect memory from being
 clobbered by a restore, so make that *mostly* idempotent. At any rate, it should be fairly
 difficult for one test to screw up the environment for another.
 
@@ -225,13 +229,15 @@ same test.)
 
 	Before testing a unit-test (called ut) when ut is test1 or ut is test2:
 
-And don't have one test invoke another: when the outer test restored state, it would be
-restoring the state as of beginning the inner test.
+And don't have one test invoke another: the save-state in the inner test's Before testing
+rule would clobber the outer test's state, so when the outer test restored state, it would
+restore state as of the beginning of the inner test, not the outer test.
 
 Chapter Assertions and Refutations
 
 assert/refute statements are the heart of testing. It technically doesn't matter where they
-occur in the activity, but the intent is that they be used in For Testing rules. They're very simple:
+occur in the activity, but the intent is that they be used in For Testing rules. They're very
+simple:
 
 assert <condition> or <text of message to be printed on failure>
 refute <condition> or <text of message to be printed on failure>
@@ -241,12 +247,13 @@ For example:
 	assert 1 + 1 is 2 or "Oh no! Math is broken!"
 
 If you create a unit-test object, you should write a corresponding For testing activity rule
-which should include at least one assertion or refutation. This isn't enforced; if you don't
+which should include at least one assertion or refutation. This isn't enforced. If you don't
 have any assertions, the test will run and report 0/0 Passed.
 
 Section Death
 
-Assert and refute have an "or die" variant, which ends the activity immediately.
+Assert and refute have an "or die" variant, which ends the current rulebook. Beware using
+this in any After testing rules: dying would prevent state-restoration.
 
 assert <condition> or die with/-- <text of message to be printed on failure>
 refute <condition> or die with/-- <text of message to be printed on failure>
@@ -286,10 +293,13 @@ as a synonym for "text") but they continue to have different underlying represen
 When you test whether a text containing adaptive text *is* a text that doesn't,
 I7 automatically takes the substituted form of the text containing adaptive text.
 But when you test whether a text containing adaptive text *is* a text containing
-adaptive text, the answer is just no, always no. So that's why we have the
-``substituted form of`` and ``exactly matches the text`` phrases.
+adaptive text, the answer doesn't depend on whether the evaluations of the two texts
+are the same, but on whether the underlying function representing it is the same.
+This can be hard to predict. That's why we have the ``substituted form of`` and
+``exactly matches the text`` phrases. (I avoid using "is" in text comparisons unless
+there's a text literal on one side.)
 
-Not just ``exactly matches the text``, but also ``matches the text`` and ``matches the
+All of ``exactly matches the text``, ``matches the text``, and ``matches the
 regular expression`` automatically take the substituted forms of the texts.
 
 The phrase
@@ -320,9 +330,11 @@ if <text1> includes <text2>
 
 (There are also ``does not exactly match`` and ``does not include``.) This allows you
 to forget about ``matches the text`` and to always use ``exactly matches`` and ``includes``
-and to get the same behavior. Existing phrases are unchanged.
+and to get the same behavior.
 
-Further it includes the following just to reduce the verbosity of regular expression
+Existing phrases are unchanged.
+
+Further, it includes the following just to reduce the verbosity of regular expression
 usage:
 
 if <text> rmatches <text of a regexp> [ = if <text> matches the regular expression <text of a regexp> ]
@@ -350,22 +362,25 @@ To say backwards-test-output:
 For testing backwards-test:
  assert "[backwards-test-output]" exactly matches "poomhcs" or "[backwards-test-output] not poomhcs";
 
+This is a trivial example: we could have tested ``To say <T> backwards`` directly. But it illustrates
+the point that a custom say phrase can capture other phrases' output.
+
 Section Text-capturing unit-tests for use with Text Capture by Eric Eve
 
 But if your game *does* include Text Capture, Unit Tests adds a text-capturing
-property to unit-tests and, for them, starts capturing text in a Before testing rule.
+property to unit-tests and, for them, starts capturing text in a Before testing rule and
+stops capturing text in a ``Last for testing`` rule, so it becomes crucial to restrict
+assertions and refutations until ``After testing`` rules for text-capturing unit-tests.
+
 So you could then have:
 
-Backwards-capture-test is a text-capturing unit-test. "Saying captured text backwards."
-
+backwards-test-input is always "doowyc3".
 For testing backwards-capture-test:
-  let t be "doowyc3";
-  say t backwards;
-  stop capturing text;
-  let expectation be "3cywood";
-  assert "[captured text trimmed]" exactly matches "3cywood" or "[t] backwards wasn't [expectation]";
+  say backwards-test-input backwards.
 
-But make sure you stop capturing text prior to your assert statements!
+After testing backwards-capture-test:
+  let expectation be "3cywood";
+  assert "[captured text trimmed]" exactly matches "3cywood" or "[backwards-test-input] backwards wasn't [expectation]";
 
 Chapter Test Automatically
 
@@ -404,3 +419,24 @@ Chapter Examples
 
 Example: * Who tests the tester?
 
+	"Unit Tests"
+	
+	Include Unit Tests by Zed Lopez.
+	
+	Lab is a room.
+	
+	To decide what number is (m - a number) to the (n - a number):
+	  if n is zero, decide on 1;
+	  let result be m;
+	  repeat with i running from 2 to n begin;
+	    now result is result * m;
+	  end repeat;
+	  decide on result;
+	  
+	Power-test is a unit-test. "m to the n".
+	
+	For testing power-test:
+	  assert 3 to the 1 is 3 or "3 to the 1 shouldn't be [3 to the 1].";
+	  assert 2 to the 1 is 2 or "2 to the 1 shouldn't be [2 to the 1].";
+	  assert 5 to the 0 is 1 or "5 to the 0 shouldn't be [5 to the 0].";
+	  assert 3 to the 3 is 27 or "3 to the 3 shouldn't be [3 to the 3].";
