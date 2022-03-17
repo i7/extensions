@@ -1,4 +1,4 @@
-Version 1/220316 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220317 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -6,8 +6,10 @@ Version 1/220316 of Data Structures (for Glulx only) by Dannii Willis begins her
 
 Chapter - Template changes
 
-[ The handling of short blocks doesn't actually do as it says it does, so we need to add support for our own short block bitmaps. ]
+[ Clean up the function stubs ]
+Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
 
+[ The handling of short blocks doesn't actually do as it says it does, so we need to add support for our own short block bitmaps. ]
 Include (-
 Constant BLK_BVBITMAP_CUSTOM_BV = $80;
 Constant BLK_BVBITMAP_OPTION = $81;
@@ -40,7 +42,20 @@ Constant BLK_BVBITMAP_MAP = $85;
 ];
 -) instead of "Weak Kind" in "BlockValues.i6t".
 
-Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
+[ For unknown reasons, most of the new kinds don't get added to KOVComparisonFunction, so augment it ]
+Include (-
+Replace KOVComparisonFunction KOVComparisonFunction_Orig;
+-) after "Definitions.i6t".
+
+Include (-
+[ KOVComparisonFunction k	ak;
+	ak = KindAtomic(k);
+	switch(ak) {
+		ANY_TY, COUPLE_TY, MAP_TY, OPTION_TY, PROMISE_TY, RESULT_TY: return BlkValueCompare;
+		default: return KOVComparisonFunction_Orig(k);
+	}
+];
+-) after "Printing Routines" in "Output.i6t".
 
 
 
@@ -274,6 +289,96 @@ To decide what K result is (A - any) as a/an (name of kind of value K):
 
 To decide what K is (A - any) as a/an (name of kind of value K) or (backup - K):
 	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {backup}, 1) -).
+
+
+
+Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
+
+Data Structures Anys is a unit-test. "Data Structures: Anys functionality"
+
+For testing data structures anys:
+	[ Test untyped (null) anys ]
+	let NullAny1 be an any;
+	assert the kind of NullAny1 is null or "Untyped any name of kind is not null";
+	for "Name of kind of untyped any" assert "[kind of NullAny1]" is "null";
+	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
+	[ Test basic functionality with a number any ]
+	let NumAny1 be 1234 as an any;
+	assert the kind of NumAny1 is number or "Any<number> name of kind incorrect";
+	for "Any<number> result" assert NumAny1 as a number is 1234 as a result;
+	for "Any<number> equality" assert NumAny1 is 1234 as an any;
+	let NumAny1Error be a text error result with message "Any type mismatch: expected text, got number";
+	for "Any<number> cast to text error message" assert NumAny1 as a text is NumAny1Error;
+	let NumAny1Text2 be NumAny1 as a text or "Oops, not a text";
+	for "Any<number> cast with backup value" assert NumAny1Text2 is "Oops, not a text";
+	for "Any<number> unchecked" assert NumAny1 as a number unchecked is 1234;
+	[ Test anys with with block values with a text any ]
+	let TextAny1 be "Hello world!" as an any;
+	assert the kind of TextAny1 is text or "Any<text> name of kind incorrect";
+	for "Any<text> result" assert TextAny1 as a text is "Hello world!" as a result;
+	for "Any<text> equality" assert TextAny1 is "Hello world!" as an any;
+	for "Any<text> unchecked" assert TextAny1 as a text unchecked is "Hello world!";
+	[ Test comparison operators ]
+	for "Any<number> > comparison" assert 1234 as an option > 1233 as an option;
+	for "Any<number> < comparison" assert 1234 as an option < 1235 as an option;
+	[ Check that object subkinds are shown in error messages ]
+	let ListAny1 be {yourself} as an any;
+	assert "[ListAny1 as a number]" rmatches "Error\(Any type mismatch: expected number, got list of objects \(subkind \d+\)\)" or "Any<list of objects> subkind was not shown in error messages";
+
+Data Structures Anys All Kinds is a unit-test. "Data Structures: Anys of all kinds"
+
+Equation - Data Structures Test Equation
+	F=ma
+where F is a number, m is a number, a is an number.
+
+The file of Data Structures Test File is called "DSTF".
+
+To data structures test phrase (this is data structures test phrase):
+	do nothing;
+
+Sound of Data Structures Test Sound is the file "DSTS".
+
+For testing data structures anys all kinds:
+	[ Test that printing anys of all the kinds works ]
+	for "Any<action name>" assert "[waiting action as an any]" is "Any<action name: waiting>";
+	for "Any<activity>" assert "[printing the name as an any]" is "Any<activity: 0>";
+	for "Any<any>" assert "[1234 as an any as an any]" is "Any<any: Any<number: 1234>>";
+	for "Any<couple>" assert "[1234 and yourself as a couple as an any]" is "Any<couple of number and object: (1234, yourself)>";
+	[ descriptions? ]
+	assert "[Data Structures Test Equation as an any]" rmatches "Any\<equation: \d+\>" or "Any<equation> incorrect";
+	for "Any<external file>" assert "[file of Data Structures Test File as an any]" is "Any<external file: file of Data Structures Test File>";
+	for "Any<figure name>" assert "[figure of cover as an any]" is "Any<figure name: Figure of cover>";
+	for "Any<list>" assert "[{yourself} as an any]" is "Any<list of objects: yourself>";
+	for "Any<map>" assert "[(new map of numbers to things) as an any]" is "Any<map of numbers to objects: {}>";
+	for "Any<null>" assert "[null as an any]" is "Any<null: null>";
+	for "Any<number>" assert "[1234 as an any]" is "Any<number: 1234>";
+	for "Any<object>" assert "[yourself as an any]" is "Any<object: yourself>";
+	for "Any<option>" assert "[1234 as an option as an any]" is "Any<number option: Some(1234)>";
+	for "Any<phrase>" assert "[data structures test phrase as an any]" is "Any<phrase: data structures test phrase>";
+	[ properties? ]
+	for "Any<real number>" assert "[3.14159 as an any]" is "Any<real number: 3.14159>";
+	for "Any<relation>" assert "[containment relation as an any]" is "Any<relation: containment relation>";
+	for "Any<response>" assert "[(print empty inventory rule response (A)) as an any]" is "Any<response: print empty inventory rule response (A)>";
+	for "Any<result>" assert "[1234 as a result as an any]" is "Any<number result: Ok(1234)>";
+	for "Any<rule>" assert "[make named things mentioned rule as an any]" is "Any<rule: make named things mentioned rule>";
+	for "Any<rulebook outcome>" assert "[allow access outcome as an any]" is "Any<rulebook outcome: allow access>";
+	for "Any<rulebook>" assert "[when play begins as an any]" is "Any<rulebook: When play begins rulebook>";
+	for "Any<scene>" assert "[entire game as an any]" is "Any<scene: Entire Game>";
+	assert "[the player's command as an any]" rmatches "Any\<snippet: [the player's command]\>" or "Any<snippet> incorrect";
+	for "Any<sound name>" assert "[sound of data structures test sound as an any]" is "Any<sound name: Sound of Data Structures Test Sound>";
+	for "Any<stored action>" assert "[jumping as an any]" is "Any<stored action: jumping>";
+	for "Any<table>" assert "[Table of Locale Priorities as an any]" is "Any<table: Table of Locale Priorities>";
+	assert "[locale description priority as an any]" rmatches "Any\<table column: \d+\>" or "Any<table column> incorrect";
+	let TestText be "Hello world";
+	for "Any<text>" assert "[TestText as an any]" is "Any<text: Hello world>";
+	for "Any<time>" assert "[11:05 AM as an any]" is "Any<time: 11:05 am>";
+	for "Any<truth state>" assert "[true as an any]" is "Any<truth state: true>";
+	[ topics? ]
+	for "Any<unicode character>" assert "[unicode 68 as an any]" is "Any<unicode character: 68>";
+	for "Any<use option>" assert "[telemetry recordings option as an any]" is "Any<use option: telemetry recordings option>";
+	for "Any<verb>" assert "[the verb discover as an any]" is "Any<verb: verb discover>";
+	[ And then one enum kind of value ]
+	for "Any<grammatical tense>" assert "[present tense as an any]" is "Any<grammatical tense: present tense>";
 
 
 
@@ -1015,7 +1120,7 @@ To if (R - value of kind K result) is ok/okay let (V - nonexisting K variable) b
 To decide if (R - a value result) is an/-- error:
 	(- (({-by-reference:R}-->1) & RESULT_IS_OKAY == 0) -).
 	
-To if (R - value of kind K result) is an/-- error let (V - nonexisting text variable) be the error message begin -- end loop:
+To if (R - value result) is an/-- error let (V - nonexisting text variable) be the error message begin -- end loop:
 	(- if ((({-by-reference:R}-->1) & RESULT_IS_OKAY == 0) && BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}))) -).
 
 To decide what K is value of (R - value of kind K result) or (backup - K):
