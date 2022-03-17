@@ -1,4 +1,4 @@
-Version 1/220306 of Unit Tests by Zed Lopez begins here.
+Version 1/220316 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -97,7 +97,7 @@ Include (-
 
 Chapter Assertions proper
 
-To assert (C - a condition) or (T - a text): (- if ({C}) {-open-brace} unit_test_success++; {-close-brace} else {-open-brace} unit_test_failure++; TEXT_TY_puts({T}); {-close-brace} -)
+To assert (C - a condition) or say/-- (T - a text): (- if ({C}) {-open-brace} unit_test_success++; {-close-brace} else {-open-brace} unit_test_failure++; TEXT_TY_puts({T}); {-close-brace} -)
 
 Section Assert or die
 
@@ -105,7 +105,7 @@ To assert (C - a condition) or die with/-- (T - a text): (- if ({C}) {-open-brac
 
 Chapter Refutations
 
-To refute (C - a condition) or (T - a text): (- if (~~({C})) {-open-brace} unit_test_success++; {-close-brace} else {-open-brace} unit_test_failure++; TEXT_TY_puts({T}); {-close-brace} -)
+To refute (C - a condition) or say/-- (T - a text): (- if (~~({C})) {-open-brace} unit_test_success++; {-close-brace} else {-open-brace} unit_test_failure++; TEXT_TY_puts({T}); {-close-brace} -)
 
 Section Refute or die
 
@@ -440,3 +440,5 @@ Example: * Who tests the tester?
 	  assert 2 to the 1 is 2 or "2 to the 1 shouldn't be [2 to the 1].";
 	  assert 5 to the 0 is 1 or "5 to the 0 shouldn't be [5 to the 0].";
 	  assert 3 to the 3 is 27 or "3 to the 3 shouldn't be [3 to the 3].";
+
+	test me with "utest".
