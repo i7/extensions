@@ -33,7 +33,7 @@ specification-text:When made with the Glulx setting, an Inform project can inclu
 
 
 
-! New kinds from Custom Block Value Kinds by Dannii Willis
+! New kinds from Data Structures by Dannii Willis
 
 ANY_TY:
 apply-macro:#KIND-CONSTRUCTOR
@@ -95,6 +95,23 @@ i6-printing-routine:MAP_TY_Say
 
 description:a map
 specification-text:A map of key-value pairs.
+
+
+
+NULL_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:null
+plural:nulls
+
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+
+i6-printing-routine:NULL_TY_Say
+
+description:a null
+index-default-value:null
+index-priority:6
+specification-text:A null value.
 
 
 
