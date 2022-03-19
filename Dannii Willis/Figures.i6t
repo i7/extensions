@@ -52,5 +52,7 @@ Stub MAP_TY_Support 3;
 Stub NULL_TY_Say 2;
 Stub OPTION_TY_Say 2;
 Stub OPTION_TY_Support 3;
+Stub PROMISE_TY_Say 2;
+Stub PROMISE_TY_Support 3;
 Stub RESULT_TY_Say 2;
 Stub RESULT_TY_Support 3;

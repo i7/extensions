@@ -1,4 +1,4 @@
-Version 1/220317 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220319 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -17,6 +17,7 @@ Constant BLK_BVBITMAP_COUPLE = $82;
 Constant BLK_BVBITMAP_ANY = $83;
 Constant BLK_BVBITMAP_RESULT = $84;
 Constant BLK_BVBITMAP_MAP = $85;
+Constant BLK_BVBITMAP_PROMISE = $86;
 
 [ BlkValueWeakKind bv o;
 	if (bv) {
@@ -29,6 +30,7 @@ Constant BLK_BVBITMAP_MAP = $85;
 					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
 					BLK_BVBITMAP_MAP: return MAP_TY;
 					BLK_BVBITMAP_OPTION: return OPTION_TY;
+					BLK_BVBITMAP_PROMISE: return PROMISE_TY;
 					BLK_BVBITMAP_RESULT: return RESULT_TY;
 				}
 				return 0;
@@ -194,6 +196,9 @@ Array ANY_TY_Print_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<i
 		OPTION_TY:
 			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
 			print " option";
+		PROMISE_TY:
+			ANY_TY_Print_Subkind_Name(skov, 0, 0, show_object_subkinds);
+			print " promise";
 		PHRASE_TY: print "phrase";
 		PROPERTY_TY: print "property";
 		REAL_NUMBER_TY: print "real number";
@@ -276,7 +281,7 @@ Array ANY_TY_Print_Kind_Text --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Print_K
 -).
 
 To decide which any is (V - value of kind K) as an any:
-	(- ANY_TY_Set({-new:any}, {-strong-kind:K}, {V}) -).
+	(- ANY_TY_Set({-new:any}, {-strong-kind:K}, {-by-reference:V}) -).
 
 To say kind/type of (A - any):
 	(- ANY_TY_Print_Kind_Name({-by-reference:A}-->1); -).
@@ -288,23 +293,26 @@ To decide what K result is (A - any) as a/an (name of kind of value K):
 	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, {-new:K result}) -).
 
 To decide what K is (A - any) as a/an (name of kind of value K) or (backup - K):
-	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {backup}, 1) -).
+	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, 0, {-by-reference:backup}, 1) -).
 
 
 
 Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
 
-Data Structures Anys is a unit-test. "Data Structures: Anys functionality"
+Data Structures Anys is a unit test. "Data Structures: Anys functionality"
+
+To decide what any is test returning a text any from a phrase:
+	decide on "Hello world!" as an any;
 
 For testing data structures anys:
 	[ Test untyped (null) anys ]
 	let NullAny1 be an any;
-	assert the kind of NullAny1 is null or "Untyped any name of kind is not null";
+	for "Untyped any is kind null" assert the kind of NullAny1 is null;
 	for "Name of kind of untyped any" assert "[kind of NullAny1]" is "null";
 	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
 	[ Test basic functionality with a number any ]
 	let NumAny1 be 1234 as an any;
-	assert the kind of NumAny1 is number or "Any<number> name of kind incorrect";
+	for "Any<number> kind" assert the kind of NumAny1 is number ;
 	for "Any<number> result" assert NumAny1 as a number is 1234 as a result;
 	for "Any<number> equality" assert NumAny1 is 1234 as an any;
 	let NumAny1Error be a text error result with message "Any type mismatch: expected text, got number";
@@ -314,18 +322,19 @@ For testing data structures anys:
 	for "Any<number> unchecked" assert NumAny1 as a number unchecked is 1234;
 	[ Test anys with with block values with a text any ]
 	let TextAny1 be "Hello world!" as an any;
-	assert the kind of TextAny1 is text or "Any<text> name of kind incorrect";
+	for "Any<text> kind" assert the kind of TextAny1 is text;
 	for "Any<text> result" assert TextAny1 as a text is "Hello world!" as a result;
 	for "Any<text> equality" assert TextAny1 is "Hello world!" as an any;
+	for "Any<text> returned from phrase" assert test returning a text any from a phrase is "Hello world!" as an any;
 	for "Any<text> unchecked" assert TextAny1 as a text unchecked is "Hello world!";
 	[ Test comparison operators ]
 	for "Any<number> > comparison" assert 1234 as an option > 1233 as an option;
 	for "Any<number> < comparison" assert 1234 as an option < 1235 as an option;
 	[ Check that object subkinds are shown in error messages ]
 	let ListAny1 be {yourself} as an any;
-	assert "[ListAny1 as a number]" rmatches "Error\(Any type mismatch: expected number, got list of objects \(subkind \d+\)\)" or "Any<list of objects> subkind was not shown in error messages";
+	for "Any<list of objects> subkinds shown in error messages" assert "[ListAny1 as a number]" rmatches "Error\(Any type mismatch: expected number, got list of objects \(subkind \d+\)\)";
 
-Data Structures Anys All Kinds is a unit-test. "Data Structures: Anys of all kinds"
+Data Structures Anys All Kinds is a unit test. "Data Structures: Anys of all kinds"
 
 Equation - Data Structures Test Equation
 	F=ma
@@ -345,7 +354,7 @@ For testing data structures anys all kinds:
 	for "Any<any>" assert "[1234 as an any as an any]" is "Any<any: Any<number: 1234>>";
 	for "Any<couple>" assert "[1234 and yourself as a couple as an any]" is "Any<couple of number and object: (1234, yourself)>";
 	[ descriptions? ]
-	assert "[Data Structures Test Equation as an any]" rmatches "Any\<equation: \d+\>" or "Any<equation> incorrect";
+	for "Any<equation>" assert "[Data Structures Test Equation as an any]" rmatches "Any\<equation: \d+\>";
 	for "Any<external file>" assert "[file of Data Structures Test File as an any]" is "Any<external file: file of Data Structures Test File>";
 	for "Any<figure name>" assert "[figure of cover as an any]" is "Any<figure name: Figure of cover>";
 	for "Any<list>" assert "[{yourself} as an any]" is "Any<list of objects: yourself>";
@@ -364,11 +373,11 @@ For testing data structures anys all kinds:
 	for "Any<rulebook outcome>" assert "[allow access outcome as an any]" is "Any<rulebook outcome: allow access>";
 	for "Any<rulebook>" assert "[when play begins as an any]" is "Any<rulebook: When play begins rulebook>";
 	for "Any<scene>" assert "[entire game as an any]" is "Any<scene: Entire Game>";
-	assert "[the player's command as an any]" rmatches "Any\<snippet: [the player's command]\>" or "Any<snippet> incorrect";
+	for "Any<snippet>" assert "[the player's command as an any]" rmatches "Any\<snippet: [the player's command]\>";
 	for "Any<sound name>" assert "[sound of data structures test sound as an any]" is "Any<sound name: Sound of Data Structures Test Sound>";
 	for "Any<stored action>" assert "[jumping as an any]" is "Any<stored action: jumping>";
 	for "Any<table>" assert "[Table of Locale Priorities as an any]" is "Any<table: Table of Locale Priorities>";
-	assert "[locale description priority as an any]" rmatches "Any\<table column: \d+\>" or "Any<table column> incorrect";
+	for "Any<table column>" assert "[locale description priority as an any]" rmatches "Any\<table column: \d+\>";
 	let TestText be "Hello world";
 	for "Any<text>" assert "[TestText as an any]" is "Any<text: Hello world>";
 	for "Any<time>" assert "[11:05 AM as an any]" is "Any<time: 11:05 am>";
@@ -476,7 +485,7 @@ Include (-
 -).
 
 To decide what couple of K and L is (V1 - value of kind K) and (V2 - value of kind L) as a couple:
-	(- COUPLE_TY_Set({-new:couple of K and L}, {V1}, {V2}) -).
+	(- COUPLE_TY_Set({-new:couple of K and L}, {-by-reference:V1}, {-by-reference:V2}) -).
 
 To decide what K is first value of (C - couple of value of kind K and value of kind L):
 	(- {-by-reference:C}-->3 -).
@@ -489,6 +498,29 @@ To decide what K is (C - couple of value of kind K and value of kind L) => 1:
 
 To decide what L is (C - couple of value of kind K and value of kind L) => 2:
 	(- {-by-reference:C}-->4 -).
+
+
+
+Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
+
+Data Structures Couples is a unit test. "Data Structures: Couples"
+
+To decide what couple of text and list of numbers is test returning a couple from a phrase:
+	decide on "Hello world!" and {1234} as a couple;
+
+For testing data structures couples:
+	let CoupleTest be 1234 and "Hello world" as a couple;
+	for "Couple<number, text> equality" assert CoupleTest is 1234 and "Hello world" as a couple;
+	for "Couple<number, text> saying" assert "[CoupleTest]" is "(1234, Hello world)";
+	for "Couple<text, list of numbers> returned from phrase" assert test returning a couple from a phrase is "Hello world!" and {1234} as a couple;
+	for "Couple reading first value" assert first value of CoupleTest is 1234;
+	for "Couple reading second value" assert second value of CoupleTest is "Hello world";
+	for "Couple reading => 1" assert CoupleTest => 1 is 1234;
+	for "Couple reading => 2" assert CoupleTest => 2 is "Hello world";
+	for "Couple reading < comparison" assert 1234 and "Hello" as a couple < 12345 and "Apple" as a couple;
+	for "Couple reading < comparison" assert 1234 and "Hello" as a couple < 1234 and "Zoo" as a couple;
+	for "Couple reading > comparison" assert 1234 and "Hello" as a couple > 123 and "Zoo" as a couple;
+	for "Couple reading > comparison" assert 1234 and "Hello" as a couple > 1234 and "Apple" as a couple;
 
 
 
@@ -533,6 +565,17 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	short_block-->1 = BlkValueCreate(MAP_TY_Temp_List_Definition);
 	MAP_TY_Temp_List_Definition-->2 = KindBaseTerm(skov, 1);
 	short_block-->2 = BlkValueCreate(MAP_TY_Temp_List_Definition);
+	return short_block;
+];
+
+[ MAP_TY_Create_From short_block keys vals;
+	! TODO: check keys and vals lengths are equal
+	if (short_block == 0) {
+		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
+	}
+	short_block-->0 = BLK_BVBITMAP_MAP;
+	short_block-->1 = keys;
+	short_block-->2 = vals;
 	return short_block;
 ];
 
@@ -671,6 +714,9 @@ Chapter - Maps - Creating
 To decide which map of value of kind K to value of kind L is a/-- new map of (name of kind of value K) to (name of kind of value L):
 	(- {-new:map of K to L} -);
 
+[To decide which map of value of kind K to value of kind L is a/-- new/-- map from (keys - list of values of kind K) and/to (vals - list of values of kind L):
+	(- MAP_TY_Create_From({-new:map of K to L}, {-by-reference:K}, {-by-reference:L}) -);]
+
 
 
 Chapter - Maps - Writing
@@ -720,10 +766,10 @@ To decide what L option is get key (key - value of kind K) in/from/of (M - map o
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
 
 To decide what L is get key (key - K) in/from/of (M - map of value of kind K to value of kind L) or (backup - L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {backup}, 1) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-by-reference:backup}, 1) -).
 
 To decide what L is get key (key - value of kind K) in/from/of (M - map of any to value of kind L) or (backup - L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {backup}, 1) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-by-reference:backup}, 1) -).
 
 To decide what L option is (M - map of value of kind K to value of kind L) => (key - K):
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option}) -).
@@ -732,10 +778,10 @@ To decide what L option is (M - map of any to value of kind L) => (key - value o
 	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option}) -).
 
 To decide what L is (M - map of value of kind K to value of kind L) => (key - K) or/|| (backup - L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {backup}, 1) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, 0, {-by-reference:backup}, 1) -).
 
 To decide what L is (M - map of any to value of kind L) => (key - value of kind K) or/|| (backup - L):
-	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {backup}, 1) -).
+	(- MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, 0, {-by-reference:backup}, 1) -).
 
 
 
@@ -922,7 +968,7 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 -).
 
 To decide what K option is (V - value of kind K) as an option:
-	(- OPTION_TY_Set({-new:K option}, 1, {V}) -).
+	(- OPTION_TY_Set({-new:K option}, 1, {-by-reference:V}) -).
 
 To decide what K option is a/an (name of kind of value K) none option:
 	(- OPTION_TY_Set({-new:K option}) -).
@@ -943,7 +989,186 @@ To decide if (O - a value option) is none:
 	(- (({-by-reference:O}-->1) & OPTION_IS_SOME == 0) -).
 
 To decide what K is value of (O - value of kind K option) or (backup - K):
-	(- OPTION_TY_Get({-by-reference:O}, {backup}, 1) -).
+	(- OPTION_TY_Get({-by-reference:O}, {-by-reference:backup}, 1) -).
+
+
+
+Chapter - Promises
+
+[ Promises are four word short block values.
+The first word is the short block header, $86.
+The second word is a result holding the resolved value for the promise.
+The third word is a list of callbacks for a success value.
+The fourth word is a list of error callbacks. ]
+
+Include (-
+[ PROMISE_TY_Support task arg1 arg2 arg3;
+	switch(task) {
+		COPY_KOVS: PROMISE_TY_Copy(arg1, arg2);
+		CREATE_KOVS: return PROMISE_TY_Create(arg1, arg2);
+		DESTROY_KOVS: PROMISE_TY_Destroy(arg1);
+	}
+	! We don't respond to the other tasks
+	rfalse;
+];
+
+[ PROMISE_TY_Add_Handler promise handlerany success_handler	result;
+	result = promise-->1;
+	if (~~(result)) {
+		if (success_handler) {
+			LIST_OF_TY_InsertItem(promise-->2, handlerany);
+		}
+		else {
+			LIST_OF_TY_InsertItem(promise-->3, handlerany);
+		}
+	}
+	else if ((result-->1) & RESULT_IS_OKAY) {
+		if (success_handler) {
+			PROMISE_TY_Run_Handler(handlerany, result-->2);
+		}
+	}
+	else {
+		if (~~success_handler) {
+			PROMISE_TY_Run_Handler(handlerany, result-->2);
+		}
+	}
+];
+
+[ PROMISE_TY_Copy to from	toresult fromresult;
+	if (to-->1) {
+		BlkValueFree(to-->1);
+		to-->1 = 0;
+	}
+	if (from-->1) {
+		toresult = BlkValueCreate(RESULT_TY);
+		to-->1 = toresult;
+		fromresult = from-->1;
+		toresult-->1 = (fromresult-->1) & RESULT_MASK;
+		BlkValueCopy(toresult, fromresult);
+	}
+	LIST_OF_TY_SetLength(to-->2, 0, 0);
+	LIST_OF_TY_SetLength(to-->3, 0, 0);
+	BlkValueCopy(to-->2, from-->2);
+	BlkValueCopy(to-->3, from-->3);
+];
+
+Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
+
+[ PROMISE_TY_Create skov short_block;
+	if (short_block == 0) {
+		short_block = FlexAllocate(4 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
+	}
+	short_block-->0 = BLK_BVBITMAP_PROMISE;
+	short_block-->1 = 0;
+	short_block-->2 = BlkValueCreate(PROMISE_TY_Handler_List_Def);
+	short_block-->3 = BlkValueCreate(PROMISE_TY_Handler_List_Def);
+	return short_block;
+];
+
+[ PROMISE_TY_Destroy promise;
+	if (promise-->1) {
+		BlkValueFree(promise-->1);
+	}
+	BlkValueFree(promise-->2);
+	BlkValueFree(promise-->3);
+];
+
+[ PROMISE_TY_Get promise returnopt;
+	if (promise-->1) {
+		return OPTION_TY_Set(returnopt, 1, promise-->1);
+	}
+	else {
+		return OPTION_TY_Set(returnopt);
+	}
+];
+
+[ PROMISE_TY_Resolve promise result resultkov returnresult	handler i length list_to_run resultval;
+	if (promise-->1) {
+		if (returnresult) {
+			return RESULT_TY_Set(returnresult, 0, PROMISE_TY_Resolve_Error_Multi);
+		}
+		else {
+			print (TEXT_TY_Say) PROMISE_TY_Resolve_Error_Multi;
+			print "^";
+			return;
+		}
+	}
+	promise-->1 = BlkValueCreate(resultkov);
+	BlkValueCopy(promise-->1, result);
+	if ((result-->1) & RESULT_IS_OKAY) {
+		list_to_run = promise-->2;
+	}
+	else {
+		list_to_run = promise-->3;
+	}
+	length = BlkValueRead(list_to_run, LIST_LENGTH_F);
+	resultval = result-->2;
+	for (i = 0: i < length: i++) {
+		handler = BlkValueRead(list_to_run, LIST_ITEM_BASE + i);
+		PROMISE_TY_Run_Handler(handler, resultval);
+	}
+	LIST_OF_TY_SetLength(promise-->2, 0, 0);
+	LIST_OF_TY_SetLength(promise-->3, 0, 0);
+	if (returnresult) {
+		return RESULT_TY_Set(returnresult, 1, 0);
+	}
+	return promise;
+];
+
+Array PROMISE_TY_Resolve_Error_Multi --> CONSTANT_PACKED_TEXT_STORAGE "A promise cannot be resolved more than once.";
+
+[ PROMISE_TY_Run_Handler handlerany value;
+	if (handlerany-->1 == PHRASE_TY) {
+		((handlerany-->2)-->1)(value);
+	}
+	else {
+		print "Error! Unknown promise handler kind.^";
+	}
+];
+
+[ PROMISE_TY_Say promise;
+	print "Promise(";
+	if (promise-->1) {
+		RESULT_TY_Say(promise-->1);
+	}
+	else {
+		print "pending";
+	}
+	print ")";
+];
+-).
+
+
+
+Chapter - Promises - Creating and resolving
+
+To decide what K promise is (name of kind of value K) promise:
+	(- {-new:K promise} -).
+
+To decide what null result is resolve (P - a value of kind K promise) with (R - K result):
+	(- PROMISE_TY_Resolve({-by-reference:P}, {-by-reference:R}, {-strong-kind:K result}, {-new:null result}) -).
+
+To decide what null result is resolve (P - a value of kind K promise) with (val - K):
+	(- PROMISE_TY_Resolve({-by-reference:P}, RESULT_TY_Set({-new:K result}, 1, {-by-reference:val}), {-strong-kind:K result}, {-new:null result}) -).
+
+To decide what K promise is (val - value of kind K) as a successful/-- promise:
+	(- PROMISE_TY_Resolve({-new:K promise}, RESULT_TY_Set({-new:K result}, 1, {-by-reference:val}), {-strong-kind:K result}) -).
+
+To decide what K promise is (val - text) as a failed (name of kind of value K) promise:
+	(- PROMISE_TY_Resolve({-new:K promise}, RESULT_TY_Set({-new:K result}, 0, {-by-reference:val}), {-strong-kind:K result}) -).
+
+To decide what K result option is value of (P - a value of kind K promise):
+	(- PROMISE_TY_Get({-by-reference:P}, {-new:K result option}) -).
+
+
+
+Chapter - Promises - Attaching handlers
+
+To attach success/-- handler/-- (H - a phrase K -> nothing) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, PHRASE_TY, {-by-reference:H}), 1); -).
+
+To attach failure handler/-- (H - a phrase text -> nothing) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, PHRASE_TY, {-by-reference:H})); -).
 
 
 
@@ -1100,10 +1325,10 @@ Constant RESULT_MASK = $7FFFFFFF;
 -).
 
 To decide what K result is (V - value of kind K) as a/an ok/okay/-- result:
-	(- RESULT_TY_Set({-new:K result}, 1, {V}) -).
+	(- RESULT_TY_Set({-new:K result}, 1, {-by-reference:V}) -).
 
 To decide what K result is a/an (name of kind of value K) error result with message (M - text):
-	(- RESULT_TY_Set({-new:K result}, 0, {M}) -).
+	(- RESULT_TY_Set({-new:K result}, 0, {-by-reference:M}) -).
 
 To decide if (R - a value result) is ok/okay:
 	(- (({-by-reference:R}-->1) & RESULT_IS_OKAY) -).
@@ -1124,7 +1349,7 @@ To if (R - value result) is an/-- error let (V - nonexisting text variable) be t
 	(- if ((({-by-reference:R}-->1) & RESULT_IS_OKAY == 0) && BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}))) -).
 
 To decide what K is value of (R - value of kind K result) or (backup - K):
-	(- RESULT_TY_Get({-by-reference:R}, 1, {backup}, 1) -).
+	(- RESULT_TY_Get({-by-reference:R}, 1, {-by-reference:backup}, 1) -).
 
 
 
@@ -1149,6 +1374,12 @@ To decide what L is (M - map of any to value of kind L) => (key - value of kind 
 
 To decide what K is value of (O - value of kind K option) unchecked:
 	(- OPTION_TY_Get({-by-reference:O}, {-new:K}) -).
+
+To resolve (P - a value of kind K promise) with (R - K result) unchecked:
+	(- PROMISE_TY_Resolve({-by-reference:P}, {-by-reference:R}, {-strong-kind:K result}); -).
+
+To resolve (P - a value of kind K promise) with (R - K) unchecked:
+	(- PROMISE_TY_Resolve({-by-reference:P}, RESULT_TY_Set({-new:K result}, 1, {-by-reference:R}), {-strong-kind:K result}); -).
 
 To decide what K is value of (R - value of kind K result) unchecked:
 	(- RESULT_TY_Get({-by-reference:R}, 1, {-new:K}) -).

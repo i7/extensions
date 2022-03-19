@@ -137,6 +137,27 @@ specification-text:An optional value, either nothing, or a value of a specific k
 
 
 
+PROMISE_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:k promise
+plural:k promises
+constructor-arity:covariant
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:0
+heap-size-estimate:16
+small-block-size:4
+
+comparison-routine:BlkValueCompare
+!distinguisher:PROMISE_TY_Distinguish
+i6-printing-routine:PROMISE_TY_Say
+
+description:a promise
+specification-text:A promise represents a value which is yet to be determined, and holds a list of code hooks to run when it has been resolved.
+
+
+
 RESULT_TY:
 apply-macro:#KIND-CONSTRUCTOR
 singular:k result
