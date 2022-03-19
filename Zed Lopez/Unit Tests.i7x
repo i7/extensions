@@ -1,4 +1,4 @@
-Version 2/220318 of Unit Tests by Zed Lopez begins here.
+Version 2/220319 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -223,7 +223,6 @@ if (buf == NULL) { print "<NULL>"; return; }
   ];
 
 [ utSuccessCmp x y k cmp_target assert;
-  print "expected ";
   if (~~cmp_target) {
     if (assert) print "and found ";
     else print "other than ";
@@ -419,9 +418,12 @@ Chapter Introduction
 
 This is a unit test extension. There are many like it, but this one is mine.
 
-To test your game as a whole, I recommend using Andrew Plotkin's [RegTest](https://eblong.com/zarf/plotex/regtest.html). The latest is available in [the plotex Github repo](https://github.com/erkyrath/plotex/blob/master/regtest.html).
+To test your game as a whole, I recommend using Andrew Plotkin's [RegTest](https://eblong.com/zarf/plotex/regtest.html).
+The latest is available in [the plotex Github repo](https://github.com/erkyrath/plotex/blob/master/regtest.html).
 
-But if you're testing code in isolation that isn't about accepting player commands or producing player-visible output, RegTest isn't the most natural fit. This extension was written for those cases.
+But if you're testing code in isolation that isn't about accepting player commands
+or producing player-visible output, RegTest isn't the most natural fit. This
+extension was written for those cases.
 
 A unit test is a kind of object, with a text description property, which should
 be populated for the test to identify itself. (It *can* be left blank, in which
