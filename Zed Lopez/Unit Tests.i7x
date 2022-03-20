@@ -1,4 +1,4 @@
-Version 2/220319 of Unit Tests by Zed Lopez begins here.
+Version 3 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -7,23 +7,76 @@ Volume Unit Tests (not for release)
 Part Autotest
 
 Use test automatically translates as (- Constant TEST_AUTOMATICALLY; -).
-Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS = 1; -).
+Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
 
 when play begins (this is the test all unit tests automatically rule):
   if test automatically option is active, test all unit tests.
 
 Part Undo
 
-To decide what number is the result of saving before running the unit tests:
+To decide what number is the result of saving before running the unit test:
 (- VM_Save_Undo() -).
 
-To restore back to before running the unit tests:
+To restore back to before running the unit test:
 (- VM_Undo(); -).
 
 Part unit test object
 
 A unit test is a kind of object.
 A unit test has a text called the description.
+
+dummy-unit-test is a unit test.
+The current unit test is a unit test that varies.
+
+A unit test operator value is a kind of value.
+A unit test operator value has a text called the description.
+
+ut-lt is a unit test operator value. "<". [1]
+ut-eq is a unit test operator value. "==".[2]
+ut-gt is a unit test operator value. ">". [3]
+ut-ge is a unit test operator value. ">=".[4]
+ut-ne is a unit test operator value. "!=". [5]
+ut-le is a unit test operator value. "<=". [6]
+
+To say the/a/-- (uto - a unit test operator value): say the description of uto.
+
+A unit test operator value has a unit test operator value called the opposite operator.
+The opposite operator of ut-eq is ut-ne.
+The opposite operator of ut-ne is ut-eq.
+The opposite operator of ut-lt is ut-ge.
+The opposite operator of ut-ge is ut-lt.
+The opposite operator of ut-gt is ut-le.
+The opposite operator of ut-le is ut-gt.
+A unit test has a phrase text -> nothing called the output result.
+To say ut-how-tested: if ut-assert is true, say "Asserted";
+else say "Refuted".
+
+To verbosely output result with (T - a text) (this is original-output-result):
+  say "[ut-how-tested] [T]: expected ";
+  if ut-truth-state is true begin;
+    if ut-result is true, say "and found true";
+    else say "true, found false";
+  else;
+    if ut-assert is true, say ut-operator;
+    else say ut-opposite;
+    say " [ut-expected], found: [ut-found]";
+  end if;
+  if ut-result is true, say " (pass)";
+  else say " (fail)";
+  say line break;
+
+To simple output result with (T - a text) (this is simple-output-result):
+  if ut-result is false or don't report passing tests option is not active begin;
+  say "[ut-how-tested] [T]: ";
+  if ut-truth-state is true, say "[ut-found]";
+  else say "tested [ut-found] [ut-operator] [ut-expected]";
+  if ut-result is true, say " (pass)";
+  else say " (fail)";
+  say line break;
+  end if;
+  
+The output result of a unit test is usually simple-output-result.
+
 The description of a unit test is usually "".
 
 Chapter Saying unit test
@@ -40,13 +93,46 @@ Part Success and failure counting
 Include (-
 Global unit_test_success;
 Global unit_test_failure;
+Global ut_expected; ! LHS for comparative ; true/false for conditional
+Global ut_found; ! RHS for comparative ; true/false for conditional
+Global ut_kind; ! strong kind of operands for comparative; irrelevant for conditional
+Global ut_truth_state; ! 0: comparative ; 1 : conditional
+Global ut_operator; ! -1: < ; 0: == ; 1: >
+Global ut_result; ! 0: fail 1: pass
+Global ut_assert; ! 0: refutation, 1: assertion
 -) after "Definitions.i6t".
+
+ut-assert is a truth state variable.
+ut-assert variable translates into I6 as "ut_assert".
+
+ut-truth-state is a truth state variable.
+ut-truth-state variable translates into I6 as "ut_truth_state".
+
+ut-op is a number variable.
+ut-op variable translates into I6 as "ut_operator".
+
+ut-result is a truth state variable.
+ut-result variable translates into I6 as "ut_result".
 
 Unit test success is a number variable.
 Unit test success variable translates into I6 as "unit_test_success".
 
 Unit test failure is a number variable.
 Unit test failure variable translates into I6 as "unit_test_failure".
+
+to decide what unit test operator value is the ut-operator: (- (ut_operator + 2) -).
+to decide what unit test operator value is the ut-opposite: (- (ut_operator + 5) -).
+
+To say ut-expected: (- if (ut_truth_state) { utTruth(ut_expected); } else {
+if (ut_kind == TEXT_TY) print "~";
+PrintKindValuePair(ut_kind, ut_expected);
+if (ut_kind == TEXT_TY) print "~";
+ } -).
+To say ut-found: (- if (ut_kind) {
+if (ut_kind == TEXT_TY) print "~";
+PrintKindValuePair(ut_kind, ut_found);
+if (ut_kind == TEXT_TY) print "~";
+} else { utTruth(ut_found); } -)
 
 Part Actions
 
@@ -94,15 +180,15 @@ Part Assertions
 Part Utest rulebook
 
 Utest is a unit test based rulebook.
-[The utest rulebook has a number called the total test count.]
 
 Chapter Setup test
 
 First utest a unit test (called ut) (this is the unit test setup rule):
+  now current unit test is ut;
   now unit test success is 0;
   now unit test failure is 0;
   say "[line break]Testing [ut][line break]";
-  if the result of saving before running the unit tests is 2, stop;
+  if the result of saving before running the unit test is 2, stop;
 
 Chapter Utest rule to carry out testing activity
 
@@ -117,148 +203,60 @@ Utest a unit test (called ut) (this is the unit test reporting rule):
 
 Chapter Cleanup
 
-Utest (this is the unit test cleanup rule):
-  restore back to before running the unit tests;
+Utest a unit test (this is the unit test cleanup rule):
+  restore back to before running the unit test;
 
 Part Testing something activity
 
 [ no pre-defined rules: this is for authors to define rules for their tests ]
 Testing something is an activity on unit tests.
 
-[ utPlainSuccess x assert expected;
-  expected = x;
-  if (~~assert) expected = ~~x;  
-  print "and found "; utTruth(expected);
-];
-[!  if (pass) { print "and found "; utTruth(expected); }
-!  else {   utTruth(x);
-!  print ", found ";
-!  utTruth(~~x);
-]
-[ utPlainFailure x assert expected;
-  expected = x;
-  if (~~assert) expected = ~~x;  
-  utTruth(x);
-  print "and found "; 
-  utTruth(expected);
-];
-
-
-
 Include (-
-
-[ utAssertPlain x k assert txt err pass;
-  pass = 0;
-  if ((x && assert) || (~~x && ~~assert)) pass = 1;
-  ut_truth_state = 1;
-  ut_expected = assert;
-  utFinish(x, 0, k, 0, assert, txt, err, pass);
-  ];
-
-[ utAssert x y k cmp_target assert txt err cmp pass;
-  pass = 0;
-  if (k) cmp = KOVComparisonFunction(k);
-  if (k == NUMBER_TY) cmp = utSignedCompare;
-  if (assert == (utSimpleCmp(cmp(x,y))==cmp_target)) pass = 1;
-  ut_truth_state = 0;
-  ut_expected = y;
-  utFinish(x, y, k, cmp_target, assert, txt, err, pass);
-
-];
-
-[ UtFinish x y k cmp_target assert txt err pass;
-  ut_found = x;
-if (pass) {
-  unit_test_success++;
-#ifndef DONT_REPORT_PASSING_TESTS;
-  utPreface(assert,txt);
-  print "expected ";
-  if (ut_truth_state) utPlainResult(x, assert, pass);
-  else utSuccessCmp(x, y, k, cmp_target, assert);
-  print " (pass)^";
-#endif;
-}
-else {
-  unit_test_failure++;
-  utPreface(assert,txt);
-  if (err) {
-    TEXT_TY_Say(err);
-  }
-  else {
-  print "expected ";
-  if (ut_truth_state) utPlainResult(x, assert, pass);
-  else utFailureCmp(x, y, k, cmp_target, assert);
-  }
-  print " (fail)^";
-}
-];
-
-[ stringarray buf
-i ;
-if (buf == NULL) { print "<NULL>"; return; }
-  for (i=1:i<=buf->0:i++ ) print (char) buf->i;
-];
-
-[ utPreface assert txt;
-  if (assert) { print "Asserted "; }
-  else { print "Refuted "; }
-  TEXT_TY_say(txt);
-  print ": ";
-  ];
-
-[ utPlainResult x assert pass expected;
-  expected = x;
-  if (~~pass) expected = ~~x;  
-  if (pass) { print "and found "; utTruth(expected); }
-  else {   utTruth(x);
-  print ", found ";
-  utTruth(~~x);
-}
-];
-
 
 [ utTruth x;
   if (x) print "true";
   else print "false";
   ];
 
-[ utSuccessCmp x y k cmp_target assert;
-  if (~~cmp_target) {
-    if (assert) print "and found ";
-    else print "other than ";
-    PrintKindValuePair(k, y);
-    if (~~assert) {
-      print ", found "; 
-      PrintKindValuePair(k, x);
-    }
-return;
-}
-      if (assert) {
-      if (cmp_target > 0) { print "> "; }
-      else if (cmp_target < 0) { print "< "; }
-} else {
-      if (cmp_target > 0) { print "<= "; }
-      else if (cmp_target < 0) { print ">= "; }
-}
-      PrintKindValuePair(k, y);
-      print ", ";
-    print "found ";
-    PrintKindValuePair(k, x);
-    ];
+[ utAssertPlain x assert txt;
+  ut_result = 0;
+  if ((x && assert) || (~~x && ~~assert)) ut_result = 1;
+  ut_truth_state = 1;
+  ut_expected = assert;
+  ut_found = ut_expected;
+  if (~~ut_result) ut_found = ~~ut_expected;
+!  utFinish(x, 0, 0, 0, assert, txt);
+  utFinish(assert, txt);
+  ];
 
-[ utFailureCmp x y k cmp_target assert txt err;
-      if (assert) {
-      if (cmp_target > 0) { print "> "; }
-      else if (cmp_target < 0) { print "< "; }
-      }
-      else {
-      if (cmp_target > 0) { print "<= "; }
-      else if (cmp_target < 0) { print ">= "; }
-      else if (cmp_target == 0) print "other than ";
-}      PrintKindValuePair(k, y);
-      print ", found: ";
-      PrintKindValuePair(k, x);
-      ];
+[ utAssert x y k cmp_target assert txt err cmp;
+  ut_result = 0;
+  ut_operator = cmp_target;
+  if (k) { cmp = KOVComparisonFunction(k); ut_kind = k; }
+  if (k == NUMBER_TY) cmp = utSignedCompare;
+  if (assert == (utSimpleCmp(cmp(x,y))==cmp_target)) ut_result = 1;
+  ut_truth_state = 0;
+  ut_kind = k;
+  ut_expected = y;
+  ut_found = x;
+!  utFinish(x, y, k, cmp_target, assert, txt);
+  utFinish(assert, txt);
+];
+
+[ UtFinish assert txt; !x y k cmp_target assert txt operand;
+  ut_assert = assert;
+  if (ut_truth_state) ut_kind = 0;
+  if (ut_result) {
+    unit_test_success++;
+#ifndef DONT_REPORT_PASSING_TESTS;
+((+ output-result +)-->1)(txt);
+#endif;
+}
+else {
+  unit_test_failure++;
+((+ output-result +)-->1)(txt);
+}
+];
 
 [ utSignedCompare x y;
 if (x > y) return 1;
@@ -272,18 +270,10 @@ return 0;
   return 0;
   ];
 
--)
+-).
 
-To say ut-expected: (- if (ut_truth_state) { utTruth(ut_expected); } else { PrintKindValuePair(ut_kind, ut_expected); } -).
-To say ut-found: (- PrintKindValuePair(ut_kind, ut_found); -).
-
-Include (-
-Global ut_expected;
-Global ut_found;
-Global ut_kind;
-Global ut_truth_state;
--) after "Definitions.i6t".
-
+To output current unit test result for (T - a text) (this is output-result):
+  apply output result of current unit test to T.
 
 Volume Assertions and Refutations
 
@@ -292,43 +282,27 @@ Book Assertions
 Part boolean (for use with If True by Zed Lopez)
 
 To for (txt - a text) assert (X - value of kind K):
-  (- utAssertPlain({X},{-strong-kind:K},1,{txt}); -).
-
-To for (txt - a text) assert (X - value of kind K) or say/-- (err - a text):
-  (- utAssertPlain({X},{-strong-kind:K},1,{txt},{err}); -).
-
+  (- utAssertPlain({X},1,{txt}); -).
 
 Part conditional
 
-To for (txt - a text) assert (C - a condition) or say/-- (err - a text):
-  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,1,{txt},{err}); -).
-
 To for (txt - a text) assert (C - a condition):
-  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,1,{txt}); -).
+  (- utAssertPlain({C},1,{txt}); -).
 
 Part equality
 
 To for (txt - a text) assert (X - value of kind K) is/== (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},0,1,{txt}); -).
-
-To for (txt - a text) assert (X - value of kind K) is/== (Y - K) or say/-- (err - a text):
-  (- utAssert({X},{Y},{-strong-kind:K},0,1,{txt},{err}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},0,1,{txt}); -)
 
 Part greater than
-
+  
 To for (txt - a text) assert (X - value of kind K) > (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},1,1,{txt}); -).
 
-To for (txt - a text) assert (X - value of kind K) > (Y - K) or say/-- (err - a text):
-  (-  utAssert({X},{Y},{-strong-kind:K},1,1,{txt},{err}); -).
-
 Part less than
-
+  
 To for (txt - a text) assert (X - value of kind K) < (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},-1,1,{txt}); -).
-
-To for (txt - a text) assert (X - value of kind K) < (Y - K) or say/-- (err - a text):
-  (- utAssert({X},{Y},{-strong-kind:K},-1,1,{txt},{err}); -).
 
 Book Refutations
 
@@ -337,40 +311,25 @@ Part boolean (for use with If True by Zed Lopez)
 To for (txt - a text) refute (X - value of kind K):
   (- utAssertPlain({X},{-strong-kind:K},0,{txt}); -).
 
-To for (txt - a text) refute (X - value of kind K) or say/-- (err - a text):
-  (- utAssertPlain({X},{-strong-kind:K},0,{txt},{err}); -).
-
 Part conditional
 
-To for (txt - a text) refute (C - a condition) or say/-- (err - a text):
-  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,0,{txt},{err}); -).
-
 To for (txt - a text) refute (C - a condition):
-  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,0,{txt}); -).
+  (- utAssertPlain({C},0,{txt}); -).
 
 Part equality
-
+    
 To for (txt - a text) refute (X - value of kind K) is/== (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},0,0, {txt}); -).
-
-To for (txt - a text) refute (X - value of kind K) is/== (Y - K) or say/-- (err - a text):
-  (- utAssert({X},{Y},{-strong-kind:K},0,0, {txt},{err}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},0,0,{txt}); -).
 
 Part greater than
-
+  
 To for (txt - a text) refute (X - value of kind K) > (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},1,0, {txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},1,0,{txt}); -).
 
-To for (txt - a text) refute (X - value of kind K) > (Y - K) or say/-- (err - a text):
-  (- utAssert({X},{Y},{-strong-kind:K},1,0, {txt},{err}); -).
-
-part less than
-
+Part less than
+  
 To for (txt - a text) refute (X - value of kind K) < (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},-1,0, {txt}); -).
-
-To for (txt - a text) refute (X - value of kind K) < (Y - K) or say/-- (err - a text):
-  (- utAssert({X},{Y},{-strong-kind:K},-1,0, {txt},{err}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},-1,0,{txt}); -).
 
 Volume Other interactions
 
@@ -381,9 +340,11 @@ A unit test can be text-capturing.
 Before testing a text-capturing unit test (called ut):
   start capturing text.    
 
+First before testing a unit test (called ut): now the current unit test is ut.
+
 Last for testing a text-capturing unit test: stop capturing text.
 
-Part text comparisons (For use without Textile by zed lopez)
+Part text comparisons (For use without Textile by Zed Lopez)
 
 To decide if a/an/-- (S - text) exactly matches a/an/-- (T - text): decide on whether or not S exactly matches the text T;
 To decide if a/an/-- (S - text) does not exactly match a/an/-- (T - text): if S exactly matches T, no; yes.
@@ -492,23 +453,25 @@ Or, if you've included If True by Zed Lopez, a plain truth state value.
 	for <label> assert <truth state value>
 	for <label> refute <truth state value>
 
-In most cases, the default success/failure messages should be adequate, but
-you can provide an alternative by adding something like the example below to
-the end of any assertion or refutation. There are say phrases to provide
-``expected`` and ``found``. If the assertion or refutation was in regard to
-a conditional or a truth state, expected is "true" for assertions and "false"
-for refutations.
-
-	[...] or "We expected [expected] but got [found]"
-
-for <label> assert <condition> 
-for <label> refute <condition> or <text of message to be printed on failure>
-for <label> assert <condition> or <text of message to be printed on failure>
-for <label> refute <condition> or <text of message to be printed on failure>
-
 If you create a unit test object, you should write a corresponding For testing activity rule
 which should include at least one assertion or refutation. This isn't enforced. If you don't
 have any assertions, the test will run and report 0/0 Passed.
+
+The output for the results is determined by the ``output result`` phrase property on the relevant unit test. You can see simple-output-result and original-output-result in the code for working examples. The following values and say phrases provide the ingredients to build your own:
+
+Values:
+- ut-assert (truth state) true if it was an assertion or false if it was a refutation
+- ut-truth-state (truth state) true if it was a conditional or boolean or false if it was a comparison
+- ut-result (truth state) true if passed, false if failed
+    
+Say phrases:
+- ut-expected: if it was a conditional/boolean refutation, "false"; if it was a conditional/boolean assertion, "true"; otherwise, the expected (right hand side of the comparison) value
+- ut-found: if it was a comparison, the found (left hand side of the comparison) value; otherwise the same as ut-expected if the test passed, else the opposite of ut-expected
+- ut-how-tested: the text "Asserted" or "Refuted".
+- ut-operator: if it was a comparison, a textual representation of the operator
+- ut-opposite: if it was a comparison, a textual representation of the opposite of the operator (i.e., instead of <, ==, >, it would be >=, !=, <=, respectively)
+
+It's a phrase text -> nothing; it automatically receives as a parameter the text value specified in ``for <label>``.
 
 Chapter Text comparisons
 
@@ -680,6 +643,10 @@ The design of this extension's interface owes most to Simple Unit Tests and Benc
 
 Chapter Changelog
 
+Section Version 3
+
+Output now done in I7 via output result phrase text -> nothing on unit tests.
+
 Section Version 2
 
 Renamed "unit-test" -> "unit test"; completely changed how assertions and refutations
@@ -781,7 +748,7 @@ Example: * Who tests the tester?
 	  for "0 > 0" assert 0 > 0;
 	  for "0 < 0" assert 0 < 0;
 	  for "-3 < -3" assert -3 < -3;
-	  for "-3 < -3" assert -3 < -3 or "We really didn't expect [ut-expected] but we found [ut-found].";
+
 	  
 	For testing numeric-comparison-refutation-truths:
 	  for "2 < 1" refute 2 < 1;
@@ -834,7 +801,7 @@ Example: * Who tests the tester?
 	  for "A > A" refute "A" > "A";
 	  for "A > A" refute "A" > "A";
 	  for "B is A" refute "B" is "A";
-	  for "B is A" refute "B" is "A" or "We really expected [ut-expected] but what we got was [ut-found].";
+
 	
 	For testing text-comparison-assertion-lies:
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]X2[rbrack]" assert "[X]" does not exactly match "[X2]";
