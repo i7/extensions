@@ -1,4 +1,4 @@
-Version 1/220319 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220320 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -17,7 +17,6 @@ Constant BLK_BVBITMAP_COUPLE = $82;
 Constant BLK_BVBITMAP_ANY = $83;
 Constant BLK_BVBITMAP_RESULT = $84;
 Constant BLK_BVBITMAP_MAP = $85;
-Constant BLK_BVBITMAP_PROMISE = $86;
 
 [ BlkValueWeakKind bv o;
 	if (bv) {
@@ -30,7 +29,6 @@ Constant BLK_BVBITMAP_PROMISE = $86;
 					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
 					BLK_BVBITMAP_MAP: return MAP_TY;
 					BLK_BVBITMAP_OPTION: return OPTION_TY;
-					BLK_BVBITMAP_PROMISE: return PROMISE_TY;
 					BLK_BVBITMAP_RESULT: return RESULT_TY;
 				}
 				return 0;
@@ -73,7 +71,7 @@ Include (-
 	switch(task) {
 		COMPARE_KOVS: return ANY_TY_Compare(arg1, arg2);
 		COPY_KOVS: ANY_TY_Copy(arg1, arg2);
-		CREATE_KOVS: return ANY_TY_Create(arg1, arg2);
+		CREATE_KOVS: return ANY_TY_Create(arg2);
 		DESTROY_KOVS: ANY_TY_Destroy(arg1);
 	}
 	! We don't respond to the other tasks
@@ -103,7 +101,7 @@ Include (-
 	to-->2 = from-->2;
 ];
 
-[ ANY_TY_Create skov short_block;
+[ ANY_TY_Create short_block;
 	if (short_block == 0) {
 		short_block = FlexAllocate(3 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
 	}
@@ -995,31 +993,37 @@ To decide what K is value of (O - value of kind K option) or (backup - K):
 
 Chapter - Promises
 
-[ Promises are four word short block values.
-The first word is the short block header, $86.
-The second word is a result holding the resolved value for the promise.
-The third word is a list of callbacks for a success value.
-The fourth word is a list of error callbacks. ]
+[ Promises are three word long block values (ignoring the header).
+The first word is a result holding the resolved value for the promise, or 0 for a pending promise.
+The second word is a list of callbacks for a success value.
+The third word is a list of error callbacks.
+
+For other block value kinds Inform uses copy-on-write mechanics. We don't want that, so when setting the result, write directly to the long block. ]
 
 Include (-
 [ PROMISE_TY_Support task arg1 arg2 arg3;
 	switch(task) {
-		COPY_KOVS: PROMISE_TY_Copy(arg1, arg2);
-		CREATE_KOVS: return PROMISE_TY_Create(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
+		CREATE_KOVS: return PROMISE_TY_Create(arg2);
 		DESTROY_KOVS: PROMISE_TY_Destroy(arg1);
 	}
 	! We don't respond to the other tasks
 	rfalse;
 ];
 
+Constant PROMISE_TY_RESULT = 0;
+Constant PROMISE_TY_SUCCESS_HANDLERS = 1;
+Constant PROMISE_TY_FAILURE_HANDLERS = 2;
+
 [ PROMISE_TY_Add_Handler promise handlerany success_handler	result;
-	result = promise-->1;
+	result = BlkValueRead(promise, PROMISE_TY_RESULT);
 	if (~~(result)) {
 		if (success_handler) {
-			LIST_OF_TY_InsertItem(promise-->2, handlerany);
+			LIST_OF_TY_InsertItem(BlkValueRead(promise, PROMISE_TY_SUCCESS_HANDLERS), handlerany);
 		}
 		else {
-			LIST_OF_TY_InsertItem(promise-->3, handlerany);
+			LIST_OF_TY_InsertItem(BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS), handlerany);
 		}
 	}
 	else if ((result-->1) & RESULT_IS_OKAY) {
@@ -1034,56 +1038,39 @@ Include (-
 	}
 ];
 
-[ PROMISE_TY_Copy to from	toresult fromresult;
-	if (to-->1) {
-		BlkValueFree(to-->1);
-		to-->1 = 0;
-	}
-	if (from-->1) {
-		toresult = BlkValueCreate(RESULT_TY);
-		to-->1 = toresult;
-		fromresult = from-->1;
-		toresult-->1 = (fromresult-->1) & RESULT_MASK;
-		BlkValueCopy(toresult, fromresult);
-	}
-	LIST_OF_TY_SetLength(to-->2, 0, 0);
-	LIST_OF_TY_SetLength(to-->3, 0, 0);
-	BlkValueCopy(to-->2, from-->2);
-	BlkValueCopy(to-->3, from-->3);
-];
-
 Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 
-[ PROMISE_TY_Create skov short_block;
-	if (short_block == 0) {
-		short_block = FlexAllocate(4 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_PROMISE;
-	short_block-->1 = 0;
-	short_block-->2 = BlkValueCreate(PROMISE_TY_Handler_List_Def);
-	short_block-->3 = BlkValueCreate(PROMISE_TY_Handler_List_Def);
+[ PROMISE_TY_Create short_block	long_block;
+	long_block = FlexAllocate(3 * WORDSIZE, PROMISE_TY, BLK_FLAG_WORD);
+	BlkValueWrite(long_block, PROMISE_TY_SUCCESS_HANDLERS, BlkValueCreate(PROMISE_TY_Handler_List_Def), 1);
+	BlkValueWrite(long_block, PROMISE_TY_FAILURE_HANDLERS, BlkValueCreate(PROMISE_TY_Handler_List_Def), 1);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
-[ PROMISE_TY_Destroy promise;
-	if (promise-->1) {
-		BlkValueFree(promise-->1);
+[ PROMISE_TY_Destroy promise	result;
+	result = BlkValueRead(promise, PROMISE_TY_RESULT);
+	if (result) {
+		BlkValueFree(result);
 	}
-	BlkValueFree(promise-->2);
-	BlkValueFree(promise-->3);
+	BlkValueFree(BlkValueRead(promise, PROMISE_TY_SUCCESS_HANDLERS));
+	BlkValueFree(BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS));
 ];
 
-[ PROMISE_TY_Get promise returnopt;
-	if (promise-->1) {
-		return OPTION_TY_Set(returnopt, 1, promise-->1);
+[ PROMISE_TY_Get promise returnopt	result;
+	result = BlkValueRead(promise, PROMISE_TY_RESULT);
+	if (result) {
+		return OPTION_TY_Set(returnopt, 1, result);
 	}
 	else {
 		return OPTION_TY_Set(returnopt);
 	}
 ];
 
-[ PROMISE_TY_Resolve promise result resultkov returnresult	handler i length list_to_run resultval;
-	if (promise-->1) {
+[ PROMISE_TY_Resolve promise result resultkov returnresult	handler i length list_to_run long_block promiseresult resultval;
+	! Check if the promise has already been resolved
+	promiseresult = BlkValueRead(promise, PROMISE_TY_RESULT);
+	if (promiseresult) {
 		if (returnresult) {
 			return RESULT_TY_Set(returnresult, 0, PROMISE_TY_Resolve_Error_Multi);
 		}
@@ -1093,13 +1080,17 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 			return;
 		}
 	}
-	promise-->1 = BlkValueCreate(resultkov);
-	BlkValueCopy(promise-->1, result);
+	! Store the new result, writing directly to the long block
+	promiseresult = BlkValueCreate(resultkov);
+	BlkValueCopy(promiseresult, result);
+	long_block = BlkValueGetLongBlock(promise);
+	BlkValueWrite(long_block, PROMISE_TY_RESULT, promiseresult, 1);
+	! Run the handlers
 	if ((result-->1) & RESULT_IS_OKAY) {
-		list_to_run = promise-->2;
+		list_to_run = BlkValueRead(promise, PROMISE_TY_SUCCESS_HANDLERS);
 	}
 	else {
-		list_to_run = promise-->3;
+		list_to_run = BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS);
 	}
 	length = BlkValueRead(list_to_run, LIST_LENGTH_F);
 	resultval = result-->2;
@@ -1107,8 +1098,10 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 		handler = BlkValueRead(list_to_run, LIST_ITEM_BASE + i);
 		PROMISE_TY_Run_Handler(handler, resultval);
 	}
-	LIST_OF_TY_SetLength(promise-->2, 0, 0);
-	LIST_OF_TY_SetLength(promise-->3, 0, 0);
+	! Clean up the handlers
+	LIST_OF_TY_SetLength(BlkValueRead(promise, PROMISE_TY_SUCCESS_HANDLERS), 0, 0);
+	LIST_OF_TY_SetLength(BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS), 0, 0);
+	! Return a result if requested
 	if (returnresult) {
 		return RESULT_TY_Set(returnresult, 1, 0);
 	}
@@ -1118,18 +1111,18 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 Array PROMISE_TY_Resolve_Error_Multi --> CONSTANT_PACKED_TEXT_STORAGE "A promise cannot be resolved more than once.";
 
 [ PROMISE_TY_Run_Handler handlerany value;
-	if (handlerany-->1 == PHRASE_TY) {
-		((handlerany-->2)-->1)(value);
-	}
-	else {
-		print "Error! Unknown promise handler kind.^";
+	switch (handlerany-->1) {
+		PHRASE_TY: ((handlerany-->2)-->1)(value);
+		RULEBOOK_TY: FollowRulebook(handlerany-->2, value, 1);
+		default: print "Error! Unknown promise handler kind.^";
 	}
 ];
 
-[ PROMISE_TY_Say promise;
+[ PROMISE_TY_Say promise result;
+	result = BlkValueRead(promise, PROMISE_TY_RESULT);
 	print "Promise(";
-	if (promise-->1) {
-		RESULT_TY_Say(promise-->1);
+	if (result) {
+		RESULT_TY_Say(result);
 	}
 	else {
 		print "pending";
@@ -1167,8 +1160,21 @@ Chapter - Promises - Attaching handlers
 To attach success/-- handler/-- (H - a phrase K -> nothing) to (P - a value of kind K promise):
 	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, PHRASE_TY, {-by-reference:H}), 1); -).
 
+[ Inform doesn't seem to allow individual rules producing nothing to be followed, only rulebooks?? ]
+[To attach success/-- handler/-- (H - a K based rule producing nothing) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, RULE_TY, {-by-reference:H}), 1); -).]
+
+To attach success/-- handler/-- (H - a K based rulebook) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, RULEBOOK_TY, {-by-reference:H}), 1); -).
+
 To attach failure handler/-- (H - a phrase text -> nothing) to (P - a value of kind K promise):
 	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, PHRASE_TY, {-by-reference:H})); -).
+
+[To attach failure handler/-- (H - a K based rule producing nothing) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, RULE_TY, {-by-reference:H})); -).]
+
+To attach failure handler/-- (H - a K based rulebook) to (P - a value of kind K promise):
+	(- PROMISE_TY_Add_Handler({-by-reference:P}, ANY_TY_Set({-new:any}, RULEBOOK_TY, {-by-reference:H})); -).
 
 
 
