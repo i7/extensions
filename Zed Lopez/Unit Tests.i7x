@@ -1,4 +1,4 @@
-Version 3 of Unit Tests by Zed Lopez begins here.
+Version 3/220320 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -398,7 +398,7 @@ following the object definition.
 you must define a corresponding ``For testing`` rule:
 
 	For testing math-still-works:
-		assert 2 + 2 is 4 or "Math is broken.";
+		For "Addition" assert 2 + 2 is 4;
 
 (More about assert statements later.)
 
