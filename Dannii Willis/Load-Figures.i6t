@@ -42,9 +42,8 @@ plural:anys
 
 instance-of:POINTER_VALUE_TY
 instance-of:SAYABLE_VALUE_TY
-default-value:0
-heap-size-estimate:12
-small-block-size:3
+default-value:ANY_TY_Default
+heap-size-estimate:8
 
 comparison-routine:BlkValueCompare
 distinguisher:ANY_TY_Distinguish
@@ -123,9 +122,8 @@ constructor-arity:covariant
 
 instance-of:POINTER_VALUE_TY
 instance-of:SAYABLE_VALUE_TY
-default-value:0
-heap-size-estimate:12
-small-block-size:3
+default-value:OPTION_TY_Default
+heap-size-estimate:8
 
 comparison-routine:BlkValueCompare
 distinguisher:OPTION_TY_Distinguish

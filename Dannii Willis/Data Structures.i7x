@@ -1,4 +1,4 @@
-Version 1/220320 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220321 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -12,9 +12,7 @@ Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
 [ The handling of short blocks doesn't actually do as it says it does, so we need to add support for our own short block bitmaps. ]
 Include (-
 Constant BLK_BVBITMAP_CUSTOM_BV = $80;
-Constant BLK_BVBITMAP_OPTION = $81;
 Constant BLK_BVBITMAP_COUPLE = $82;
-Constant BLK_BVBITMAP_ANY = $83;
 Constant BLK_BVBITMAP_RESULT = $84;
 Constant BLK_BVBITMAP_MAP = $85;
 
@@ -25,10 +23,8 @@ Constant BLK_BVBITMAP_MAP = $85;
 		if (o & BLK_BVBITMAP == o) {
 			if (o & BLK_BVBITMAP_CUSTOM_BV) {
 				switch (o) {
-					BLK_BVBITMAP_ANY: return ANY_TY;
 					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
 					BLK_BVBITMAP_MAP: return MAP_TY;
-					BLK_BVBITMAP_OPTION: return OPTION_TY;
 					BLK_BVBITMAP_RESULT: return RESULT_TY;
 				}
 				return 0;
@@ -61,16 +57,23 @@ Include (-
 
 Chapter - Anys
 
-[ Anys are three word short block values.
-The 1st word is the short block header, $83.
-The 2nd word store the type of the value.
-The 3rd word store the value. ]
+[ Anys have a two word long block (ignoring the header).
+Word 0: the kind of the value
+Word 1: the value ]
 
 Include (-
-[ ANY_TY_Support task arg1 arg2 arg3;
+! Static block values have three parts: the short block (0 means the long block follows immediately), the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array ANY_TY_Default --> 0	$050C0000 ANY_TY MAX_POSITIVE_NUMBER	NULL_TY 0;
+
+Constant ANY_TY_KOV = 0;
+Constant ANY_TY_VALUE = 1;
+
+[ ANY_TY_Support task arg1 arg2;
 	switch(task) {
 		COMPARE_KOVS: return ANY_TY_Compare(arg1, arg2);
-		COPY_KOVS: ANY_TY_Copy(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
 		CREATE_KOVS: return ANY_TY_Create(arg2);
 		DESTROY_KOVS: ANY_TY_Destroy(arg1);
 	}
@@ -78,62 +81,53 @@ Include (-
 	rfalse;
 ];
 
-[ ANY_TY_Compare c1 c2	cf delta c1kov;
-	c1kov = c1-->1;
+[ ANY_TY_Compare any1 any2	cf delta any1kov;
+	any1kov = BlkValueRead(any1, ANY_TY_KOV);
 	! Compare the kinds
-	delta = c1kov - c2-->1;
+	delta = any1kov - BlkValueRead(any2, ANY_TY_KOV);
 	if (delta) {
 		return delta;
 	}
 	! Then compare the contents
-	cf = KOVComparisonFunction(c1kov);
+	cf = KOVComparisonFunction(any1kov);
 	if (cf == 0 or UnsignedCompare) {
-		delta = c1-->2 - c2-->2;
+		return BlkValueRead(any1, ANY_TY_VALUE) - BlkValueRead(any2, ANY_TY_VALUE);
 	}
 	else {
-		delta = cf(c1-->2, c2-->2);
+		return cf(BlkValueRead(any1, ANY_TY_VALUE), BlkValueRead(any2, ANY_TY_VALUE));
 	}
-	return delta;
 ];
 
-[ ANY_TY_Copy to from;
-	to-->1 = from-->1;
-	to-->2 = from-->2;
-];
-
-[ ANY_TY_Create short_block;
-	if (short_block == 0) {
-		short_block = FlexAllocate(3 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_ANY;
-	short_block-->1 = NULL_TY;
-	short_block-->2 = 0;
+[ ANY_TY_Create short_block	long_block;
+	long_block = FlexAllocate(2 * WORDSIZE, ANY_TY, BLK_FLAG_WORD);
+	BlkValueWrite(long_block, ANY_TY_KOV, NULL_TY, 1);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
-[ ANY_TY_Destroy short_block;
-	if (KOVIsBlockValue(short_block-->1)) {
-		BlkValueFree(short_block-->2);
+[ ANY_TY_Destroy any;
+	if (KOVIsBlockValue(BlkValueRead(any, ANY_TY_KOV))) {
+		BlkValueFree(BlkValueRead(any, ANY_TY_VALUE));
 	}
 ];
 
-[ ANY_TY_Distinguish c1 c2;
-	if (ANY_TY_Compare(c1, c2) == 0) rfalse;
+[ ANY_TY_Distinguish any1 any2;
+	if (ANY_TY_Compare(any1, any2) == 0) rfalse;
 	rtrue;
 ];
 
-[ ANY_TY_Get short_block type checked_bv backup or	kov txt;
-	kov = short_block-->1;
-	if (kov == type) {
+[ ANY_TY_Get any kov checked_bv backup or	anykov txt;
+	anykov = BlkValueRead(any, ANY_TY_KOV);
+	if (anykov == kov) {
 		if (checked_bv) {
-			return RESULT_TY_Set(checked_bv, 1, short_block-->2);
+			return RESULT_TY_Set(checked_bv, 1, BlkValueRead(any, ANY_TY_VALUE));
 		}
 		else {
-			return short_block-->2;
+			return BlkValueRead(any, ANY_TY_VALUE);
 		}
 	}
-	LocalParking-->0 = type;
-	LocalParking-->1 = short_block;
+	LocalParking-->0 = kov;
+	LocalParking-->1 = any;
 	if (checked_bv) {
 		txt = BlkValueCreate(TEXT_TY);
 		BlkValueCopy(txt, ANY_TY_Print_Kind_Mismatch);
@@ -247,7 +241,7 @@ Array ANY_TY_Print_Kind_Mismatch --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Pri
 	print "Any type mismatch: expected ";
 	ANY_TY_Print_Kind_Name(LocalParking-->0, 0, 0, 1);
 	print ", got ";
-	ANY_TY_Print_Kind_Name((LocalParking-->1)-->1, (LocalParking-->1)-->2, 0, 1);
+	ANY_TY_Print_Kind_Name(BlkValueRead(LocalParking-->1, ANY_TY_KOV), BlkValueRead(LocalParking-->1, ANY_TY_VALUE), 0, 1);
 ];
 
 Array ANY_TY_Print_Kind_Text --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Print_Kind_Text_Inner;
@@ -263,18 +257,32 @@ Array ANY_TY_Print_Kind_Text --> CONSTANT_PERISHABLE_TEXT_STORAGE ANY_TY_Print_K
 	}
 ];
 
-[ ANY_TY_Say short_block	kov;
+[ ANY_TY_Say any	kov;
+	kov = BlkValueRead(any, ANY_TY_KOV);
 	print "Any<";
-	ANY_TY_Print_Kind_Name(short_block-->1);
+	ANY_TY_Print_Kind_Name(kov);
 	print ": ";
-	PrintKindValuePair(short_block-->1, short_block-->2);
+	PrintKindValuePair(kov,  BlkValueRead(any, ANY_TY_VALUE));
 	print ">";
 ];
 
-[ ANY_TY_Set short_block type value;
-	short_block-->1 = type;
-	short_block-->2 = value;
-	return short_block;
+[ ANY_TY_Set any kov value	long_block valcopy;
+	! Check this Any hasn't been set before
+	if (BlkValueRead(any, ANY_TY_KOV) ~= NULL_TY) {
+		print "Error! Cannot set an Any twice!^";
+		return any;
+	}
+	! Write to the long block directly, without copy-on-write semantics
+	long_block = BlkValueGetLongBlock(any);
+	BlkValueWrite(long_block, ANY_TY_KOV, kov, 1);
+	! Make our own copy of the value
+	if (KOVIsBlockValue(kov)) {
+		valcopy = BlkValueCreate(kov);
+		BlkValueCopy(valcopy, value);
+		value = valcopy;
+	}
+	BlkValueWrite(long_block, ANY_TY_VALUE, value, 1);
+	return any;
 ];
 -).
 
@@ -282,10 +290,10 @@ To decide which any is (V - value of kind K) as an any:
 	(- ANY_TY_Set({-new:any}, {-strong-kind:K}, {-by-reference:V}) -).
 
 To say kind/type of (A - any):
-	(- ANY_TY_Print_Kind_Name({-by-reference:A}-->1); -).
+	(- ANY_TY_Print_Kind_Name(BlkValueRead({-by-reference:A}, ANY_TY_KOV)); -).
 
 To decide if kind/type of (A - any) is (name of kind of value K):
-	(- ({-by-reference:A}-->1 == {-strong-kind:K}) -).
+	(- (BlkValueRead({-by-reference:A}, ANY_TY_KOV) == {-strong-kind:K}) -).
 
 To decide what K result is (A - any) as a/an (name of kind of value K):
 	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, {-new:K result}) -).
@@ -299,6 +307,12 @@ Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (u
 
 Data Structures Anys is a unit test. "Data Structures: Anys functionality"
 
+Test global any is an any that varies.
+Persons have an any called test property any.
+
+To set test global any:
+	now test global any is substituted form of "[1234]" as an any;
+
 To decide what any is test returning a text any from a phrase:
 	decide on "Hello world!" as an any;
 
@@ -308,9 +322,13 @@ For testing data structures anys:
 	for "Untyped any is kind null" assert the kind of NullAny1 is null;
 	for "Name of kind of untyped any" assert "[kind of NullAny1]" is "null";
 	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
+	for "Default value of global any" assert test global any is null as an any;
+	for "Default value of property any" assert test property any of yourself is null as an any;
+	set test global any;
+	for "Anys correctly copy and reference count their values" assert test global any is "1234" as an any;
 	[ Test basic functionality with a number any ]
 	let NumAny1 be 1234 as an any;
-	for "Any<number> kind" assert the kind of NumAny1 is number ;
+	for "Any<number> kind" assert the kind of NumAny1 is number;
 	for "Any<number> result" assert NumAny1 as a number is 1234 as a result;
 	for "Any<number> equality" assert NumAny1 is 1234 as an any;
 	let NumAny1Error be a text error result with message "Any type mismatch: expected text, got number";
@@ -326,8 +344,10 @@ For testing data structures anys:
 	for "Any<text> returned from phrase" assert test returning a text any from a phrase is "Hello world!" as an any;
 	for "Any<text> unchecked" assert TextAny1 as a text unchecked is "Hello world!";
 	[ Test comparison operators ]
-	for "Any<number> > comparison" assert 1234 as an option > 1233 as an option;
-	for "Any<number> < comparison" assert 1234 as an option < 1235 as an option;
+	for "Any<number> > comparison" assert 1234 as an any > 1233 as an any;
+	for "Any<number> < comparison" assert 1234 as an any < 1235 as an any;
+	for "Any<text> > comparison" assert "Hello" as an any > "Apple" as an any;
+	for "Any<text> < comparison" assert "Hello" as an any < "Zoo" as an any;
 	[ Check that object subkinds are shown in error messages ]
 	let ListAny1 be {yourself} as an any;
 	for "Any<list of objects> subkinds shown in error messages" assert "[ListAny1 as a number]" rmatches "Error\(Any type mismatch: expected number, got list of objects \(subkind \d+\)\)";
@@ -623,7 +643,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		if (cf(key, res) == 0) {
 			res = BlkValueRead(valslist, LIST_ITEM_BASE + i);
 			if (checked_bv) {
-				return OPTION_TY_Set(checked_bv, 1, res);
+				return OPTION_TY_Set(checked_bv, 1, BlkValueRead(valslist, LIST_ITEM_KOV_F), res);
 			}
 			else {
 				return res;
@@ -836,87 +856,61 @@ To decide which null is null:
 
 Chapter - Options
 
-[ Options are three word short block values.
-The first word is the short block header, $81.
-The second word stores the kind, but also whether the option contains a value - if the top bit is 1 then there is a value.
-The third word stores the value. ]
+[ Options have a two word long block (ignoring the header).
+Word 0: the kind of the value, or 0 for none
+Word 1: the value (or 0) ]
 
 Include (-
-Constant OPTION_IS_SOME = $80000000;
-Constant OPTION_SOME_MASK = $7FFFFFFF;
+! Static block values have three parts: the short block (0 means the long block follows immediately), the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array OPTION_TY_Default --> 0	$050C0000 OPTION_TY MAX_POSITIVE_NUMBER	0 0;
 
-[ OPTION_TY_Support task arg1 arg2 arg3;
+Constant OPTION_TY_KOV = 0;
+Constant OPTION_TY_VALUE = 1;
+
+[ OPTION_TY_Support task arg1 arg2;
 	switch(task) {
 		COMPARE_KOVS: return OPTION_TY_Compare(arg1, arg2);
-		COPY_KOVS: OPTION_TY_Copy(arg1, arg2);
-		CREATE_KOVS: return OPTION_TY_Create(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
+		CREATE_KOVS: return OPTION_TY_Create(arg2);
 		DESTROY_KOVS: OPTION_TY_Destroy(arg1);
 	}
 	! We don't respond to the other tasks
 	rfalse;
 ];
 
-[ OPTION_TY_Compare opt1 opt2	cf delta opt1kov opt2kov;
-	opt1kov = opt1-->1;
-	opt2kov = opt2-->1;
+[ OPTION_TY_Compare opt1 opt2	cf delta opt1kov;
+	opt1kov = BlkValueRead(opt1, OPTION_TY_KOV);
 	! First check if one is some and the other is none
-	delta = ((opt2kov & OPTION_IS_SOME) == 0) - ((opt1kov & OPTION_IS_SOME) == 0);
+	delta = opt1kov - BlkValueRead(opt2, OPTION_TY_KOV);
 	if (delta) {
 		return delta;
 	}
 	! If both are none, return 0
-	if (opt1kov & OPTION_IS_SOME == 0) {
+	if (opt1kov == 0) {
 		return 0;
 	}
-	! Compare the kinds
-	delta = ((opt2kov & OPTION_SOME_MASK) == 0) - ((opt1kov & OPTION_SOME_MASK) == 0);
-	if (delta) {
-		return delta;
-	}
 	! Then compare the contents
-	cf = KOVComparisonFunction(opt1kov & OPTION_SOME_MASK);
+	cf = KOVComparisonFunction(opt1kov);
 	if (cf == 0 or UnsignedCompare) {
-		delta = opt1-->2 - opt2-->2;
+		return BlkValueRead(opt1, OPTION_TY_VALUE) - BlkValueRead(opt2, OPTION_TY_VALUE);
 	}
 	else {
-		delta = cf(opt1-->2, opt2-->2);
-	}
-	return delta;
-];
-
-[ OPTION_TY_Copy to from	kov tokov;
-	tokov = to-->1;
-	kov = tokov & OPTION_SOME_MASK;
-	if ((tokov & OPTION_IS_SOME) && KOVIsBlockValue(kov)) {
-		BlkValueFree(to-->2);
-	}
-	tokov = kov | ((from-->1) & OPTION_IS_SOME);
-	to-->1 = tokov;
-	if (tokov & OPTION_IS_SOME) {
-		if (KOVIsBlockValue(kov)) {
-			to-->2 = BlkValueCreate(kov);
-			BlkValueCopy(to-->2, from-->2);
-		}
-		else {
-			to-->2 = from-->2;
-		}
+		return cf(BlkValueRead(opt1, OPTION_TY_VALUE), BlkValueRead(opt2, OPTION_TY_VALUE));
 	}
 ];
 
-[ OPTION_TY_Create skov short_block;
-	if (short_block == 0) {
-		short_block = FlexAllocate(3 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_OPTION;
-	short_block-->1 = KindBaseTerm(skov, 0);
-	short_block-->2 = 0;
+[ OPTION_TY_Create short_block	long_block;
+	long_block = FlexAllocate(2 * WORDSIZE, OPTION_TY, BLK_FLAG_WORD);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
-[ OPTION_TY_Destroy short_block	kov;
-	kov = short_block-->1;
-	if ((kov & OPTION_IS_SOME) && KOVIsBlockValue(kov & OPTION_SOME_MASK)) {
-		BlkValueFree(short_block-->2);
+[ OPTION_TY_Destroy option	kov;
+	kov = BlkValueRead(option, OPTION_TY_KOV);
+	if (kov && KOVIsBlockValue(kov)) {
+		BlkValueFree(BlkValueRead(option, OPTION_TY_VALUE));
 	}
 ];
 
@@ -925,10 +919,10 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 	rtrue;
 ];
 
-[ OPTION_TY_Get short_block backup or	kov;
-	kov = short_block-->1;
-	if (kov & OPTION_IS_SOME) {
-		return short_block-->2;
+[ OPTION_TY_Get option backup or	kov;
+	kov = BlkValueRead(option, OPTION_TY_KOV);
+	if (kov) {
+		return BlkValueRead(option, OPTION_TY_VALUE);
 	}
 	if (~~or) {
 		print "Error! Trying to extract value from a none option.^";
@@ -936,11 +930,11 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 	return backup;
 ];
 
-[ OPTION_TY_Say short_block	kov;
-	kov = short_block-->1;
-	if ((kov & OPTION_IS_SOME)) {
+[ OPTION_TY_Say option	kov;
+	kov = BlkValueRead(option, OPTION_TY_KOV);
+	if (kov) {
 		print "Some(";
-		PrintKindValuePair(kov & OPTION_SOME_MASK, short_block-->2);
+		PrintKindValuePair(kov, BlkValueRead(option, OPTION_TY_VALUE));
 		print ")";
 	}
 	else {
@@ -948,60 +942,119 @@ Constant OPTION_SOME_MASK = $7FFFFFFF;
 	}
 ];
 
-[ OPTION_TY_Set short_block some value	kov;
-	kov = short_block-->1;
-	if ((kov & OPTION_IS_SOME) && KOVIsBlockValue(kov & OPTION_SOME_MASK)) {
-		BlkValueFree(short_block-->2);
+[ OPTION_TY_Set option some kov value	long_block valcopy;
+	! Check this Option hasn't been set before
+	if (BlkValueRead(option, OPTION_TY_KOV)) {
+		print "Error! Cannot set an Option twice!^";
+		return option;
 	}
 	if (some) {
-		short_block-->1 = kov | OPTION_IS_SOME;
-		short_block-->2 = value;
+		! Write to the long block directly, without copy-on-write semantics
+		long_block = BlkValueGetLongBlock(option);
+		BlkValueWrite(long_block, OPTION_TY_KOV, kov, 1);
+		! Make our own copy of the value
+		if (KOVIsBlockValue(kov)) {
+			valcopy = BlkValueCreate(kov);
+			BlkValueCopy(valcopy, value);
+			value = valcopy;
+		}
+		BlkValueWrite(long_block, OPTION_TY_VALUE, value, 1);
 	}
-	else {
-		short_block-->1 = kov & OPTION_SOME_MASK;
-		short_block-->2 = 0;
-	}
-	return short_block;
+	return option;
 ];
 -).
 
 To decide what K option is (V - value of kind K) as an option:
-	(- OPTION_TY_Set({-new:K option}, 1, {-by-reference:V}) -).
+	(- OPTION_TY_Set({-new:K option}, 1, {-strong-kind:K}, {-by-reference:V}) -).
 
 To decide what K option is a/an (name of kind of value K) none option:
 	(- OPTION_TY_Set({-new:K option}) -).
 
 To decide if (O - a value option) is some:
-	(- (({-by-reference:O}-->1) & OPTION_IS_SOME) -).
+	(- (BlkValueRead({-by-reference:O}, OPTION_TY_KOV)) -).
 
 [ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
 To if (O - value of kind K option) is some let (V - nonexisting K variable) be the value begin -- end loop:
-	(- if (({-by-reference:O}-->1) & OPTION_IS_SOME && (
+	(- if (BlkValueRead({-by-reference:O}, OPTION_TY_KOV) && (
 		(KOVIsBlockValue({-strong-kind:K})
-			&& BlkValueCopy({-lvalue-by-reference:V}, OPTION_TY_Get({-by-reference:O}, 1))
-			|| ({-lvalue-by-reference:V} = OPTION_TY_Get({-by-reference:O}, 1))
+			&& BlkValueCopy({-lvalue-by-reference:V}, OPTION_TY_Get({-by-reference:O}))
+			|| ({-lvalue-by-reference:V} = OPTION_TY_Get({-by-reference:O}))
 		)
 	, 1)) -).
 
 To decide if (O - a value option) is none:
-	(- (({-by-reference:O}-->1) & OPTION_IS_SOME == 0) -).
+	(- (BlkValueRead({-by-reference:O}, OPTION_TY_KOV) == 0) -).
 
 To decide what K is value of (O - value of kind K option) or (backup - K):
 	(- OPTION_TY_Get({-by-reference:O}, {-by-reference:backup}, 1) -).
 
 
 
+Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
+
+Data Structures Options is a unit test. "Data Structures: Options"
+
+Test global option is a text option that varies.
+Persons have a number option called test property option.
+
+To set test global option:
+	now test global option is substituted form of "[1234]" as an option;
+
+To decide what text option is test returning a text option from a phrase:
+	decide on "Hello world!" as an option;
+
+For testing data structures options:
+	[ Test default/none options ]
+	let NoneOption be a number option;
+	for "Default options are none" assert NoneOption is none;
+	for "Default options are not some" refute NoneOption is some;
+	for "Saying default option" assert "[NoneOption]" is "None";
+	for "Default value of global option" assert test global option is a text none option;
+	for "Default value of property any" assert test property option of yourself is a number none option;
+	set test global option;
+	for "Options correctly copy and reference count their values" assert test global option is "1234" as an option;
+	for "Get value of none option errors" assert "[the value of NoneOption unchecked]" is "Error! Trying to extract value from a none option.[line break]0";
+	for "Get value of none option with backup" assert value of NoneOption or 6789 is 6789;
+	[ Test basic functionality with a number option ]
+	let NumOption be 1234 as an option;
+	for "Option<number> is some" assert NumOption is some;
+	for "Option<number> is not none" refute NumOption is none;
+	for "Option<number> equality" assert NumOption is 1234 as an option;
+	for "Option<number> with backup" assert value of NumOption or 6789 is 1234;
+	if NumOption is some let NumOptionValue be the value:
+		for "Option<number> let V be the value" assert NumOptionValue is 1234;
+	for "Option<number> value unchecked" assert the value of NumOption unchecked is 1234;
+	[ Test options with with block values with a text option ]
+	let TextOption be "Hello world!" as an option;
+	for "Option<text> is some" assert TextOption is some;
+	for "Option<text> is not none" refute TextOption is none;
+	for "Option<text> equality" assert TextOption is "Hello world!" as an option;
+	for "Option<text> with backup" assert value of TextOption or "Goodbye" is "Hello world!";
+	if TextOption is some let TextOptionValue be the value:
+		for "Option<text> let V be the value" assert TextOptionValue is "Hello world!";
+	for "Option<text> value unchecked" assert the value of TextOption unchecked is "Hello world!";
+	for "Option<text> returned from phrase" assert test returning a text option from a phrase is "Hello world!" as an option;
+	[ Test comparison operators ]
+	for "Option<number> > comparison" assert 1234 as an option > 1233 as an option;
+	for "Option<number> < comparison" assert 1234 as an option < 1235 as an option;
+	for "Option<text> > comparison" assert "Hello" as an option > "Apple" as an option;
+	for "Option<text> < comparison" assert "Hello" as an option < "Zoo" as an option;
+
+
+
 Chapter - Promises
 
-[ Promises are three word long block values (ignoring the header).
-The first word is a result holding the resolved value for the promise, or 0 for a pending promise.
-The second word is a list of callbacks for a success value.
-The third word is a list of error callbacks.
-
-For other block value kinds Inform uses copy-on-write mechanics. We don't want that, so when setting the result, write directly to the long block. ]
+[ Promises have a three word long block (ignoring the header).
+Word 0: a result holding the resolved value for the promise, or 0 for a pending promise
+Word 1: a list of callbacks for a success value
+Word 2: a list of error callbacks ]
 
 Include (-
-[ PROMISE_TY_Support task arg1 arg2 arg3;
+Constant PROMISE_TY_RESULT = 0;
+Constant PROMISE_TY_SUCCESS_HANDLERS = 1;
+Constant PROMISE_TY_FAILURE_HANDLERS = 2;
+
+[ PROMISE_TY_Support task arg1 arg2;
 	switch(task) {
 		COPYQUICK_KOVS: rtrue;
 		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
@@ -1011,10 +1064,6 @@ Include (-
 	! We don't respond to the other tasks
 	rfalse;
 ];
-
-Constant PROMISE_TY_RESULT = 0;
-Constant PROMISE_TY_SUCCESS_HANDLERS = 1;
-Constant PROMISE_TY_FAILURE_HANDLERS = 2;
 
 [ PROMISE_TY_Add_Handler promise handlerany success_handler	result;
 	result = BlkValueRead(promise, PROMISE_TY_RESULT);
@@ -1057,10 +1106,10 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 	BlkValueFree(BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS));
 ];
 
-[ PROMISE_TY_Get promise returnopt	result;
+[ PROMISE_TY_Get promise returnopt resultkov	result;
 	result = BlkValueRead(promise, PROMISE_TY_RESULT);
 	if (result) {
-		return OPTION_TY_Set(returnopt, 1, result);
+		return OPTION_TY_Set(returnopt, 1, resultkov, result);
 	}
 	else {
 		return OPTION_TY_Set(returnopt);
@@ -1080,7 +1129,7 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 			return;
 		}
 	}
-	! Store the new result, writing directly to the long block
+	! Store the new result, writing directly to the long block, without copy-on-write semantics
 	promiseresult = BlkValueCreate(resultkov);
 	BlkValueCopy(promiseresult, result);
 	long_block = BlkValueGetLongBlock(promise);
@@ -1151,7 +1200,7 @@ To decide what K promise is (val - text) as a failed (name of kind of value K) p
 	(- PROMISE_TY_Resolve({-new:K promise}, RESULT_TY_Set({-new:K result}, 0, {-by-reference:val}), {-strong-kind:K result}) -).
 
 To decide what K result option is value of (P - a value of kind K promise):
-	(- PROMISE_TY_Get({-by-reference:P}, {-new:K result option}) -).
+	(- PROMISE_TY_Get({-by-reference:P}, {-new:K result option}, {-strong-kind:K result}) -).
 
 
 
