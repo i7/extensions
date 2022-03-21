@@ -1,4 +1,4 @@
-Version 3/220320 of Unit Tests by Zed Lopez begins here.
+Version 3/220321 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -25,7 +25,6 @@ Part unit test object
 A unit test is a kind of object.
 A unit test has a text called the description.
 
-dummy-unit-test is a unit test.
 The current unit test is a unit test that varies.
 
 A unit test operator value is a kind of value.
@@ -98,8 +97,8 @@ Global ut_found; ! RHS for comparative ; true/false for conditional
 Global ut_kind; ! strong kind of operands for comparative; irrelevant for conditional
 Global ut_truth_state; ! 0: comparative ; 1 : conditional
 Global ut_operator; ! -1: < ; 0: == ; 1: >
-Global ut_result; ! 0: fail 1: pass
-Global ut_assert; ! 0: refutation, 1: assertion
+Global ut_result; ! 0: fail ; 1: pass
+Global ut_assert; ! 0: refutation ; 1: assertion
 -) after "Definitions.i6t".
 
 ut-assert is a truth state variable.
@@ -219,17 +218,14 @@ Include (-
   ];
 
 [ utAssertPlain x assert txt;
-  ut_result = 0;
-  if ((x && assert) || (~~x && ~~assert)) ut_result = 1;
   ut_truth_state = 1;
-  ut_expected = assert;
-  ut_found = ut_expected;
-  if (~~ut_result) ut_found = ~~ut_expected;
-!  utFinish(x, 0, 0, 0, assert, txt);
-  utFinish(assert, txt);
-  ];
+  ut_found = x;
+  if (~~x == ~~assert) ut_result = 1;
+  ut_assert = assert;
+  utFinish(txt);
+];
 
-[ utAssert x y k cmp_target assert txt err cmp;
+[ utAssert x y k cmp_target assert txt cmp;
   ut_result = 0;
   ut_operator = cmp_target;
   if (k) { cmp = KOVComparisonFunction(k); ut_kind = k; }
@@ -239,12 +235,11 @@ Include (-
   ut_kind = k;
   ut_expected = y;
   ut_found = x;
-!  utFinish(x, y, k, cmp_target, assert, txt);
-  utFinish(assert, txt);
+  ut_assert = assert;
+  utFinish(txt);
 ];
 
-[ UtFinish assert txt; !x y k cmp_target assert txt operand;
-  ut_assert = assert;
+[ UtFinish txt;
   if (ut_truth_state) ut_kind = 0;
   if (ut_result) {
     unit_test_success++;
@@ -277,6 +272,16 @@ To output current unit test result for (T - a text) (this is output-result):
 
 Volume Assertions and Refutations
 
+Book or neither
+
+Part instant
+
+To for (txt - a text) pass:
+  (- utAssertPlain(1,1,{txt}); -).
+
+To for (txt - a text) fail:
+  (- utAssertPlain(0,1,{txt}); -).
+
 Book Assertions
 
 Part boolean (for use with If True by Zed Lopez)
@@ -287,7 +292,7 @@ To for (txt - a text) assert (X - value of kind K):
 Part conditional
 
 To for (txt - a text) assert (C - a condition):
-  (- utAssertPlain({C},1,{txt}); -).
+  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},1,{txt}); -).
 
 Part equality
 
@@ -314,7 +319,7 @@ To for (txt - a text) refute (X - value of kind K):
 Part conditional
 
 To for (txt - a text) refute (C - a condition):
-  (- utAssertPlain({C},0,{txt}); -).
+  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,{txt}); -).
 
 Part equality
     
@@ -379,12 +384,19 @@ Chapter Introduction
 
 This is a unit test extension. There are many like it, but this one is mine.
 
+Note: because this extension declares a unit test variable, if you include Unit
+Tests, your code *must* create at least one unit test, or it will fail to compile.
+
+Chapter Use case
+
 To test your game as a whole, I recommend using Andrew Plotkin's [RegTest](https://eblong.com/zarf/plotex/regtest.html).
 The latest is available in [the plotex Github repo](https://github.com/erkyrath/plotex/blob/master/regtest.html).
 
 But if you're testing code in isolation that isn't about accepting player commands
 or producing player-visible output, RegTest isn't the most natural fit. This
 extension was written for those cases.
+
+Chapter Unit Test kind
 
 A unit test is a kind of object, with a text description property, which should
 be populated for the test to identify itself. (It *can* be left blank, in which
@@ -398,24 +410,24 @@ following the object definition.
 you must define a corresponding ``For testing`` rule:
 
 	For testing math-still-works:
-		For "Addition" assert 2 + 2 is 4;
+		for "Add 2 + 2" assert 2 + 2 is 4;
 
 (More about assert statements later.)
 
-If you have setup to do, a ``Before testing`` rule is a good place for it. But
-you may need to establish global variables or activity variables for the ``For testing``
-and/or ``After testing`` rules to have access to information set up in the Before rule.
+If you have setup to do, a ``Before testing`` rule is a good place for it. But you may
+need to establish global variables or activity variables for the ``For testing`` and/or
+``After testing`` rules to have access to information set up in the Before rule.
 
 If there's more reporting you want, you might use an ``After testing`` rule. But you shouldn't
 need to do any teardown: unit tests are idempotent. They save the game state before they
 start, and restore when they're finished. (On glulx one can protect memory from being
-clobbered by a restore, so make that *mostly* idempotent, but at any rate, it should be fairly
-difficult for one test to screw up the environment for another.)
+clobbered by a restore, so make that *mostly* idempotent, but it should be fairly difficult
+for one test to screw up the environment for another.)
 
 This means that you also can't share context between different tests... but you can make the
-same Before rule apply to more than one test. (You can have multiple ``for testing`` rules
-for the same unit test, using ``continue the activity``, but those would be treated as the
-same test.)
+same Before rule apply to more than one test. (You could have multiple ``for testing`` rules
+for the same unit test, using ``continue the activity``, but assertions/refutations spread
+among multiple rules in that fashion would be equivalent to them all being in the same rule.)
 
 	Before testing a unit test (called ut) when ut is test1 or ut is test2:
 
@@ -448,30 +460,64 @@ Any arbitrary condition:
 	for <label> assert <condition>
 	for <label> refute <condition>
 
-Or, if you've included If True by Zed Lopez, a plain truth state value.
+And, if you've included If True by Zed Lopez, a plain truth state value.
 
 	for <label> assert <truth state value>
 	for <label> refute <truth state value>
 
+Operators for !=, <=, => aren't provided; just refute ==, >, <, respectively.
+
 If you create a unit test object, you should write a corresponding For testing activity rule
-which should include at least one assertion or refutation. This isn't enforced. If you don't
+which should include at least one assertion or refutation. This isn't enforced: if you don't
 have any assertions, the test will run and report 0/0 Passed.
 
-The output for the results is determined by the ``output result`` phrase property on the relevant unit test. You can see simple-output-result and original-output-result in the code for working examples. The following values and say phrases provide the ingredients to build your own:
+Chapter Output Result
+
+The output for the results is determined by the ``output result`` phrase property on the relevant unit test.
+You can see simple-output-result and original-output-result in the code for working examples. The following
+values and say phrases provide the ingredients to build your own:
 
 Values:
-- ut-assert (truth state) true if it was an assertion or false if it was a refutation
-- ut-truth-state (truth state) true if it was a conditional or boolean or false if it was a comparison
-- ut-result (truth state) true if passed, false if failed
+- ut-assert (truth state) true if it was an assertion; false if it was a refutation
+- ut-truth-state (truth state) true if it was a conditional or boolean; false if it was a comparison
+- ut-result (truth state) true if passed; false if failed
     
 Say phrases:
-- ut-expected: if it was a conditional/boolean refutation, "false"; if it was a conditional/boolean assertion, "true"; otherwise, the expected (right hand side of the comparison) value
-- ut-found: if it was a comparison, the found (left hand side of the comparison) value; otherwise the same as ut-expected if the test passed, else the opposite of ut-expected
+- ut-expected:
+  - for comparisons: the expected (right hand side of the comparison) value
+  - for conditional/booleans: if it was a refutation, false; if it was an assertion, true.
+- ut-found:
+  - for comparisons, the found (left hand side of the comparison) value
+  - for conditional/booleans, the same as ut-expected if the test passed;
+    the opposite of ut-expected if the test failed
 - ut-how-tested: the text "Asserted" or "Refuted".
 - ut-operator: if it was a comparison, a textual representation of the operator
-- ut-opposite: if it was a comparison, a textual representation of the opposite of the operator (i.e., instead of <, ==, >, it would be >=, !=, <=, respectively)
+- ut-opposite: if it was a comparison, a textual representation of the opposite of the operator
+  (i.e., instead of <, ==, >, it would be >=, !=, <=, respectively)
 
-It's a phrase text -> nothing; it automatically receives as a parameter the text value specified in ``for <label>``.
+It's a phrase text -> nothing; it automatically receives as a parameter the text value
+specified in ``for <label>``.
+
+You can set a custom phrase as the default for all unit tests:
+
+	The output result of a unit test is usually custom-output-result.
+
+Or create subkinds of unit tests that have different defaults:
+
+	Verbose unit test is a kind of unit test.
+	The output result of a verbose unit test is usually verbose-output-result.
+	Terse unit test is a kind of unit test.
+	The output result of a terse unit test is usually terse-output-result.
+
+Or set a custom phrase on a per unit test basis:
+
+	Complicated phrase trial is a unit test.
+	The output result of complicated phrase trial is complicated-output-result.
+
+Since the granularity is at the unit test level, all assertions and refutations
+in rules associated with some given unit test must all use the same output result
+phrase. If you find you want different output result phrases for some of them,
+move them to a different unit test with a different output result phrase.
 
 Chapter Text comparisons
 
@@ -506,7 +552,7 @@ Subsequently, they were collapsed together (you can still use "indexed text"
 as a synonym for "text") but they continue to have different underlying representations.
 
 When you test whether a text containing substitutions *is* a text that doesn't,
-I7 automatically takes the substituted form of the text containing adaptive text.
+I7 automatically takes the substituted form of the text containing substitutions.
 But when you test whether a text containing a substitution *is* a text containing
 another substitution, the answer doesn't depend on whether the evaluations of the
 two texts are the same, but on whether the underlying function representing it is
@@ -537,8 +583,8 @@ is true only if it's an exact match, and
 if <snippet> includes <topic> is true if the topic occurs anywhere within the
 snippet, like the behavior of ``matches the text``.
 
-So this extension includes these phrases, that correspond to the behavior of
-snippets and topics:
+So this extension includes the following phrases, that correspond to the behavior
+of snippets and topics:
 
 if <text1> exactly matches <text2>
 if <text1> includes <text2>
@@ -600,7 +646,7 @@ For testing backwards-capture-test:
 
 After testing backwards-capture-test:
   let expected be "3cywood";
-  for "doowyc3 backwards" assert "[captured text trimmed]" exactly matches "3cywood";
+  for "doowyc3 backwards" assert "[captured text]" exactly matches "3cywood";
 
 Chapter Test Automatically
 
@@ -608,7 +654,8 @@ There is a "test automatically" use option. You can include:
 
 Use test automatically.
 
-and all tests will be run on startup. Otherwise you can enter the command ``test suite`` or ``utest``.
+and all tests will be run on startup. Otherwise you can enter the command ``test suite`` or
+``utest``.
 
 Chapter Less Verbose
 
@@ -637,24 +684,21 @@ Section for 6G60
 [Simple Unit Tests by Dannii Willis](https://github.com/i7/extensions/blob/master/Dannii%20Willis/Simple%20Unit%20Tests.i7x) 
 [Automated Testing by Kerkerkruip](https://github.com/i7/kerkerkruip/blob/master/Kerkerkruip.materials/Extensions/Kerkerkruip/Automated%20Testing.i7x)
 
-The fundamental mechanism at the heart of Simple Unit Tests ceased working after 6G60, and Automated Testing depends on Simple Unit Tests.
+The fundamental mechanism at the heart of Simple Unit Tests ceased working after 6G60, and Automated Testing
+depends on Simple Unit Tests.
 
 The design of this extension's interface owes most to Simple Unit Tests and Benchmarking.
 
 Chapter Changelog
 
-Section Version 3
+v3: Output now done in I7 via output result phrase text -> nothing on unit tests.
 
-Output now done in I7 via output result phrase text -> nothing on unit tests.
-
-Section Version 2
-
-Renamed "unit-test" -> "unit test"; completely changed how assertions and refutations
+v2: Renamed "unit-test" -> "unit test"; completely changed how assertions and refutations
 are formed. Incorporated some suggestions and code by Dannii Willis.
 
 Chapter Examples
 
-Example: * Who tests the tester?
+Example: * Who tests the testers?
 
 	"Unit Tests"
 	
@@ -672,7 +716,7 @@ Example: * Who tests the tester?
 	    now result is result * m;
 	  end repeat;
 	  decide on result;
-	  
+	
 	Power-test-assertion-truths is a unit test. "Power test assertions, true."
 	Power-test-assertion-lies is a unit test. "Power test assertions, false statements".
 	Power-test-refutation-truths is a unit test. "Power test refutations, true statements".
@@ -706,7 +750,6 @@ Example: * Who tests the tester?
 	  for "0^0" assert 0 to the 0 is 0;
 	  for "2^-1" assert 2 to the -1 is -2;
 	  for "0^111" assert 0 to the 111 is 1;
-	
 	
 	For testing power-test-refutation-lies:
 	  for "3^2" refute 3 to the 2 is 9;
@@ -748,7 +791,6 @@ Example: * Who tests the tester?
 	  for "0 > 0" assert 0 > 0;
 	  for "0 < 0" assert 0 < 0;
 	  for "-3 < -3" assert -3 < -3;
-
 	  
 	For testing numeric-comparison-refutation-truths:
 	  for "2 < 1" refute 2 < 1;
@@ -770,9 +812,9 @@ Example: * Who tests the tester?
 	To say rbrack: say close bracket.
 	
 	For testing text-comparison-assertion-truths:
-	  for "X is X" assert "X" is "X";
-	  for "X < Y" assert "X" < "Y";
-	  for "Y > X" assert "Y" > "X";
+	  for "'X' is 'X'" assert "X" is "X";
+	  for "'X' < 'Y'" assert "X" < "Y";
+	  for "'Y' > 'X'" assert "Y" > "X";
 	  for "[lbrack]X[rbrack] exactly matches X" assert "[X]" exactly matches "X";
 	  for "[lbrack]X[rbrack] exactly matches [lbrack]X2[rbrack]" assert "[X]" exactly matches "[X2]";
 	  for "'banana' rmatches '(an)+'" assert "banana" rmatches "(an)+";
@@ -782,9 +824,9 @@ Example: * Who tests the tester?
 	  for "match 1 exactly matches an" assert m1 exactly matches "an";
 	  
 	For testing text-comparison-refutation-lies:
-	  for "X is X" refute "X" is "X";
-	  for "X < Y" refute "X" < "Y";
-	  for "Y > X" refute "Y" > "X";
+	  for "'X' is 'X'" refute "X" is "X";
+	  for "'X' < 'Y'" refute "X" < "Y";
+	  for "'Y' > 'X'" refute "Y" > "X";
 	  for "[lbrack]X[rbrack] exactly matches X" refute "[X]" exactly matches "X";
 	  for "[lbrack]X[rbrack] exactly matches [lbrack]X2[rbrack]" refute "[X]" exactly matches "[X2]";
 	  for "'banana' rmatches '(an)+'" refute "banana" rmatches "(an)+";
@@ -796,18 +838,33 @@ Example: * Who tests the tester?
 	For testing text-comparison-refutation-truths:
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]X2[rbrack]" refute "[X]" does not exactly match "[X2]";
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" refute "[X]" exactly matches "[Y]";
-	  for "A > B" refute "A" > "B";
-	  for "B < A" refute "B" < "A";
-	  for "A > A" refute "A" > "A";
-	  for "A > A" refute "A" > "A";
-	  for "B is A" refute "B" is "A";
-
+	  for "'A' > 'B'" refute "A" > "B";
+	  for "'B' < 'A'" refute "B" < "A";
+	  for "'A' > 'A'" refute "A" > "A";
+	  for "'A' > 'A'" refute "A" > "A";
+	  for "'B' is 'A'" refute "B" is "A";
 	
 	For testing text-comparison-assertion-lies:
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]X2[rbrack]" assert "[X]" does not exactly match "[X2]";
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" assert "[X]" exactly matches "[Y]";
-	  for "A > B" assert "A" > "B";
-	  for "B < A" assert "B" < "A";
-	  for "A > A" assert "A" > "A";
-	  for "A > A" assert "A" > "A";
-	  for "B is A" assert "B" is "A";
+	  for "'A' > 'B'" assert "A" > "B";
+	  for "'B' < 'A'" assert "B" < "A";
+	  for "'A' > 'A'" assert "A" > "A";
+	  for "'A' > 'A'" assert "A" > "A";
+	  for "'B' is 'A'" assert "B" is "A";
+	
+	[ the phrase to be tested ]
+	To say (T - a text) backwards:
+	    let len be the number of characters in T + 1;
+	    repeat with i running from 1 to the number of characters in T begin;
+	      say character number len - i in T;
+	    end repeat;
+	
+	Backwards-test is a unit test. "saying text backwards."
+	
+	[ the custom say statement added for testing purposes]
+	To say backwards-test-output:
+	    say "schmoop" backwards;
+	
+	For testing backwards-test:
+	 For "'schmoop' backwards" assert "[backwards-test-output]" exactly matches "poomhcs";
