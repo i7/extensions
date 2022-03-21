@@ -51,7 +51,7 @@ i6-printing-routine:ANY_TY_Say
 
 description:an any
 index-priority:6
-specification-text:An any stores a value and its type; the type cannot be determined at compile time, but can be read at run time.
+specification-text:An any stores a value and its kind; the kind cannot be determined at compile time, but can be read at run time.
 
 
 
@@ -72,7 +72,7 @@ distinguisher:COUPLE_TY_Distinguish
 i6-printing-routine:COUPLE_TY_Say
 
 description:a couple
-specification-text:A couple is a 2-tuple, grouping two values of any type.
+specification-text:A couple is a 2-tuple, grouping two values of any kind.
 
 
 
@@ -163,9 +163,8 @@ constructor-arity:covariant
 
 instance-of:POINTER_VALUE_TY
 instance-of:SAYABLE_VALUE_TY
-default-value:0
-heap-size-estimate:12
-small-block-size:3
+default-value:RESULT_TY_Default
+heap-size-estimate:8
 
 comparison-routine:BlkValueCompare
 distinguisher:RESULT_TY_Distinguish
