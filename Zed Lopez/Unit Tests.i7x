@@ -16,8 +16,10 @@ Part Autotest
 
 Use test automatically translates as (- Constant TEST_AUTOMATICALLY; -).
 Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
+Use quit after autotesting translates as (- Constant QUIT_AFTER_AUTOTESTING; -).
+Use write test results to file translates as (- Constant WRITE_TEST_RESULTS_TO_FILE; -).
 
-First when play begins:
+First when play begins when write test results to file option is active:
   write "" to file of results.
 
 Last when play begins (this is the test all unit tests automatically rule):
@@ -164,8 +166,9 @@ To test all unit tests matching (T - a text):
     if printed name of ut does not rmatch "^[T]", case insensitively begin; next; end if;
     follow the utest rules for ut;
   end repeat;
-  say "[line break][text of file of results]".
-
+  if the write test results to file option is active, say "[line break][text of file of results]";
+  if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
+  
 Chapter Test command
 
 [ ``> test suite`` can be used instead of ``> utest`` ]
@@ -210,7 +213,7 @@ Chapter Test results
 Utest a unit test (called ut) (this is the unit test reporting rule):
   let total test count be unit test success + unit test failure;
   say "[unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if]";
-  if unit test failure > 0 begin;
+  if unit test failure > 0 and write test results to file option is active begin;
     append "[ut] [unit test failure]/[total test count] failed.[line break]" to file of results;
   end if;
   
