@@ -1,4 +1,4 @@
-Version 3/220322 of Unit Tests by Zed Lopez begins here.
+Version 3/220323 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -161,12 +161,15 @@ To test all unit tests: test all unit tests matching ".*".
 
 Section test all unit tests matching
 
+To say test results for (ut - a unit test):
+  follow the utest rules for ut;
+
 To test all unit tests matching (T - a text):
   repeat with ut running through the unit tests begin;
     if printed name of ut does not rmatch "^[T]", case insensitively begin; next; end if;
-    follow the utest rules for ut;
+      let results be the substituted form of "[test results for ut]";
+      output results;
   end repeat;
-  if the write test results to file option is active, say "[line break][text of file of results]";
   if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
   
 Chapter Test command
@@ -212,10 +215,8 @@ Chapter Test results
 
 Utest a unit test (called ut) (this is the unit test reporting rule):
   let total test count be unit test success + unit test failure;
-  say "[unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if]";
-  if unit test failure > 0 and write test results to file option is active begin;
-    append "[ut] [unit test failure]/[total test count] failed.[line break]" to file of results;
-  end if;
+  let summary be "[unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
+  output summary;
   
 Chapter Cleanup
 
@@ -284,8 +285,16 @@ return 0;
 
 -).
 
-To output current unit test result for (T - a text) (this is output-result):
+To say captured output of current unit test result for (T - a text): 
   apply output result of current unit test to T.
+
+To output (T - a text):
+  say T;
+  if write test results to file option is active, append T to file of results;
+
+To output current unit test result for (T - a text) (this is output-result):
+  let result be "[captured output of current unit test result for T]";
+  output result;
 
 Book Assertions and Refutations
 
