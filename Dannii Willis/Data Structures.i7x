@@ -1,4 +1,4 @@
-Version 1/220322 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220323 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -13,7 +13,6 @@ Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
 Include (-
 Constant BLK_BVBITMAP_CUSTOM_BV = $80;
 Constant BLK_BVBITMAP_COUPLE = $82;
-Constant BLK_BVBITMAP_MAP = $85;
 
 [ BlkValueWeakKind bv o;
 	if (bv) {
@@ -23,7 +22,6 @@ Constant BLK_BVBITMAP_MAP = $85;
 			if (o & BLK_BVBITMAP_CUSTOM_BV) {
 				switch (o) {
 					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
-					BLK_BVBITMAP_MAP: return MAP_TY;
 				}
 				return 0;
 			}
@@ -542,16 +540,22 @@ For testing data structures couples:
 
 Chapter - Maps
 
-[ Maps are three word short block values.
-The 1st word is the short block header, $85.
-The 2nd word is a list of keys.
-The 3rd word is a list of values. ]
+[ Maps have a two word long block (ignoring the header).
+Word 0: list of keys
+Word 1: list of values ]
 
 Include (-
+! Static long blocks have two parts: the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array MAP_TY_Default_LB --> $050C0000 MAP_TY MAX_POSITIVE_NUMBER	MAP_TY_Default_List MAP_TY_Default_List;
+! And a static list, to be used for both the keys and values - it doesn't matter as we'll prevent it ever being written to.
+! $051C0000 means a block of length 2^5=32 byes, that is resident (static), uses word values, and sets BLK_FLAG_TRUNCMULT... I'm not sure what that does, but it's how I7 compiles global lists.
+Array MAP_TY_Default_List --> 0	$051C0000 LIST_OF_TY MAX_POSITIVE_NUMBER	NUMBER_TY 0 0;
+
 [ MAP_TY_Support task arg1 arg2 arg3;
 	switch(task) {
-		!COMPARE_KOVS: return MAP_TY_Compare(arg1, arg2);
-		COPY_KOVS: MAP_TY_Copy(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
 		CREATE_KOVS: return MAP_TY_Create(arg1, arg2);
 		DESTROY_KOVS: MAP_TY_Destroy(arg1);
 	}
@@ -559,39 +563,27 @@ Include (-
 	rfalse;
 ];
 
-[ MAP_TY_Compare c1 c2	cf delta c1kov;
-
-];
-
-[ MAP_TY_Copy to from;
-	to-->1 = from-->1;
-	to-->2 = from-->2;
-	!BlkValueCopy(to-->1, from-->1);
-	!BlkValueCopy(to-->2, from-->2);
-];
+Constant MAP_TY_KEYS = 0;
+Constant MAP_TY_VALUES = 1;
 
 Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 
-[ MAP_TY_Create skov short_block;
-	if (short_block == 0) {
-		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_MAP;
+[ MAP_TY_Create skov short_block	long_block;
+	long_block = FlexAllocate(2 * WORDSIZE, MAP_TY, BLK_FLAG_WORD);
 	MAP_TY_Temp_List_Definition-->2 = KindBaseTerm(skov, 0);
-	short_block-->1 = BlkValueCreate(MAP_TY_Temp_List_Definition);
+	BlkValueWrite(long_block, MAP_TY_KEYS, BlkValueCreate(MAP_TY_Temp_List_Definition), 1);
 	MAP_TY_Temp_List_Definition-->2 = KindBaseTerm(skov, 1);
-	short_block-->2 = BlkValueCreate(MAP_TY_Temp_List_Definition);
+	BlkValueWrite(long_block, MAP_TY_VALUES, BlkValueCreate(MAP_TY_Temp_List_Definition), 1);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
-[ MAP_TY_Create_From short_block keys vals;
+[ MAP_TY_Create_From short_block keys vals	long_block;
 	! TODO: check keys and vals lengths are equal
-	if (short_block == 0) {
-		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_MAP;
-	short_block-->1 = keys;
-	short_block-->2 = vals;
+	long_block = FlexAllocate(2 * WORDSIZE, MAP_TY, BLK_FLAG_WORD);
+	BlkValueWrite(long_block, MAP_TY_KEYS, keys, 1);
+	BlkValueWrite(long_block, MAP_TY_VALUES, vals, 1);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
@@ -599,7 +591,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	if (keyany && keykind ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keykind, key);
 	}
-	keyslist = map-->1;
+	keyslist = BlkValueRead(map, MAP_TY_KEYS);
 	cf = KOVComparisonFunction(BlkValueRead(keyslist, LIST_ITEM_KOV_F));
 	if (cf == 0) {
 		cf = UnsignedCompare;
@@ -608,28 +600,23 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	for (i = 0: i < length; i++) {
 		if (cf(key, BlkValueRead(keyslist, LIST_ITEM_BASE + i)) == 0) {
 			LIST_OF_TY_RemoveItemRange(keyslist, i + 1, i + 1);
-			LIST_OF_TY_RemoveItemRange(map-->2, i + 1, i + 1);
+			LIST_OF_TY_RemoveItemRange(BlkValueRead(map, MAP_TY_VALUES), i + 1, i + 1);
 			return;
 		}
 	}
 ];
 
-[ MAP_TY_Destroy short_block;
-	BlkValueFree(short_block-->1);
-	BlkValueFree(short_block-->2);
-];
-
-[ MAP_TY_Distinguish m1 m2;
-	if (MAP_TY_Compare(m1, m2) == 0) rfalse;
-	rtrue;
+[ MAP_TY_Destroy map;
+	BlkValueFree(BlkValueRead(map, MAP_TY_KEYS));
+	BlkValueFree(BlkValueRead(map, MAP_TY_VALUES));
 ];
 
 [ MAP_TY_Get_Key map key keyany keykind checked_bv backup or	cf i keyskov keyslist length res valslist;
 	if (keyany && keykind ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keykind, key);
 	}
-	keyslist = map-->1;
-	valslist = map-->2;
+	keyslist = BlkValueRead(map, MAP_TY_KEYS);
+	valslist = BlkValueRead(map, MAP_TY_VALUES);
 	keyskov = BlkValueRead(keyslist, LIST_ITEM_KOV_F);
 	cf = KOVComparisonFunction(keyskov);
 	if (cf == 0) {
@@ -665,7 +652,7 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	if (keyany && keykind ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keykind, key);
 	}
-	keyslist = map-->1;
+	keyslist = BlkValueRead(map, MAP_TY_KEYS);
 	cf = KOVComparisonFunction(BlkValueRead(keyslist, LIST_ITEM_KOV_F));
 	if (cf == 0) {
 		cf = UnsignedCompare;
@@ -679,15 +666,21 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 	rfalse;
 ];
 
-[ MAP_TY_Set_Key map key keyany keykind val valany valkind	cf i keyslist length valslist;
+[ MAP_TY_Set_Key map mapkov key keyany keykind val valany valkind	cf i keyslist kov length temp valslist;
+	! Check if we are writing to the default map, and if so make a new map
+	if (BlkValueGetLongBlock(map) == MAP_TY_Default_LB) {
+		temp = MAP_TY_Create(mapkov);
+		BlkValueCopy(map, temp);
+		BlkValueFree(temp);
+	}
 	if (keyany && keykind ~= ANY_TY) {
 		key = ANY_TY_Set(keyany, keykind, key);
 	}
 	if (valany && valkind ~= ANY_TY) {
 		val = ANY_TY_Set(valany, valkind, val);
 	}
-	keyslist = map-->1;
-	valslist = map-->2;
+	keyslist = BlkValueRead(map, MAP_TY_KEYS);
+	valslist = BlkValueRead(map, MAP_TY_VALUES);
 	cf = KOVComparisonFunction(BlkValueRead(keyslist, LIST_ITEM_KOV_F));
 	if (cf == 0) {
 		cf = UnsignedCompare;
@@ -697,18 +690,39 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 		if (cf(key, BlkValueRead(keyslist, LIST_ITEM_BASE + i)) == 0) {
 			! Updating existing key
 			LIST_OF_TY_RemoveItemRange(valslist, i + 1, i + 1);
+			! Make our own copy of the value
+			kov = BlkValueRead(valslist, LIST_ITEM_KOV_F);
+			if (KOVIsBlockValue(kov)) {
+				temp = BlkValueCreate(kov);
+				BlkValueCopy(temp, val);
+				val = temp;
+			}
 			LIST_OF_TY_InsertItem(valslist, val, 1, i + 1);
 			return;
 		}
 	}
 	! New key
+	! Make our own copy of the key
+	kov = BlkValueRead(keyslist, LIST_ITEM_KOV_F);
+	if (KOVIsBlockValue(kov)) {
+		temp = BlkValueCreate(kov);
+		BlkValueCopy(temp, key);
+		key = temp;
+	}
 	LIST_OF_TY_InsertItem(keyslist, key);
+	! Make our own copy of the value
+	kov = BlkValueRead(valslist, LIST_ITEM_KOV_F);
+	if (KOVIsBlockValue(kov)) {
+		temp = BlkValueCreate(kov);
+		BlkValueCopy(temp, val);
+		val = temp;
+	}
 	LIST_OF_TY_InsertItem(valslist, val);
 ];
 
 [ MAP_TY_Say map	i keyskov keyslist length valskov valslist;
-	keyslist = map-->1;
-	valslist = map-->2;
+	keyslist = BlkValueRead(map, MAP_TY_KEYS);
+	valslist = BlkValueRead(map, MAP_TY_VALUES);
 	keyskov = BlkValueRead(keyslist, LIST_ITEM_KOV_F);
 	valskov = BlkValueRead(valslist, LIST_ITEM_KOV_F);
 	length = BlkValueRead(keyslist, LIST_LENGTH_F);
@@ -727,39 +741,42 @@ Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 
 Chapter - Maps - Creating
 
-To decide which map of value of kind K to value of kind L is new map of (name of kind of value K) to (name of kind of value L):
+To decide which map of value of kind K to value of kind L is a/-- new map of (name of kind of value K) to (name of kind of value L):
 	(- {-new:map of K to L} -);
 
 [To decide which map of value of kind K to value of kind L is new/-- map from (keys - list of values of kind K) and/to (vals - list of values of kind L):
 	(- MAP_TY_Create_From({-new:map of K to L}, {-by-reference:K}, {-by-reference:L}) -);]
+
+[To decide which map of value of kind K to value of kind L is clone of (M - map of value of kind K to value of kind L):
+	(-  -).]
 
 
 
 Chapter - Maps - Writing
 
 To set key (key - K) in/of (M - map of value of kind K to value of kind L) to/= (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of K to L}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
 
 To set key (key - K) in/of (M - map of value of kind K to any) to/= (val - value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of K to any}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 To set key (key - value of kind K) in/of (M - map of any to value of kind L) to/= (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of any to L}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
 
 To set key (key - value of kind K) in/of (M - map of any to any) to/= (val - value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of any to any}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 To (M - map of value of kind K to value of kind L) => (key - K) = (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of K to L}, {-by-reference:key}, 0, 0, {-by-reference:val}); -).
 
 To (M - map of value of kind K to any) => (key - K) = (val - value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of K to any}, {-by-reference:key}, 0, 0, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 To (M - map of any to value of kind L) => (key - value of kind K) = (val - L):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of any to L}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}); -).
 
 To (M - map of any to any) => (key - value of kind K) = (val - value of kind V):
-	(- MAP_TY_Set_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
+	(- MAP_TY_Set_Key({-by-reference:M}, {-strong-kind:map of any to any}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-by-reference:val}, {-new:any}, {-strong-kind:V}); -).
 
 
 
@@ -815,24 +832,24 @@ Chapter - Maps - Iterating
 
 To repeat with (key - nonexisting K variable) in/from/of (M - map of value of kind K to value of kind L) keys begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead({-by-reference:M}-->1, LIST_LENGTH_F);
-		{-lvalue-by-reference:key} = BlkValueRead({-by-reference:M}-->1, LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead({-by-reference:M}-->1, LIST_ITEM_BASE + {-my:1}))
+		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_LENGTH_F);
+		{-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE + {-my:1}))
 	-).
 
 To repeat with (val - nonexisting L variable) in/from/of (M - map of value of kind K to value of kind L) values begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead({-by-reference:M}-->1, LIST_LENGTH_F);
-		{-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE + {-my:1}))
+		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS)-->1, LIST_LENGTH_F);
+		{-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE + {-my:1}))
 	-).
 
 To repeat with (key - nonexisting K variable) and/to/=> (val - nonexisting L variable) in/from/of (M - map of value of kind K to value of kind L) begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead({-by-reference:M}-->1, LIST_LENGTH_F);
-		{-lvalue-by-reference:key} = BlkValueRead({-by-reference:M}-->1, LIST_ITEM_BASE);
-		{-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead({-by-reference:M}-->1, LIST_ITEM_BASE + {-my:1}), {-lvalue-by-reference:val} = BlkValueRead({-by-reference:M}-->2, LIST_ITEM_BASE + {-my:1}))
+		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_LENGTH_F);
+		{-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE);
+		{-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE + {-my:1}), {-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE + {-my:1}))
 	-).
 
 
