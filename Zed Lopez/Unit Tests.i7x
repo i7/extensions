@@ -1,23 +1,34 @@
-Version 3/220321 of Unit Tests by Zed Lopez begins here.
+Version 3/220322 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
 Volume Unit Tests (not for release)
+
+Part Output file
+
+The file of results is called "utresults".
+
+Part Improbable
+
+To decide what number is improbable number: (- IMPROBABLE_VALUE -).
 
 Part Autotest
 
 Use test automatically translates as (- Constant TEST_AUTOMATICALLY; -).
 Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
 
-when play begins (this is the test all unit tests automatically rule):
+First when play begins:
+  write "" to file of results.
+
+Last when play begins (this is the test all unit tests automatically rule):
   if test automatically option is active, test all unit tests.
 
 Part Undo
 
-To decide what number is the result of saving before running the unit test:
+To decide what number is the/a/-- result of saving before running the/-- unit test:
 (- VM_Save_Undo() -).
 
-To restore back to before running the unit test:
+To restore back to before running the/-- unit test:
 (- VM_Undo(); -).
 
 Part unit test object
@@ -37,7 +48,7 @@ ut-ge is a unit test operator value. ">=".[4]
 ut-ne is a unit test operator value. "!=". [5]
 ut-le is a unit test operator value. "<=". [6]
 
-To say the/a/-- (uto - a unit test operator value): say the description of uto.
+To say the/a/an/-- (uto - a unit test operator value): say the description of uto.
 
 A unit test operator value has a unit test operator value called the opposite operator.
 The opposite operator of ut-eq is ut-ne.
@@ -86,9 +97,9 @@ To say (ut - a unit test):
 
 Part Success and failure counting
 
-[ For easy of sharing info between I7 and I6 these are globals.
-  Only one test should be occurring at a time, so it shouldn't
-  pose any problem. ]
+[ For ease of sharing info between I7 and I6 these are globals.
+  Only one test should be occurring at a time, so their globality
+  shouldn't pose any problem. ]
 Include (-
 Global unit_test_success;
 Global unit_test_failure;
@@ -142,13 +153,18 @@ Understand "utest" as unit testing.
 
 Carry out unit testing (this is the test all unit tests rule): test all unit tests.
 
-Section Test all unit tests to-phrase
+Chapter Test all unit tests to-phrase
 
-[ also used in the test all unit tests automatically rule]
-To test all unit tests:
+To test all unit tests: test all unit tests matching ".*".
+
+Section test all unit tests matching
+
+To test all unit tests matching (T - a text):
   repeat with ut running through the unit tests begin;
+    if printed name of ut does not rmatch "^[T]", case insensitively begin; next; end if;
     follow the utest rules for ut;
   end repeat;
+  say "[line break][text of file of results]".
 
 Chapter Test command
 
@@ -163,12 +179,7 @@ Understand "utest [text]" as specific-utesting.
 Section Carry out specific-utesting
 
 Carry out specific-utesting (this is the carry out unit testing via utest command rule):
-  let txt be "[the topic understood]";
-  repeat with ut running through the unit tests begin;
-    if printed name of ut rmatches "^[txt]", case insensitively begin;
-      follow the utest rules for ut;
-    end if;
-  end repeat;
+  test all unit tests matching "^[the topic understood]"
 
 Part Assertions
 
@@ -199,7 +210,10 @@ Chapter Test results
 Utest a unit test (called ut) (this is the unit test reporting rule):
   let total test count be unit test success + unit test failure;
   say "[unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if]";
-
+  if unit test failure > 0 begin;
+    append "[ut] [unit test failure]/[total test count] failed.[line break]" to file of results;
+  end if;
+  
 Chapter Cleanup
 
 Utest a unit test (this is the unit test cleanup rule):
@@ -270,11 +284,11 @@ return 0;
 To output current unit test result for (T - a text) (this is output-result):
   apply output result of current unit test to T.
 
-Volume Assertions and Refutations
+Book Assertions and Refutations
 
-Book or neither
+Part or neither
 
-Part instant
+Chapter instant
 
 To for (txt - a text) pass:
   (- utAssertPlain(1,1,{txt}); -).
@@ -282,63 +296,63 @@ To for (txt - a text) pass:
 To for (txt - a text) fail:
   (- utAssertPlain(0,1,{txt}); -).
 
-Book Assertions
+Part Assertions
 
-Part boolean (for use with If True by Zed Lopez)
+Chapter boolean (for use with If True by Zed Lopez)
 
 To for (txt - a text) assert (X - value of kind K):
   (- utAssertPlain({X},1,{txt}); -).
 
-Part conditional
+Chapter conditional
 
 To for (txt - a text) assert (C - a condition):
   (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},1,{txt}); -).
 
-Part equality
+Chapter equality
 
 To for (txt - a text) assert (X - value of kind K) is/== (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},0,1,{txt}); -)
 
-Part greater than
+Chapter greater than
   
 To for (txt - a text) assert (X - value of kind K) > (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},1,1,{txt}); -).
 
-Part less than
+Chapter less than
   
 To for (txt - a text) assert (X - value of kind K) < (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},-1,1,{txt}); -).
 
-Book Refutations
+Part Refutations
 
-Part boolean (for use with If True by Zed Lopez)
+Chapter boolean (for use with If True by Zed Lopez)
 
 To for (txt - a text) refute (X - value of kind K):
   (- utAssertPlain({X},{-strong-kind:K},0,{txt}); -).
 
-Part conditional
+Chapter conditional
 
 To for (txt - a text) refute (C - a condition):
   (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,{txt}); -).
 
-Part equality
+Chapter equality
     
 To for (txt - a text) refute (X - value of kind K) is/== (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},0,0,{txt}); -).
 
-Part greater than
+Chapter greater than
   
 To for (txt - a text) refute (X - value of kind K) > (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},1,0,{txt}); -).
 
-Part less than
+Chapter less than
   
 To for (txt - a text) refute (X - value of kind K) < (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},-1,0,{txt}); -).
 
-Volume Other interactions
+Book Other interactions
 
-Part Captured (for use with Text Capture by Eric Eve)
+Chapter Captured (for use with Text Capture by Eric Eve)
 
 A unit test can be text-capturing.
 
@@ -349,7 +363,7 @@ First before testing a unit test (called ut): now the current unit test is ut.
 
 Last for testing a text-capturing unit test: stop capturing text.
 
-Part text comparisons (For use without Textile by Zed Lopez)
+Chapter text comparisons (For use without Textile by Zed Lopez)
 
 To decide if a/an/-- (S - text) exactly matches a/an/-- (T - text): decide on whether or not S exactly matches the text T;
 To decide if a/an/-- (S - text) does not exactly match a/an/-- (T - text): if S exactly matches T, no; yes.
@@ -386,6 +400,8 @@ This is a unit test extension. There are many like it, but this one is mine.
 
 Note: because this extension declares a unit test variable, if you include Unit
 Tests, your code *must* create at least one unit test, or it will fail to compile.
+
+The entire extension is marked "not for release".
 
 Chapter Use case
 
@@ -470,6 +486,23 @@ Operators for !=, <=, => aren't provided; just refute ==, >, <, respectively.
 If you create a unit test object, you should write a corresponding For testing activity rule
 which should include at least one assertion or refutation. This isn't enforced: if you don't
 have any assertions, the test will run and report 0/0 Passed.
+
+Chapter Instantly passing or failing
+
+You can say either of:
+
+	for <label> pass;
+	for <label> fail;
+
+As to why you'd want to, say you had a test whose setup relied upon a phrase invocation that
+could return an invalid value, or a case where you wanted the output to include something extra
+or both. You might do something like:
+
+	For testing dark-rooms:
+	    let r be a random dark room;
+	    let label be "dark room has a container";
+	    if r is nowhere, for "[label] (got nowhere)" fail;
+	    for label assert r encloses a container.
 
 Chapter Output Result
 
@@ -657,6 +690,17 @@ Use test automatically.
 and all tests will be run on startup. Otherwise you can enter the command ``test suite`` or
 ``utest``.
 
+The ``utest`` command can also take an argument. It will run all unit tests whose object
+names begin with the argument given, so if you choose common prefixes for the names of
+related unit tests, you can easily run those together, e.g.,
+
+	person-wearing is a unit test. [...]
+	person-carrying is a unit test. [...]
+
+	[...]
+
+	> utest person            
+
 Chapter Less Verbose
 
 You can omit details about successful tests with:
@@ -683,9 +727,11 @@ Section for 6G60
 
 [Simple Unit Tests by Dannii Willis](https://github.com/i7/extensions/blob/master/Dannii%20Willis/Simple%20Unit%20Tests.i7x) 
 [Automated Testing by Kerkerkruip](https://github.com/i7/kerkerkruip/blob/master/Kerkerkruip.materials/Extensions/Kerkerkruip/Automated%20Testing.i7x)
+[Automated Testing by Roger Carbol](https://github.com/i7/archive/blob/master/Roger%20Carbol/Automated%20Testing.i7x)
 
-The fundamental mechanism at the heart of Simple Unit Tests ceased working after 6G60, and Automated Testing
-depends on Simple Unit Tests.
+The fundamental mechanism at the heart of Simple Unit Tests ceased working after 6G60, and Kerkerkruip's
+Automated Testing depends on Simple Unit Tests. (Despite the names, it and Automated Testing by Roger Carbol
+don't appear to be related.)
 
 The design of this extension's interface owes most to Simple Unit Tests and Benchmarking.
 
