@@ -1,4 +1,4 @@
-Version 3/220323 of Unit Tests by Zed Lopez begins here.
+Version 4 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -12,18 +12,33 @@ Part Improbable
 
 To decide what number is improbable number: (- IMPROBABLE_VALUE -).
 
-Part Autotest
+Part Use Options
+
+Chapter Test Automatically
 
 Use test automatically translates as (- Constant TEST_AUTOMATICALLY; -).
-Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
+
+Last when play begins (this is the test all unit tests automatically rule):
+  if test automatically option is active, test all unit tests.
+
+Section Quit Afterwards
+
 Use quit after autotesting translates as (- Constant QUIT_AFTER_AUTOTESTING; -).
+
+Chapter Write to file
+
 Use write test results to file translates as (- Constant WRITE_TEST_RESULTS_TO_FILE; -).
 
 First when play begins when write test results to file option is active:
   write "" to file of results.
 
-Last when play begins (this is the test all unit tests automatically rule):
-  if test automatically option is active, test all unit tests.
+Chapter Don't Report passing tests
+
+Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
+
+Chapter Quiet please (for use with Text Capture by Eric Eve)
+
+Use test quietly translates as (- Constant TEST_QUIETLY; -).
 
 Part Undo
 
@@ -79,17 +94,28 @@ To verbosely output result with (T - a text) (this is original-output-result):
 
 To simple output result with (T - a text) (this is simple-output-result):
   if ut-result is false or don't report passing tests option is not active begin;
-  say "[ut-how-tested] [T]: ";
-  if ut-truth-state is true, say "[ut-found]";
-  else say "tested [ut-found] [ut-operator] [ut-expected]";
-  if ut-result is true, say " (pass)";
-  else say " (fail)";
-  say line break;
+    say "[ut-how-tested] [T]: ";
+    if ut-truth-state is true, say "[ut-found]";
+    else say "tested [ut-found] [ut-operator] [ut-expected]";
+    if ut-result is true, say " (pass)";
+    else say " (fail)";
+    say line break;
   end if;
   
 The output result of a unit test is usually simple-output-result.
 
 The description of a unit test is usually "".
+
+Chapter Stash (for use with Text Capture by Eric Eve)
+
+To stash unit test output (this is ut-stash):
+  now ut-test-output is the expanded "[captured text]";
+  unless the test quietly option is active, output ut-test-output;
+
+Chapter Fake Stash (for use without Text Capture by Eric Eve)
+
+To stash unit test output (this is ut-stash):
+  do nothing.
 
 Chapter Saying unit test
 
@@ -126,6 +152,8 @@ ut-op variable translates into I6 as "ut_operator".
 ut-result is a truth state variable.
 ut-result variable translates into I6 as "ut_result".
 
+ut-test-output is initially "".
+
 Unit test success is a number variable.
 Unit test success variable translates into I6 as "unit_test_success".
 
@@ -157,7 +185,7 @@ Carry out unit testing (this is the test all unit tests rule): test all unit tes
 
 Chapter Test all unit tests to-phrase
 
-To test all unit tests: test all unit tests matching ".*".
+To test all unit tests: test all unit tests matching "".
 
 Section test all unit tests matching
 
@@ -166,9 +194,9 @@ To say test results for (ut - a unit test):
 
 To test all unit tests matching (T - a text):
   repeat with ut running through the unit tests begin;
-    if printed name of ut does not rmatch "^[T]", case insensitively begin; next; end if;
-      let results be the substituted form of "[test results for ut]";
-      output results;
+    if T is empty or printed name of ut rmatches "^[T]", case insensitively begin;
+      output the substituted form of "[test results for ut]";
+    end if;
   end repeat;
   if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
   
@@ -206,16 +234,23 @@ First utest a unit test (called ut) (this is the unit test setup rule):
   say "[line break]Testing [ut][line break]";
   if the result of saving before running the unit test is 2, stop;
 
-Chapter Utest rule to carry out testing activity
+Chapter Utest rule to carry out testing activity (for use with Text Capture by Eric Eve)
+
+Utest a unit test (called ut) (this is the carry out a unit test rule):
+  start capturing text;
+  carry out the testing activity with ut;
+  stop capturing text;
+
+Chapter Utest rule to carry out testing activity (for use without Text Capture by Eric Eve)
 
 Utest a unit test (called ut) (this is the carry out a unit test rule):
   carry out the testing activity with ut;
-
+  
 Chapter Test results
 
 Utest a unit test (called ut) (this is the unit test reporting rule):
   let total test count be unit test success + unit test failure;
-  let summary be "[unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
+  let summary be "[if unit test failure > 0]**[else]  [end if] [unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
   output summary;
   
 Chapter Cleanup
@@ -236,14 +271,20 @@ Include (-
   ];
 
 [ utAssertPlain x assert txt;
+  EndCapture();
+  ((+ ut-stash +)-->1)();
   ut_truth_state = 1;
+print "found: ", x, " assert: ", assert, "^";
   ut_found = x;
-  if (~~x == ~~assert) ut_result = 1;
+  ut_result = 0;
+  if ((~~x) == (~~assert)) ut_result = 1;
   ut_assert = assert;
   utFinish(txt);
 ];
 
 [ utAssert x y k cmp_target assert txt cmp;
+  EndCapture();
+  ((+ ut-stash +)-->1)();
   ut_result = 0;
   ut_operator = cmp_target;
   if (k) { cmp = KOVComparisonFunction(k); ut_kind = k; }
@@ -257,7 +298,7 @@ Include (-
   utFinish(txt);
 ];
 
-[ UtFinish txt;
+[ utFinish txt;
   if (ut_truth_state) ut_kind = 0;
   if (ut_result) {
     unit_test_success++;
@@ -269,6 +310,7 @@ else {
   unit_test_failure++;
 ((+ output-result +)-->1)(txt);
 }
+StartCapture();
 ];
 
 [ utSignedCompare x y;
@@ -285,16 +327,26 @@ return 0;
 
 -).
 
-To say captured output of current unit test result for (T - a text): 
-  apply output result of current unit test to T.
+
+
 
 To output (T - a text):
   say T;
   if write test results to file option is active, append T to file of results;
 
-To output current unit test result for (T - a text) (this is output-result):
-  let result be "[captured output of current unit test result for T]";
+To say captured output of current unit test result for (T - a text): 
+  apply output result of current unit test to T.
+
+To report current unit test result for (T - a text) (this is output-result):
+  let result be "[if ut-result is true]  [else]**[end if] [captured output of current unit test result for T]";
   output result;
+
+Chapter Fake I6 Stubs (for use without Text Capture by Eric Eve)
+
+Include (-
+[ EndCapture; ];
+[ StartCapture; ];
+-)
 
 Book Assertions and Refutations
 
@@ -318,7 +370,7 @@ To for (txt - a text) assert (X - value of kind K):
 Chapter conditional
 
 To for (txt - a text) assert (C - a condition):
-  (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},1,{txt}); -).
+  (- utAssertPlain({C},1,{txt}); -).
 
 Chapter equality
 
@@ -364,18 +416,10 @@ To for (txt - a text) refute (X - value of kind K) < (Y - K):
 
 Book Other interactions
 
-Chapter Captured (for use with Text Capture by Eric Eve)
-
-A unit test can be text-capturing.
-
-Before testing a text-capturing unit test (called ut):
-  start capturing text.    
-
-First before testing a unit test (called ut): now the current unit test is ut.
-
-Last for testing a text-capturing unit test: stop capturing text.
-
 Chapter text comparisons (For use without Textile by Zed Lopez)
+
+To decide what text is an/-- expanded (T - a text):
+    (- TEXT_TY_SubstitutedForm({-new:text}, {-by-reference:T}) -).
 
 To decide if a/an/-- (S - text) exactly matches a/an/-- (T - text): decide on whether or not S exactly matches the text T;
 To decide if a/an/-- (S - text) does not exactly match a/an/-- (T - text): if S exactly matches T, no; yes.
@@ -465,9 +509,11 @@ restore state as of the beginning of the inner test, not the outer test.
 
 Chapter Assertions and Refutations
 
-assert/refute statements are the heart of testing. It technically doesn't matter where they
-occur in the activity, but the intent is that they be used in For Testing rules. There are
-several varieties:
+assert/refute statements are the heart of testing. This documentation will refer to assertions
+and refutations collectively as "test statements".
+
+It technically doesn't matter where they occur in the activity, but the intent is that they be
+used in For Testing rules. There are several varieties:
 
 Equality with ``is`` or ``==``
 
@@ -496,8 +542,8 @@ And, if you've included If True by Zed Lopez, a plain truth state value.
 Operators for !=, <=, => aren't provided; just refute ==, >, <, respectively.
 
 If you create a unit test object, you should write a corresponding For testing activity rule
-which should include at least one assertion or refutation. This isn't enforced: if you don't
-have any assertions, the test will run and report 0/0 Passed.
+which should include at least one test statement. This isn't enforced: if you don't
+have any test statements, the test will run and report 0/0 Passed.
 
 Chapter Instantly passing or failing
 
@@ -526,6 +572,11 @@ Values:
 - ut-assert (truth state) true if it was an assertion; false if it was a refutation
 - ut-truth-state (truth state) true if it was a conditional or boolean; false if it was a comparison
 - ut-result (truth state) true if passed; false if failed
+
+Additionally, if Text Capture by Eric Eve is included:
+
+- ut-test-output (text) anything the operation would have printed to the screen
+  (it will be output automatically unless Use test quietly is active)
     
 Say phrases:
 - ut-expected:
@@ -559,10 +610,73 @@ Or set a custom phrase on a per unit test basis:
 	Complicated phrase trial is a unit test.
 	The output result of complicated phrase trial is complicated-output-result.
 
-Since the granularity is at the unit test level, all assertions and refutations
-in rules associated with some given unit test must all use the same output result
-phrase. If you find you want different output result phrases for some of them,
-move them to a different unit test with a different output result phrase.
+Since the granularity is at the unit test level, all test statements in rules
+associated with some given unit test must all use the same output result phrase.
+If you find you want different output result phrases for some of them, move them
+to a different unit test with a different output result phrase.
+
+Chapter Text Capture
+
+If you want to test your assertions' and refutations' printed output you should include Text
+Capture by Eric Eve. With it included, each test statement's output is saved to a global text
+variable called ut-test-output.
+
+You may want to avoid putting say statements in your unit tests, though, as they'll get captured,
+too.
+
+	let L be {0};
+	for "out of range" assert entry 2 of L is 0;
+	let err be ut-test-output;
+	for "out of range error" assert err rmatches "^\*\*";
+
+for "statement that can produce error" assert erroneous is true
+for "error message test" 
+
+
+Chapter Test commands
+
+Otherwise you can enter the command ``test suite`` or ``utest``.
+
+The ``utest`` command can also take an argument. It will run all unit tests whose object
+names begin with the argument given, so if you choose common prefixes for the names of
+related unit tests, you can easily run those together, e.g.,
+
+	person-wearing is a unit test. [...]
+	person-carrying is a unit test. [...]
+
+	[...]
+
+	> utest person            
+
+Chapter Use Options
+
+Section Less Verbose
+
+You can omit details about successful tests with:
+
+	Use don't report passing tests.
+
+Section Test Automatically
+
+There is a "test automatically" use option. You can include:
+
+	Use test automatically.
+
+and all tests will be run on startup. 
+
+Section Quit after autotesting
+
+	Use quit after autotesting.
+
+Quits the game after testing. It does nothing unless test automatically is also active.
+
+Section Test quietly (for use with Text Capture by Eric Eve)
+
+	Use test quietly.
+
+Suppresses any text output the assertions' and refutations' operations would normally produce.
+If Text Capture is not included, this Use option doesn't get defined and mention of it would
+cause a compilation error.
 
 Chapter Text comparisons
 
@@ -652,73 +766,6 @@ Beware that the values of the matches only persist until the next regular expres
 for text as defined here) *are* regular expression operations under the hood. So store the results of
 a regexp match before trying to use ``exactly matches`` to test them.
 
-Chapter Testing printed output
-
-Most unit test extensions include Text Capture by Eric Eve to facilitate testing output. But much
-of the time you can make do by wrapping things in a say statement constructed for the purpose.
-
-[ the phrase to be tested ]
-To say (T - a text) backwards:
-    let len be the number of characters in T + 1;
-    repeat with i running from 1 to the number of characters in T begin;
-      say character number len - i in T;
-    end repeat;
-
-Backwards-test is a unit test. "saying text backwards."
-
-[ the custom say statement added for testing purposes]
-To say backwards-test-output:
-    say "schmoop" backwards;
-
-For testing backwards-test:
- For "'schmoop' backwards matches 'poomhcs'" assert "[backwards-test-output]" exactly matches "poomhcs";
-
-This is a trivial example: we could have tested ``To say <T> backwards`` directly. But it illustrates
-the point that a custom say phrase can capture other phrases' output.
-
-Section Text-capturing unit tests for use with Text Capture by Eric Eve
-
-But if your game *does* include Text Capture, Unit Tests adds a text-capturing
-property to unit tests and, for them, starts capturing text in a Before testing rule and
-stops capturing text in a ``Last for testing`` rule, so it becomes crucial to restrict
-assertions and refutations until ``After testing`` rules for text-capturing unit tests.
-
-So you could then have:
-
-backwards-test-input is always "doowyc3".
-For testing backwards-capture-test:
-  say backwards-test-input backwards.
-
-After testing backwards-capture-test:
-  let expected be "3cywood";
-  for "doowyc3 backwards" assert "[captured text]" exactly matches "3cywood";
-
-Chapter Test Automatically
-
-There is a "test automatically" use option. You can include:
-
-Use test automatically.
-
-and all tests will be run on startup. Otherwise you can enter the command ``test suite`` or
-``utest``.
-
-The ``utest`` command can also take an argument. It will run all unit tests whose object
-names begin with the argument given, so if you choose common prefixes for the names of
-related unit tests, you can easily run those together, e.g.,
-
-	person-wearing is a unit test. [...]
-	person-carrying is a unit test. [...]
-
-	[...]
-
-	> utest person            
-
-Chapter Less Verbose
-
-You can omit details about successful tests with:
-
-	Use don't report passing tests.
-
 Chapter Prior art
 
 Section Other unit testing extensions
@@ -748,6 +795,8 @@ don't appear to be related.)
 The design of this extension's interface owes most to Simple Unit Tests and Benchmarking.
 
 Chapter Changelog
+
+v4: support for Text Capture by Eric Eve
 
 v3: Output now done in I7 via output result phrase text -> nothing on unit tests.
 
