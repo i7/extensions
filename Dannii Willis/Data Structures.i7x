@@ -1,4 +1,4 @@
-Version 1/220323 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220324 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -402,6 +402,480 @@ For testing data structures anys all kinds:
 	for "Any<verb>" assert "[the verb discover as an any]" is "Any<verb: verb discover>";
 	[ And then one enum kind of value ]
 	for "Any<grammatical tense>" assert "[present tense as an any]" is "Any<grammatical tense: present tense>";
+
+
+
+Chapter - Closures
+
+[ Closures have a ? word long block (ignoring the header).
+Word 0: address to resume
+Word 1: a list of numbers for preserving the locals
+Word 2: local variable number for first incoming parameter
+Word 3: a list of numbers for preserving the stack ]
+
+Use closure saving memory of at least 100000 translates as (- Constant CLOSURE_TY_SAVING_MEMORY = {N}; -).
+
+Include (-
+! Static long blocks have two parts: the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array CLOSURE_TY_Default_LB --> $050C0000 CLOSURE_TY MAX_POSITIVE_NUMBER	0 0;
+
+Constant CLOSURE_TY_ADDR = 0;
+Constant CLOSURE_TY_LOCALS_DATA = 1;
+Constant CLOSURE_TY_FIRST_PARAMETER = 2;
+Constant CLOSURE_TY_STACK_DATA = 3;
+
+[ DS_Read32 str	res;
+	res = glk_get_char_stream(str);
+	@shiftl res 8 res;
+	res = res + glk_get_char_stream(str);
+	@shiftl res 8 res;
+	res = res + glk_get_char_stream(str);
+	@shiftl res 8 res;
+	return res + glk_get_char_stream(str);
+];
+
+Array CLOSURE_TY_Temp_List_Definition --> LIST_OF_TY 1 NUMBER_TY;
+
+[ CLOSURE_TY_Support task arg1 arg2 arg3;
+	switch(task) {
+		!COMPARE_KOVS: return CLOSURE_TY_Compare(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
+		CREATE_KOVS: return CLOSURE_TY_Create(arg2);
+		DESTROY_KOVS: CLOSURE_TY_Destroy(arg1);
+	}
+	! We don't respond to the other tasks
+	rfalse;
+];
+
+[ CLOSURE_TY_Create short_block	long_block;
+	long_block = FlexAllocate(4 * WORDSIZE, CLOSURE_TY, BLK_FLAG_WORD);
+	BlkValueWrite(long_block, CLOSURE_TY_LOCALS_DATA, BlkValueCreate(CLOSURE_TY_Temp_List_Definition), 1);
+	BlkValueWrite(long_block, CLOSURE_TY_STACK_DATA, BlkValueCreate(CLOSURE_TY_Temp_List_Definition), 1);
+	short_block = BlkValueCreateSB1(short_block, long_block);
+	return short_block;
+];
+
+[ CLOSURE_TY_Destroy closure;
+	BlkValueFree(BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA));
+	BlkValueFree(BlkValueRead(closure, CLOSURE_TY_STACK_DATA));
+];
+
+[ CLOSURE_TY_Initialise closure has_parameters	addr chunk chunk_length file_length frame_length frameptr i l localslist localspos long_block prev_func save_alloc save_str temp stacklist stackpos stks_base;
+	long_block = BlkValueGetLongBlock(closure);
+	! Reset the lists in case we are updating a closure with new values
+	localslist = BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA);
+	stacklist = BlkValueRead(closure, CLOSURE_TY_STACK_DATA);
+	LIST_OF_TY_SetLength(localslist, 0, 0);
+	LIST_OF_TY_SetLength(stacklist, 0, 0);
+	! Get address of first parameter
+	if (has_parameters) {
+		! Check that the instruction we use has been encoded correctly;
+		addr = BlkValueRead(closure, CLOSURE_TY_ADDR);
+		if (addr->0 ~= $10 || addr->1 ~= $09) {
+			print "Error! Closure code has been compiled incorrectly.^";
+			rfalse;
+		}
+		BlkValueWrite(long_block, CLOSURE_TY_FIRST_PARAMETER, (addr->2) / 4, 1);
+	}
+	! Get a snapshot of the stack
+	@malloc CLOSURE_TY_SAVING_MEMORY save_alloc;
+	save_str = glk_stream_open_memory(save_alloc, CLOSURE_TY_SAVING_MEMORY, filemode_ReadWrite, 0);
+	@save save_str temp;
+	! Parse the Quetzal save
+	glk_stream_set_position(save_str, 4, seekmode_Start);
+	file_length = DS_Read32(save_str);
+	glk_stream_set_position(save_str, 12, seekmode_Start);
+	while (glk_stream_get_position(save_str) < file_length) {
+		chunk = DS_Read32(save_str);
+		chunk_length = DS_Read32(save_str);
+		if (chunk == $53746B73) { ! Stks
+			stks_base = glk_stream_get_position(save_str);
+			glk_stream_set_position(save_str, chunk_length - 4, seekmode_Current);
+			! The stream cursor is now at the final call stub frameptr
+			frameptr = DS_Read32(save_str);
+			temp = frameptr;
+			glk_stream_set_position(save_str, stks_base + frameptr - 4, seekmode_Start);
+			! We're now at the call stub frameptr for the closure function
+			frameptr = DS_Read32(save_str);
+			! Account for the call stub in the frame length
+			frame_length = temp - frameptr - 16;
+			glk_stream_set_position(save_str, stks_base + frameptr, seekmode_Start);
+			! Now at the base of the frame
+			stackpos = DS_Read32(save_str);
+			localspos = DS_Read32(save_str);
+			glk_stream_set_position(save_str, stks_base + frameptr + localspos, seekmode_Start);
+			! Now at the locals
+			l = (stackpos - localspos) / 4;
+			for (i = 0: i < l: i++) {
+				LIST_OF_TY_InsertItem(localslist, DS_Read32(save_str));
+			}
+			! And finally at the routine stack
+			l = ((frame_length - stackpos) / 4);
+			for (i = 0: i < l: i++) {
+				LIST_OF_TY_InsertItem(stacklist, DS_Read32(save_str));
+			}
+			
+			break;
+		}
+		else {
+			if (chunk_length % 2) {
+				chunk_length++;
+			}
+			glk_stream_set_position(save_str, chunk_length, seekmode_Current);
+		}
+	}
+	! Clean up
+	glk_stream_close(save_str, 0);
+	@mfree save_alloc;
+];
+
+Global CLOSURE_TY_Reenter_Addr;
+Global CLOSURE_TY_Reenter_First_Param;
+Global CLOSURE_TY_Reenter_Index;
+Global CLOSURE_TY_Reenter_Locals_Count;
+Global CLOSURE_TY_Reenter_Locals_Data;
+Global CLOSURE_TY_Reenter_Locals_List;
+Global CLOSURE_TY_Reenter_Locals_List_I;
+Global CLOSURE_TY_Reenter_Param_Count;
+Global CLOSURE_TY_Reenter_Param_Data;
+Global CLOSURE_TY_Reenter_Stack_Count;
+Global CLOSURE_TY_Reenter_Stack_Data;
+Global CLOSURE_TY_Reenter_Temp;
+[ CLOSURE_TY_Reenter closure result resultkov parameter_count P1 P1kov P2 P2kov P3 P3kov	resultval temp;
+	! Check that this closure is initialised
+	if (BlkValueRead(closure, CLOSURE_TY_ADDR) == 0) {
+		return RESULT_TY_Set(result, 0, CLOSURE_TY_Reenter_Error);
+	}
+	CLOSURE_TY_Reenter_Addr = BlkValueRead(closure, CLOSURE_TY_ADDR);
+	CLOSURE_TY_Reenter_First_Param = BlkValueRead(closure, CLOSURE_TY_FIRST_PARAMETER);
+	CLOSURE_TY_Reenter_Locals_Data = BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA);
+	CLOSURE_TY_Reenter_Locals_Count = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_LENGTH_F);
+	CLOSURE_TY_Reenter_Stack_Data = BlkValueRead(closure, CLOSURE_TY_STACK_DATA);
+	CLOSURE_TY_Reenter_Stack_Count = BlkValueRead(CLOSURE_TY_Reenter_Stack_Data, LIST_LENGTH_F);
+	CLOSURE_TY_Reenter_Param_Count = parameter_count;
+	if (parameter_count) {
+		CLOSURE_TY_Reenter_Param_Data = BlkValueCreate(CLOSURE_TY_Temp_List_Definition);
+		! Make our own copy of the parameter
+		if (KOVIsBlockValue(P1kov)) {
+			temp = BlkValueCreate(P1kov);
+			BlkValueCopy(temp, P1);
+			P1 = temp;
+		}
+		LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P1);
+		if (parameter_count > 1) {
+			if (KOVIsBlockValue(P2kov)) {
+				temp = BlkValueCreate(P2kov);
+				BlkValueCopy(temp, P2);
+				P2 = temp;
+			}
+			LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P2);
+			if (parameter_count > 2) {
+				if (KOVIsBlockValue(P3kov)) {
+					temp = BlkValueCreate(P3kov);
+					BlkValueCopy(temp, P3);
+					P3 = temp;
+				}
+				LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P3);
+			}
+		}
+	}
+	resultval = CLOSURE_TY_Reenter_Inner();
+	if (parameter_count) {
+		if (KOVIsBlockValue(P1kov)) {
+			BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE));
+		}
+		if (parameter_count > 1) {
+			if (KOVIsBlockValue(P2kov)) {
+				BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE + 1));
+			}
+			if (parameter_count > 2) {
+				if (KOVIsBlockValue(P3kov)) {
+					BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE + 2));
+				}
+			}
+		}
+		BlkValueFree(CLOSURE_TY_Reenter_Param_Data);
+	}
+	return RESULT_TY_Set(result, resultkov, resultval);
+];
+Array CLOSURE_TY_Reenter_Error --> CONSTANT_PACKED_TEXT_STORAGE "Cannot run an uninitialised Closure.";
+
+[ CLOSURE_TY_Reenter_Inner l0 l1 l2 l3 l4 l5 l6 l7 l8 l9 l10 l11 l12 l13 l14 l15 l16 l17 l18 l19;
+	! Restore all the locals
+	CLOSURE_TY_Reenter_Index = 0;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l0 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 1;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l1 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 2;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l2 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 3;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l3 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 4;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l4 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 5;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l5 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 6;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l6 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 7;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l7 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 8;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l8 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 9;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l9 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 10;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l10 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 11;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l11 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 12;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l12 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 13;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l13 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 14;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l14 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 15;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l15 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 16;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l16 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 17;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l17 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 18;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l18 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	CLOSURE_TY_Reenter_Index = 19;
+	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
+		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
+		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
+		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
+			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
+			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+		}
+		l19 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
+	}
+	! Restore the stack
+	for (CLOSURE_TY_Reenter_Index = 0: CLOSURE_TY_Reenter_Index < CLOSURE_TY_Reenter_Stack_Count: CLOSURE_TY_Reenter_Index++) {
+		CLOSURE_TY_Reenter_Temp = BlkValueRead(CLOSURE_TY_Reenter_Stack_Data, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Index);
+		@push CLOSURE_TY_Reenter_Temp;
+	}
+	@jumpabs CLOSURE_TY_Reenter_Addr;
+];
+
+[ CLOSURE_TY_Preinitialise closure;
+	! Check if we are writing to the default map, and if so make a new map
+	if (BlkValueGetLongBlock(closure) == CLOSURE_TY_Default_LB) {
+		print "Error! Cannot initialise a global Closure.^";
+		rtrue;
+	}
+	! Check if closure has been initialised already
+	if (BlkValueRead(closure, CLOSURE_TY_ADDR)) {
+		print "Error! Cannot initialise a Closure twice.^";
+		rtrue;
+	}
+	rfalse;
+];
+
+[ CLOSURE_TY_Say closure	addr;
+	addr = BlkValueRead(closure, CLOSURE_TY_ADDR);
+	if (addr) {
+		print "Closure<", addr, ">";
+	}
+	else {
+		print "Closure<Uninitialised>";
+	}
+];
+-).
+
+
+
+Chapter - Closures - Initialising
+
+To initialise (C - closure value of kind K -> value of kind L) with parameter (P1 - nonexisting K variable):
+	(-
+	if (CLOSURE_TY_Preinitialise({-by-reference:C})) {
+		rfalse;
+	}
+	jump DS_Closure{-counter:DS_Closures}_Catch;
+	.DS_Closure{-counter:DS_Closures}_Catch_Continue;
+	@pull temporary_value;
+	@pull temporary_value;
+	! Write the address
+	BlkValueWrite(BlkValueGetLongBlock({-by-reference:C}), CLOSURE_TY_ADDR, temporary_value, 1);
+	! Clean up the rest of the call stub
+	@pull temporary_value;
+	@pull temporary_value;
+	CLOSURE_TY_Initialise({-by-reference:C}, 1);
+	rfalse;
+	.DS_Closure{-counter:DS_Closures}_Catch;
+	@catch temporary_value ?DS_Closure{-counter:DS_Closures}_Catch_Continue;
+	! This lets us work out which local variable number the incoming parameter is
+	@add {-by-reference:P1} 0 {-by-reference:P1};
+	{-counter-up:DS_Closures}
+	-).
+
+To decide if (C - closure value of kind K -> value of kind L) is initialised:
+	(- BlkValueRead({-by-reference:C}, CLOSURE_TY_ADDR) -).
+
+[To update (C - closure value of kind K -> value of kind L):
+	(- if (CLOSURE_TY_Preinitialise({-by-reference:C})) { rfalse; } CLOSURE_TY_Initialise({-by-reference:C}); -).]
+
+
+
+Chapter - Closures - Running
+
+To decide what L result is (C - closure value of kind K -> value of kind L) applied to (P1 - K):
+	(- CLOSURE_TY_Reenter({-by-reference:C}, {-new:L result}, {-strong-kind:L}, 1, {-by-reference:P1}, {-strong-kind:K}) -).
 
 
 

@@ -55,6 +55,24 @@ specification-text:An any stores a value and its kind; the kind cannot be determ
 
 
 
+CLOSURE_TY:
+apply-macro:#KIND-CONSTRUCTOR
+singular:closure k -> l
+plural:closures k -> l
+constructor-arity:contravariant list, covariant optional
+
+instance-of:POINTER_VALUE_TY
+instance-of:SAYABLE_VALUE_TY
+default-value:/CLOSURE_TY_Default_LB 0
+heap-size-estimate:8
+
+i6-printing-routine:CLOSURE_TY_Say
+
+description:a closure
+specification-text:A closure preserves the state of a phrase so that it can be resumed at a later time.
+
+
+
 COUPLE_TY:
 apply-macro:#KIND-CONSTRUCTOR
 singular:couple of k and l
