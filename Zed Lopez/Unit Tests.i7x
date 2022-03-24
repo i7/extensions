@@ -1,4 +1,4 @@
-Version 4 of Unit Tests by Zed Lopez begins here.
+Version 4/220324 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -274,7 +274,6 @@ Include (-
   EndCapture();
   ((+ ut-stash +)-->1)();
   ut_truth_state = 1;
-print "found: ", x, " assert: ", assert, "^";
   ut_found = x;
   ut_result = 0;
   if ((~~x) == (~~assert)) ut_result = 1;
