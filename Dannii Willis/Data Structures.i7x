@@ -1,4 +1,4 @@
-Version 1/220324 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220325 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -48,6 +48,32 @@ Include (-
 	}
 ];
 -) after "Printing Routines" in "Output.i6t".
+
+
+
+Chapter - General utilities
+
+To decide what V is a/-- new (name of kind of value V):
+	(- {-new:V} -).
+
+To ignore the result of (V - value):
+	(- {V}; -).
+
+
+
+Section - Unit tests heap usage (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
+
+The testing activity has a number called the pre-test heap usage.
+
+To decide what numbers is the current heap usage:
+	(- (MEMORY_HEAP_SIZE + 16 - HeapNetFreeSpace(false)) -).
+
+Before testing (this is the update the pre-test heap usage rule):
+	now the pre-test heap usage is the current heap usage;
+
+After testing a unit test (called T) (this is the check the heap usage post-test rule):
+	if the current heap usage is not the pre-test heap usage:
+		say "Test [T] leaked heap memory: was [pre-test heap usage], now [current heap usage].";
 
 
 
@@ -306,7 +332,10 @@ Data Structures Anys is a unit test. "Data Structures: Anys functionality"
 Test global any is an any that varies.
 Persons have an any called test property any.
 
-To set test global any:
+To set test global any to number:
+	now test global any is 1234 as an any;
+
+To set test global any to text:
 	now test global any is substituted form of "[1234]" as an any;
 
 To decide what any is test returning a text any from a phrase:
@@ -320,8 +349,14 @@ For testing data structures anys:
 	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
 	for "Default value of global any" assert test global any is null as an any;
 	for "Default value of property any" assert test property any of yourself is null as an any;
-	set test global any;
+	let before setting global heap usage be current heap usage;
+	set test global any to text;
+	[for "Updating global Any to text heap usage" assert current heap usage is before setting global heap usage + 84;]
 	for "Anys correctly copy and reference count their values" assert test global any is "1234" as an any;
+	now before setting global heap usage is current heap usage;
+	set test global any to number;
+	[for "Updating global Any to number heap usage" assert current heap usage is before setting global heap usage + 20;
+	increase pre-test heap usage by 20;]
 	[ Test basic functionality with a number any ]
 	let NumAny1 be 1234 as an any;
 	for "Any<number> kind" assert the kind of NumAny1 is number;
@@ -425,6 +460,8 @@ Constant CLOSURE_TY_LOCALS_DATA = 1;
 Constant CLOSURE_TY_FIRST_PARAMETER = 2;
 Constant CLOSURE_TY_STACK_DATA = 3;
 
+Constant CLOSURE_TY_MAX_LOCALS = 20;
+
 [ DS_Read32 str	res;
 	res = glk_get_char_stream(str);
 	@shiftl res 8 res;
@@ -457,27 +494,40 @@ Array CLOSURE_TY_Temp_List_Definition --> LIST_OF_TY 1 NUMBER_TY;
 	return short_block;
 ];
 
-[ CLOSURE_TY_Destroy closure;
-	BlkValueFree(BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA));
+[ CLOSURE_TY_Destroy closure	i length localslist long_block temp;
+	long_block = BlkValueGetLongBlock(closure);
+	localslist = BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA);
+	length = BlkValueRead(localslist, LIST_LENGTH_F);
+	! Free our copy of the closure
+	for (i = 0: i < length: i++) {
+		temp = BlkValueRead(localslist, LIST_ITEM_BASE + i);
+		if (temp-->0 == long_block) {
+			! Because this copy isn't reference counted properly, free it with the flex system, not the block value system
+			FlexFree(temp - BLK_DATA_OFFSET);
+		}
+	}
+	BlkValueFree(localslist);
 	BlkValueFree(BlkValueRead(closure, CLOSURE_TY_STACK_DATA));
 ];
 
-[ CLOSURE_TY_Initialise closure has_parameters	addr chunk chunk_length file_length frame_length frameptr i l localslist localspos long_block prev_func save_alloc save_str temp stacklist stackpos stks_base;
+[ CLOSURE_TY_Initialise closure has_parameters updating	addr chunk chunk_length count file_length frame_length frameptr i localslist localspos long_block oldlocalscount prev_func save_alloc save_str stacklist stackpos stks_base temp;
 	long_block = BlkValueGetLongBlock(closure);
-	! Reset the lists in case we are updating a closure with new values
 	localslist = BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA);
 	stacklist = BlkValueRead(closure, CLOSURE_TY_STACK_DATA);
-	LIST_OF_TY_SetLength(localslist, 0, 0);
-	LIST_OF_TY_SetLength(stacklist, 0, 0);
+	! Reset the stack if we are updating a closure
+	if (updating) {
+		LIST_OF_TY_SetLength(stacklist, 0, 0);
+		oldlocalscount = BlkValueRead(localslist, LIST_LENGTH_F);
+	}
 	! Get address of first parameter
 	if (has_parameters) {
 		! Check that the instruction we use has been encoded correctly;
 		addr = BlkValueRead(closure, CLOSURE_TY_ADDR);
-		if (addr->0 ~= $10 || addr->1 ~= $09) {
+		if (addr->0 ~= $10 || addr->1 ~= $09 || addr->2 ~= $09) {
 			print "Error! Closure code has been compiled incorrectly.^";
 			rfalse;
 		}
-		BlkValueWrite(long_block, CLOSURE_TY_FIRST_PARAMETER, (addr->2) / 4, 1);
+		BlkValueWrite(long_block, CLOSURE_TY_FIRST_PARAMETER, (addr->3) / 4, 1);
 	}
 	! Get a snapshot of the stack
 	@malloc CLOSURE_TY_SAVING_MEMORY save_alloc;
@@ -507,16 +557,31 @@ Array CLOSURE_TY_Temp_List_Definition --> LIST_OF_TY 1 NUMBER_TY;
 			localspos = DS_Read32(save_str);
 			glk_stream_set_position(save_str, stks_base + frameptr + localspos, seekmode_Start);
 			! Now at the locals
-			l = (stackpos - localspos) / 4;
-			for (i = 0: i < l: i++) {
-				LIST_OF_TY_InsertItem(localslist, DS_Read32(save_str));
+			count = (stackpos - localspos) / 4;
+			if (count > CLOSURE_TY_MAX_LOCALS) {
+				print "Error! Closures only support a maximum of ", CLOSURE_TY_MAX_LOCALS, " locals.^";
+				rfalse;
+			}
+			for (i = 0: i < count: i++) {
+				temp = DS_Read32(save_str);
+				! Is this the closure?
+				if (temp-->0 == long_block && ~~updating) {
+					! Make a copy of the closure, but don't add to its reference count
+					temp = BlkValueCreateSB1(0, long_block);
+				}
+				if (updating && i < oldlocalscount) {
+					WriteLIST_OF_TY_GetItem(localslist, i + 1, temp);
+				}
+				else {
+					LIST_OF_TY_InsertItem(localslist, temp);
+				}
 			}
 			! And finally at the routine stack
-			l = ((frame_length - stackpos) / 4);
-			for (i = 0: i < l: i++) {
+			count = ((frame_length - stackpos) / 4);
+			for (i = 0: i < count: i++) {
 				LIST_OF_TY_InsertItem(stacklist, DS_Read32(save_str));
 			}
-			
+			! TODO: block values on stack
 			break;
 		}
 		else {
@@ -532,277 +597,133 @@ Array CLOSURE_TY_Temp_List_Definition --> LIST_OF_TY 1 NUMBER_TY;
 ];
 
 Global CLOSURE_TY_Reenter_Addr;
-Global CLOSURE_TY_Reenter_First_Param;
 Global CLOSURE_TY_Reenter_Index;
 Global CLOSURE_TY_Reenter_Locals_Count;
 Global CLOSURE_TY_Reenter_Locals_Data;
-Global CLOSURE_TY_Reenter_Locals_List;
-Global CLOSURE_TY_Reenter_Locals_List_I;
-Global CLOSURE_TY_Reenter_Param_Count;
-Global CLOSURE_TY_Reenter_Param_Data;
 Global CLOSURE_TY_Reenter_Stack_Count;
 Global CLOSURE_TY_Reenter_Stack_Data;
 Global CLOSURE_TY_Reenter_Temp;
-[ CLOSURE_TY_Reenter closure result resultkov parameter_count P1 P1kov P2 P2kov P3 P3kov	resultval temp;
+[ CLOSURE_TY_Reenter closure result resultkov parameter_count P1 P1kov P2 P2kov P3 P3kov	first_param P1copy P2copy P3copy resultval;
 	! Check that this closure is initialised
 	if (BlkValueRead(closure, CLOSURE_TY_ADDR) == 0) {
 		return RESULT_TY_Set(result, 0, CLOSURE_TY_Reenter_Error);
 	}
 	CLOSURE_TY_Reenter_Addr = BlkValueRead(closure, CLOSURE_TY_ADDR);
-	CLOSURE_TY_Reenter_First_Param = BlkValueRead(closure, CLOSURE_TY_FIRST_PARAMETER);
-	CLOSURE_TY_Reenter_Locals_Data = BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA);
+	! Copy the locals list
+	CLOSURE_TY_Reenter_Locals_Data = BlkValueCreate(CLOSURE_TY_Temp_List_Definition);
+	BlkValueCopy(CLOSURE_TY_Reenter_Locals_Data, BlkValueRead(closure, CLOSURE_TY_LOCALS_DATA));
+	BlkMakeMutable(CLOSURE_TY_Reenter_Locals_Data);
 	CLOSURE_TY_Reenter_Locals_Count = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_LENGTH_F);
 	CLOSURE_TY_Reenter_Stack_Data = BlkValueRead(closure, CLOSURE_TY_STACK_DATA);
 	CLOSURE_TY_Reenter_Stack_Count = BlkValueRead(CLOSURE_TY_Reenter_Stack_Data, LIST_LENGTH_F);
-	CLOSURE_TY_Reenter_Param_Count = parameter_count;
 	if (parameter_count) {
-		CLOSURE_TY_Reenter_Param_Data = BlkValueCreate(CLOSURE_TY_Temp_List_Definition);
+		first_param = BlkValueRead(closure, CLOSURE_TY_FIRST_PARAMETER);
 		! Make our own copy of the parameter
 		if (KOVIsBlockValue(P1kov)) {
-			temp = BlkValueCreate(P1kov);
-			BlkValueCopy(temp, P1);
-			P1 = temp;
+			P1copy = BlkValueCreate(P1kov);
+			BlkValueCopy(P1copy, P1);
+			P1 = P1copy;
 		}
-		LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P1);
+		WriteLIST_OF_TY_GetItem(CLOSURE_TY_Reenter_Locals_Data, first_param + 1, P1);
 		if (parameter_count > 1) {
 			if (KOVIsBlockValue(P2kov)) {
-				temp = BlkValueCreate(P2kov);
-				BlkValueCopy(temp, P2);
-				P2 = temp;
+				P2copy = BlkValueCreate(P2kov);
+				BlkValueCopy(P2copy, P2);
+				P2 = P2copy;
 			}
-			LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P2);
+			WriteLIST_OF_TY_GetItem(CLOSURE_TY_Reenter_Locals_Data, first_param + 2, P2);
 			if (parameter_count > 2) {
 				if (KOVIsBlockValue(P3kov)) {
-					temp = BlkValueCreate(P3kov);
-					BlkValueCopy(temp, P3);
-					P3 = temp;
+					P3copy = BlkValueCreate(P3kov);
+					BlkValueCopy(P3copy, P3);
+					P3 = P3copy;
 				}
-				LIST_OF_TY_InsertItem(CLOSURE_TY_Reenter_Param_Data, P3);
+				WriteLIST_OF_TY_GetItem(CLOSURE_TY_Reenter_Locals_Data, first_param + 3, P3);
 			}
 		}
 	}
 	resultval = CLOSURE_TY_Reenter_Inner();
 	if (parameter_count) {
 		if (KOVIsBlockValue(P1kov)) {
-			BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE));
+			BlkValueFree(P1copy);
 		}
 		if (parameter_count > 1) {
 			if (KOVIsBlockValue(P2kov)) {
-				BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE + 1));
+				BlkValueFree(P2copy);
 			}
 			if (parameter_count > 2) {
 				if (KOVIsBlockValue(P3kov)) {
-					BlkValueFree(BlkValueRead(CLOSURE_TY_Reenter_Param_Data, LIST_ITEM_BASE + 2));
+					BlkValueFree(P3copy);
 				}
 			}
 		}
-		BlkValueFree(CLOSURE_TY_Reenter_Param_Data);
 	}
+	BlkValueFree(CLOSURE_TY_Reenter_Locals_Data);
 	return RESULT_TY_Set(result, resultkov, resultval);
 ];
 Array CLOSURE_TY_Reenter_Error --> CONSTANT_PACKED_TEXT_STORAGE "Cannot run an uninitialised Closure.";
 
 [ CLOSURE_TY_Reenter_Inner l0 l1 l2 l3 l4 l5 l6 l7 l8 l9 l10 l11 l12 l13 l14 l15 l16 l17 l18 l19;
 	! Restore all the locals
-	CLOSURE_TY_Reenter_Index = 0;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
+	if (CLOSURE_TY_Reenter_Locals_Count > 0) {
+		l0 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE);
+		if (CLOSURE_TY_Reenter_Locals_Count > 1) {
+			l1 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 1);
+			if (CLOSURE_TY_Reenter_Locals_Count > 2) {
+				l2 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 2);
+				if (CLOSURE_TY_Reenter_Locals_Count > 3) {
+					l3 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 3);
+					if (CLOSURE_TY_Reenter_Locals_Count > 4) {
+						l4 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 4);
+						if (CLOSURE_TY_Reenter_Locals_Count > 5) {
+							l5 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 5);
+							if (CLOSURE_TY_Reenter_Locals_Count > 6) {
+								l6 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 6);
+								if (CLOSURE_TY_Reenter_Locals_Count > 7) {
+									l7 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 7);
+									if (CLOSURE_TY_Reenter_Locals_Count > 8) {
+										l8 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 8);
+										if (CLOSURE_TY_Reenter_Locals_Count > 9) {
+											l9 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 9);
+											if (CLOSURE_TY_Reenter_Locals_Count > 10) {
+												l10 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 10);
+												if (CLOSURE_TY_Reenter_Locals_Count > 11) {
+													l11 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 11);
+													if (CLOSURE_TY_Reenter_Locals_Count > 12) {
+														l12 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 12);
+														if (CLOSURE_TY_Reenter_Locals_Count > 13) {
+															l13 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 13);
+															if (CLOSURE_TY_Reenter_Locals_Count > 14) {
+																l14 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 14);
+																if (CLOSURE_TY_Reenter_Locals_Count > 15) {
+																	l15 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 15);
+																	if (CLOSURE_TY_Reenter_Locals_Count > 16) {
+																		l16 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 16);
+																		if (CLOSURE_TY_Reenter_Locals_Count > 17) {
+																			l17 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 17);
+																			if (CLOSURE_TY_Reenter_Locals_Count > 18) {
+																				l18 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 18);
+																				if (CLOSURE_TY_Reenter_Locals_Count > 19) {
+																					l19 = BlkValueRead(CLOSURE_TY_Reenter_Locals_Data, LIST_ITEM_BASE + 19);
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-		l0 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 1;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l1 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 2;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l2 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 3;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l3 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 4;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l4 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 5;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l5 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 6;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l6 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 7;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l7 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 8;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l8 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 9;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l9 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 10;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l10 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 11;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l11 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 12;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l12 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 13;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l13 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 14;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l14 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 15;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l15 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 16;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l16 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 17;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l17 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 18;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l18 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
-	}
-	CLOSURE_TY_Reenter_Index = 19;
-	if (CLOSURE_TY_Reenter_Locals_Count > CLOSURE_TY_Reenter_Index) {
-		CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Locals_Data;
-		CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index;
-		if (CLOSURE_TY_Reenter_Param_Count && (CLOSURE_TY_Reenter_First_Param >= CLOSURE_TY_Reenter_Index) && (CLOSURE_TY_Reenter_Index < (CLOSURE_TY_Reenter_First_Param + CLOSURE_TY_Reenter_Param_Count))) {
-			CLOSURE_TY_Reenter_Locals_List_I = CLOSURE_TY_Reenter_Index - CLOSURE_TY_Reenter_First_Param;
-			CLOSURE_TY_Reenter_Locals_List = CLOSURE_TY_Reenter_Param_Data;
-		}
-		l19 = BlkValueRead(CLOSURE_TY_Reenter_Locals_List, LIST_ITEM_BASE + CLOSURE_TY_Reenter_Locals_List_I);
 	}
 	! Restore the stack
 	for (CLOSURE_TY_Reenter_Index = 0: CLOSURE_TY_Reenter_Index < CLOSURE_TY_Reenter_Stack_Count: CLOSURE_TY_Reenter_Index++) {
@@ -867,8 +788,13 @@ To initialise (C - closure value of kind K -> value of kind L) with parameter (P
 To decide if (C - closure value of kind K -> value of kind L) is initialised:
 	(- BlkValueRead({-by-reference:C}, CLOSURE_TY_ADDR) -).
 
-[To update (C - closure value of kind K -> value of kind L):
-	(- if (CLOSURE_TY_Preinitialise({-by-reference:C})) { rfalse; } CLOSURE_TY_Initialise({-by-reference:C}); -).]
+[ Note that updating closures which save stack variables might not be safe if they've already been popped! ]
+To update (C - closure value of kind K -> value of kind L):
+	(- if (BlkValueRead({-by-reference:C}, CLOSURE_TY_ADDR) == 0) {
+		print "Error! Can only update closures which have already been initialised.^";
+		rfalse;
+	}
+	CLOSURE_TY_Initialise({-by-reference:C}, 0, 1); -).
 
 
 
@@ -1306,24 +1232,28 @@ Chapter - Maps - Iterating
 
 To repeat with (key - nonexisting K variable) in/from/of (M - map of value of kind K to value of kind L) keys begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_LENGTH_F);
-		{-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE + {-my:1}))
+		{-my:3} = BlkValueRead({-by-reference:M}, MAP_TY_KEYS);
+		{-my:2} = BlkValueRead({-my:3}, LIST_LENGTH_F);
+		{-lvalue-by-reference:key} = BlkValueRead({-my:3}, LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead({-my:3}, LIST_ITEM_BASE + {-my:1}))
 	-).
 
 To repeat with (val - nonexisting L variable) in/from/of (M - map of value of kind K to value of kind L) values begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS)-->1, LIST_LENGTH_F);
-		{-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE + {-my:1}))
+		{-my:3} = BlkValueRead({-by-reference:M}, MAP_TY_VALUES);
+		{-my:2} = BlkValueRead({-my:3}, LIST_LENGTH_F);
+		{-lvalue-by-reference:val} = BlkValueRead({-my:3}, LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:val} = BlkValueRead({-my:3}, LIST_ITEM_BASE + {-my:1}))
 	-).
 
 To repeat with (key - nonexisting K variable) and/to/=> (val - nonexisting L variable) in/from/of (M - map of value of kind K to value of kind L) begin -- end loop:
 	(-
-		{-my:2} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_LENGTH_F);
-		{-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE);
-		{-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE);
-		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_KEYS), LIST_ITEM_BASE + {-my:1}), {-lvalue-by-reference:val} = BlkValueRead(BlkValueRead({-by-reference:M}, MAP_TY_VALUES), LIST_ITEM_BASE + {-my:1}))
+		{-my:4} = BlkValueRead({-by-reference:M}, MAP_TY_VALUES);
+		{-my:3} = BlkValueRead({-by-reference:M}, MAP_TY_KEYS);
+		{-my:2} = BlkValueRead({-my:3}, LIST_LENGTH_F);
+		{-lvalue-by-reference:key} = BlkValueRead({-my:3}, LIST_ITEM_BASE);
+		{-lvalue-by-reference:val} = BlkValueRead({-my:4}, LIST_ITEM_BASE);
+		for ({-my:1} = 0: {-my:1} < {-my:2}: {-my:1}++, {-lvalue-by-reference:key} = BlkValueRead({-my:3}, LIST_ITEM_BASE + {-my:1}), {-lvalue-by-reference:val} = BlkValueRead({-my:4}, LIST_ITEM_BASE + {-my:1}))
 	-).
 
 
@@ -1504,6 +1434,10 @@ For testing data structures options:
 	for "Options correctly copy and reference count their values" assert test global option is "1234" as an option;
 	for "Get value of none option unchecked shows error" assert "[the value of NoneOption unchecked]" is "Error! Trying to extract value from a none option.[line break]0";
 	for "Get value of none option with backup" assert value of NoneOption or 6789 is 6789;
+	if NoneOption is some let NoneOptionValue be the value:
+		for "Option<none> let V be the value" fail;
+	otherwise:
+		for "Option<none> let V be the value" pass;
 	[ Test basic functionality with a number option ]
 	let NumOption be 1234 as an option;
 	for "Option<number> is some" assert NumOption is some;
@@ -1850,11 +1784,11 @@ To decide what K result is (name of kind of value K) error result with message (
 	(- RESULT_TY_Set({-new:K result}, 0, {-by-reference:M}) -).
 
 To decide if (R - a value result) is ok/okay:
-	(- (BlkValueRead({-by-reference:R}, RESULT_TY_VALUE)) -).
+	(- (BlkValueRead({-by-reference:R}, RESULT_TY_KOV)) -).
 
 [ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
 To if (R - value of kind K result) is ok/okay let (V - nonexisting K variable) be the value begin -- end loop:
-	(- if (BlkValueRead({-by-reference:R}, RESULT_TY_VALUE) && (
+	(- if (BlkValueRead({-by-reference:R}, RESULT_TY_KOV) && (
 		(KOVIsBlockValue({-strong-kind:K})
 			&& BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}, 1))
 			|| ({-lvalue-by-reference:V} = RESULT_TY_Get({-by-reference:R}, 1))
@@ -1862,10 +1796,10 @@ To if (R - value of kind K result) is ok/okay let (V - nonexisting K variable) b
 	, 1)) -).
 
 To decide if (R - a value result) is an/-- error:
-	(- (BlkValueRead({-by-reference:R}, RESULT_TY_VALUE) == 0) -).
+	(- (BlkValueRead({-by-reference:R}, RESULT_TY_KOV) == 0) -).
 
 To if (R - value result) is an/-- error let (V - nonexisting text variable) be the error message begin -- end loop:
-	(- if ((BlkValueRead({-by-reference:R}, RESULT_TY_VALUE) == 0) && BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}))) -).
+	(- if ((BlkValueRead({-by-reference:R}, RESULT_TY_KOV) == 0) && BlkValueCopy({-lvalue-by-reference:V}, RESULT_TY_Get({-by-reference:R}))) -).
 
 To decide what K is value of (R - value of kind K result) or (backup - K):
 	(- RESULT_TY_Get({-by-reference:R}, 1, {-by-reference:backup}, 1) -).
@@ -1896,6 +1830,7 @@ For testing data structures results:
 	set test global result;
 	for "Results correctly copy and reference count their values" assert test global result is "1234" as an result;
 	let ErrorResult be a number error result with message "Test error result";
+	for "Result<number> (error) saying" assert "[ErrorResult]" is "Error(Test error result)";
 	if ErrorResult is an error let ErrorResultValue be the error message:
 		for "Result<number> (error) let V be the error message" assert ErrorResultValue is "Test error result";
 	otherwise:
