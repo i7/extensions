@@ -1,6 +1,6 @@
-Version 4/220325 of Unit Tests by Zed Lopez begins here.
+Version 5 of Unit Tests by Zed Lopez begins here.
 
-"Yet another Unit Tests extension. Tested with 6M62."
+"For unit testing. Tested with 6M62."
 
 Volume Unit Tests (not for release)
 
@@ -36,22 +36,19 @@ Chapter Don't Report passing tests
 
 Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
 
-Chapter Quiet please (for use with Text Capture by Eric Eve)
-
-Use test quietly translates as (- Constant TEST_QUIETLY; -).
-
 Part Undo
 
-To decide what number is the/a/-- result of saving before running the/-- unit test:
-(- VM_Save_Undo() -).
+To decide what number is the save-restore state: (- VM_Save_Undo() -).
 
-To restore back to before running the/-- unit test:
-(- VM_Undo(); -).
+Back from restoration is always 2.
+
+To restore state: (- VM_Undo(); -).
 
 Part unit test object
 
 A unit test is a kind of object.
 A unit test has a text called the description.
+A unit test can be heap tracking.
 
 The current unit test is a unit test that varies.
 
@@ -181,6 +178,8 @@ Chapter unit testing
 unit testing is an action out of world.
 Understand "utest" as unit testing.
 
+Check unit testing (this is the check for unit tests rule): unless there are unit tests, instead say "No unit tests have been defined.";
+
 Carry out unit testing (this is the test all unit tests rule): test all unit tests.
 
 Chapter Test all unit tests to-phrase
@@ -190,16 +189,29 @@ To test all unit tests: test all unit tests matching "".
 Section test all unit tests matching
 
 To say test results for (ut - a unit test):
-  follow the utest rules for ut;
+  now unit test success is 0;
+  now unit test failure is 0;
+  if the save-restore state is back from restoration, stop;
+  carry out the testing activity with ut;
+  let total test count be unit test success + unit test failure;
+  let summary be "[if unit test failure > 0]**[else]  [end if] [unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
+  output summary;
+  restore state;
+
+[to perform the/a/-- unit test (ut - a unit test):
+ perform the unit test ut;]
 
 To test all unit tests matching (T - a text):
+  let matching-unit-tests-count be 0;
   repeat with ut running through the unit tests begin;
     if T is empty or printed name of ut rmatches "^[T]", case insensitively begin;
       output the substituted form of "[test results for ut]";
+      increment matching-unit-tests-count;
     end if;
   end repeat;
   if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
-  
+ if matching-unit-tests-count is 0, say "No unit tests began with '[T]'.";
+ 
 Chapter Test command
 
 [ ``> test suite`` can be used instead of ``> utest`` ]
@@ -213,55 +225,42 @@ Understand "utest [text]" as specific-utesting.
 Section Carry out specific-utesting
 
 Carry out specific-utesting (this is the carry out unit testing via utest command rule):
-  test all unit tests matching "^[the topic understood]"
+  test all unit tests matching "[the topic understood]"
 
 Part Assertions
 
-[ a rulebook wraps around an activity because restoring from save was taking us back
-  to the middle of the previous activity, and because this guarantees a user-defined
-  before rule can't beat us to first. ]
-
-Part Utest rulebook
-
-Utest is a unit test based rulebook.
-
-Chapter Setup test
-
-First utest a unit test (called ut) (this is the unit test setup rule):
-  now current unit test is ut;
-  now unit test success is 0;
-  now unit test failure is 0;
-  say "[line break]Testing [ut][line break]";
-  if the result of saving before running the unit test is 2, stop;
-
-Chapter Utest rule to carry out testing activity (for use with Text Capture by Eric Eve)
-
-Utest a unit test (called ut) (this is the carry out a unit test rule):
-  start capturing text;
-  carry out the testing activity with ut;
-  stop capturing text;
-
-Chapter Utest rule to carry out testing activity (for use without Text Capture by Eric Eve)
-
-Utest a unit test (called ut) (this is the carry out a unit test rule):
-  carry out the testing activity with ut;
-  
-Chapter Test results
-
-Utest a unit test (called ut) (this is the unit test reporting rule):
-  let total test count be unit test success + unit test failure;
-  let summary be "[if unit test failure > 0]**[else]  [end if] [unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
-  output summary;
-  
-Chapter Cleanup
-
-Utest a unit test (this is the unit test cleanup rule):
-  restore back to before running the unit test;
-
 Part Testing something activity
 
-[ no pre-defined rules: this is for authors to define rules for their tests ]
 Testing something is an activity on unit tests.
+The testing activity has a number called the initial heap usage.
+
+To decide what number is the current heap usage:
+  (- (MEMORY_HEAP_SIZE + 16 - HeapNetFreeSpace(false)) -).
+
+First before testing a heap tracking unit test (called ut) (this is the unit test say your name rule):
+  now the initial heap usage is the current heap usage;
+
+First before testing a unit test (called ut):
+      if write test results to file option is active, mark the file of results as not ready to read;
+  output "[line break]Testing [ut][line break]";
+
+After testing a heap tracking unit test (called ut):
+  let heap-usage be the current heap usage;
+  if heap-usage is not initial heap usage, output "** Test [ut] altered heap usage: was [initial heap usage], now [current heap usage].[line break]" 
+
+last after testing a unit test (called ut):
+  mark the file of results as ready to read;
+
+[volume captured (for use with Text Capture by Eric Eve)
+
+This is the unit test text capture rule: start capturing text.
+
+The unit test text capture rule is listed after the the unit test say your name rule in the before testing rules.
+
+First after testing a unit test: stop capturing text;
+
+volume the rest
+]
 
 The for testing rules have default no outcome.
 
@@ -328,12 +327,15 @@ return 0;
 
 -).
 
-
-
-
 To output (T - a text):
   say T;
-  if write test results to file option is active, append T to file of results;
+  if write test results to file option is active begin;
+    unless ready to read file of results begin;
+      append T to file of results;
+      mark the file of results as not ready to read;
+    end unless;
+  end if;
+
 
 To say captured output of current unit test result for (T - a text): 
   apply output result of current unit test to T.
@@ -341,13 +343,6 @@ To say captured output of current unit test result for (T - a text):
 To report current unit test result for (T - a text) (this is output-result):
   let result be "[if ut-result is true]  [else]**[end if] [captured output of current unit test result for T]";
   output result;
-
-Chapter Fake I6 Stubs (for use without Text Capture by Eric Eve)
-
-Include (-
-[ EndCapture; ];
-[ StartCapture; ];
--)
 
 Book Assertions and Refutations
 
@@ -446,6 +441,31 @@ To rmatch (V - a text) by/with/against a/an/-- (R - a text), case insensitively:
 To decide what text is a/an/-- (T - a text) trimmed:
   rmatch T against "^\s*(.*?)\s*$";
   decide on match 1;
+
+Book Text Capture (for use with Text Capture by Eric Eve)
+
+Use maximum capture buffer length of at least 8192;
+
+Use test quietly translates as (- Constant TEST_QUIETLY; -).
+
+This is the unit test text capture rule: start capturing text.
+
+The unit test text capture rule is listed after the the unit test say your name rule in the before testing rules.
+
+First after testing a unit test: stop capturing text;
+
+Book Fake I6 Stubs (for use without Text Capture by Eric Eve)
+
+Include (-
+[ EndCapture;
+rfalse;
+];
+[ StartCapture;
+rfalse;
+];
+-)
+
+
 
 Unit Tests ends here.
 
@@ -797,6 +817,11 @@ The design of this extension's interface owes most to Simple Unit Tests and Benc
 
 Chapter Changelog
 
+v5: added heap tracking unit tests, per a contribution by Dannii Willis
+    fixed bug by which output was written to the file of results twice
+    renamed phrases for saving, restoring state
+    eliminated utest rulebook; incorporated functionality into To say test results
+
 v4: support for Text Capture by Eric Eve
 
 v3: Output now done in I7 via output result phrase text -> nothing on unit tests.
@@ -808,11 +833,12 @@ Chapter Examples
 
 Example: * Who tests the testers?
 
-	"Unit Tests"
+	*: "Unit Tests"
 	
 	Include Unit Tests by Zed Lopez.
 	
 	Use test automatically.
+	[Use don't report passing tests.]
 	
 	Lab is a room.
 	
@@ -825,20 +851,34 @@ Example: * Who tests the testers?
 	  end repeat;
 	  decide on result;
 	
-	Power-test-assertion-truths is a unit test. "Power test assertions, true."
-	Power-test-assertion-lies is a unit test. "Power test assertions, false statements".
-	Power-test-refutation-truths is a unit test. "Power test refutations, true statements".
-	Power-test-refutation-lies is a unit test. "Power test refutations, false statements".
 	
-	Numeric-comparison-assertion-truths is a unit test. "Numeric comparison assertions, true statements".
-	Numeric-comparison-refutation-truths is a unit test. "Numeric comparison refutations, true statements".
-	Numeric-comparison-assertion-lies is a unit test. "Numeric comparison assertions, false statements".
-	Numeric-comparison-refutation-lies is a unit test. "Numeric comparison refutations, false statements".
+	a hat is a thing.
+	the player wears a sweater.
+	Conditional-tests is a unit test. "All conditionals all the time.".
 	
-	Text-comparison-assertion-truths is a unit test. "Text comparison assertions, true statements".
-	Text-comparison-assertion-lies is a unit test. "Text comparison assertions, false statements".
-	Text-comparison-refutation-truths is a unit test. "Text comparison refutations, true statements".
-	Text-comparison-refutation-lies is a unit test. "Text comparison refutations, false statements".
+	for testing conditional-tests:
+	if the player wears a hat, for "testing forced pass" pass;
+	else for "testing forced fail, so failing is correct)" fail;
+	for "player wears sweater (true thus should pass)" assert the player wears a sweater;
+	for "player wears hat (false thus should fail)" assert the player wears a hat;
+	for "player wears sweater (true thus should fail)" refute the player wears a sweater;
+	for "player wears hat (false thus should pass)" refute the player wears a hat;
+	
+	
+	Power-test-assertion-truths is a unit test. "Power test: asserting truths, should pass".
+	Power-test-assertion-lies is a unit test. "Power test: asserting lies; should fail.".
+	Power-test-refutation-lies is a unit test. "Power test: refuting lies; should pass".
+	Power-test-refutation-truths is a unit test. "Power test: refuting truths; should fail".
+	
+	Numeric-comparison-assertion-truths is a unit test. "Numeric comparison asserting truths, should pass".
+	Numeric-comparison-refutation-lies is a unit test. "Numeric comparison refuting lies, should pass".
+	Numeric-comparison-assertion-lies is a unit test. "Numeric comparison asserting lies, should fail".
+	Numeric-comparison-refutation-truths is a unit test. "Numeric comparison refuting truths, should fail".
+	
+	Text-comparison-assertion-truths is a unit test. "Text comparison asserting truths, should pass".
+	Text-comparison-assertion-lies is a unit test. "Text comparison asserting lies, should fail".
+	Text-comparison-refutation-lies is a unit test. "Text comparison refuting lies, should pass".
+	Text-comparison-refutation-truths is a unit test. "Text comparison refuting truths, should fail".
 	
 	For testing power-test-assertion-truths:
 	  for "3^2" assert 3 to the 2 is 9;
@@ -847,7 +887,7 @@ Example: * Who tests the testers?
 	  for "0^-1" assert 0 to the -1 is -1;
 	  for "0^111" assert 0 to the 111 is 0;
 	
-	For testing power-test-refutation-truths:
+	For testing power-test-refutation-lies:
 	  for "3^2" refute 3 to the 2 is 27;
 	  for "0^0" refute 0 to the 0 is 0;
 	  for "2^-1" refute 2 to the -1 is -2;
@@ -859,7 +899,7 @@ Example: * Who tests the testers?
 	  for "2^-1" assert 2 to the -1 is -2;
 	  for "0^111" assert 0 to the 111 is 1;
 	
-	For testing power-test-refutation-lies:
+	For testing power-test-refutation-truths:
 	  for "3^2" refute 3 to the 2 is 9;
 	  for "0^0" refute 0 to the 0 is 1;
 	  for "2^-1" refute 2 to the -1 is -1;
@@ -877,7 +917,7 @@ Example: * Who tests the testers?
 	  for "-2 < -1" assert -2 < -1;
 	  for "3 > -3" assert 3 > -3;
 	
-	For testing numeric-comparison-refutation-lies:
+	For testing numeric-comparison-refutation-truths:
 	  for "5 > 3" refute 5 > 3;
 	  for "0 > -1" refute 0 > -1;
 	  for "-1 > -2" refute -1 > -2;
@@ -900,7 +940,7 @@ Example: * Who tests the testers?
 	  for "0 < 0" assert 0 < 0;
 	  for "-3 < -3" assert -3 < -3;
 	  
-	For testing numeric-comparison-refutation-truths:
+	For testing numeric-comparison-refutation-lies:
 	  for "2 < 1" refute 2 < 1;
 	  for "2 < 2" refute 2 < 2;
 	  for "2 < 0" refute 2 < 0;
@@ -925,27 +965,30 @@ Example: * Who tests the testers?
 	  for "'Y' > 'X'" assert "Y" > "X";
 	  for "[lbrack]X[rbrack] exactly matches X" assert "[X]" exactly matches "X";
 	  for "[lbrack]X[rbrack] exactly matches [lbrack]X2[rbrack]" assert "[X]" exactly matches "[X2]";
+	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" assert "[X]" does not exactly match "[Y]";
 	  for "'banana' rmatches '(an)+'" assert "banana" rmatches "(an)+";
 	  let m0 be match 0;
 	  let m1 be match 1;
 	  for "match 0 exactly matches anan" assert m0 exactly matches "anan";
 	  for "match 1 exactly matches an" assert m1 exactly matches "an";
 	  
-	For testing text-comparison-refutation-lies:
+	For testing text-comparison-refutation-truths:
+	  for "1 is not 2" refute "1" is not "2";
 	  for "'X' is 'X'" refute "X" is "X";
 	  for "'X' < 'Y'" refute "X" < "Y";
 	  for "'Y' > 'X'" refute "Y" > "X";
 	  for "[lbrack]X[rbrack] exactly matches X" refute "[X]" exactly matches "X";
 	  for "[lbrack]X[rbrack] exactly matches [lbrack]X2[rbrack]" refute "[X]" exactly matches "[X2]";
+	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" refute "[X]" does not exactly match "[Y]";
 	  for "'banana' rmatches '(an)+'" refute "banana" rmatches "(an)+";
 	  let m0 be match 0;
 	  let m1 be match 1;
 	  for "match 0 exactly matches anan" refute m0 exactly matches "anan";
 	  for "match 1 exactly matches an" refute m1 exactly matches "an";
 	
-	For testing text-comparison-refutation-truths:
+	For testing text-comparison-refutation-lies:
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]X2[rbrack]" refute "[X]" does not exactly match "[X2]";
-	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" refute "[X]" exactly matches "[Y]";
+	  for "[lbrack]X[rbrack] exactly matches [lbrack]Y[rbrack]" refute "[X]" exactly matches "[Y]";
 	  for "'A' > 'B'" refute "A" > "B";
 	  for "'B' < 'A'" refute "B" < "A";
 	  for "'A' > 'A'" refute "A" > "A";
@@ -954,25 +997,9 @@ Example: * Who tests the testers?
 	
 	For testing text-comparison-assertion-lies:
 	  for "[lbrack]X[rbrack] does not exactly match [lbrack]X2[rbrack]" assert "[X]" does not exactly match "[X2]";
-	  for "[lbrack]X[rbrack] does not exactly match [lbrack]Y[rbrack]" assert "[X]" exactly matches "[Y]";
+	  for "[lbrack]X[rbrack] exactly matches [lbrack]Y[rbrack]" assert "[X]" exactly matches "[Y]";
 	  for "'A' > 'B'" assert "A" > "B";
 	  for "'B' < 'A'" assert "B" < "A";
 	  for "'A' > 'A'" assert "A" > "A";
 	  for "'A' > 'A'" assert "A" > "A";
 	  for "'B' is 'A'" assert "B" is "A";
-	
-	[ the phrase to be tested ]
-	To say (T - a text) backwards:
-	    let len be the number of characters in T + 1;
-	    repeat with i running from 1 to the number of characters in T begin;
-	      say character number len - i in T;
-	    end repeat;
-	
-	Backwards-test is a unit test. "saying text backwards."
-	
-	[ the custom say statement added for testing purposes]
-	To say backwards-test-output:
-	    say "schmoop" backwards;
-	
-	For testing backwards-test:
-	 For "'schmoop' backwards" assert "[backwards-test-output]" exactly matches "poomhcs";
