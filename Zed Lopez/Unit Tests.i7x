@@ -1,4 +1,4 @@
-Version 4/220324 of Unit Tests by Zed Lopez begins here.
+Version 4/220325 of Unit Tests by Zed Lopez begins here.
 
 "Yet another Unit Tests extension. Tested with 6M62."
 
@@ -262,6 +262,8 @@ Part Testing something activity
 
 [ no pre-defined rules: this is for authors to define rules for their tests ]
 Testing something is an activity on unit tests.
+
+The for testing rules have default no outcome.
 
 Include (-
 
