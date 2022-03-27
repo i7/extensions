@@ -1,4 +1,4 @@
-Version 5 of Unit Tests by Zed Lopez begins here.
+Version 6 of Unit Tests (for Glulx only) by Zed Lopez begins here.
 
 "For unit testing. Tested with 6M62."
 
@@ -12,7 +12,7 @@ Part Improbable
 
 To decide what number is improbable number: (- IMPROBABLE_VALUE -).
 
-Part Use Options
+Part Use Option
 
 Chapter Test Automatically
 
@@ -52,6 +52,7 @@ A unit test can be heap tracking.
 
 The current unit test is a unit test that varies.
 
+[
 A unit test operator value is a kind of value.
 A unit test operator value has a text called the description.
 
@@ -71,7 +72,10 @@ The opposite operator of ut-lt is ut-ge.
 The opposite operator of ut-ge is ut-lt.
 The opposite operator of ut-gt is ut-le.
 The opposite operator of ut-le is ut-gt.
+]
+
 A unit test has a phrase text -> nothing called the output result.
+
 To say ut-how-tested: if ut-assert is true, say "Asserted";
 else say "Refuted".
 
@@ -89,6 +93,8 @@ To verbosely output result with (T - a text) (this is original-output-result):
   else say " (fail)";
   say line break;
 
+To decide what number is text-type: (- TEXT_TY -).
+
 To simple output result with (T - a text) (this is simple-output-result):
   if ut-result is false or don't report passing tests option is not active begin;
     say "[ut-how-tested] [T]: ";
@@ -103,16 +109,6 @@ The output result of a unit test is usually simple-output-result.
 
 The description of a unit test is usually "".
 
-Chapter Stash (for use with Text Capture by Eric Eve)
-
-To stash unit test output (this is ut-stash):
-  now ut-test-output is the expanded "[captured text]";
-  unless the test quietly option is active, output ut-test-output;
-
-Chapter Fake Stash (for use without Text Capture by Eric Eve)
-
-To stash unit test output (this is ut-stash):
-  do nothing.
 
 Chapter Saying unit test
 
@@ -135,7 +131,30 @@ Global ut_truth_state; ! 0: comparative ; 1 : conditional
 Global ut_operator; ! -1: < ; 0: == ; 1: >
 Global ut_result; ! 0: fail ; 1: pass
 Global ut_assert; ! 0: refutation ; 1: assertion
+Global ut_test_output;
+! an operator constant xor-ed with 7 produces its opposite
+Constant EQ_OK 1;
+Constant LT_OK 2;
+Constant GT_OK 4;
+Constant GE_OK = EQ_OK | GT_OK;
+Constant LE_OK = EQ_OK | LT_OK;
+Constant NE_OK = LT_OK & GT_OK; ! literally <> !
 -) after "Definitions.i6t".
+
+[ut-lt is a unit test operator value. "<". [1]
+ut-eq is a unit test operator value. "==".[2]
+ut-gt is a unit test operator value. ">". [3]
+ut-ge is a unit test operator value. ">=".[4]
+ut-ne is a unit test operator value. "!=". [5]
+ut-le is a unit test operator value. "<=". [6]]
+
+[
+== 0 -- 1
+< 0 -- 2
+<= 0 -- 3
+> 0 -- 4
+>= 0 -- 5
+]
 
 ut-assert is a truth state variable.
 ut-assert variable translates into I6 as "ut_assert".
@@ -146,10 +165,17 @@ ut-truth-state variable translates into I6 as "ut_truth_state".
 ut-op is a number variable.
 ut-op variable translates into I6 as "ut_operator".
 
+ut-kind is a number variable.
+ut-kind variable translates into I6 as "ut_kind".
+
 ut-result is a truth state variable.
 ut-result variable translates into I6 as "ut_result".
 
+[ut-previous-output is initially "".
 ut-test-output is initially "".
+]
+ut-test-output is a truth state variable.
+ut-test-output variable translates into I6 as "ut_test_output".
 
 Unit test success is a number variable.
 Unit test success variable translates into I6 as "unit_test_success".
@@ -157,8 +183,12 @@ Unit test success variable translates into I6 as "unit_test_success".
 Unit test failure is a number variable.
 Unit test failure variable translates into I6 as "unit_test_failure".
 
-to decide what unit test operator value is the ut-operator: (- (ut_operator + 2) -).
-to decide what unit test operator value is the ut-opposite: (- (ut_operator + 5) -).
+to say ut-operator: (- print (utop) ut_operator; -)
+
+to say ut-opposite: (- print (utop) bitxor(ut_operator, 7); -)
+
+[to decide what unit test operator value is the ut-operator: (- (ut_operator + 2) -).
+to decide what unit test operator value is the ut-opposite: (- (ut_operator + 5) -).]
 
 To say ut-expected: (- if (ut_truth_state) { utTruth(ut_expected); } else {
 if (ut_kind == TEXT_TY) print "~";
@@ -194,13 +224,10 @@ To say test results for (ut - a unit test):
   if the save-restore state is back from restoration, stop;
   carry out the testing activity with ut;
   let total test count be unit test success + unit test failure;
-  let summary be "[if unit test failure > 0]**[else]  [end if] [unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
+  let summary be "[if unit test failure > 0]***[else]   [end if] [unit test success]/[total test count] passed[if unit test failure is 0].[else]; [unit test failure]/[total test count] failed.[end if][line break]";
   output summary;
   restore state;
-
-[to perform the/a/-- unit test (ut - a unit test):
- perform the unit test ut;]
-
+  
 To test all unit tests matching (T - a text):
   let matching-unit-tests-count be 0;
   repeat with ut running through the unit tests begin;
@@ -210,8 +237,18 @@ To test all unit tests matching (T - a text):
     end if;
   end repeat;
   if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
- if matching-unit-tests-count is 0, say "No unit tests began with '[T]'.";
- 
+  if matching-unit-tests-count is 0, say "No unit tests began with '[T]'.";
+
+Chapter say test
+
+To say test (ph - phrase): (- ut_test_output = 1; if (0==0) {ph} -).
+
+To say test (C - a condition):
+  (- ut_test_output = 1; if ({C}) { print ""; } -).
+
+To decide if (T - a text) reports an/-- error:
+  decide on whether or not T rmatches "(.*\n)*\*\*\* ".
+
 Chapter Test command
 
 [ ``> test suite`` can be used instead of ``> utest`` ]
@@ -241,26 +278,15 @@ First before testing a heap tracking unit test (called ut) (this is the unit tes
   now the initial heap usage is the current heap usage;
 
 First before testing a unit test (called ut):
-      if write test results to file option is active, mark the file of results as not ready to read;
+  if write test results to file option is active, mark the file of results as not ready to read;
   output "[line break]Testing [ut][line break]";
 
 After testing a heap tracking unit test (called ut):
   let heap-usage be the current heap usage;
-  if heap-usage is not initial heap usage, output "** Test [ut] altered heap usage: was [initial heap usage], now [current heap usage].[line break]" 
+  if heap-usage is not initial heap usage, output "*** Test [ut] altered heap usage: was [initial heap usage], now [current heap usage].[line break]" 
 
-last after testing a unit test (called ut):
+Last after testing a unit test (called ut):
   mark the file of results as ready to read;
-
-[volume captured (for use with Text Capture by Eric Eve)
-
-This is the unit test text capture rule: start capturing text.
-
-The unit test text capture rule is listed after the the unit test say your name rule in the before testing rules.
-
-First after testing a unit test: stop capturing text;
-
-volume the rest
-]
 
 The for testing rules have default no outcome.
 
@@ -272,8 +298,6 @@ Include (-
   ];
 
 [ utAssertPlain x assert txt;
-  EndCapture();
-  ((+ ut-stash +)-->1)();
   ut_truth_state = 1;
   ut_found = x;
   ut_result = 0;
@@ -282,14 +306,13 @@ Include (-
   utFinish(txt);
 ];
 
-[ utAssert x y k cmp_target assert txt cmp;
-  EndCapture();
-  ((+ ut-stash +)-->1)();
+[ utAssert x y k cmp_target assert txt cmp cmp_result;
   ut_result = 0;
   ut_operator = cmp_target;
-  if (k) { cmp = KOVComparisonFunction(k); ut_kind = k; }
   if (k == NUMBER_TY) cmp = utSignedCompare;
-  if (assert == (utSimpleCmp(cmp(x,y))==cmp_target)) ut_result = 1;
+  else cmp = KOVComparisonFunction(k);
+  cmp_result = cmp(x,y);
+  if (assert == (((cmp_result == 0) && (cmp_target & EQ_OK)) || ((cmp_result < 0) && (cmp_target & LT_OK)) || ((cmp_result > 0) && (cmp_target & GT_OK)))) ut_result = 1;
   ut_truth_state = 0;
   ut_kind = k;
   ut_expected = y;
@@ -310,7 +333,7 @@ else {
   unit_test_failure++;
 ((+ output-result +)-->1)(txt);
 }
-StartCapture();
+!StartCapture();
 ];
 
 [ utSignedCompare x y;
@@ -319,13 +342,20 @@ if (x < y) return -1;
 return 0;
 ];
 
+[ utop op;
+if (op & LT_OK) print "<";
+if (op & GT_OK) print ">";
+if (op & EQ_OK) print "=";
+if (op & EQ_OK) print "="; ! yes, it's supposed to be there twice
+];
+-)
+
 [ utSimpleCmp x;
   if (x > 0) return 1;
   if (x < 0) return -1;
   return 0;
   ];
 
--).
 
 To output (T - a text):
   say T;
@@ -337,12 +367,13 @@ To output (T - a text):
   end if;
 
 
-To say captured output of current unit test result for (T - a text): 
+To say captured output of current test statement result for (T - a text): 
   apply output result of current unit test to T.
 
-To report current unit test result for (T - a text) (this is output-result):
-  let result be "[if ut-result is true]  [else]**[end if] [captured output of current unit test result for T]";
+To report current test statement result for (T - a text) (this is output-result):
+  let result be "[if ut-result is true]   [else]***[end if] [captured output of current test statement result for T]";
   output result;
+  if ut-test-output is true, now ut-test-output is false;
 
 Book Assertions and Refutations
 
@@ -371,17 +402,27 @@ To for (txt - a text) assert (C - a condition):
 Chapter equality
 
 To for (txt - a text) assert (X - value of kind K) is/== (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},0,1,{txt}); -)
+  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,1,{txt}); -)
 
 Chapter greater than
   
 To for (txt - a text) assert (X - value of kind K) > (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},1,1,{txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},GT_OK,1,{txt}); -).
 
 Chapter less than
   
 To for (txt - a text) assert (X - value of kind K) < (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},-1,1,{txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},LT_OK,1,{txt}); -).
+
+Chapter <=
+
+To for (txt - a text) refute (X - value of kind K) <= (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},LE_OK,1,{txt}); -).
+
+Chapter <=
+
+To for (txt - a text) refute (X - value of kind K) >= (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},GE_OK,1,{txt}); -).
 
 Part Refutations
 
@@ -398,17 +439,27 @@ To for (txt - a text) refute (C - a condition):
 Chapter equality
     
 To for (txt - a text) refute (X - value of kind K) is/== (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},0,0,{txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,0,{txt}); -).
 
 Chapter greater than
   
 To for (txt - a text) refute (X - value of kind K) > (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},1,0,{txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},GT_OK,0,{txt}); -).
 
 Chapter less than
   
 To for (txt - a text) refute (X - value of kind K) < (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},-1,0,{txt}); -).
+  (- utAssert({X},{Y},{-strong-kind:K},LT_OK,0,{txt}); -).
+
+Chapter <=
+
+To for (txt - a text) refute (X - value of kind K) <= (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},LE_OK,0,{txt}); -).
+
+Chapter <=
+
+To for (txt - a text) refute (X - value of kind K) >= (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},GE_OK,0,{txt}); -).
 
 Book Other interactions
 
@@ -442,29 +493,19 @@ To decide what text is a/an/-- (T - a text) trimmed:
   rmatch T against "^\s*(.*?)\s*$";
   decide on match 1;
 
-Book Text Capture (for use with Text Capture by Eric Eve)
+Definition: a text (called T) is blank if the substituted form of T exactly matches the text "".
 
-Use maximum capture buffer length of at least 8192;
-
-Use test quietly translates as (- Constant TEST_QUIETLY; -).
-
-This is the unit test text capture rule: start capturing text.
-
-The unit test text capture rule is listed after the the unit test say your name rule in the before testing rules.
-
-First after testing a unit test: stop capturing text;
-
-Book Fake I6 Stubs (for use without Text Capture by Eric Eve)
+Book Xorn (for use without Bit Ops by Zed Lopez)
 
 Include (-
-[ EndCapture;
-rfalse;
+[ bitxor n1 n2 result;
+  @bitxor n1 n2 result;
+  return result;
 ];
-[ StartCapture;
-rfalse;
-];
--)
+-).
 
+To decide what number is (n1 - a number) bitxor/xor (n2 - a number):
+  (- bitxor({n1},{n2}) -).
 
 
 Unit Tests ends here.
@@ -583,6 +624,18 @@ or both. You might do something like:
 	    if r is nowhere, for "[label] (got nowhere)" fail;
 	    for label assert r encloses a container.
 
+Chapter Testing printed output, including errors
+
+If you want to test phrases' output, use the test say-phrase. It can be passed a phrase invocation or a complete conditional, but it cannot be passed just a value. Any variables local to your For testing rule won't be available; don't make assignments in your phrase. For example:
+
+for "inv-test" assert "[test follow the the print standard inventory rule]" rmatches "the rubber ducky";
+
+For sayable values, you don't need to use ``test``.
+
+for "entry 0 error" assert "[entry 0 of empty-l]" reports an error;
+
+``<text> reports an error`` is true if the text includes a newline character followed by three asterisks and a space. 
+
 Chapter Output Result
 
 The output for the results is determined by the ``output result`` phrase property on the relevant unit test.
@@ -594,23 +647,32 @@ Values:
 - ut-truth-state (truth state) true if it was a conditional or boolean; false if it was a comparison
 - ut-result (truth state) true if passed; false if failed
 
-Additionally, if Text Capture by Eric Eve is included:
+Suppose that ``say foo 123`` produces ``123 out of range for foo``.
 
-- ut-test-output (text) anything the operation would have printed to the screen
-  (it will be output automatically unless Use test quietly is active)
+	for "foo 123" assert "[foo 123]" exactly matches "123";
+	for "foo 123 error" assert previous reported error;
+
+*Both* of these will fail. ``"[foo 123]"`` was never actually said, so it didn't
+end up captured so that ut-test-output could find it. In this case:
+
+	for "foo 123 error" assert "[foo 123]" rmatches "^\*\*";
+
+would be better.
     
 Say phrases:
 - ut-expected:
   - for comparisons: the expected (right hand side of the comparison) value
   - for conditional/booleans: if it was a refutation, false; if it was an assertion, true.
 - ut-found:
-  - for comparisons, the found (left hand side of the comparison) value
-  - for conditional/booleans, the same as ut-expected if the test passed;
+  - if using the test say-phrase, all output
+  - otherwise:
+    - for comparisons, the found (left hand side of the comparison) value
+    - for conditional/booleans, the same as ut-expected if the test passed;
     the opposite of ut-expected if the test failed
 - ut-how-tested: the text "Asserted" or "Refuted".
 - ut-operator: if it was a comparison, a textual representation of the operator
 - ut-opposite: if it was a comparison, a textual representation of the opposite of the operator
-  (i.e., instead of <, ==, >, it would be >=, !=, <=, respectively)
+  (i.e., instead of <, ==, >, it would be >=, <>, <=, respectively)
 
 It's a phrase text -> nothing; it automatically receives as a parameter the text value
 specified in ``for <label>``.
@@ -740,6 +802,10 @@ the same. This can be hard to predict. That's why we have the ``substituted form
 and ``exactly matches the text`` phrases. (I avoid using "is" in text comparisons
 unless there's a text literal on one side.)
 
+Additionally, if a text T contains a substitution, ``if T is empty`` is always
+false, whether or not the substituted form of T is empty. When you're testing
+a text that might contain a substitution, test ``if T exactly matches ""``.
+
 All of ``exactly matches the text``, ``matches the text``, and ``matches the
 regular expression`` automatically take the substituted forms of the texts.
 
@@ -817,6 +883,9 @@ The design of this extension's interface owes most to Simple Unit Tests and Benc
 
 Chapter Changelog
 
+v6: ripped out text capture support and the unit test operator value kind of value
+    added ``test`` say-phrases and ``reports an error`` phrase.
+
 v5: added heap tracking unit tests, per a contribution by Dannii Willis
     fixed bug by which output was written to the file of results twice
     renamed phrases for saving, restoring state
@@ -838,7 +907,6 @@ Example: * Who tests the testers?
 	Include Unit Tests by Zed Lopez.
 	
 	Use test automatically.
-	[Use don't report passing tests.]
 	
 	Lab is a room.
 	
@@ -851,7 +919,6 @@ Example: * Who tests the testers?
 	  end repeat;
 	  decide on result;
 	
-	
 	a hat is a thing.
 	the player wears a sweater.
 	Conditional-tests is a unit test. "All conditionals all the time.".
@@ -863,7 +930,6 @@ Example: * Who tests the testers?
 	for "player wears hat (false thus should fail)" assert the player wears a hat;
 	for "player wears sweater (true thus should fail)" refute the player wears a sweater;
 	for "player wears hat (false thus should pass)" refute the player wears a hat;
-	
 	
 	Power-test-assertion-truths is a unit test. "Power test: asserting truths, should pass".
 	Power-test-assertion-lies is a unit test. "Power test: asserting lies; should fail.".
@@ -1003,3 +1069,33 @@ Example: * Who tests the testers?
 	  for "'A' > 'A'" assert "A" > "A";
 	  for "'A' > 'A'" assert "A" > "A";
 	  for "'B' is 'A'" assert "B" is "A";
+	
+	[ A phrase to be tested ]
+	To say (T - a text) backwards:
+	    let len be the number of characters in T + 1;
+	    repeat with i running from 1 to the number of characters in T begin;
+	      say character number len - i in T;
+	    end repeat;
+	
+	Backwards-test is a unit test. "Saying text backwards"
+	
+	Text-scratch is initially "";
+	
+	For testing backwards-test:
+	 let orig be "schmoop";
+	 For "'schmoop' backwards" assert "[orig backwards]" exactly matches "poomhcs";
+	
+	empty-list is a list of numbers that varies.
+	empty-list is initially {}.
+	
+	Error-test is a unit test. "Detecting an error"
+	
+	For testing error-test:
+	  for "can't get entry 0" assert "[test entry 0 of empty-list is 0]" reports an error;
+	
+	The player carries a rubber ducky.
+	
+	Rubber-ducky-test is a unit test. "Ducky possession".
+	
+	For testing rubber-ducky-test:
+	  for "inv-test" assert "[test follow the print standard inventory rule]" rmatches "rubber ducky";

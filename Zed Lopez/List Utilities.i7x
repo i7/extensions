@@ -1,4 +1,4 @@
-Version 1 of List Utilities by Zed Lopez begins here.
+Version 1/220327 of List Utilities by Zed Lopez begins here.
 
 "List utility functions"
 
@@ -333,10 +333,8 @@ Chapter Examples
 Example: ** List tests
 
 	*: "List tests"
-	
 	Include List Utilities by Zed Lopez.
 	Include Unit Tests by Zed Lopez.
-	Include Text Capture by Eric Eve.
 	
 	Use test automatically.
 	
@@ -363,11 +361,12 @@ Example: ** List tests
 	
 	Random entry is a unit test. "Random entry"
 	
+	test-num is initially 0.
+	
 	For testing random entry:
 	  let z be a random entry from empty-l;
 	  for "random entry from empty list" assert z is 0;
-	  let err be ut-test-output;
-	  for "random entry from empty list error" assert previous reported error; [err rmatches "^\*\*";]
+	  for "random entry from empty list error" assert "[test random entry from empty-l is 0]" reports an error;
 	  let z2 be a random entry from empty-l or improbable number;
 	  for "random entry from empty list or backup" assert z2 is improbable number;
 	  let count be { 0, 0, 0 };
@@ -447,9 +446,6 @@ Example: ** List tests
 	
 	Pop value is a unit test. "Pop value".
 	
-	to decide if previous reported error:
-	  decide on whether or not ut-test-output rmatches "^\*\*";
-	
 	For testing pop value:
 	  let l1 be ref;
 	  let p be pop l1;
@@ -460,7 +456,7 @@ Example: ** List tests
 	  for "popped non-empty with backup" assert pop l1 or improbable number is 1;
 	  let l2 be a list of numbers;
 	  for "popped value empty list" assert pop l2 is 0;
-	  for "popped value empty list error" assert previous reported error;
+	  for "popped value empty list error" assert "[test pop l2 is 0]" reports error;
 	  let l3 be teens;
 	  for "popped value non-empty with backup" assert pop l3 or improbable number is 19;
 	  let l4 be a list of numbers;
@@ -468,16 +464,18 @@ Example: ** List tests
 	  
 	Pop discarding is a unit test. "Pop, discarding value".
 	
+	empty-num-list is a list of numbers that varies.
+	empty-num-list is initially {}.
+	
 	For testing pop discarding:
 	  let l1 be ref;
 	  pop l1;
 	  for "popped { 0, 1, 2 }, length of list" assert number of entries in l1 is 2;
 	  for "popped { 0, 1, 2 }, first entry" assert entry 1 of l1 is 0;
 	  for "popped { 0, 1, 2 }, second entry" assert entry 2 of l1 is 1;
+	  for "popped empty list error" assert "[test pop empty-num-list]" reports error;
 	  let l2 be a list of numbers;
 	  pop l2;
-	  for "check pop empty list error" pass;
-	  for "popped empty list error" assert previous reported error;
 	  for "popped empty list" assert l2 is empty;
 	
 	Push is a unit test. "Push".
@@ -509,7 +507,7 @@ Example: ** List tests
 	  for "shifted non-empty with backup" assert (shift l2 or improbable number) is 13;
 	  let L be a list of numbers;
 	  for "shift value, empty list" assert shift L is 0;
-	  for "shift value, empty error message" assert previous reported error;
+	  for "shift value, empty error message" assert "[test shift empty-num-list]" reports error;
 	
 	  
 	Shift discarding is a unit test. "Shift, discarding value".
@@ -640,7 +638,7 @@ Example: ** List tests
 	
 	For testing slice:
 	  for "empty" assert entries 3 to 4 of empty-l is empty;
-	  for "empty error" assert previous reported error;
+	  for "empty error" assert "[test entries 3 to 4 of empty-l is empty]" reports error;
 	  for "plain" assert entries 2 to 3 of list9 is { 2, 3 };
 	  for "singleton bottom" assert entries 1 to 1 of list9 is { 1 };
 	  for "singleton top" assert entries 9 to 9 of list9 is { 9 };
@@ -658,6 +656,7 @@ Example: ** List tests
 	  for "7 of 9" assert entries 7 to last of list9 is { 7, 8, 9 };
 	  for "singleton" assert entries 1 to last of loneliest is { 1 };
 	  for "empty" assert entries 1 to 15 of empty-l is empty;
+	  for "empty reported error" assert "[test entries 1 to 15 of empty-l is empty]" reports error;
 	
 	Left index is a unit test. "Left index".
 	
