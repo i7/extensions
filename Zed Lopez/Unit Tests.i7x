@@ -1,4 +1,4 @@
-Version 6 of Unit Tests (for Glulx only) by Zed Lopez begins here.
+Version 6/220327 of Unit Tests (for Glulx only) by Zed Lopez begins here.
 
 "For unit testing. Tested with 6M62."
 
@@ -29,7 +29,7 @@ Chapter Write to file
 
 Use write test results to file translates as (- Constant WRITE_TEST_RESULTS_TO_FILE; -).
 
-First when play begins when write test results to file option is active:
+First when play begins when write test results to file option is active (this is the unit test create or empty results file rule):
   write "" to file of results.
 
 Chapter Don't Report passing tests
@@ -51,28 +51,6 @@ A unit test has a text called the description.
 A unit test can be heap tracking.
 
 The current unit test is a unit test that varies.
-
-[
-A unit test operator value is a kind of value.
-A unit test operator value has a text called the description.
-
-ut-lt is a unit test operator value. "<". [1]
-ut-eq is a unit test operator value. "==".[2]
-ut-gt is a unit test operator value. ">". [3]
-ut-ge is a unit test operator value. ">=".[4]
-ut-ne is a unit test operator value. "!=". [5]
-ut-le is a unit test operator value. "<=". [6]
-
-To say the/a/an/-- (uto - a unit test operator value): say the description of uto.
-
-A unit test operator value has a unit test operator value called the opposite operator.
-The opposite operator of ut-eq is ut-ne.
-The opposite operator of ut-ne is ut-eq.
-The opposite operator of ut-lt is ut-ge.
-The opposite operator of ut-ge is ut-lt.
-The opposite operator of ut-gt is ut-le.
-The opposite operator of ut-le is ut-gt.
-]
 
 A unit test has a phrase text -> nothing called the output result.
 
@@ -141,21 +119,6 @@ Constant LE_OK = EQ_OK | LT_OK;
 Constant NE_OK = LT_OK & GT_OK; ! literally <> !
 -) after "Definitions.i6t".
 
-[ut-lt is a unit test operator value. "<". [1]
-ut-eq is a unit test operator value. "==".[2]
-ut-gt is a unit test operator value. ">". [3]
-ut-ge is a unit test operator value. ">=".[4]
-ut-ne is a unit test operator value. "!=". [5]
-ut-le is a unit test operator value. "<=". [6]]
-
-[
-== 0 -- 1
-< 0 -- 2
-<= 0 -- 3
-> 0 -- 4
->= 0 -- 5
-]
-
 ut-assert is a truth state variable.
 ut-assert variable translates into I6 as "ut_assert".
 
@@ -171,9 +134,6 @@ ut-kind variable translates into I6 as "ut_kind".
 ut-result is a truth state variable.
 ut-result variable translates into I6 as "ut_result".
 
-[ut-previous-output is initially "".
-ut-test-output is initially "".
-]
 ut-test-output is a truth state variable.
 ut-test-output variable translates into I6 as "ut_test_output".
 
@@ -186,9 +146,6 @@ Unit test failure variable translates into I6 as "unit_test_failure".
 to say ut-operator: (- print (utop) ut_operator; -)
 
 to say ut-opposite: (- print (utop) bitxor(ut_operator, 7); -)
-
-[to decide what unit test operator value is the ut-operator: (- (ut_operator + 2) -).
-to decide what unit test operator value is the ut-opposite: (- (ut_operator + 5) -).]
 
 To say ut-expected: (- if (ut_truth_state) { utTruth(ut_expected); } else {
 if (ut_kind == TEXT_TY) print "~";
@@ -277,15 +234,15 @@ To decide what number is the current heap usage:
 First before testing a heap tracking unit test (called ut) (this is the unit test say your name rule):
   now the initial heap usage is the current heap usage;
 
-First before testing a unit test (called ut):
+First before testing a unit test (called ut) (this is the unit test mark not ready to read rule):
   if write test results to file option is active, mark the file of results as not ready to read;
   output "[line break]Testing [ut][line break]";
 
-After testing a heap tracking unit test (called ut):
+After testing a heap tracking unit test (called ut) (this is the unit test heap usage reporting rule):
   let heap-usage be the current heap usage;
   if heap-usage is not initial heap usage, output "*** Test [ut] altered heap usage: was [initial heap usage], now [current heap usage].[line break]" 
 
-Last after testing a unit test (called ut):
+Last after testing when write test results to file option is active (this is the unit test mark ready to read rule):
   mark the file of results as ready to read;
 
 The for testing rules have default no outcome.
@@ -698,24 +655,6 @@ associated with some given unit test must all use the same output result phrase.
 If you find you want different output result phrases for some of them, move them
 to a different unit test with a different output result phrase.
 
-Chapter Text Capture
-
-If you want to test your assertions' and refutations' printed output you should include Text
-Capture by Eric Eve. With it included, each test statement's output is saved to a global text
-variable called ut-test-output.
-
-You may want to avoid putting say statements in your unit tests, though, as they'll get captured,
-too.
-
-	let L be {0};
-	for "out of range" assert entry 2 of L is 0;
-	let err be ut-test-output;
-	for "out of range error" assert err rmatches "^\*\*";
-
-for "statement that can produce error" assert erroneous is true
-for "error message test" 
-
-
 Chapter Test commands
 
 Otherwise you can enter the command ``test suite`` or ``utest``.
@@ -752,14 +691,6 @@ Section Quit after autotesting
 	Use quit after autotesting.
 
 Quits the game after testing. It does nothing unless test automatically is also active.
-
-Section Test quietly (for use with Text Capture by Eric Eve)
-
-	Use test quietly.
-
-Suppresses any text output the assertions' and refutations' operations would normally produce.
-If Text Capture is not included, this Use option doesn't get defined and mention of it would
-cause a compilation error.
 
 Chapter Text comparisons
 
