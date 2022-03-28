@@ -66,6 +66,8 @@ instance-of:SAYABLE_VALUE_TY
 default-value:/CLOSURE_TY_Default_LB 0
 heap-size-estimate:8
 
+comparison-routine:BlkValueCompare
+distinguisher:Data_Structures_Distinguish
 i6-printing-routine:CLOSURE_TY_Say
 
 description:a closure
@@ -104,6 +106,8 @@ instance-of:SAYABLE_VALUE_TY
 default-value:/MAP_TY_Default_LB 0
 heap-size-estimate:8
 
+comparison-routine:BlkValueCompare
+distinguisher:Data_Structures_Distinguish
 i6-printing-routine:MAP_TY_Say
 
 description:a map
@@ -161,7 +165,7 @@ default-value:0
 heap-size-estimate:12
 
 comparison-routine:BlkValueCompare
-!distinguisher:PROMISE_TY_Distinguish
+distinguisher:Data_Structures_Distinguish
 i6-printing-routine:PROMISE_TY_Say
 
 description:a promise

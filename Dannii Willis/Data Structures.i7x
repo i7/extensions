@@ -34,6 +34,22 @@ To decide what V is a/-- new (name of kind of value V):
 To ignore the result of (V - value):
 	(- {V}; -).
 
+[ The immutable kinds are compared based on their values. The mutable kinds are compared based on their long blocks, and so can share a comparison function. ]
+Include (-
+[ Data_Structures_Compare_Common v1 v2;
+	! Equal long blocks means these are the same
+	if (BlkValueGetLongBlock(v1) == BlkValueGetLongBlock(v2)) {
+		return 0;
+	}
+	return v1 - v2;
+];
+
+[ Data_Structures_Distinguish v1 v2;
+	if (Data_Structures_Compare_Common(v1, v2) == 0) rfalse;
+	rtrue;
+];
+-).
+
 
 
 Chapter - Anys
@@ -63,6 +79,10 @@ Constant ANY_TY_VALUE = 1;
 ];
 
 [ ANY_TY_Compare any1 any2	cf delta any1kov;
+	! Equal long blocks means these are the same
+	if (BlkValueGetLongBlock(any1) == BlkValueGetLongBlock(any2)) {
+		return 0;
+	}
 	any1kov = BlkValueRead(any1, ANY_TY_KOV);
 	! Compare the kinds
 	delta = any1kov - BlkValueRead(any2, ANY_TY_KOV);
@@ -425,7 +445,7 @@ Array CLOSURE_TY_Temp_List_Definition --> LIST_OF_TY 1 NUMBER_TY;
 
 [ CLOSURE_TY_Support task arg1 arg2 arg3;
 	switch(task) {
-		!COMPARE_KOVS: return CLOSURE_TY_Compare(arg1, arg2);
+		COMPARE_KOVS: return Data_Structures_Compare_Common(arg1, arg2);
 		COPYQUICK_KOVS: rtrue;
 		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
 		CREATE_KOVS: return CLOSURE_TY_Create(arg2);
@@ -786,6 +806,10 @@ Constant COUPLE_TY_VALUE_B = 3;
 ];
 
 [ COUPLE_TY_Compare c1 c2	cf delta;
+	! Equal long blocks means these are the same
+	if (BlkValueGetLongBlock(c1) == BlkValueGetLongBlock(c2)) {
+		return 0;
+	}
 	! Default values
 	if (c1 == COUPLE_TY_Default || c2 == COUPLE_TY_Default) {
 		return BlkValueRead(c1, COUPLE_TY_KOV_A) - BlkValueRead(c2, COUPLE_TY_KOV_A);
@@ -943,6 +967,7 @@ Array MAP_TY_Default_List --> 0	$051C0000 LIST_OF_TY MAX_POSITIVE_NUMBER	NUMBER_
 
 [ MAP_TY_Support task arg1 arg2 arg3;
 	switch(task) {
+		COMPARE_KOVS: return Data_Structures_Compare_Common(arg1, arg2);
 		COPYQUICK_KOVS: rtrue;
 		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
 		CREATE_KOVS: return MAP_TY_Create(arg1, arg2);
@@ -956,6 +981,14 @@ Constant MAP_TY_KEYS = 0;
 Constant MAP_TY_VALUES = 1;
 
 Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
+
+[ MAP_TY_Clone skov oldmap newmap;
+	newmap = MAP_TY_Create(skov, 0);
+	! Copy the lists. The lists code will handle cloning themselves the first time one is written to.
+	BlkValueCopy(BlkValueRead(newmap, MAP_TY_KEYS), BlkValueRead(oldmap, MAP_TY_KEYS));
+	BlkValueCopy(BlkValueRead(newmap, MAP_TY_VALUES), BlkValueRead(oldmap, MAP_TY_VALUES));
+	return newmap;
+];
 
 [ MAP_TY_Create skov short_block	long_block;
 	long_block = FlexAllocate(2 * WORDSIZE, MAP_TY, BLK_FLAG_WORD);
@@ -1136,8 +1169,8 @@ To decide which map of value of kind K to value of kind L is a/-- new map of (na
 [To decide which map of value of kind K to value of kind L is new/-- map from (keys - list of values of kind K) and/to (vals - list of values of kind L):
 	(- MAP_TY_Create_From({-new:map of K to L}, {-by-reference:K}, {-by-reference:L}) -);]
 
-[To decide which map of value of kind K to value of kind L is clone of (M - map of value of kind K to value of kind L):
-	(-  -).]
+To decide which map of value of kind K to value of kind L is clone of (M - map of value of kind K to value of kind L):
+	(- MAP_TY_Clone({-strong-kind:map of K to L}, {-by-reference:M}, {-new:map of K to L}) -).
 
 
 
@@ -1289,6 +1322,10 @@ Constant OPTION_TY_VALUE = 1;
 ];
 
 [ OPTION_TY_Compare opt1 opt2	cf delta opt1kov;
+	! Equal long blocks means these are the same
+	if (BlkValueGetLongBlock(opt1) == BlkValueGetLongBlock(opt2)) {
+		return 0;
+	}
 	opt1kov = BlkValueRead(opt1, OPTION_TY_KOV);
 	! First check if one is some and the other is none
 	delta = opt1kov - BlkValueRead(opt2, OPTION_TY_KOV);
@@ -1470,6 +1507,7 @@ Constant PROMISE_TY_FAILURE_HANDLERS = 2;
 
 [ PROMISE_TY_Support task arg1 arg2;
 	switch(task) {
+		COMPARE_KOVS: return Data_Structures_Compare_Common(arg1, arg2);
 		COPYQUICK_KOVS: rtrue;
 		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
 		CREATE_KOVS: return PROMISE_TY_Create(arg2);
@@ -1673,6 +1711,10 @@ Constant RESULT_TY_VALUE = 1;
 ];
 
 [ RESULT_TY_Compare res1 res2	cf delta res1kov;
+	! Equal long blocks means these are the same
+	if (BlkValueGetLongBlock(res1) == BlkValueGetLongBlock(res2)) {
+		return 0;
+	}
 	res1kov = BlkValueRead(res1, RESULT_TY_KOV);
 	! First check if one is okay and the other is error
 	delta = (BlkValueRead(res2, RESULT_TY_KOV) == 0) - (res1kov == 0);
