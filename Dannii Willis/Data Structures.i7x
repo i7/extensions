@@ -1,4 +1,4 @@
-Version 1/220325 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220328 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -8,31 +8,6 @@ Chapter - Template changes
 
 [ Clean up the function stubs ]
 Include (- -) instead of "Data Structures Stubs" in "Figures.i6t".
-
-[ The handling of short blocks doesn't actually do as it says it does, so we need to add support for our own short block bitmaps. ]
-Include (-
-Constant BLK_BVBITMAP_CUSTOM_BV = $80;
-Constant BLK_BVBITMAP_COUPLE = $82;
-
-[ BlkValueWeakKind bv o;
-	if (bv) {
-		o = bv-->0;
-		if (o == 0) return bv-->(BLK_HEADER_KOV+1);
-		if (o & BLK_BVBITMAP == o) {
-			if (o & BLK_BVBITMAP_CUSTOM_BV) {
-				switch (o) {
-					BLK_BVBITMAP_COUPLE: return COUPLE_TY;
-				}
-				return 0;
-			}
-			if (o & BLK_BVBITMAP_TEXT) return TEXT_TY;
-			o = bv-->1;
-		}
-		return o-->BLK_HEADER_KOV;
-	}
-	return NIL_TY;
-];
--) instead of "Weak Kind" in "BlockValues.i6t".
 
 [ For unknown reasons, most of the new kinds don't get added to KOVComparisonFunction, so augment it ]
 Include (-
@@ -58,22 +33,6 @@ To decide what V is a/-- new (name of kind of value V):
 
 To ignore the result of (V - value):
 	(- {V}; -).
-
-
-
-Section - Unit tests heap usage (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
-
-The testing activity has a number called the pre-test heap usage.
-
-To decide what numbers is the current heap usage:
-	(- (MEMORY_HEAP_SIZE + 16 - HeapNetFreeSpace(false)) -).
-
-Before testing (this is the update the pre-test heap usage rule):
-	now the pre-test heap usage is the current heap usage;
-
-After testing a unit test (called T) (this is the check the heap usage post-test rule):
-	if the current heap usage is not the pre-test heap usage:
-		say "Test [T] leaked heap memory: was [pre-test heap usage], now [current heap usage].";
 
 
 
@@ -329,14 +288,10 @@ Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (u
 
 Data Structures Anys is a unit test. "Data Structures: Anys functionality"
 
+Data Structures Anys is heap tracking.
+
 Test global any is an any that varies.
 Persons have an any called test property any.
-
-To set test global any to number:
-	now test global any is 1234 as an any;
-
-To set test global any to text:
-	now test global any is substituted form of "[1234]" as an any;
 
 To decide what any is test returning a text any from a phrase:
 	decide on "Hello world!" as an any;
@@ -349,14 +304,6 @@ For testing data structures anys:
 	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
 	for "Default value of global any" assert test global any is null as an any;
 	for "Default value of property any" assert test property any of yourself is null as an any;
-	let before setting global heap usage be current heap usage;
-	set test global any to text;
-	[for "Updating global Any to text heap usage" assert current heap usage is before setting global heap usage + 84;]
-	for "Anys correctly copy and reference count their values" assert test global any is "1234" as an any;
-	now before setting global heap usage is current heap usage;
-	set test global any to number;
-	[for "Updating global Any to number heap usage" assert current heap usage is before setting global heap usage + 20;
-	increase pre-test heap usage by 20;]
 	[ Test basic functionality with a number any ]
 	let NumAny1 be 1234 as an any;
 	for "Any<number> kind" assert the kind of NumAny1 is number;
@@ -384,6 +331,8 @@ For testing data structures anys:
 	for "Any<list of objects> subkinds shown in error messages" assert "[ListAny1 as a number]" rmatches "Error\(Any kind mismatch: expected number, got list of objects \(subkind \d+\)\)";
 
 Data Structures Anys All Kinds is a unit test. "Data Structures: Anys of all kinds"
+
+Data Structures Anys All Kinds is heap tracking.
 
 Equation - Data Structures Test Equation
 	F=ma
@@ -760,7 +709,7 @@ Array CLOSURE_TY_Reenter_Error --> CONSTANT_PACKED_TEXT_STORAGE "Cannot run an u
 
 
 
-Chapter - Closures - Initialising
+Chapter - Closures - Initialising and updating
 
 To initialise (C - closure value of kind K -> value of kind L) with parameter (P1 - nonexisting K variable):
 	(-
@@ -789,7 +738,7 @@ To decide if (C - closure value of kind K -> value of kind L) is initialised:
 	(- BlkValueRead({-by-reference:C}, CLOSURE_TY_ADDR) -).
 
 [ Note that updating closures which save stack variables might not be safe if they've already been popped! ]
-To update (C - closure value of kind K -> value of kind L):
+To update all local variables of (C - closure value of kind K -> value of kind L):
 	(- if (BlkValueRead({-by-reference:C}, CLOSURE_TY_ADDR) == 0) {
 		print "Error! Can only update closures which have already been initialised.^";
 		rfalse;
@@ -810,17 +759,26 @@ Chapter - Couples
 [ We can't have variable length tuples, and also TUPLE is already an I7 kind, though it isn't useable.
 It doesn't seem possible to make a triple - Inform seems to trip over kinds generic over three other kinds. ]
 
-[ Couples are five word short block values.
-The first word is the short block header, $82.
-The 2nd-3rd words store the kinds of the values.
-The 4th-5th words store the values. ]
+[ Couples have a ? word long block (ignoring the header).
+Words 0-1: the kinds of the values
+Words 2-3: the values ]
 
 Include (-
+! Static block values have three parts: the short block (0 means the long block follows immediately), the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array COUPLE_TY_Default --> 0	$050C0000 COUPLE_TY MAX_POSITIVE_NUMBER	0 0;
+
+Constant COUPLE_TY_KOV_A = 0;
+Constant COUPLE_TY_KOV_B = 1;
+Constant COUPLE_TY_VALUE_A = 2;
+Constant COUPLE_TY_VALUE_B = 3;
+
 [ COUPLE_TY_Support task arg1 arg2 arg3;
 	switch(task) {
 		COMPARE_KOVS: return COUPLE_TY_Compare(arg1, arg2);
-		COPY_KOVS: COUPLE_TY_Copy(arg1, arg2);
-		CREATE_KOVS: return COUPLE_TY_Create(arg1, arg2);
+		COPYQUICK_KOVS: rtrue;
+		COPYSB_KOVS: BlkValueCopySB1(arg1, arg2);
+		CREATE_KOVS: return COUPLE_TY_Create(arg2);
 		DESTROY_KOVS: COUPLE_TY_Destroy(arg1);
 	}
 	! We don't respond to the other tasks
@@ -828,53 +786,44 @@ Include (-
 ];
 
 [ COUPLE_TY_Compare c1 c2	cf delta;
+	! Default values
+	if (c1 == COUPLE_TY_Default || c2 == COUPLE_TY_Default) {
+		return BlkValueRead(c1, COUPLE_TY_KOV_A) - BlkValueRead(c2, COUPLE_TY_KOV_A);
+	}
 	! Compare the first values
-	cf = KOVComparisonFunction(c1-->1);
+	cf = KOVComparisonFunction(BlkValueRead(c1, COUPLE_TY_KOV_A));
 	if (cf == 0 or UnsignedCompare) {
-		delta = c1-->3 - c2-->3;
+		delta = BlkValueRead(c1, COUPLE_TY_VALUE_A) - BlkValueRead(c2, COUPLE_TY_VALUE_A);
 	}
 	else {
-		delta = cf(c1-->3, c2-->3);
+		delta = cf(BlkValueRead(c1, COUPLE_TY_VALUE_A), BlkValueRead(c2, COUPLE_TY_VALUE_A));
 	}
 	if (delta) {
 		return delta;
 	}
 	! Compare the second values
-	cf = KOVComparisonFunction(c1-->2);
+	cf = KOVComparisonFunction(BlkValueRead(c1, COUPLE_TY_KOV_B));
 	if (cf == 0 or UnsignedCompare) {
-		delta = c1-->4 - c2-->4;
+		delta = BlkValueRead(c1, COUPLE_TY_VALUE_B) - BlkValueRead(c2, COUPLE_TY_VALUE_B);
 	}
 	else {
-		delta = cf(c1-->4, c2-->4);
+		delta = cf(BlkValueRead(c1, COUPLE_TY_VALUE_B), BlkValueRead(c2, COUPLE_TY_VALUE_B));
 	}
 	return delta;
 ];
 
-[ COUPLE_TY_Copy to from;
-	to-->1 = from-->1;
-	to-->2 = from-->2;
-	to-->3 = from-->3;
-	to-->4 = from-->4;
-];
-
-[ COUPLE_TY_Create skov short_block;
-	if (short_block == 0) {
-		short_block = FlexAllocate(5 * WORDSIZE, 0, BLK_FLAG_WORD) + BLK_DATA_OFFSET;
-	}
-	short_block-->0 = BLK_BVBITMAP_COUPLE;
-	short_block-->1 = KindBaseTerm(skov, 0);
-	short_block-->2 = KindBaseTerm(skov, 1);
-	short_block-->3 = 0;
-	short_block-->4 = 0;
+[ COUPLE_TY_Create short_block	long_block;
+	long_block = FlexAllocate(4 * WORDSIZE, COUPLE_TY, BLK_FLAG_WORD);
+	short_block = BlkValueCreateSB1(short_block, long_block);
 	return short_block;
 ];
 
-[ COUPLE_TY_Destroy short_block;
-	if (KOVIsBlockValue(short_block-->1)) {
-		BlkValueFree(short_block-->3);
+[ COUPLE_TY_Destroy couple;
+	if (KOVIsBlockValue(BlkValueRead(couple, COUPLE_TY_KOV_A))) {
+		BlkValueFree(BlkValueRead(couple, COUPLE_TY_VALUE_A));
 	}
-	if (KOVIsBlockValue(short_block-->2)) {
-		BlkValueFree(short_block-->4);
+	if (KOVIsBlockValue(BlkValueRead(couple, COUPLE_TY_KOV_B))) {
+		BlkValueFree(BlkValueRead(couple, COUPLE_TY_VALUE_B));
 	}
 ];
 
@@ -883,35 +832,68 @@ Include (-
 	rtrue;
 ];
 
-[ COUPLE_TY_Say short_block	kov;
+[ COUPLE_TY_Get couple index backup;
+	! Check if this any is a default
+	if (couple == COUPLE_TY_Default) {
+		return backup;
+	}
+	return BlkValueRead(couple, index);
+];
+
+[ COUPLE_TY_Say couple	kov;
+	if (couple == COUPLE_TY_Default) {
+		print "(Uninitialised Couple)";
+		return;
+	}
 	print "(";
-	PrintKindValuePair(short_block-->1, short_block-->3);
+	PrintKindValuePair(BlkValueRead(couple, COUPLE_TY_KOV_A), BlkValueRead(couple, COUPLE_TY_VALUE_A));
 	print ", ";
-	PrintKindValuePair(short_block-->2, short_block-->4);
+	PrintKindValuePair(BlkValueRead(couple, COUPLE_TY_KOV_B), BlkValueRead(couple, COUPLE_TY_VALUE_B));
 	print ")";
 ];
 
-[ COUPLE_TY_Set short_block value1 value2;
-	short_block-->3 = value1;
-	short_block-->4 = value2;
-	return short_block;
+[ COUPLE_TY_Set couple kov1 value1 kov2 value2	long_block valcopy;
+	! Check this Couple hasn't been set before
+	if (BlkValueRead(couple, COUPLE_TY_KOV_A) ~= 0) {
+		print "Error! Cannot set a Couple twice!^";
+		return couple;
+	}
+	! Write to the long block directly, without copy-on-write semantics
+	long_block = BlkValueGetLongBlock(couple);
+	BlkValueWrite(long_block, COUPLE_TY_KOV_A, kov1, 1);
+	BlkValueWrite(long_block, COUPLE_TY_KOV_B, kov2, 1);
+	! Make our own copy of the value
+	if (KOVIsBlockValue(kov1)) {
+		valcopy = BlkValueCreate(kov1);
+		BlkValueCopy(valcopy, value1);
+		value1 = valcopy;
+	}
+	BlkValueWrite(long_block, COUPLE_TY_VALUE_A, value1, 1);
+	! Make our own copy of the value
+	if (KOVIsBlockValue(kov2)) {
+		valcopy = BlkValueCreate(kov2);
+		BlkValueCopy(valcopy, value2);
+		value2 = valcopy;
+	}
+	BlkValueWrite(long_block, COUPLE_TY_VALUE_B, value2, 1);
+	return couple;
 ];
 -).
 
 To decide what couple of K and L is (V1 - value of kind K) and (V2 - value of kind L) as a couple:
-	(- COUPLE_TY_Set({-new:couple of K and L}, {-by-reference:V1}, {-by-reference:V2}) -).
+	(- COUPLE_TY_Set({-new:couple of K and L}, {-strong-kind:K}, {-by-reference:V1}, {-strong-kind:L}, {-by-reference:V2}) -).
 
 To decide what K is first value of (C - couple of value of kind K and value of kind L):
-	(- {-by-reference:C}-->3 -).
+	(- COUPLE_TY_Get({-by-reference:C}, COUPLE_TY_VALUE_A, {-new:K}) -).
 
 To decide what L is second value of (C - couple of value of kind K and value of kind L):
-	(- {-by-reference:C}-->4 -).
+	(- COUPLE_TY_Get({-by-reference:C}, COUPLE_TY_VALUE_B, {-new:L}) -).
 
 To decide what K is (C - couple of value of kind K and value of kind L) => 1:
-	(- {-by-reference:C}-->3 -).
+	(- COUPLE_TY_Get({-by-reference:C}, COUPLE_TY_VALUE_A, {-new:K}) -).
 
 To decide what L is (C - couple of value of kind K and value of kind L) => 2:
-	(- {-by-reference:C}-->4 -).
+	(- COUPLE_TY_Get({-by-reference:C}, COUPLE_TY_VALUE_B, {-new:L}) -).
 
 
 
@@ -919,10 +901,17 @@ Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (u
 
 Data Structures Couples is a unit test. "Data Structures: Couples"
 
+Data Structures Couples is heap tracking.
+
+Test global couple is a (couple of text and number) that varies.
+
 To decide what couple of text and list of numbers is test returning a couple from a phrase:
 	decide on "Hello world!" and {1234} as a couple;
 
 For testing data structures couples:
+	for "Default couple saying" assert "[test global couple]" is "(Uninitialised Couple)";
+	for "Default couple first value" assert first value of test global couple is "";
+	for "Default couple second value" assert second value of test global couple is 0;
 	let CoupleTest be 1234 and "Hello world" as a couple;
 	for "Couple<number, text> equality" assert CoupleTest is 1234 and "Hello world" as a couple;
 	for "Couple<number, text> saying" assert "[CoupleTest]" is "(1234, Hello world)";
@@ -1413,11 +1402,10 @@ Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (u
 
 Data Structures Options is a unit test. "Data Structures: Options"
 
+Data Structures Options is heap tracking.
+
 Test global option is a text option that varies.
 Persons have a number option called test property option.
-
-To set test global option:
-	now test global option is substituted form of "[1234]" as an option;
 
 To decide what text option is test returning a text option from a phrase:
 	decide on "Hello world!" as an option;
@@ -1430,8 +1418,7 @@ For testing data structures options:
 	for "Saying default option" assert "[NoneOption]" is "None";
 	for "Default value of global option" assert test global option is a text none option;
 	for "Default value of property option" assert test property option of yourself is a number none option;
-	set test global option;
-	for "Options correctly copy and reference count their values" assert test global option is "1234" as an option;
+	[increase pre-test heap usage by 84;]
 	for "Get value of none option unchecked shows error" assert "[the value of NoneOption unchecked]" is "Error! Trying to extract value from a none option.[line break]0";
 	for "Get value of none option with backup" assert value of NoneOption or 6789 is 6789;
 	if NoneOption is some let NoneOptionValue be the value:
@@ -1810,11 +1797,10 @@ Section - Unit tests (for use with Unit Tests by Zed Lopez) (not for release) (u
 
 Data Structures Results is a unit test. "Data Structures: Results"
 
+Data Structures Results is heap tracking.
+
 Test global result is a text result that varies.
 Persons have a number result called test property result.
-
-To set test global result:
-	now test global result is substituted form of "[1234]" as a result;
 
 To decide what text result is test returning a text result from a phrase:
 	decide on "Hello world!" as a result;
@@ -1827,8 +1813,6 @@ For testing data structures results:
 	for "Saying default result" assert "[DefaultResult]" is "Error()";
 	for "Default value of global result" assert test global result is a text error result with message "Uninitialised result";
 	for "Default value of property result" assert test property result of yourself is a number error result with message "Uninitialised result";
-	set test global result;
-	for "Results correctly copy and reference count their values" assert test global result is "1234" as an result;
 	let ErrorResult be a number error result with message "Test error result";
 	for "Result<number> (error) saying" assert "[ErrorResult]" is "Error(Test error result)";
 	if ErrorResult is an error let ErrorResultValue be the error message:
@@ -1903,6 +1887,37 @@ To decide what K is value of (R - value of kind K result) unchecked:
 
 To decide what text is error message of (R - a value result) unchecked:
 	(- RESULT_TY_Get({-by-reference:R}) -).
+
+
+
+Chapter - Extra unit tests (for use with Unit Tests by Zed Lopez) (not for release) (unindexed)
+
+Data Structures Globals is a unit test. "Data Structures: Globals"
+
+To set test global any to text:
+	now test global any is substituted form of "[1234]" as an any;
+
+To set test global couple:
+	now test global couple is substituted form of "[1234]" and 7890 as a couple;
+
+To set test global option:
+	now test global option is substituted form of "[1234]" as an option;
+
+To set test global result:
+	now test global result is substituted form of "[1234]" as a result;
+
+To decide what text result is test returning a text result from a phrase:
+	decide on "Hello world!" as a result;
+
+For testing data structures globals:
+	set test global any to text;
+	for "Anys correctly copy and reference count their values" assert test global any is "1234" as an any;
+	set test global couple;
+	for "Couples correctly copy and reference count their values" assert test global couple is "1234" and 7890 as a couple;
+	set test global option;
+	for "Options correctly copy and reference count their values" assert test global option is "1234" as an option;
+	set test global result;
+	for "Results correctly copy and reference count their values" assert test global result is "1234" as an result;
 
 
 
