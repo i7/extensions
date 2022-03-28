@@ -983,7 +983,6 @@ Constant MAP_TY_VALUES = 1;
 Array MAP_TY_Temp_List_Definition --> LIST_OF_TY 1 ANY_TY;
 
 [ MAP_TY_Clone skov oldmap newmap;
-	newmap = MAP_TY_Create(skov, 0);
 	! Copy the lists. The lists code will handle cloning themselves the first time one is written to.
 	BlkValueCopy(BlkValueRead(newmap, MAP_TY_KEYS), BlkValueRead(oldmap, MAP_TY_KEYS));
 	BlkValueCopy(BlkValueRead(newmap, MAP_TY_VALUES), BlkValueRead(oldmap, MAP_TY_VALUES));
@@ -1501,6 +1500,10 @@ Word 1: a list of callbacks for a success value
 Word 2: a list of error callbacks ]
 
 Include (-
+! Static block values have three parts: the short block (0 means the long block follows immediately), the long block header, and the long block data.
+! $050C0000 means a block of length 2^5=32 bytes, that is resident (static) and uses word values.
+Array PROMISE_TY_Default --> 0	$050C0000 PROMISE_TY MAX_POSITIVE_NUMBER	0 0;
+
 Constant PROMISE_TY_RESULT = 0;
 Constant PROMISE_TY_SUCCESS_HANDLERS = 1;
 Constant PROMISE_TY_FAILURE_HANDLERS = 2;
@@ -1529,12 +1532,12 @@ Constant PROMISE_TY_FAILURE_HANDLERS = 2;
 	}
 	else if (BlkValueRead(result, RESULT_TY_VALUE)) {
 		if (success_handler) {
-			PROMISE_TY_Run_Handler(handlerany, result-->2);
+			PROMISE_TY_Run_Handler(handlerany, BlkValueRead(result, RESULT_TY_VALUE));
 		}
 	}
 	else {
 		if (~~success_handler) {
-			PROMISE_TY_Run_Handler(handlerany, result-->2);
+			PROMISE_TY_Run_Handler(handlerany, BlkValueRead(result, RESULT_TY_VALUE));
 		}
 	}
 ];
@@ -1594,7 +1597,7 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 		list_to_run = BlkValueRead(promise, PROMISE_TY_FAILURE_HANDLERS);
 	}
 	length = BlkValueRead(list_to_run, LIST_LENGTH_F);
-	resultval = result-->2;
+	resultval = BlkValueRead(result, RESULT_TY_VALUE);
 	for (i = 0: i < length: i++) {
 		handler = BlkValueRead(list_to_run, LIST_ITEM_BASE + i);
 		PROMISE_TY_Run_Handler(handler, resultval);
@@ -1611,10 +1614,11 @@ Array PROMISE_TY_Handler_List_Def --> LIST_OF_TY 1 ANY_TY;
 
 Array PROMISE_TY_Resolve_Error_Multi --> CONSTANT_PACKED_TEXT_STORAGE "A promise cannot be resolved more than once.";
 
-[ PROMISE_TY_Run_Handler handlerany value;
-	switch (handlerany-->1) {
-		PHRASE_TY: ((handlerany-->2)-->1)(value);
-		RULEBOOK_TY: FollowRulebook(handlerany-->2, value, 1);
+[ PROMISE_TY_Run_Handler handlerany value	handlervalue;
+	handlervalue = BlkValueRead(handlerany, ANY_TY_VALUE);
+	switch (BlkValueRead(handlerany, ANY_TY_KOV)) {
+		PHRASE_TY: (handlervalue-->1)(value);
+		RULEBOOK_TY: FollowRulebook(handlervalue, value, 1);
 		default: print "Error! Unknown promise handler kind.^";
 	}
 ];
@@ -1964,3 +1968,158 @@ For testing data structures globals:
 
 
 Data Structures ends here.
+
+
+
+---- Documentation ----
+
+This Data Structures extension adds several new kinds to Inform 7. Unlike most extensions, this one also requires you to install two .i6t template files into your Inform folder. For example, in Windows you will need to make an I6T folder in My Documents/Inform/, and then copy these two files inside it:
+	
+	https://raw.githubusercontent.com/i7/extensions/master/Dannii%20Willis/Figures.i6t
+	https://raw.githubusercontent.com/i7/extensions/master/Dannii%20Willis/Load-Figures.i6t
+
+You can leave those files there even if you do not use Data Structures in some of your projects.
+
+
+
+Section - Checked phrases
+
+This extension tries to be safe by default, so the return values of some phrases are Options or Results. These kinds wrap an optional return value; for Options you either will have a return value or none, for Results, either a return value or an error message. You must then check what is returned from these phrases and make sure you account for the possibility of failure. There are also unsafe "unchecked" phrases which you can use when you are sure that the phrase will be successful, but this is discouraged. In fact it will often be not only safer but also more performant to use the safe variations.
+
+For example, you might think of checking if a map has a value and extracting it like this:
+
+	if fruit varieties has key "apple":
+		let apple name be get key "apple" of fruit varieties unchecked;
+
+But when you do this the code actually searches through the map twice: first to check if the key exists, and then to extract the value. It is better to just use the safe variant which returns an option:
+
+	let result be get key "apple" of fruit varieties;
+	if result is some let apple name be the value:
+		...
+
+And in fact you can combine these into one statement:
+
+	if get key "apple" of fruit varieties is some let apple name be the value:
+		...
+
+When a phrase may fail there is sometimes a phrase variant that lets you specify a backup value:
+
+	let apple name be get key "apple" of fruit varieties or "Royal Gala";
+
+
+
+Section - Anys
+
+An any stores a value and its kind; the kind cannot be determined at compile time, but can be read at run time. These are useful for when you want to store multiple kinds of values in one list or map, or for when you don't know what kind some data might be.
+
+	When play begins:
+		let apple be "Royal Gala" as an any;
+		if apple is a text:
+			say "[apple] is a text";
+		if apple as a text is okay let apple name be the value:
+			say "Apple variety: [apple name";
+		let year be apple as a number or 2022;
+
+
+
+Section - Closures
+
+A closure preserves the state of a phrase so that it can be resumed at a later time. They are still experimental, and do not yet support block value local variables.
+
+	When play begins:
+		let C1 be a new closure number -> number;
+		ignore the result of generate test closure with C1;
+		say "Running:[line break][C1 applied to 10][line break]";
+		say "Running:[line break][C1 applied to 100][line break]";
+	
+	To decide what number is generate test closure with (C - closure number -> number):
+		say "Closure setup[line break]";
+		let N1 be 1;
+		initialise C with parameter N2;
+		say "Resumed closure[line break]";
+		say "N1: [N1][line break]";
+		increment N1;
+		say "N2: [N2][line break]";
+		update C;
+		decide on 20;
+
+
+
+Section - Couples
+
+A couple is a 2-tuple, grouping two values of any kind. Couples are useful for when you need to return two values of different kinds from a phrase.
+
+	To decide what couple of person and number is the person evaluation:
+		decide on yourself and 1234 as a couple;
+	
+	When play begins:
+		let result be the person evaluation;
+		say "Person: [first value of result][line break]Evaluation: [second value of result]";
+
+
+
+Section - Maps
+
+Maps store key-value pairs. Each map has a set kind for its keys and another set kind for its values, but if you need to store heterogenous keys or values you can make a map using anys.
+
+	When play begins:
+		let data be a map of text to any;
+		set key "player" of data to yourself;
+		set key "score" of data to 0;
+		set key "action" of data to the jumping action;
+		if get key "score" of data is some let score be the value:
+			say "Starting score: [score]";
+		let temperature be get key "temp" of data or 23 as an any;
+
+
+
+Section - Nulls
+
+Null values are occasionally useful; they are needed for parsing JSON, and can also be used for a promise that indicates when it is finished but has not resulting value.
+
+
+
+Section - Options
+
+An optional value, either nothing, or a value of a specific kind.
+
+	When play begins:
+		let O1 be "Hello" as an option;
+		let O2 be a text none option;
+		if O1 is some let message be the value:
+			say "Message: [message]";
+		let second message be value of O2 or "Goodbye";
+
+
+
+Section - Promises
+
+A promise represents a value which is yet to be determined, and holds a list of code hooks to run when it has been resolved. Promises are still somewhat experimental.
+
+	Jump promise is a person promise that varies.
+	
+	When play begins:
+		now jump promise is a new person promise;
+		attach receive the jumper to jump promise;
+	
+	To receive the jumper (P - person) (this is receive the jumper):
+		say "[P] jumped!";
+	
+	After jumping:
+		ignore the result of resolve jump promise with the player;
+
+
+
+Section - Results
+
+A result contains either a wrapped value or an error message text.
+
+	When play begins:
+		let R1 be 1234 as a result;
+		if R1 is okay let score be the value:
+			say "Score: [score][line break]";
+		let R2 be a number error result with message "Oops!";
+		if R2 is okay let score be the value:
+			say "Score: [score][line break]";
+		otherwise if R2 is an error let  message be the error message:
+			say "Error! [message][line break]";

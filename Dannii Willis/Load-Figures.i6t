@@ -161,7 +161,7 @@ constructor-arity:covariant
 
 instance-of:POINTER_VALUE_TY
 instance-of:SAYABLE_VALUE_TY
-default-value:0
+default-value:PROMISE_TY_Default
 heap-size-estimate:12
 
 comparison-routine:BlkValueCompare
