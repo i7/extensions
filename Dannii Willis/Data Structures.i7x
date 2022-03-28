@@ -2014,10 +2014,10 @@ An any stores a value and its kind; the kind cannot be determined at compile tim
 
 	When play begins:
 		let apple be "Royal Gala" as an any;
-		if apple is a text:
-			say "[apple] is a text";
+		if kind of apple is a text:
+			say "[apple] is a text[line break]";
 		if apple as a text is okay let apple name be the value:
-			say "Apple variety: [apple name";
+			say "Apple variety: [apple name][line break]";
 		let year be apple as a number or 2022;
 
 
@@ -2031,7 +2031,7 @@ A closure preserves the state of a phrase so that it can be resumed at a later t
 		ignore the result of generate test closure with C1;
 		say "Running:[line break][C1 applied to 10][line break]";
 		say "Running:[line break][C1 applied to 100][line break]";
-	
+
 	To decide what number is generate test closure with (C - closure number -> number):
 		say "Closure setup[line break]";
 		let N1 be 1;
@@ -2040,7 +2040,7 @@ A closure preserves the state of a phrase so that it can be resumed at a later t
 		say "N1: [N1][line break]";
 		increment N1;
 		say "N2: [N2][line break]";
-		update C;
+		update all local variables of C;
 		decide on 20;
 
 
@@ -2051,10 +2051,10 @@ A couple is a 2-tuple, grouping two values of any kind. Couples are useful for w
 
 	To decide what couple of person and number is the person evaluation:
 		decide on yourself and 1234 as a couple;
-	
+
 	When play begins:
 		let result be the person evaluation;
-		say "Person: [first value of result][line break]Evaluation: [second value of result]";
+		say "Person: [first value of result][line break]Evaluation: [second value of result][line break]";
 
 
 
@@ -2068,7 +2068,7 @@ Maps store key-value pairs. Each map has a set kind for its keys and another set
 		set key "score" of data to 0;
 		set key "action" of data to the jumping action;
 		if get key "score" of data is some let score be the value:
-			say "Starting score: [score]";
+			say "Starting score: [score][line break]";
 		let temperature be get key "temp" of data or 23 as an any;
 
 
@@ -2087,7 +2087,7 @@ An optional value, either nothing, or a value of a specific kind.
 		let O1 be "Hello" as an option;
 		let O2 be a text none option;
 		if O1 is some let message be the value:
-			say "Message: [message]";
+			say "Message: [message][line break]";
 		let second message be value of O2 or "Goodbye";
 
 
@@ -2097,14 +2097,14 @@ Section - Promises
 A promise represents a value which is yet to be determined, and holds a list of code hooks to run when it has been resolved. Promises are still somewhat experimental.
 
 	Jump promise is a person promise that varies.
-	
+
 	When play begins:
 		now jump promise is a new person promise;
 		attach receive the jumper to jump promise;
-	
+
 	To receive the jumper (P - person) (this is receive the jumper):
 		say "[P] jumped!";
-	
+
 	After jumping:
 		ignore the result of resolve jump promise with the player;
 
