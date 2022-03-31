@@ -1,4 +1,4 @@
-Version 1/220328 of Data Structures (for Glulx only) by Dannii Willis begins here.
+Version 1/220331 of Data Structures (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for some additional data structures"
 
@@ -18,7 +18,7 @@ Include (-
 [ KOVComparisonFunction k	ak;
 	ak = KindAtomic(k);
 	switch(ak) {
-		ANY_TY, COUPLE_TY, MAP_TY, OPTION_TY, PROMISE_TY, RESULT_TY: return BlkValueCompare;
+		ANY_TY, CLOSURE_TY, COUPLE_TY, MAP_TY, OPTION_TY, PROMISE_TY, RESULT_TY: return BlkValueCompare;
 		default: return KOVComparisonFunction_Orig(k);
 	}
 ];
@@ -36,12 +36,11 @@ To ignore the result of (V - value):
 
 [ The immutable kinds are compared based on their values. The mutable kinds are compared based on their long blocks, and so can share a comparison function. ]
 Include (-
-[ Data_Structures_Compare_Common v1 v2;
+[ Data_Structures_Compare_Common v1 v2	v1_LB v2_LB;
+	v1_LB = BlkValueGetLongBlock(v1);
+	v2_LB = BlkValueGetLongBlock(v2);
 	! Equal long blocks means these are the same
-	if (BlkValueGetLongBlock(v1) == BlkValueGetLongBlock(v2)) {
-		return 0;
-	}
-	return v1 - v2;
+	return v1_LB - v2_LB;
 ];
 
 [ Data_Structures_Distinguish v1 v2;
@@ -151,6 +150,7 @@ Array ANY_TY_Print_Illegal_Pattern --> CONSTANT_PACKED_TEXT_STORAGE "@@94@{5C}<i
 		ACTION_NAME_TY: print "action name";
 		ACTIVITY_TY: print "activity";
 		ANY_TY: print "any";
+		CLOSURE_TY: print "closure";
 		COUPLE_TY:
 			if (plural) {
 				print "couples of ";
@@ -296,6 +296,15 @@ To say kind/type of (A - any):
 To decide if kind/type of (A - any) is (name of kind of value K):
 	(- (BlkValueRead({-by-reference:A}, ANY_TY_KOV) == {-strong-kind:K}) -).
 
+[ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
+To if kind/type/-- of/-- (A - any) is (name of kind of value K) let (V - nonexisting K variable) be the value begin -- end loop:
+	(- if (BlkValueRead({-by-reference:A}, ANY_TY_KOV) == {-strong-kind:K} && (
+		(KOVIsBlockValue({-strong-kind:K})
+			&& BlkValueCopy({-lvalue-by-reference:V}, BlkValueRead({-by-reference:A}, ANY_TY_VALUE))
+			|| ({-lvalue-by-reference:V} = BlkValueRead({-by-reference:A}, ANY_TY_VALUE))
+		)
+	, 1)) -).
+
 To decide what K result is (A - any) as a/an (name of kind of value K):
 	(- ANY_TY_Get({-by-reference:A}, {-strong-kind:K}, {-new:K result}) -).
 
@@ -324,6 +333,10 @@ For testing data structures anys:
 	for "Saying untyped any" assert "[NullAny1]" is "Any<null: null>";
 	for "Default value of global any" assert test global any is null as an any;
 	for "Default value of property any" assert test property any of yourself is null as an any;
+	if NullAny1 is a number let NullAnyValue be the value:
+		for "Any<null> let V be the value" fail;
+	otherwise:
+		for "Any<null> let V be the value" pass;
 	[ Test basic functionality with a number any ]
 	let NumAny1 be 1234 as an any;
 	for "Any<number> kind" assert the kind of NumAny1 is number;
@@ -334,6 +347,10 @@ For testing data structures anys:
 	let NumAny1Text2 be NumAny1 as a text or "Oops, not a text";
 	for "Any<number> cast with backup value" assert NumAny1Text2 is "Oops, not a text";
 	for "Any<number> unchecked" assert NumAny1 as a number unchecked is 1234;
+	if NumAny1 is a number let NumAnyValue be the value:
+		for "Any<number> let V be the value" assert NumAnyValue is 1234;
+	otherwise:
+		for "Any<number> let V be the value" fail;
 	[ Test anys with with block values with a text any ]
 	let TextAny1 be "Hello world!" as an any;
 	for "Any<text> kind" assert the kind of TextAny1 is text;
@@ -341,6 +358,10 @@ For testing data structures anys:
 	for "Any<text> equality" assert TextAny1 is "Hello world!" as an any;
 	for "Any<text> returned from phrase" assert test returning a text any from a phrase is "Hello world!" as an any;
 	for "Any<text> unchecked" assert TextAny1 as a text unchecked is "Hello world!";
+	if TextAny1 is a text let TextAnyValue be the value:
+		for "Any<text> let V be the value" assert TextAnyValue is "Hello world!";
+	otherwise:
+		for "Any<text> let V be the value" fail;
 	[ Test comparison operators ]
 	for "Any<number> > comparison" assert 1234 as an any > 1233 as an any;
 	for "Any<number> < comparison" assert 1234 as an any < 1235 as an any;
@@ -779,7 +800,7 @@ Chapter - Couples
 [ We can't have variable length tuples, and also TUPLE is already an I7 kind, though it isn't useable.
 It doesn't seem possible to make a triple - Inform seems to trip over kinds generic over three other kinds. ]
 
-[ Couples have a ? word long block (ignoring the header).
+[ Couples have a 4 word long block (ignoring the header).
 Words 0-1: the kinds of the values
 Words 2-3: the values ]
 
@@ -1208,6 +1229,25 @@ To decide if (M - map of value of kind K to value of kind L) has key (key - K):
 
 To decide if (M - map of any to value of kind L) has key (key - value of kind K):
 	(- MAP_TY_Has_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}) -).
+
+[ We declare this as a loop, even though it isn't, because nonexisting variables don't seem to be unassigned at the end of conditionals. ]
+To if (M - map of value of kind K to value of kind L) has key (key - K) let (V - nonexisting L variable) be the value begin -- end loop:
+	(- {-my:1} = MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, 0, 0, {-new:L option});
+	if (BlkValueRead({-my:1} , OPTION_TY_KOV) && (
+		(KOVIsBlockValue({-strong-kind:L})
+			&& BlkValueCopy({-lvalue-by-reference:V}, BlkValueRead({-my:1}, OPTION_TY_VALUE))
+			|| ({-lvalue-by-reference:V} = BlkValueRead({-my:1}, OPTION_TY_VALUE))
+		)
+	, 1)) -).
+
+To if (M - map of any to value of kind L) has key (key - value of kind K) let (V - nonexisting L variable) be the value begin -- end loop:
+	(- {-my:1} = MAP_TY_Get_Key({-by-reference:M}, {-by-reference:key}, {-new:any}, {-strong-kind:K}, {-new:L option});
+	if (BlkValueRead({-my:1} , OPTION_TY_KOV) && (
+		(KOVIsBlockValue({-strong-kind:L})
+			&& BlkValueCopy({-lvalue-by-reference:V}, BlkValueRead({-my:1}, OPTION_TY_VALUE))
+			|| ({-lvalue-by-reference:V} = BlkValueRead({-my:1}, OPTION_TY_VALUE))
+		)
+	, 1)) -).
 
 
 
@@ -2016,7 +2056,7 @@ An any stores a value and its kind; the kind cannot be determined at compile tim
 		let apple be "Royal Gala" as an any;
 		if kind of apple is a text:
 			say "[apple] is a text[line break]";
-		if apple as a text is okay let apple name be the value:
+		if apple is a text let apple name be the value:
 			say "Apple variety: [apple name][line break]";
 		let year be apple as a number or 2022;
 
@@ -2042,6 +2082,8 @@ A closure preserves the state of a phrase so that it can be resumed at a later t
 		say "N2: [N2][line break]";
 		update all local variables of C;
 		decide on 20;
+
+The stack is preserved along with local variables, so if something pushes to the stack (usually some embedded I6 code) before the closure is initialised, you can pull from it when the closure is run. Be careful however if you then update all local variables, as there may not be anything remaining on the stack, and so the next time the closure is run it can cause a stack underflow.
 
 
 
@@ -2075,7 +2117,7 @@ Maps store key-value pairs. Each map has a set kind for its keys and another set
 
 Section - Nulls
 
-Null values are occasionally useful; they are needed for parsing JSON, and can also be used for a promise that indicates when it is finished but has not resulting value.
+Null values are occasionally useful; they are needed for parsing JSON, and can also be used for a promise that indicates when it is finished but has no actual resulting value.
 
 
 
