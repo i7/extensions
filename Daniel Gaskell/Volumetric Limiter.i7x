@@ -41,7 +41,7 @@ To decide which number is the shortest dimension of (active bulk - a volumetric 
 	if the height part of active bulk <= the length part of active bulk and the height part of active bulk <= the width part of active bulk, decide on the height part of active bulk.
 
 To decide what number is the cubic volume of (active size - a volumetric size):
-	decide on (the length part of active size times the width part of active size) times the height part of active size.
+	decide on ((the length part of active size) times (the width part of active size)) times the height part of active size.
 	
 To decide what number is the free capacity of (active item - a container):
 	let tmp-sum be 0;
