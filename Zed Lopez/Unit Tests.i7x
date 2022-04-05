@@ -1,6 +1,8 @@
-Version 6/220327 of Unit Tests (for Glulx only) by Zed Lopez begins here.
+Version 7 of Unit Tests by Zed Lopez begins here.
 
 "For unit testing. Tested with 6M62."
+
+[ relies on the interpreter supporting save/undo ]
 
 Volume Unit Tests (not for release)
 
@@ -8,9 +10,19 @@ Part Output file
 
 The file of results is called "utresults".
 
-Part Improbable
+Part Constants
+
+Chapter Improbable
 
 To decide what number is improbable number: (- IMPROBABLE_VALUE -).
+
+Chapter maximum int
+
+To decide what number is max/maximum positive/-- number/integer: (- MAX_POSITIVE_NUMBER -).
+
+Chapter minimum int
+
+To decide what number is min/minimum negative/-- number/integer: (- MIN_NEGATIVE_NUMBER -).
 
 Part Use Option
 
@@ -36,7 +48,23 @@ Chapter Don't Report passing tests
 
 Use don't report passing tests translates as (- Constant DONT_REPORT_PASSING_TESTS; -).
 
+Part what VM?
+
+To decide if in/on a/-- Zmachine/Z-machine/zcode/z-code: (- (WORDSIZE == 2) -).
+
+To decide if in/on a/-- glulx machine/--: (- (WORDSIZE == 4) -).
+
 Part Undo
+
+[ VM_Save_Undo, z5+
+Z-machine:
+-1 terp doesn't support
+0 failure
+1 save succeeded
+2 back from restoration
+]
+
+
 
 To decide what number is the save-restore state: (- VM_Save_Undo() -).
 
@@ -145,8 +173,6 @@ Unit test failure variable translates into I6 as "unit_test_failure".
 
 to say ut-operator: (- print (utop) ut_operator; -)
 
-to say ut-opposite: (- print (utop) bitxor(ut_operator, 7); -)
-
 To say ut-expected: (- if (ut_truth_state) { utTruth(ut_expected); } else {
 if (ut_kind == TEXT_TY) print "~";
 PrintKindValuePair(ut_kind, ut_expected);
@@ -157,6 +183,8 @@ if (ut_kind == TEXT_TY) print "~";
 PrintKindValuePair(ut_kind, ut_found);
 if (ut_kind == TEXT_TY) print "~";
 } else { utTruth(ut_found); } -)
+
+to say ut-opposite: (- print (utop) bitxor(ut_operator, 7); -)
 
 Part Actions
 
@@ -188,13 +216,24 @@ To say test results for (ut - a unit test):
 To test all unit tests matching (T - a text):
   let matching-unit-tests-count be 0;
   repeat with ut running through the unit tests begin;
-    if T is empty or printed name of ut rmatches "^[T]", case insensitively begin;
-      output the substituted form of "[test results for ut]";
+  if T is empty or printed name of ut rmatches "^[T]", case insensitively begin;
+      let result be the substituted form of "[test results for ut]";
+      output result;
       increment matching-unit-tests-count;
     end if;
   end repeat;
   if the test automatically option is active and the quit after autotesting option is active, follow the immediately quit rule;
   if matching-unit-tests-count is 0, say "No unit tests began with '[T]'.";
+  
+Chapter Stash (for use with Text Capture by Eric Eve)
+
+To stash unit test output (this is ut-stash):
+  unless the test quietly option is active, output "[captured text]";
+
+Chapter Fake Stash (for use without Text Capture by Eric Eve)
+
+To stash unit test output (this is ut-stash):
+  do nothing.
 
 Chapter say test
 
@@ -249,12 +288,18 @@ The for testing rules have default no outcome.
 
 Include (-
 
+[ bitxor n1 n2 result;
+  return (n1 | n2) & (~(n1 & n2));
+];
+
 [ utTruth x;
   if (x) print "true";
   else print "false";
   ];
 
 [ utAssertPlain x assert txt;
+  EndCapture();
+  ((+ ut-stash +)-->1)();
   ut_truth_state = 1;
   ut_found = x;
   ut_result = 0;
@@ -263,10 +308,26 @@ Include (-
   utFinish(txt);
 ];
 
-[ utAssert x y k cmp_target assert txt cmp cmp_result;
+[ utTextCompare t1 t2 s1 s2 result;
+  s1 = BlkValueCreate(TEXT_TY);
+  s2 = BlkValueCreate(TEXT_TY);
+  BlkValueCopy(s1, t1);
+  BlkValueCopy(s2, t2);
+  TEXT_TY_Transmute(s1);
+  TEXT_TY_Transmute(s2);
+  result = TEXT_TY_Compare(s1, s2);
+  BlkValueFree(s1);  
+  BlkValueFree(s2);
+  return result;
+];
+
+[ utAssert x y k cmp_target assert txt equal_op cmp cmp_result;
+  EndCapture();
+  ((+ ut-stash +)-->1)();
   ut_result = 0;
   ut_operator = cmp_target;
   if (k == NUMBER_TY) cmp = utSignedCompare;
+  else if ((k == TEXT_TY) && equal_op) { cmp = utTextCompare; }
   else cmp = KOVComparisonFunction(k);
   cmp_result = cmp(x,y);
   if (assert == (((cmp_result == 0) && (cmp_target & EQ_OK)) || ((cmp_result < 0) && (cmp_target & LT_OK)) || ((cmp_result > 0) && (cmp_target & GT_OK)))) ut_result = 1;
@@ -283,14 +344,14 @@ Include (-
   if (ut_result) {
     unit_test_success++;
 #ifndef DONT_REPORT_PASSING_TESTS;
-((+ output-result +)-->1)(txt);
+    ((+ output-result +)-->1)(txt);
 #endif;
-}
-else {
-  unit_test_failure++;
-((+ output-result +)-->1)(txt);
-}
-!StartCapture();
+  }
+  else {
+    unit_test_failure++;
+    ((+ output-result +)-->1)(txt);
+  }
+  StartCapture();
 ];
 
 [ utSignedCompare x y;
@@ -307,13 +368,6 @@ if (op & EQ_OK) print "="; ! yes, it's supposed to be there twice
 ];
 -)
 
-[ utSimpleCmp x;
-  if (x > 0) return 1;
-  if (x < 0) return -1;
-  return 0;
-  ];
-
-
 To output (T - a text):
   say T;
   if write test results to file option is active begin;
@@ -322,7 +376,6 @@ To output (T - a text):
       mark the file of results as not ready to read;
     end unless;
   end if;
-
 
 To say captured output of current test statement result for (T - a text): 
   apply output result of current unit test to T.
@@ -358,8 +411,14 @@ To for (txt - a text) assert (C - a condition):
 
 Chapter equality
 
-To for (txt - a text) assert (X - value of kind K) is/== (Y - K):
+To for (txt - a text) assert (X - value of kind K) is (Y - K):
   (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,1,{txt}); -)
+
+To for (txt - a text) assert (X - a text) is blank:
+  (- utAssert({X},(+ empty-string +),{-strong-kind:text},EQ_OK,1,{txt}); -)
+
+To for (txt - a text) assert (X - value of kind K) == (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,1,{txt}, 1); -)
 
 Chapter greater than
   
@@ -394,9 +453,15 @@ To for (txt - a text) refute (C - a condition):
   (- {-my:1} = 0; if ({C}) {-my:1} = 1; utAssertPlain({-my:1},0,{txt}); -).
 
 Chapter equality
-    
-To for (txt - a text) refute (X - value of kind K) is/== (Y - K):
-  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,0,{txt}); -).
+
+To for (txt - a text) refute (X - value of kind K) is (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,0,{txt}); -)
+
+To for (txt - a text) refute (X - a text) is blank:
+  (- utAssert({X},(+ empty-string +),{-strong-kind:K},EQ_OK,0,{txt}); -)
+
+To for (txt - a text) refute (X - value of kind K) == (Y - K):
+  (- utAssert({X},{Y},{-strong-kind:K},EQ_OK,0,{txt},1); -)
 
 Chapter greater than
   
@@ -450,19 +515,28 @@ To decide what text is a/an/-- (T - a text) trimmed:
   rmatch T against "^\s*(.*?)\s*$";
   decide on match 1;
 
-Definition: a text (called T) is blank if the substituted form of T exactly matches the text "".
+Book Text Capture (for use with Text Capture by Eric Eve)
 
-Book Xorn (for use without Bit Ops by Zed Lopez)
+Use maximum capture buffer length of at least 8192;
+
+Use test quietly translates as (- Constant TEST_QUIETLY; -).
+
+This is the unit test text capture rule: start capturing text.
+
+The unit test text capture rule is listed after the the unit test say your name rule in the before testing rules.
+
+First after testing a unit test: stop capturing text;
+
+Book Fake I6 Stubs (for use without Text Capture by Eric Eve)
 
 Include (-
-[ bitxor n1 n2 result;
-  @bitxor n1 n2 result;
-  return result;
+[ EndCapture;
+  rfalse;
 ];
--).
-
-To decide what number is (n1 - a number) bitxor/xor (n2 - a number):
-  (- bitxor({n1},{n2}) -).
+[ StartCapture;
+  rfalse;
+];
+-)
 
 
 Unit Tests ends here.
@@ -539,7 +613,9 @@ Equality with ``is`` or ``==``
 	for <label> assert <value> is <value>;
 	for <label> refute <value> is <value>;
 
-The values must be of compatible kinds. 
+The values must be of compatible kinds. For texts, == is a special case that means the same as
+``exactly matches the text``; ``is`` is the same as in conventional I7. See Text Comparisons
+below.
 
 Less than or greater than:
 
@@ -692,6 +768,12 @@ Section Quit after autotesting
 
 Quits the game after testing. It does nothing unless test automatically is also active.
 
+Section Test quietly (for use with Text Capture by Eric Eve)
+	Use test quietly.
+Suppresses any text output the assertions' and refutations' operations would normally produce.
+If Text Capture is not included, this Use option doesn't get defined and mention of it would
+cause a compilation error.
+
 Chapter Text comparisons
 
 If you have this:
@@ -729,16 +811,19 @@ I7 automatically takes the substituted form of the text containing substitutions
 But when you test whether a text containing a substitution *is* a text containing
 another substitution, the answer doesn't depend on whether the evaluations of the
 two texts are the same, but on whether the underlying function representing it is
-the same. This can be hard to predict. That's why we have the ``substituted form of``
-and ``exactly matches the text`` phrases. (I avoid using "is" in text comparisons
-unless there's a text literal on one side.)
+the same. Outside of contrived circumstances, this will be false. That's why we
+have the ``substituted form of`` and ``exactly matches the text`` phrases. (I avoid
+using "is" in text comparisons unless there's a text literal on one side.)
 
 Additionally, if a text T contains a substitution, ``if T is empty`` is always
-false, whether or not the substituted form of T is empty. When you're testing
-a text that might contain a substitution, test ``if T exactly matches ""``.
+false, whether or not the substituted form of T is empty.
 
 All of ``exactly matches the text``, ``matches the text``, and ``matches the
 regular expression`` automatically take the substituted forms of the texts.
+
+But to make writing tests easier, you can use ``if T1 == T2`` and it acts like
+``if T1 exactly matches the text T2``. And you can use ``if T1 is blank`` and
+that acts like ``if T1 exactly matches the text ""``.
 
 The phrase
 
@@ -779,10 +864,8 @@ if <text> rmatches <text of a regexp> [ = if <text> matches the regular expressi
 let t1 be match 1 [ = text matching subexpression 1 ]
 let t0 be match 0 [ = text matching the regular expression ]
 
-Beware that the values of the matches only persist until the next regular expression operation, and
-``exactly matches the text`` and ``matches the text`` (and thus ``exactly matches`` and ``includes``
-for text as defined here) *are* regular expression operations under the hood. So store the results of
-a regexp match before trying to use ``exactly matches`` to test them.
+Beware that the values of the matches only persist until the next regular expression operation, so store
+the results of a regexp match before trying to use ``exactly matches`` to test them.
 
 Chapter Prior art
 
@@ -813,6 +896,10 @@ don't appear to be related.)
 The design of this extension's interface owes most to Simple Unit Tests and Benchmarking.
 
 Chapter Changelog
+
+v7: put back enough support for Text Capture to reinstate Use test quietly.
+    Introduced special-case for texts of == meaning exactly matches and
+    ``is blank`` meaning ``is ""``.
 
 v6: ripped out text capture support and the unit test operator value kind of value
     added ``test`` say-phrases and ``reports an error`` phrase.
