@@ -35,6 +35,8 @@ specification-text:When made with the Glulx setting, an Inform project can inclu
 
 ! New kinds from Data Structures by Dannii Willis
 
+! [Supported releases: 6M62]
+
 ANY_TY:
 apply-macro:#KIND-CONSTRUCTOR
 singular:any

@@ -2,6 +2,8 @@ Version 1/220331 of Data Structures (for Glulx only) by Dannii Willis begins her
 
 "Provides support for some additional data structures"
 
+[Supported releases: 6M62]
+
 
 
 Chapter - Template changes

@@ -2,6 +2,8 @@ Version 1/130803 of Simple Unit Tests by Dannii Willis begins here.
 
 "Very simple unit tests."
 
+[Supported releases: 6G60]
+
 Include Text Capture by Eric Eve.
 
 Chapter - Output capturing

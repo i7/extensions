@@ -2,6 +2,8 @@ Version 1/220301 of JSON (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for parsing and generating JSON"
 
+[Supported releases: 6M62]
+
 Use authorial modesty.
 
 

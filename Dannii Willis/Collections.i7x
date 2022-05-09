@@ -2,6 +2,8 @@ Version 1/220218 of Collections (for Glulx only) by Dannii Willis begins here.
 
 "Provides support for array and map data structures"
 
+[Supported releases: 6M62]
+
 Use authorial modesty.
 
 

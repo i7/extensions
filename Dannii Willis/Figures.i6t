@@ -42,6 +42,8 @@ Array ResourceUsageFlags ->
 
 @p Data Structures Stubs
 
+! [Supported releases: 6M62]
+
 @c
 Stub ANY_TY_Say 2;
 Stub ANY_TY_Support 3;
