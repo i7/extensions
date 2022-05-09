@@ -15,7 +15,7 @@ Include (-
 	! door.found_in should be a list of two rooms, which is I7's normal arrangement
 	addr = door.&found_in;
 	if (addr == 0 || door.#found_in ~= 2*WORDSIZE)
-		"(BUG) Cannot activate/deactivate door: malformed found_in: ", (name) door;
+		print "(BUG) Cannot activate/deactivate door: malformed found_in: ", (name) door;
 	rm1 = addr-->0;
 	rm2 = addr-->1;
 	
@@ -27,7 +27,7 @@ Include (-
 	@pull location;
 	
 	if (~~(dir1 ofclass (+ direction +) && dir2 ofclass (+ direction +) ))
-		"(BUG) Cannot activate/deactivate door: directions not found: ", (name) door;
+		print "(BUG) Cannot activate/deactivate door: directions not found: ", (name) door;
 	
 	off1 = ((rm1.IK1_Count)*No_Directions + dir1.IK3_Count);
 	off2 = ((rm2.IK1_Count)*No_Directions + dir2.IK3_Count);
