@@ -3,6 +3,8 @@ The Friends of Inform 7 extensions group
 
 Here you'll find many Inform 7 extensions -- some are ready for public use, others are barely working experiments. Enjoy!
 
+The full list of extensions is visible here: https://i7.github.io/extensions/
+
 If you would access to the repository to add your own extensions, please ask here: http://www.intfiction.org/forum/viewtopic.php?f=7&t=5229
 
 It may help to know that the I7 Public Library of extensions (integrated with the 6L38 IDE) can be found at:
