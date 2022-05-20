@@ -1,4 +1,4 @@
-Version 1/210328 of Extension Style Guide for Inform 7 by Nathanael Nerode begins here.
+Version 1/220518 of Extension Style Guide for Inform 7 by Nathanael Nerode begins here.
 
 After writing, and editing, a number of Inform 7 extensions, I have some advice for extension writers.  More like hard-and-fast rules, really.
 
@@ -27,6 +27,7 @@ If you're defining a table, give it its own Section so that game writers who wan
 Replacing a section is the only way to override definitions.
 The game writer may want to override definitions and keep all your rules.
 You might put some tightly linked code defining properties of the kind in the section with the kind.
+
 (5) Each set of Definitions should get their own Section, with no rules in it.
 
 Replacing a section is the only way to override definitions.
