@@ -1,4 +1,4 @@
-Version 5/210331 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 5/220520 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -221,7 +221,7 @@ Example: * Careful Startup -- displaying messages at the right time during start
 
 	A bed is a kind of supporter.
 	The latticework double bed is a bed in the bedroom.
-	The description of the latticework double bed is "It's a double bed with a latticework headboard.
+	The description of the latticework double bed is "It's a double bed with a latticework headboard."
 	
 	The player is on the latticework double bed.  [This is the correct way to set a starting location.]
 
@@ -307,15 +307,17 @@ Use the full power of arbitrary binary relations, which are poorly documented in
 
 	A government is a kind of thing.
 
-	US, UK, France, Germany, Russia, China, India, Pakistan are governments.
+	[In an earlier version, I used "US" here, but Inform 10.1.0 misinterprets that as the word "us".  So it's "USA".]
+
+	USA, UK, France, Germany, Russia, China, India, Pakistan are governments.
 
 	Alpha, Beta, Gamma, Delta, Epsilon are people in Meeting Place.
 
 	Trusting relates various people to various governments.
 	The verb to trust means the trusting relation.
 
-	Alpha trusts US.  Alpha trusts UK.
-	Beta trusts US.  Beta trusts France.
+	Alpha trusts USA.  Alpha trusts UK.
+	Beta trusts USA.  Beta trusts France.
 	Gamma trusts China.  Gamma trusts France.
 
 	Understand "ask [someone] about [any government]" as asking it opinion about.
@@ -383,17 +385,18 @@ The default "There is no reply" is completely surreal for certain types of games
 
 Example: *** Early Command Parsing -- process certain commands specially
 
-This is an offcut from Compliant Characters.i7x.  While I found a much better way to do what I needed there, the code pattern serves as reference for the hooks available in early parsing.  It probably won't compile.
+This is an offcut from Compliant Characters.i7x.  While I found a much better way to do what I needed there, the code pattern serves as reference for the hooks available in early parsing.
 
 	*: "Early Command Parsing"
 
-	"Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+	Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
 
 	Section - Say quoted text
 
 	Original say verb name is a text that varies.
 
 	[It's essentially impossible to match quotation marks with standard grammar tokens; they attach to neighboring words.  Must match with regexes.]
+
 	After reading a command (this is the say quoted text conversion rule):
 		let cmdline be text;
 		let cmdline be the player's command;
