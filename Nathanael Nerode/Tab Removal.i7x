@@ -1,6 +1,8 @@
-Version 1/210314 of Tab Removal by Nathanael Nerode begins here.
+Version 2.0.220520 of Tab Removal by Nathanael Nerode begins here.
 
-"For commands with tabs in them, replaces tabs with spaces before passing them on to the game."
+Use authorial modesty.
+
+"For commands with tabs in them, replaces tabs with spaces before passing them on to the game.  Prevents all kinds of confusing weirdness when the player types tabs."
 
 [
 Many interpreters unfortunately pass tabs through into the command.  Tabs are treated as *letters* which are part of a word, unhelpfully, which leads to confusing error responses with embedded tabs.  Worse, when Glulxe goes to print the error message with the embedded tab, it issues a runtime error saying that it can't print character 9* (the tab character) -- in the middle of this "word"!  This is a pretty cryptic error message.
@@ -12,6 +14,8 @@ The implementation for the Z-machine is straightforwardly done with "after readi
 But while the straightforward implementation works for the Z-machine, *it fails for Glulx*.  In both glulxe and git, the "\t" regular expression does not match the tab as it should.  It matches tabs inserted into your code using [unicode 9], but not tabs typed at the command line.  I can't figure out why.
 
 So for Glulx we replace the tokenizer.  (We can't replace the tokenizer with the Z-machine because on the Z-machine the tokenizer is on the interpreter-side.)
+
+In Inform v10, the tokenizer is in the BasicInformKit in the Glulx.i6t file, for reference.
 ]
 
 Section - The Easy Way (for Z-machine only)
@@ -27,31 +31,6 @@ After reading a command (this is the tab removal rule):
 Section - The Hard Way (for Glulx only)
 
 Include (-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Tab Removal replacement for Glulx.i6t: Buffer Functions
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-[ VM_CopyBuffer bto bfrom i;
-    for ( i=0: i<INPUT_BUFFER_LEN: i++ ) bto->i = bfrom->i;
-];
-
-[ VM_PrintToBuffer buf len a b c;
-    if (b) {
-        if (metaclass(a) == Object && a.#b == WORDSIZE
-            && metaclass(a.b) == String)
-            buf-->0 = Glulx_PrintAnyToArray(buf+WORDSIZE, len, a.b);
-		else if (metaclass(a) == Routine)
-			buf-->0 = Glulx_PrintAnyToArray(buf+WORDSIZE, len, a, b, c);
-        else
-            buf-->0 = Glulx_PrintAnyToArray(buf+WORDSIZE, len, a, b);
-    }
-    else if (metaclass(a) == Routine)
-        buf-->0 = Glulx_PrintAnyToArray(buf+WORDSIZE, len, a, b, c);
-    else
-		buf-->0 = Glulx_PrintAnyToArray(buf+WORDSIZE, len, a);
-    if (buf-->0 > len) buf-->0 = len;
-    return buf-->0;
-];
-
 [ VM_Tokenise buf tab
     cx numwords len bx ix wx wpos wlen val res dictlen entrylen;
     len = buf-->0;
@@ -60,14 +39,16 @@ Include (-
     ! First, split the buffer up into words. We use the standard Infocom
     ! list of word separators (comma, period, double-quote).
 
-    ! Tab Removal takes place here: since it can't be matched in I7 due to bugs in Glulxe.
-	cx = 0;
-	while (cx < len) {
-		if (buf->cx == 9) {  ! it's a tab character
-			buf->cx = ' '; ! now it's a space character
-		}
-		cx++;
-	}
+    ! The following was added by the Tab Removal extension.
+    ! Tab removal is done here since it can't be matched in I7 due to bugs in Glulxe.
+    cx = 0;
+    while (cx < len) {
+        if (buf->cx == 9) {  ! it's a tab character
+            buf->cx = ' '; ! now it's a space character
+        }
+        cx++;
+    }
+    ! This ends the changes made by the Tab Removal extension.
 
     cx = 0;
     numwords = 0;
@@ -107,27 +88,7 @@ Include (-
         tab-->(wx*3+1) = res;
     }
 ];
-
-[ LTI_Insert i ch  b y;
-
-    ! Protect us from strict mode, as this isn't an array in quite the
-    ! sense it expects
-    b = buffer;
-
-    ! Insert character ch into buffer at point i.
-    ! Being careful not to let the buffer possibly overflow:
-    y = b-->0;
-    if (y > INPUT_BUFFER_LEN) y = INPUT_BUFFER_LEN;
-
-    ! Move the subsequent text along one character:
-    for ( y=y+WORDSIZE : y>i : y-- ) b->y = b->(y-1); ! Tab Removal: spacing fixed to avoid ending I7 include section
-    b->i = ch;
-
-    ! And the text is now one character longer:
-    if (b-->0 < INPUT_BUFFER_LEN) (b-->0)++;
-];
-
--) instead of "Buffer Functions" in "Glulx.i6t".
+-) replacing "VM_Tokenise".
 
 Tab Removal ends here.
 
@@ -137,9 +98,15 @@ When the player types tabs, this extension replaces them with spaces.
 
 Tabs can appear in commands when typed at the keyboard by the player.  Tabs are handled very badly in the Standard Rules; they are treated as part of a word (like letters).  They can't be printed by Glulx.  This creates all kinds of confusing problems.  This fixes those problems.
 
+The worst problem:  When Glulxe goes to print an error message which contains a tab which originally came from the keyboard, it issues a runtime error saying that it can't print character 9* (the tab character) -- in the middle of this "word"!  This is a pretty cryptic error message, especially since Glulx can actually print tab characters if they're specified in the Inform source code as [unicode 9].
+
+Accordingly, I recommend that everyone use this extension at all times for all games.
+
 The Z-machine implementation is pretty clean and should continue to work in all versions.
 
-The Glulx implementation has been tested with Inform 6M62, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
+The Glulx implementation has been tested with Inform v10.0.1, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
 
 Changelog:
+	2.0.220520: Adapt to Inform 7 v10, by changing the method of replacing I6 code.
+              Minor documentation updates.  Use authorial modesty on this one.
 	1/210314: Change short description.
