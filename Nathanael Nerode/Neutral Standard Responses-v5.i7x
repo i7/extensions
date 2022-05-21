@@ -1,6 +1,6 @@
-Version 4/210908 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 5.0.220521 of Neutral Standard Responses by Nathanael Nerode begins here.
 
-"Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 6M62."
+"Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 10.1.0."
 
 "based on version 3/120107 of Neutral Library Messages by Aaron Reed;
 incorporates version 2/170531 of Unknown Word Error by Mike Ceil, based on Dunno by Neil Cerutti, with contributions by Andrew Plotkin for Glulx compatibility"
@@ -122,7 +122,7 @@ Include (-
 	if (j == 0) return 0; ! 0 means not in dictionary
 	return 1; ! Inform 7 can't handle the large negative numbers in j and sometimes thinks they're false, so we convert them to 1
 ];
--) after "Words" in "Parser.i6t".
+-)
 
 Section - Exposing the Command Understood So Far to Inform 7
 
@@ -136,7 +136,7 @@ Include (-
 	for (m=0 : m<32 : m++) pattern-->m = pattern2-->m;
 	pcount = pcount2; PrintCommand(0);
 ];
--) after "Parser.i6t".
+-)
 
 To say the command understood so far:
 	(- PrintCommandUnderstoodSoFar(); -)
@@ -170,7 +170,7 @@ Include (-
    }
  }
 ];
--) after "Parser.i6t".
+-)
 
 To decide what number is the/-- position of the/-- first/-- non-dictionary word:
 	(- FindUnknownWordToken(2) -)
@@ -192,7 +192,7 @@ Include (-
  for (m=0: m < l: m++) 
    print (char) k->m; 
 ];
--) after "Parser.i6t".
+-)
 
 To say the/-- word at position/-- (N - a number):
 	(- PrintToken({N}); -)
@@ -971,37 +971,42 @@ Chapter - Announcing the Score
 [As an exercise in masochism, we roll up our sleeves for the unpleasant plumbing involved in making the score command be styled correctly. Since the standard rules hard-code printing a period and line break into the obscure PrintRank routine, of all places, we have to do some ugly trickery to make this work.]
 
 [First:
-- replace PrintRank with GetRank which only prints the name of the rank
-- expose #ifdef RANKING_TABLE as an I6 routine
+- replace PrintRank with PrintRankName which only prints the name of the rank
+- expose whether there is a rank table
 ]
 
 Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Neutral Standard Responses.i7x: Print Rank replacement
+! Neutral Standard Responses.i7x: Print Rank replacement work
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 
 [ PrintRankName i j v;
-#ifdef RANKING_TABLE;
-  j = TableRows(RANKING_TABLE);
-  for ( i=j:i>=1:i-- )
-    if (score >= TableLookUpEntry(RANKING_TABLE, 1, i)) {
+  if (KIT_CONFIGURATION_BITMAP & RANKING_TABLE_TCBIT) {
+    j = TableRows(RANKING_TABLE);
+    for ( i=j:i>=1:i-- )
+			if (score >= TableLookUpEntry(RANKING_TABLE, 1, i)) {
         v = TableLookUpEntry(RANKING_TABLE, 2, i);
-        Text_TY_Say(v);
+        TEXT_TY_Say(v);
         return;
-    }
-#endif;
-  ;
+	    }
+  }
 ];
+-)
+
+Include (-
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+! Neutral Standard Responses.i7x: Print Rank replacement work
+! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 
 [ DoesRankingTableExist; 
-#ifdef RANKING_TABLE;
-return true;
-#ifnot; 
-return false; 
-#endif;
+  if (KIT_CONFIGURATION_BITMAP & RANKING_TABLE_TCBIT) {
+		return true;
+	} else {
+		return false;
+	}
 ];
 
--) after "Print Rank" in "Tables.i6t".
+-)
 
 [Second: wrap these I6 routines in I7 phrases]
 
@@ -1056,7 +1061,8 @@ This is the full-sentence report preferring abbreviated room descriptions rule:
 
 Chapter - Requesting the Pronoun Meanings
 
-[This is a complicated construction.  To do this, access the I6 code as a phrase instead of a rule.  In order to avoid a spurious line break we must duplicate all the I6 code. ]
+[This is a complicated construction.  To do this, access the I6 code as a phrase instead of a rule.  In order to avoid a spurious line break we must duplicate all the I6 code. This is the code of
+ANNOUNCE_PRONOUN_MEANINGS_R except for the one change.]
 
 Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
@@ -1080,7 +1086,7 @@ Include (-
     d++;
     if (d < c-1) print ", ";
     if (d == c-1) {
-      #ifdef SERIAL_COMMA; print ","; #endif;
+      if (KIT_CONFIGURATION_BITMAP & SERIAL_COMMA_TCBIT) print ",";
       LIST_WRITER_INTERNAL_RM('C');
     }
   }
@@ -1091,7 +1097,7 @@ Include (-
   }
   print "."; ! This is the only change made by Neutral Standard Responses
 ];
--) after "Announce Pronoun Meanings Rule" in "OutOfWorld.i6t".
+-)
 
 To say statement of pronoun meanings:
 	(- AnnouncePronounMeanings(); -)
@@ -1111,7 +1117,7 @@ Chapter 1 - Without Gender Options (for use without Gender Options by Nathanael 
 [Gender Options rewrites this section heavily; we need to not touch its version.
 Gender Options will accomodate us.]
 
-Section SR1/11 - People (in place of Section SR1/11 - People in Standard Rules by Graham Nelson) 
+Section 11 - People (in place of Section 11 - People in Standard Rules by Graham Nelson) 
 
 The specification of person is "Despite the name, not necessarily
 a human being, but anything animate enough to envisage having a
@@ -1123,21 +1129,19 @@ A person can be neuter. A person is usually not neuter.
 A person has a number called carrying capacity.
 The carrying capacity of a person is usually 100.
 
-Include (-
-  has transparent animate
-  with before NULL,
--) when defining a person.
+A person can be transparent. A person is always transparent.
 
 The yourself is an undescribed person. The yourself is proper-named.
 
-The yourself object translates into I6 as "selfobj".
-Include (-
-  with saved_short_name "yourself",
- -) when defining yourself.
+The yourself is privately-named.
+Understand "your former self" or "my former self" or "former self" or
+  "former" as yourself when the player is not yourself.
+
+The yourself object translates into Inter as "selfobj".
 
 Chapter 2 - Always Active
 
-Section SR1/11 A - Player Description
+Section SR2.2.11A - Player Description
 
 The description of yourself is usually "[We] [see] nothing unexpected about [ourselves]." ["As good-looking as ever."]
 
@@ -1407,6 +1411,7 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+	Version 5.0.220521: adapt to Inform v10.1.0.
 	Version 4/210908: in several rule responses, changed "here" to "[here]" (which will only ever matter outside of present tense) -- ZL
 	Version 4/171007:
 		Add line break helper phrases and documentation.  Fix several tricky line break errors correctly (including some from the Standard Rules).
