@@ -1,4 +1,4 @@
-Version 1/220518 of Extension Style Guide for Inform 7 by Nathanael Nerode begins here.
+Version 2.0.220522 of Extension Style Guide for Inform 7 v10 by Nathanael Nerode begins here.
 
 After writing, and editing, a number of Inform 7 extensions, I have some advice for extension writers.  More like hard-and-fast rules, really.
 
@@ -18,40 +18,7 @@ After you've broken it into bite-sized sections, you can organize those bitses i
 
 Neutral Standard Responses is a good example here.
 
-(3) Every large data structure should get its own Section, with no rules in it.
-
-If you're defining a table, give it its own Section so that game writers who want to replace it (perhaps with a table with an extra column) can replace the table without deleting anything else.
-
-(4) A kind (type) definition should get its own Section, with no rules in it.
-
-Replacing a section is the only way to override definitions.
-The game writer may want to override definitions and keep all your rules.
-You might put some tightly linked code defining properties of the kind in the section with the kind.
-
-(5) Each set of Definitions should get their own Section, with no rules in it.
-
-Replacing a section is the only way to override definitions.
-The game writer may want to override definitions and keep all your rules.
-You might put a few related Definitions together.
-
-(6) Each related group of say-phrases should get their own Section, with no rules in it.
-
-Replacing a section is, again, the only way to override say-phrases.
-You probably want one section for each say-phrase, unless you have several closely related say-phrases.  It is OK to put "to say a blorb", "to say the blorb", and "to say blorb" in the same section.
-
-(7) Global variable definitions should often get their own Section.
-
-Replacing a section is, again, the only way to override global variable definitions.
-Are you sensing a pattern here?
-Sometimes you don't need to do this because global variables get overridden a lot less than the other things mentioned above.  It still doesn't hurt to give it its own section.
-
-(8) Never put unrelated things in the same Section.
-
-You want the game writer to be able to delete the machinery for one part of your extension without having to copy and rewrite the machinery for another part.
-
-As of Inform 6M62, The Standard Rules does not follow this advice, creating many headaches.
-
-(9) Name every Volume, Book, Chapter, Section, so they can be overridden -- but don't usually number them.
+(3) Name every Volume, Book, Chapter, Section, so they can be overridden -- but DO NOT usually number them.
 
 You generally want to keep a section name the same when you update the extension, so that any game which overrides it will continue to do so in later versions of the extensions.
 
@@ -59,20 +26,52 @@ Extension updates can make a numbering scheme get out of date, but you have to k
 
 So, you want "Section - Say Phrases For Bananas", not "Section 2 - Say Phrases For Bananas".
 
-You can see the perils of numbering in my Gender Options extension, which ended up with a "Part 2B".
-You can see the better choice in my Gender Speedup extension.
+You can see the perils of numbering in the older (6M62) version of my Gender Options extension, which ended up with a "Part 2B".  You can see the better choice in my newer extensions.
 
-(10) Increase the extension's major version for interface changes; minor version for implementation or other changes.
+(4) Every large data structure should get its own Section, with no rules in it.
 
-The version number should be in the form (major version)/(minor version) .
+If you're defining a table, give it its own Section so that game writers who want to replace it (perhaps with a table with an extra column) can replace the table without deleting anything else.
 
-The minor version should be a date in the form (YYMMDD), typically the date of release or of writing -- there are no Inform 7 extensions from before the year 2000, so four-digit-years are unnecessary.  This is useful mostly to tell how obsolete an extension is (how badly it needs an update).
+(5) A kind (type) definition should get its own Section, with no rules in it.
+
+Replacing a section is the only way to override definitions.
+The game writer may want to override definitions and keep all your rules.
+You might put some tightly linked code defining properties of the kind in the section with the kind.
+
+(6) Each set of Definitions should get their own Section, with no rules in it.
+
+Replacing a section is the only way to override definitions.
+The game writer may want to override definitions and keep all your rules.
+You might put a few related Definitions together.
+
+(7) Each related group of say-phrases should get their own Section, with no rules in it.
+
+Replacing a section is, again, the only way to override say-phrases.
+You probably want one section for each say-phrase, unless you have several closely related say-phrases.  It is OK to put "to say a blorb", "to say the blorb", and "to say blorb" in the same section.
+
+(8) Global variable definitions should often get their own Section.
+
+Replacing a section is, again, the only way to override global variable definitions.
+Are you sensing a pattern here?
+Sometimes you don't need to do this because global variables get overridden a lot less than the other things mentioned above.  It still doesn't hurt to give it its own section.
+
+(9) Never put unrelated things in the same Section.
+
+You want the game writer to be able to delete the machinery for one part of your extension without having to copy and rewrite the machinery for another part.
+
+As of Inform 10.1.0, the Standard Rules still is not granular enough, but it's a lot better than it used to be.
+
+(10) Follow the Semantic Versioning pattern: Increase the extension's major version for interface changes.  Increment the minor or patch version for implementation or other changes.  Always change the version number even for tiny changes.
+
+With Inform 10.1.0, the version number system has changed.  It should be MAJOR.MINOR.PATCH now.
+
+I advise having the patch level be a date in the form (YYMMDD).  Typically the date of writing -- there are no Inform 7 extensions from before the year 2000, so four-digit-years are unnecessary.  This is useful partly to tell how obsolete an extension is (how badly it needs an update).  It also encourages the good practice of changing the version number for EVERY edit.
 
 The major version should be incremented whenever you make a change which might be likely to break existing games which use the extension -- that is, when you change the interface.  This would include changing any preexisting rule names, section names, etc.  You may use your discretion if you change something which could be used explicitly by story writers but *shouldn't* be (and you tell them not to in the Documentation).
 
-The minor version should be changed *every time you release a new version*, even if you think the change is insignificant.  If you have two or more versions released in one day, go ahead and increment the minor version to a day in the near future.  It's more important to increment the version than it is for it to be an accurate release date.
+The minor or patch version should be changed *every time you release a new version*, even if you think the change is insignificant.  If you have two or more versions released in one day, go ahead and increment the patch version to a day in the near future.  It's more important to increment the version than it is for it to be an accurate release date.
 
-Standard Rules did not follow this versioning rule, which is a pain; there are different versions floating around with identical version numbers.  Never do this!
+Standard Rules by Graham Nelson does not follow this versioning rule, which is a pain; there are different versions floating around with identical version numbers.  Never do this!
 
 (11) Use longer, more verbose, more elaborate names for implementation details, including most rules, sections, internally-used global variables, column names in tables, etc.
 
