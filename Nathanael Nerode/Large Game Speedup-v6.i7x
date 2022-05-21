@@ -1,12 +1,13 @@
-Version 5/210908 of Large Game Speedup by Nathanael Nerode begins here.
+Version 6.0.220521 of Large Game Speedup by Nathanael Nerode begins here.
 
-"Performance improvements for games with large numbers of objects, by avoiding looping over all objects."
+"Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
 "based on the extension of the same name by Andrew Plotkin"
 
 Use authorial modesty.
 
 [This broke in 6M62, but it's still very important.  Updated by Nathanael Nerode.]
+[It broke again in 10.1.0, and it's still just as important.]
 
 Chapter - Empty
 
@@ -21,6 +22,8 @@ Section - Core Fast Functions
 
 [We have to clear these flags for every thing, almost every turn. It's worth having a routine that skips I7's usual SetEitherOrProperty() mechanism and all its safety checks.]
 
+[It's not clear whether this is as necessary in v10 as it was before, but we do it anyway.  In v10, objectloop(obj ofclass K2_thing) IS optimized -- that, I did check.]
+
 To rapidly set all things not mentioned: (- OptimizedAllThingsUnsetMentioned(); -).
 To rapidly set all things not marked for listing: (- OptimizedAllThingsUnsetWorkflag(); -).
 
@@ -29,20 +32,22 @@ Include (-
 ! Large Game Speedup: OptimizedAllThingsUnsetMentioned
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 [ OptimizedAllThingsUnsetMentioned obj;
-	for (obj=IK2_First: obj: obj=obj.IK2_Link) {
+	objectloop(obj ofclass K2_thing) {
 		give obj ~mentioned;
 	}
 ];
+-)
 
+Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 ! Large Game Speedup: OptimizedAllThingsUnsetWorkflag
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 [ OptimizedAllThingsUnsetWorkflag obj;
-	for (obj=IK2_First: obj: obj=obj.IK2_Link) {
+	objectloop(obj ofclass K2_thing) {
 		give obj ~workflag;
 	}
 ];
--) after "ListWriter.i6t".
+-)
 
 This is the optimized declare everything unmentioned rule:
 	rapidly set all things not mentioned;
@@ -95,7 +100,7 @@ Include (-
 		print "Final state:^"; TableColumnDebug(tab, col);
 	}
 ];
--) after "Sort" in "Tables.i6t".
+-)
 
 To sort (T - table name) up to row (N - number) in (TC - table column) order
         (documented at ph_sortcolumn):
@@ -235,15 +240,17 @@ Include (-
 		ListFilterContents(o);
 	}
 ];
+-)
 
+Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 ! Large Game Speedup: replacement for WriteListFrom in ListWriter.i6t
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-[ WriteListFrom first style depth noactivity iter i a ol;
+[ WriteListFrom first in_style depth noactivity iter i a ol;
 	@push c_iterator; @push c_style; @push c_depth; @push c_margin;
     if (iter) c_iterator = iter; else c_iterator = ObjectTreeIterator;
-    c_style = style; c_depth = depth;
-	c_margin = 0; if (style & EXTRAINDENT_BIT) c_margin = 1;
+    c_style = in_style; c_depth = depth;
+	c_margin = 0; if (in_style & EXTRAINDENT_BIT) c_margin = 1;
 
 	! Set or clear the list_filter_permits flag. Try to do it efficiently.
 	if (c_iterator == ObjectTreeIterator) {
@@ -273,8 +280,8 @@ Include (-
 
     first = c_iterator(first, depth, 0, START_ITF);
 	if (first == nothing) {
-		if (style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W'); else LIST_WRITER_INTERNAL_RM('Y');
-        if (style & NEWLINE_BIT ~= 0) new_line;
+		if (in_style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W'); else LIST_WRITER_INTERNAL_RM('Y');
+        if (in_style & NEWLINE_BIT ~= 0) new_line;
     } else {
 		if ((noactivity) || (iter)) {
 			WriteListR(first, c_depth, true);
@@ -291,7 +298,7 @@ Include (-
 
     @pull c_margin; @pull c_depth; @pull c_style; @pull c_iterator;
 ];
--) instead of "WriteListFrom" in "ListWriter.i6t".
+-) replacing "WriteListFrom".
 
 Chapter - Faster Listing Phrases
 
@@ -301,7 +308,7 @@ Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 ! Large Game Speedup: WriteListOfMarkedContentsObjects
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-[ WriteListOfMarkedContentsObjects style common_parent
+[ WriteListOfMarkedContentsObjects in_style common_parent
 	obj first length;
 
 	objectloop (obj in common_parent && obj has workflag2) {
@@ -310,8 +317,8 @@ Include (-
 	}
 
 	if (length == 0) {
-		if (style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
-		else if (style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
+		if (in_style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
+		else if (in_style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
 		else LIST_WRITER_INTERNAL_RM('Y');
 	} else {
 		@push MarkedObjectArray; @push MarkedObjectLength;
@@ -325,7 +332,7 @@ Include (-
 		objectloop (obj in common_parent) ! object tree order
 			if (obj has workflag2) MarkedObjectArray-->length++ = obj;
 
-		WriteListFrom(first, style, 0, false, MarkedListIterator);
+		WriteListFrom(first, in_style, 0, false, MarkedListIterator);
 
 		FreeStack(MarkedObjectArray);
 		@pull MarkedObjectLength; @pull MarkedObjectArray;
@@ -333,7 +340,7 @@ Include (-
 	prior_named_list = length;
 	return;
 ];
--) after "WriteListOfMarkedObjects" in "ListWriter.i6t".
+-)
 
 To say a list of (OS - description of objects) *in (parent - object):
 	(-
@@ -402,7 +409,7 @@ to decide which list of objects is the/-- list of components of (obj - an object
 
 Chapter - Static Object Grouping
 
-[This is *untested* in 6M62.]
+[This is *untested* in 6M62 and 10.1.0.]
 
 Use static object grouping translates as (- Constant STATIC_OBJECT_GROUPING; -). 
 
@@ -437,9 +444,11 @@ Large Game Speedup ends here.
 
 Chapter - The Problem
 
-Inform's Standard Rules take some shortcuts which are acceptable for most games, but which become inefficient in very large games. In particular, the "look" action can take several times longer than necessary.
+Inform's Standard Rules take some shortcuts which are acceptable for most games, but which become inefficient in very large games, or games with a lot of nested loops. In particular, the "look" action can take several times longer than necessary.
 
 If your game has less than a hundred things, you probably don't need this extension.  (It won't hurt, though.) The problems we're talking about arise when the game has four or five hundred things defined.
+
+Or if you do a lot of nested loops.  You may need this extension even with 50 things if your code is hitting the loops repeatedly.  For instance, my (Nathanael Nerode's) initial implementation of a clothing system ran a loop over all objects *inside* another loop over all objects, and did so 4 times every turn.  This extension reduces this double loop to looping over the (generally short) list of relevant objects.
 
 (Of course, if you have hundreds of things *in one room*, that will always be slow! And this extension does not address the problem of having big slow "every turn" rules. This is purely about the "look" action, and some related phrases that print lists.)
 
@@ -452,8 +461,6 @@ or
 	repeat through all things:
 
 (Or the Inform 6 equivalents.) The Standard Rules have such code in a few places. This extension removes some (though not all) of these.
-
-You may need this extension even with 50 things if your code is hitting the loops repeatedly.  For instance, my (Nathanael Nerode's) initial implementation of a clothing system ran a loop over all objects *inside* another loop over all objects, and did so 4 times every turn.  This extension reduces this double loop to looping over the (generally short) list of relevant objects.
 
 Chapter - The Solutions
 
@@ -503,7 +510,7 @@ These are used in exactly the same way as the existing Inform 7 phrases:
 
 Section - Static Object Grouping
 
-Static object grouping is UNTESTED in Inform 6M62 and may not work.
+Static object grouping is UNTESTED in Inform 6M62 and 10.1.0 and may not work.
 
 Finally, we define an alternate way to group objects in lists. The Standard Rules recompute object grouping every time a list is printed. But in most games, object groups are fixed -- perhaps the Tarot cards are one group, the Scrabble tiles are another group, and so on. So it's possible to compute this once, when the game begins, and then leave it alone.
 
@@ -525,6 +532,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+Version 6.0.20220521 adapted to Inform v10.
 Version 5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
 Version 5/210325 added more section subdivision and reommitted some unnecessary code when Room Description Control is active.
 Version 5/210324 reverted the changes from 5/210322 as they caused unexpected errors.
@@ -563,7 +571,7 @@ As you see, a lag of nearly two seconds (in the Javascript interpreter) is cut t
 
 	*: "Four Hundred Things"
 
-	Include Large Game Speedup by Andrew Plotkin.
+	Include Large Game Speedup by Nathanael Nerode.
 
 	Use static object grouping.
 
