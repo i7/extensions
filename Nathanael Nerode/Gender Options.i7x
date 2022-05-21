@@ -1,8 +1,8 @@
-Version 4.0.220521 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220522 of Gender Options by Nathanael Nerode begins here.
 
-"More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.0.1."
+"More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
-[We replace very, very specific bits of the standard rules. This is based on Inform v10.0.1]
+[We replace very, very specific bits of the standard rules. This is based on Inform v10.1.0]
 
 Include Standard Rules by Graham Nelson.
 
@@ -22,7 +22,7 @@ A thing can be female.  A thing is usually not female.
 [Ambiguously plural is defined in Basic Inform.  It isn't fully implemented, however.  It allows for "ambiguously plural" nouns like "a pair of shoes".  We need this line but it's in Basic Inform.i7x so we don't need it here:]
 [An object can be ambiguously plural.]
 
-[Beginning of text from original section SR1/11.]
+[Beginning of text from original Section 11.]
 
 The specification of person is "Despite the name, not necessarily
 a human being, but anything animate enough to envisage having a
@@ -31,7 +31,7 @@ conversation with, or bartering with."
 A person has a number called carrying capacity.
 The carrying capacity of a person is usually 100.
 
-[Standard Rules says "A person is always transparent", which is an unreasonable restriction on the story writer.]
+[Standard Rules says "A person is always transparent", which is an unnecessary restriction on the story writer.]
 A person can be transparent.  A person is usually transparent.
 
 The yourself is an undescribed person. The yourself is proper-named.
@@ -79,7 +79,7 @@ giant Venus fly-trap might qualify, but not a patch of lichen."
 
 Section SR2.3.12A  - Inform 6 equivalent for male
 
-[This saves a property since Inform 6 already has an unused male property.  This is actually only *required* for compatibility with Original Parser, which uses the term 'linguistically male' for what has to be the same property.]
+[This saves a property since Inform 6 already has an unused male property.  This is actually only *required* for compatibility with Original Parser, which uses the term 'linguistically male' for what has to be the same property.  Several other properties must also have Inter translations but the ones in Standard Rules will do fine for our purposes.]
 The male property translates into Inter as "male".
 
 Chapter - Yourself Description - Standard
@@ -185,23 +185,27 @@ Section - GetGNABitfield
 
 [This is the primary logic change, allowing male, female, and neuter to be three separate bits, properly.]
 
+[This is harder than it should be because the (+ +) notation completely stopped working in Inform 10.
+Thankfully, we have named I6/Inter attributes for everything (from Definitions.i6t in the BasicInformKit).
+Some of the Inter translations are specified in Standard Rules; "male" is specified earlier in this file.]
+
 Include (-
 [ GetGNABitfield obj g gn;
 	! First calculate three-bit gender field
 	g = 0;
-	if ( obj has (+ neuter +) ) {
+	if ( obj has neuter ) {
 		g = g + 1;	! bit position 0
 		}
-	if ( obj has (+ female +) ) {
+	if ( obj has female ) {
 		g = g + 2;	! bit position 1
 		}
-	if ( obj has (+ male +) ) {
+	if ( obj has male ) {
 		g = g + 4;	! bit position 2
 		}
 	gn = 0;
-	if ( obj has (+ ambiguously plural +) ) {
+	if ( obj has ambigpluralname  ) {
 		gn = g * 9;	 ! plural in low significant digits, plus singular shifted three to the left
-	} else if ( obj has (+ plural-named +) ) {
+	} else if ( obj has pluralname ) {
 		gn = gn + g;	! plural is in low significant digits
 	} else {	! obj is singular-named
 		gn = gn + g * 8;	! singular is shifted 3 to the left
@@ -281,29 +285,29 @@ The acronyms stand for:
 "Male", "Female", or "Neuter"
 ]
 To decide what word usage is
-	the empty bitfield: 	(- $$000000000000 -).
+	the empty bitfield:	(- $$000000000000 -).
 To decide what word usage is 
-	_a_s_m: 	(- $$100000000000 -).
+	_a_s_m: (- $$100000000000 -).
 To decide what word usage is
-	 _a_s_f: 	(- $$010000000000 -).
+	_a_s_f: (- $$010000000000 -).
 To decide what word usage is
- 	_a_s_n: 	(- $$001000000000 -).
+	_a_s_n: (- $$001000000000 -).
 To decide what word usage is 
-	_a_p_m: 	(- $$000100000000 -).
+	_a_p_m: (- $$000100000000 -).
 To decide what word usage is 
-	_a_p_f: 	(- $$000010000000 -).
+	_a_p_f: (- $$000010000000 -).
 To decide what word usage is 
-	_a_p_n: 	(- $$000001000000 -).
+	_a_p_n: (- $$000001000000 -).
 To decide what word usage is 
 	_i_s_m:	(- $$000000100000 -).
 To decide what word usage is 
 	_i_s_f:	(- $$000000010000 -).
 To decide what word usage is 
-	_i_s_n: 	(- $$000000001000 -).
+	_i_s_n: (- $$000000001000 -).
 To decide what word usage is 
-	_i_p_m: 	(- $$000000000100 -).
+	_i_p_m: (- $$000000000100 -).
 To decide what word usage is 
-	_i_p_f: 	(- $$000000000010 -).
+	_i_p_f: (- $$000000000010 -).
 To decide what word usage is 
 	_i_p_n:	(- $$000000000001 -).
 
@@ -861,11 +865,11 @@ This is usually desirable.
 
 Section 4 - Unsetting pronouns
 
-By default, if you are changing the gender of characters, it doesn't change any pronoun referents already set by the player.  So if "him" is currently referring to Ned, and Ned stops being male, "him" will continue to refer to Ned until the player looks at another male character.  Under some circumstances, this satisfies "principle of least surprise" -- but under others it doesn't.  If you want to make sure that Ned can not be referenced as him:
+By default, if you are changing the gender of characters, it doesn't change any pronoun referents already set by the player.  So if "him" is currently referring to Alex, and Alex stops being male, "him" will continue to refer to Alex until the player looks at another male character.  Under some circumstances, this satisfies "principle of least surprise" -- but under others it doesn't.  If you want to make sure that Alex can not be referenced as him:
 
-	unset pronouns from Ned
+	unset pronouns from Alex
 
-Section 4 - Gender in output messages
+Section 5 - Gender in output messages
 
 Gender and number is used for a second purpose other than recognizing pronouns in the English Language extension, and we must fix this up too.
 It shows up in message substitutions such as [those].
@@ -893,7 +897,7 @@ This is all implemented with the following decide phrase.  If you don't like the
 
 	To decide which grammatical gender is the printing gender for (o - an object):
 
-Section 5 - Number in output messages
+Section 6 - Number in output messages
 
 Ambiguously plural items (like "pair of shoes") will be treated as plural or singular by output messages depending on whether they are "plural-named" or "singular-named"  This is standard behavior.  This does not affect the ability to refer to them by pronouns (you can always use both "they" and the singular pronouns for their gender).
 
@@ -901,7 +905,7 @@ The plural-named property is also used for the items like "the trees" which are 
 
 Please note that for a thing which is ambiguously plural but singular-named, such as "pair of dice", the substitution "[they're]" will produce "that's", while "[they]['re]" will produce "it's".  Choose wisely!
 
-Section 6 - Printing differences from standard behavior
+Section 7 - Printing differences from standard behavior
 
 For reference, this is the procedure currently used in the Standard Rules as of the time of writing:
 
@@ -916,7 +920,7 @@ For reference, this is the procedure currently used in the Standard Rules as of 
 	Otherwise, if person is neuter, neuter form ("it") is used.
 	Otherwise, male form ("him") is used.
 
-In contrast, this is the procedure in Emily Short's Plurality:
+In contrast, this was the procedure in Emily Short's Plurality:
 
 	If the thing/person is plural, plural form ("they") is used.
 	Otherwise, if the thing/person is the player, "you" is used.
@@ -926,7 +930,14 @@ In contrast, this is the procedure in Emily Short's Plurality:
 
 Changing the gender model causes these to be two different procedures, which is why I wrote an entirely new and more versatile procedure.
 
-Section 7 - Interaction with Other Extensions
+Section 8 - Miscellaneous Changes
+
+In Standard Rules, a person is always transparent -- their contents can be seen and interacted with.
+This is perfectly reasonable as a baseline but can be restrictive for some story authors, so instead,
+with this extension, a person is usually transparent.  Which changes nothing unless you as the story
+author decide to create a non-transparent person.
+
+Section 9 - Interaction with Other Extensions
 
 Gender Options replaces parts of Standard Rules by Graham Nelson and should be included after it.
 Gender Options replaces most of English Language by Graham Nelson and should be included after it.
@@ -934,7 +945,7 @@ Gender Options replaces most of English Language by Graham Nelson and should be 
 Gender Options is compatible with Neutral Standard Responses by Nathanael Nerode.
 Gender Options is incompatible with Neutral Library Messages by Aaron Reed, which predates the "responses" system.  Neutral Standard Responses is intended as a replacement.
 
-Gender Options includes fixes for the gender handling in Original Parser by Ron Newcomb.  However, Original Parser is broken on the current version of Inform, so don't use it.  As a result this is untested and Gender Options probably doesn't work as well with Original Parser as it does with the standard parser.
+Gender Options includes fixes for the gender handling in Original Parser by Ron Newcomb.  However, Original Parser is broken on the current version of Inform, so don't use it.  As a result this is untested and Gender Options probably doesn't work as well with Original Parser as it does with the standard parser.  I have retained this code in hopes of reviving Original Parser some day.
 
 Gender Options is compatible with Plurality by Emily Short in that it is safe to include both.  But they will probably not interact well due to conflicting gender assumptions.  Plurality is largely obsolete due to incorporation of most of its features in the Standard Rules as of Inform 6M62; please use the Standard Rules features in preference to the features in Plurality.
 
@@ -942,7 +953,7 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
-Version 4.0.220521  - Update for Inform v10.0.1, which restructured Standard Rules and moved the I6T code around too.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.
+Version 4.0.220521  - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.  Many whitespace fixes.  New example game.  Make opaque persons possible.  Apply my Style Guide principles -- don't number the headings!
 Version 3/210331 - Fix example / testsuite.
 Version 3/170818 - Small documentation and comment tweaks.
 Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Moved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
@@ -954,13 +965,14 @@ This consists of a room with items featuring most of the combinations of gender 
 
 	*: "Everyone Comes To City Park" by Nathanael Nerode
 	
-	The release number is 3. [Third released version of this test suite]
+	The release number is 4. [Third released version of this test suite]
 	Include Gender Options by Nathanael Nerode.
 	City Park is a room.
 	The description of City Park is "Everyone comes to City Park!"
 	
 	The shadow is a person in the park.  "Someone skulks in the shadow."
 	Understand "skulker" as the shadow.
+	Understand "someone" as the shadow.
 	The description of the shadow is "[We] [can't get] a good look at [regarding the shadow][them]."
 	The shadow is neuter.
 	
@@ -1083,7 +1095,7 @@ Example: ** It for All
 
 Some authors have requested that "it" apply to anything, plural or singular, of any gender, for the convenience of their players.
 
-	"It for All"
+	*: "It for All"
 	
 	Include Gender Options by Nathanael Nerode.
 	
@@ -1102,3 +1114,54 @@ Some authors have requested that "it" apply to anything, plural or singular, of 
 	The description of the observer is "[Regarding the observer][They] [watch] the soldiers."
 	
 	test pronouns with "x soldiers / pronouns / x observer / pronouns".
+
+Example: * No0neman's Test
+
+No0neman wanted to make sure that Alex would no longer be able to be referred to by the old gender, not even for a little while.
+
+	*: "No0neman's Test"
+
+	Include Gender Options by Nathanael Nerode.
+
+	The starting room is a room.
+
+	The player is in the starting room. The player is not female. The player is not neuter.
+
+	Alex is a person. Alex is not male. Alex is not female.
+
+	Alex is in the starting room.
+
+	Feminizing is an action applying to one thing.
+
+	Masculinizing is an action applying to one thing.
+
+	Neuterizing is an action applying to one thing.
+
+	Understand "feminize [person]" as feminizing.
+
+	Understand "masculinize [person]" as masculinizing.
+
+	Understand "neuter [person]" as neuterizing.
+
+	Carry out feminizing:
+		now the noun is not neuter;
+		now the noun is not male;
+		now the noun is female;
+		set pronouns from the noun;
+		unset pronouns from the noun;
+
+	Carry out masculinizing:
+		now the noun is not neuter;
+		now the noun is not female;
+		now the noun is male;
+		set pronouns from the noun;
+		unset pronouns from the noun;
+
+	Carry out neuterizing:
+		now the noun is neuter;
+		now the noun is not female;
+		now the noun is not male;
+		set pronouns from the noun;
+		unset pronouns from the noun;
+
+	test unsetting with "masculinize alex / x him / x her / feminize alex / x him / x her"
