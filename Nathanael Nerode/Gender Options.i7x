@@ -1,26 +1,26 @@
-Version 3/210331 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220521 of Gender Options by Nathanael Nerode begins here.
 
-"More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform 6M62."
+"More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.0.1."
 
-[We replace very, very specific bits of the standard rules. This is based on 2/090402.]
+[We replace very, very specific bits of the standard rules. This is based on Inform v10.0.1]
 
 Include Standard Rules by Graham Nelson.
 
-Volume 1 - Enhanced Gender and Number Model
+Volume - Enhanced Gender and Number Model
 
 [Make male, female, and neuter independent.]
 
-Chapter 1 - Replace Standard Rules Elements Always
+Chapter - Replace Standard Rules Elements Always
 
-Section SR1/11 - People and things with gender (in place of Section SR1/11 - People in Standard Rules by Graham Nelson)
+Section 11 - People and things with gender (in place of Section 11 - People in Standard Rules by Graham Nelson)
 
 [These must overrride all other definitions.]
 A thing can be neuter.  A thing is usually neuter.
 A thing can be male.  A thing is usually not male.
 A thing can be female.  A thing is usually not female.
 
-[Ambiguously plural is defined in Standard Rules.  It isn't fully implemented, however.  It allows for "ambiguously plural" nouns like "a pair of shoes".  This line already exists in SR1/1 and is essentially redundant, but we need it, so restate it in case Standard Rules moves it or something.]
-An object can be ambiguously plural.
+[Ambiguously plural is defined in Basic Inform.  It isn't fully implemented, however.  It allows for "ambiguously plural" nouns like "a pair of shoes".  We need this line but it's in Basic Inform.i7x so we don't need it here:]
+[An object can be ambiguously plural.]
 
 [Beginning of text from original section SR1/11.]
 
@@ -28,24 +28,22 @@ The specification of person is "Despite the name, not necessarily
 a human being, but anything animate enough to envisage having a
 conversation with, or bartering with."
 
-Include (-
-	has transparent animate
-	with before NULL,
--) when defining a person.
-
 A person has a number called carrying capacity.
 The carrying capacity of a person is usually 100.
 
+[Standard Rules says "A person is always transparent", which is an unreasonable restriction on the story writer.]
+A person can be transparent.  A person is usually transparent.
+
 The yourself is an undescribed person. The yourself is proper-named.
 
-The yourself object translates into I6 as "selfobj".
-Include (-
-	with saved_short_name "yourself",
- -) when defining yourself.
+The yourself is privately-named.
+Understand "your former self" or "my former self" or "former self" or "former" as yourself when the player is not yourself.
 
-Section SR1/11 C - Assumptions about people
+The yourself object translates into Inter as "selfobj".
 
-[This section is separated out in case someone wants to replace it.]
+Section SR2.3.11A - Assumptions about people
+
+[This section is separated out in case someone wants to replace it.  Sadly, Section is the smallest heading, so we can't embed this into the existing structure]
 
 A person is usually not neuter.
 
@@ -53,7 +51,7 @@ A person is usually female.
 A person is usually male.
 [* This is less weird than it appears.  If you make a generic, unnamed person, the player can refer to said person as "him" or "her", interchangably.]
 
-Section SR1/12 - Animals, men and women revised (in place of Section SR1/12 - Animals, men and women in Standard Rules by Graham Nelson)
+Section 12 - Animals, men and women revised (in place of Section 12 - Animals, men and women in Standard Rules by Graham Nelson)
 
 The plural of man is men. The plural of woman is women.
 
@@ -79,35 +77,35 @@ The specification of animal is "Represents an animal, or at any rate a
 non-human living creature reasonably large and possible to interact with: a
 giant Venus fly-trap might qualify, but not a patch of lichen."
 
-Section SR1/16 A - Inform 6 equivalent for male
+Section SR2.3.12A  - Inform 6 equivalent for male
 
 [This saves a property since Inform 6 already has an unused male property.  This is actually only *required* for compatibility with Original Parser, which uses the term 'linguistically male' for what has to be the same property.]
-The male property translates into I6 as "male".
+The male property translates into Inter as "male".
 
-Chapter 2A - Yourself Description - Standard
+Chapter - Yourself Description - Standard
 
-Section SR1/11 A - Yourself Description 
+Section SR2.3.11B - Yourself Description 
 
 [ this is (for use without Neutral Standard Responses by Nathanael Nerode) ]
 
 The description of yourself is usually "As good-looking as ever."
 
-Chapter 2B - Yourself Description (for use with Neutral Standard Responses by Nathanael Nerode)
+Chapter - Yourself Description (for use with Neutral Standard Responses by Nathanael Nerode)
 
 [We do it this way so that we can handle other extensions which interfere with the same text in the same way.  Which is likely.]
 
-Section SR1/11 A - Deleted Yourself Description (in place of Section SR1/11 A - Yourself Description in Gender Options by Nathanael Nerode)
+Section SR2.3.11B - Deleted Yourself Description (in place of Section SR2.3.11B - Yourself Description in Gender Options by Nathanael Nerode)
 
 dummy_variable_1234567890 is a truth state that varies.
-[* We don't need to give a description, because Neutral Standard Responses does.  Unfortunately, there must be something, not a commment, in every section or bug 0001841 causes a compiler crash.  This is the smallest possible dummy we can create, occupying between 1 bit and 1 byte.]
+[* We don't need to give a description, because Neutral Standard Responses does.  Unfortunately, there must be something, not a comment, in every section or bug 0001841 causes a compiler crash.  This is the smallest possible dummy we can create, occupying between 1 bit and 1 byte.]
 
-Volume 2 - Parser Modifications for Pronoun Handling
+Volume - Parser Modifications for Pronoun Handling
 
 [Make pronouns behave properly.]
 
-Part 1 - Universal Fix
+Part - Universal Fix
 
-Chapter 1 - Fix Pronoun Bitmask Table
+Chapter - Fix Pronoun Bitmask Table
 
 [Aw heck.  After all that work below it turns out there's a conceptual error in the bitmask table --
 it thinks all inanimate objects are neuter.  Drop down to I6 and fix it.  There may be a cleaner
@@ -132,11 +130,11 @@ Array LanguagePronouns table
     'her'     $$010000010000                    NULL
     'them'    $$000111000111                    NULL;
 
--) instead of "Pronouns" in "Language.i6t".
+-) replacing "LanguagePronouns".
 
-Part 2A - Core i6 Parser Fix (for use without Original Parser by Ron Newcomb)
+Part - Core i6 Parser Fix (for use without Original Parser by Ron Newcomb)
 
-Chapter 1 - Revisions Not Made
+Chapter - Revisions Not Made
 
 [Oddly, it turns out we don't need to alter the Gender section of the parser, which defines GetGender and GetGNAOfObject.
 
@@ -164,23 +162,16 @@ To work with foreign languages which have gendered plurals, it would be necessar
 Summary: new code should not use GetGender or GetGNAOfObject, but we don't need to edit the old code.
 ]
 
-Chapter 2 - Pronoun Handling Revised
+Chapter - Pronoun Handling Revised
 
-[Most of this is the same as in the original.  
-However, PronounNotice is different, and GetGNABitfield is new.
+[The change to PronounNotice should actually work for all languages and new pronouns;
+but a new language or new pronouns would require a different GetGNABitfield implementation. ]
 
-The change to PronounNotice should actually work for all languages and new pronouns;
-but a new language would require a different GetGNABitfield implementation.
+Section - SetProunoun bugfix
 
-FWIW, ResetVagueWords and PronounNoticeHeldObjects are obsolete.
-SetPronoun is also obsolete, but we fix its runtime error number anyway.]
+[ SetPronoun is obsolete but we fix its runtime error number anyway, since it should be fixed ]
 
 Include (-
-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Gender Options replacement for Parser.i6t: Pronoun Handling
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
 [ SetPronoun dword value x;
     for (x=1 : x<=LanguagePronouns-->0 : x=x+3)
         if (LanguagePronouns-->x == dword) {
@@ -188,16 +179,13 @@ Include (-
         }
     RunTimeError(12);
 ];
+-) replacing "SetPronoun".
 
-[ PronounValue dword x;
-    for (x=1 : x<=LanguagePronouns-->0 : x=x+3)
-        if (LanguagePronouns-->x == dword)
-            return LanguagePronouns-->(x+2);
-    return 0;
-];
+Section - GetGNABitfield
 
-[ ResetVagueWords obj; PronounNotice(obj); ];
+[This is the primary logic change, allowing male, female, and neuter to be three separate bits, properly.]
 
+Include (-
 [ GetGNABitfield obj g gn;
 	! First calculate three-bit gender field
 	g = 0;
@@ -223,30 +211,46 @@ Include (-
 		}
 	return gn;	! shift 0
 ];
+-)
 
+Section - PronounNotice
+
+[Replace GetGNAOfObject call with GetGNABitfield call.  This is the main hook.]
+
+Include (-
 [ PronounNotice obj x bm;
     if (obj == player) return;
 
-	bm = GetGNABitfield(obj);  ! This is the change made by Gender Options by Nathanael Nerode.
+    bm = GetGNABitfield(obj);  ! This is the change made by Gender Options by Nathanael Nerode.
 
     for (x=1 : x<=LanguagePronouns-->0 : x=x+3)
         if (bm & (LanguagePronouns-->(x+1)) ~= 0)
             LanguagePronouns-->(x+2) = obj;
 ];
+-) replacing "PronounNotice".
 
-[ PronounNoticeHeldObjects x;
-#IFNDEF MANUAL_PRONOUNS;
-  objectloop(x in player) PronounNotice(x);
-#ENDIF;
-  x = 0; ! To prevent a "not used" error
-  rfalse;
+Section - Unset pronouns from
+
+[Per default, if you are changing the gender of characters, it doesn't change any pronoun referents already set.  So if "him" is referring to Ned, and Ned stops being male, "him" will continue to refer to Ned until the player looks at another male character.  Under some circumstances, this satisfies "principle of least surprise" -- but under others it doesn't.  If you want to make sure that Ned is no longer referred to as him, "unset pronouns from Ned". ]
+
+Include (-
+[ PronounUnNotice obj x bm;
+    if (obj == player) return;
+
+    bm = GetGNABitfield(obj);
+    for (x=1 : x < (LanguagePronouns-->0 - 2) : x=x+3)
+        if ((bm & (LanguagePronouns-->(x+1)) == 0) && (LanguagePronouns-->(x+2) == obj))
+            LanguagePronouns-->(x+2) = NULL;
 ];
+-)
 
--) instead of "Pronoun Handling" in "Parser.i6t".
+to unset pronouns from (O - an object):
+	(- PronounUnNotice({O}); -)
 
-Part 2B - Original Parser Fix (for use with Original Parser by Ron Newcomb)
 
-Chapter 1 - Pronoun Handling Revised ( in place of Chapter - Pronoun Handling in Original Parser by Ron Newcomb )
+Part - Original Parser Fix (for use with Original Parser by Ron Newcomb)
+
+Chapter - Pronoun Handling Revised ( in place of Chapter - Pronoun Handling in Original Parser by Ron Newcomb )
 
 [Most of this is the same as in the original.  However, "To decide which word usage is the gender-animation usages for " is *completely* different.]
 
@@ -347,7 +351,7 @@ To set pronouns from (obj - an object) (this is PronounNotice):
 		if the gender-animation element includes any of the gender-animation usages for the obj:
 			now chosen antecedent element is obj.
 
-Chapter 2 - English Pronoun Names For I7
+Chapter - English Pronoun Names For I7
 
 [This allows statements like "now 'he' is Alan".  Poorly tested.]
 
@@ -356,7 +360,7 @@ To decide what understood word is 'she': (- 'she' -).
 To decide what understood word is 'it': (- 'it' -).
 To decide what understood word is 'them': (- 'them' -).
 
-Volume 3 - English Language (for use with English Language by Graham Nelson)
+Volume - English Language (for use with English Language by Graham Nelson)
 
 [It proved necessary to replace practically the entire extension. Modal verbs and contractions and Grammatical definitions are unchanged.]
 
@@ -773,7 +777,7 @@ To say Possessive:
 	otherwise:
 		say "[The item][apostrophe]s".
 
-Volume 5 - Compatibility with Plurality (for use with Plurality by Emily Short)
+Volume - Compatibility with Plurality (for use with Plurality by Emily Short)
 
 Section - Deleted (in place of Section 4 - Enumeration in Plurality by Emily Short)
 
@@ -855,6 +859,12 @@ Similarly, if you make an animal female, the player can refer to the animal as b
 	
 This is usually desirable.
 
+Section 4 - Unsetting pronouns
+
+By default, if you are changing the gender of characters, it doesn't change any pronoun referents already set by the player.  So if "him" is currently referring to Ned, and Ned stops being male, "him" will continue to refer to Ned until the player looks at another male character.  Under some circumstances, this satisfies "principle of least surprise" -- but under others it doesn't.  If you want to make sure that Ned can not be referenced as him:
+
+	unset pronouns from Ned
+
 Section 4 - Gender in output messages
 
 Gender and number is used for a second purpose other than recognizing pronouns in the English Language extension, and we must fix this up too.
@@ -922,7 +932,7 @@ Gender Options replaces parts of Standard Rules by Graham Nelson and should be i
 Gender Options replaces most of English Language by Graham Nelson and should be included after it.
 
 Gender Options is compatible with Neutral Standard Responses by Nathanael Nerode.
-Gender Options is incompatible with Neutral Library Messages by Aaron Reed, which predates the "reponses" system.  Neutral Standard Responses is intended as a replacement.
+Gender Options is incompatible with Neutral Library Messages by Aaron Reed, which predates the "responses" system.  Neutral Standard Responses is intended as a replacement.
 
 Gender Options includes fixes for the gender handling in Original Parser by Ron Newcomb.  However, Original Parser is broken on the current version of Inform, so don't use it.  As a result this is untested and Gender Options probably doesn't work as well with Original Parser as it does with the standard parser.
 
@@ -932,9 +942,10 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
+Version 4.0.220521  - Update for Inform v10.0.1, which restructured Standard Rules and moved the I6T code around too.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.
 Version 3/210331 - Fix example / testsuite.
 Version 3/170818 - Small documentation and comment tweaks.
-Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Mboved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
+Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Moved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
 Version 2/170815 - First public release for gamma testing.
 
 Example: * City Park 
