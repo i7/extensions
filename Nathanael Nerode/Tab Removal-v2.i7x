@@ -1,4 +1,4 @@
-Version 2.0.220520 of Tab Removal by Nathanael Nerode begins here.
+Version 2.0.220522 of Tab Removal by Nathanael Nerode begins here.
 
 Use authorial modesty.
 
@@ -104,9 +104,10 @@ Accordingly, I recommend that everyone use this extension at all times for all g
 
 The Z-machine implementation is pretty clean and should continue to work in all versions.
 
-The Glulx implementation has been tested with Inform v10.0.1, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
+The Glulx implementation has been tested with Inform v10.1.0, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
 
 Changelog:
+	2.0.220522: Docs typo fix.
 	2.0.220520: Adapt to Inform 7 v10, by changing the method of replacing I6 code.
               Minor documentation updates.  Use authorial modesty on this one.
 	1/210314: Change short description.
