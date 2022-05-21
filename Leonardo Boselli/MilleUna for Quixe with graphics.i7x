@@ -1,4 +1,4 @@
-MilleUna for Quixe with graphics by Leonardo Boselli begins here.
+Version 1 of MilleUna for Quixe with graphics by Leonardo Boselli begins here.
 
 "Release for web with the Quixe interpreter."
 

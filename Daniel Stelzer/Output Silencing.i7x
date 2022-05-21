@@ -1,4 +1,4 @@
-Output Silencing by Daniel Stelzer begins here.
+Version 1 of Output Silencing by Daniel Stelzer begins here.
 
 Volume I - Z-machine version (for Z-machine only)
 

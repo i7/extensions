@@ -1,4 +1,4 @@
-Serial And Fix by Andrew Plotkin begins here.
+Version 1 of Serial And Fix by Andrew Plotkin begins here.
 
 "Allows commands of the form GET X, Y, AND Z to be parsed."
 

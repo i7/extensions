@@ -1,4 +1,4 @@
-Modified Timekeeping by Daniel Stelzer begins here.
+Version 1 of Modified Timekeeping by Daniel Stelzer begins here.
 
 "Changes the one-minute-per-turn rule to account for failed and implicit actions."
 

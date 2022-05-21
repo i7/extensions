@@ -1,4 +1,4 @@
-Helpful Functions by Daniel Stelzer begins here.
+Version 1 of Helpful Functions by Daniel Stelzer begins here.
 
 "A set of functions I have often found useful, with checks to prevent conflicts with extensions."
 

@@ -1,4 +1,4 @@
-Third Noun by Daniel Stelzer begins here.
+Version 1 of Third Noun by Daniel Stelzer begins here.
 
 The third noun is an object that varies. The third noun variable translates into I6 as "third".
 

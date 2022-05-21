@@ -1,4 +1,4 @@
-MilleUna for Gargoyle by Leonardo Boselli begins here.
+Version 1 of MilleUna for Gargoyle by Leonardo Boselli begins here.
 
 Use authorial modesty.
 

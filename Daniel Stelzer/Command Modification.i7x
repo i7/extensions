@@ -1,4 +1,4 @@
-Command Modification by Daniel Stelzer begins here.
+Version 1 of Command Modification by Daniel Stelzer begins here.
 
 Include Typographical Conveniences by Daniel Stelzer.
 

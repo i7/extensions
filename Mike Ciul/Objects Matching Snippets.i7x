@@ -1,4 +1,4 @@
-Objects Matching Snippets by Mike Ciul begins here.
+Version 1 of Objects Matching Snippets by Mike Ciul begins here.
 
 Section - The Item to Match
 

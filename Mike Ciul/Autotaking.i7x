@@ -1,4 +1,4 @@
-Autotaking by Mike Ciul begins here.
+Version 1 of Autotaking by Mike Ciul begins here.
 
 "Implicit taking of noun or second noun that may be invoked by (or used as) a check rule."
 

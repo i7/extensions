@@ -1,4 +1,4 @@
-Actions on Groups by Matt Weiner begins here.
+Version 1 of Actions on Groups by Matt Weiner begins here.
 
 Section 1 - The Multiple Actions Flag
 

@@ -1,4 +1,4 @@
-Version 13/140501 of Small Kindnesses by Aaron Reed begins here.
+Version 13.2 of Small Kindnesses by Aaron Reed begins here.
 
 "Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve."
 

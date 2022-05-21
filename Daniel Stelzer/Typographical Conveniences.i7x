@@ -1,4 +1,4 @@
-Typographical Conveniences by Daniel Stelzer begins here.
+Version 1 of Typographical Conveniences by Daniel Stelzer begins here.
 
 Include Unicode Interrogation by Michael Martin.
 

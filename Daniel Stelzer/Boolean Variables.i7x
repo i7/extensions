@@ -1,4 +1,4 @@
-Boolean Variables by Daniel Stelzer begins here.
+Version 1 of Boolean Variables by Daniel Stelzer begins here.
 
 A boolean option is a kind of thing. A boolean option can be active or inactive. A boolean option is usually inactive.
 

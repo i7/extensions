@@ -1,4 +1,4 @@
-Release for Quixe by Leonardo Boselli begins here.
+Version 1 of Release for Quixe by Leonardo Boselli begins here.
 
 Use authorial modesty.
 

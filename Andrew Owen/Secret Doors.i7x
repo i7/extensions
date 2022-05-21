@@ -1,4 +1,4 @@
-Secret Doors by Andrew Owen begins here.
+Version 1 of Secret Doors by Andrew Owen begins here.
 
 "Doors and switches that cannot be acted upon until they are discovered."
 

@@ -1,4 +1,4 @@
-Cleared Events by Daniel Stelzer begins here.
+Version 1 of Cleared Events by Daniel Stelzer begins here.
 
 Include (-
 [ ClearTimedEvent rule i b;

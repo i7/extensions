@@ -1,4 +1,4 @@
-Glulx Text Styles (for Glulx only) by Daniel Stelzer begins here.
+Version 1 of Glulx Text Styles (for Glulx only) by Daniel Stelzer begins here.
 
 "Glulx Text Styles provides a more powerful way to set up special text effects for Glulx."
 

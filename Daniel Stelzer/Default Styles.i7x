@@ -1,4 +1,4 @@
-Default Styles by Daniel Stelzer begins here.
+Version 1 of Default Styles by Daniel Stelzer begins here.
 
 "Initializes and repurposes the unused Glulx text styles to provide more flexibility in formatting."
 

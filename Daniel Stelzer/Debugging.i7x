@@ -1,4 +1,4 @@
-Debugging by Daniel Stelzer begins here.
+Version 1 of Debugging by Daniel Stelzer begins here.
 
 Include Boolean Variables by Daniel Stelzer.
 
