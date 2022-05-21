@@ -3,11 +3,11 @@ The Friends of Inform 7 extensions (for v9.3 / 6M62)
 
 This [git branch](https://www.atlassian.com/git/tutorials/using-branches) of the Friends of I7 Extensions is particular to Inform 7 version 9.3 (aka 6M62). The extensions here are believed to work in 9.3 (or, at a minimum to compile). Per the [LICENSE](./LICENSE] they are shared with no implied warranty of fitness for a particular purpose.
 
-- If you are using Inform 7 v10 (the latest release, from 2022) see the [Friends of I7 Extensions v10 branch](https://github.com/i7/extensions/10.1)
-- If you would like to see a larger collection of extensions that may not identify which version of I7 they're for and may be a draft that never worked in any version, see the [Friends of I7 miscellaneous branch](https://github.com/extensions/master)
+- If you are using Inform 7 v10 (the latest release, from 2022) see the [Friends of I7 Extensions v10 branch](https://github.com/i7/extensions/tree/10.1)
+- If you would like to see a larger collection of extensions that may not identify which version of I7 they're for and may be a draft that never worked in any version, see the [Friends of I7 miscellaneous branch](https://github.com/extensions/tree/master)
 - If you're looking for old extensions, most of which were for version 8.5 / 6G60 and would not work in any subsequent version, see the [Friends of I7 Extension archive](https://github.com/i7/archive)
 
-If you would access to the repository to add your own extensions, please ask here: http://www.intfiction.org/forum/viewtopic.php?f=7&t=5229
+If you would access to the repository to add your own extensions, please ask at the [intfiction.org forums Friends of I7 Github repo thread]https://intfiction.org/t/friends-of-i7-github/4103)
 
 If you find a bug in any of these extensions, or indeed in any Inform 7 extension at all, please make a new issue and we may be able to help. The purpose of the group is that we can all work together to maintain and develop these extensions. Sharing the load will make it easier on us all, while experienced programmers can help those just starting out.
 
