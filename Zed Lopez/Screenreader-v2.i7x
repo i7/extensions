@@ -1,7 +1,7 @@
 Version 2 of Screenreader by Zed Lopez begins here.
 
 "On startup, asks user 'Are you using a screenreader?' and sets
- a global that can subsequently be tested. For 6M62."
+ a global that can subsequently be tested."
 
 Use authorial modesty.
 

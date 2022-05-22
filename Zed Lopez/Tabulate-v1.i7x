@@ -1,7 +1,7 @@
 Version 1.3 of Tabulate by Zed Lopez begins here.
 
 "Provides a phrase to go from a text to a table name, and a not-for-release
-tabulate action to show the contents of a table. For 6M62."
+tabulate action to show the contents of a table."
 
 Use authorial modesty.
 

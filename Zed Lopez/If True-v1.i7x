@@ -2,7 +2,7 @@ Version 1.3 of If True by Zed Lopez begins here.
 
 "Allow if/unless and while to accept plain truth states instead of
 a full conditional. If Strange Loopiness is included, extend that
-to until loops. For 6M62."
+to until loops."
 
 Part if/unless with truth states
 
