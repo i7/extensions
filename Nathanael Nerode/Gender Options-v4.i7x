@@ -1,4 +1,4 @@
-Version 4.0.220522 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220523 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
@@ -96,8 +96,9 @@ Chapter - Yourself Description (for use with Neutral Standard Responses by Natha
 
 Section SR2.3.11B - Deleted Yourself Description (in place of Section SR2.3.11B - Yourself Description in Gender Options by Nathanael Nerode)
 
-dummy_variable_1234567890 is a truth state that varies.
-[* We don't need to give a description, because Neutral Standard Responses does.  Unfortunately, there must be something, not a comment, in every section or bug 0001841 causes a compiler crash.  This is the smallest possible dummy we can create, occupying between 1 bit and 1 byte.]
+[ We don't need to give a description, because Neutral Standard Responses does. ]
+[ In Inform version 6M62 (9.3) and earlier, there must be something, not a comment, in every section or bug 0001841 causes a compiler crash.  This is the smallest possible dummy we can create, occupying between 1 bit and 1 byte.  this is unnecessary in Inform v10.]
+[ dummy_variable_1234567890 is a truth state that varies. ]
 
 Volume - Parser Modifications for Pronoun Handling
 
@@ -953,7 +954,8 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
-Version 4.0.220521  - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.  Many whitespace fixes.  New example game.  Make opaque persons possible.  Apply my Style Guide principles -- don't number the headings!
+Version 4.0.220523 - Eliminate now-unnecessary dummy variable.
+Version 4.0.220521 - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.  Many whitespace fixes.  New example game.  Make opaque persons possible.  Apply my Style Guide principles -- don't number the headings!
 Version 3/210331 - Fix example / testsuite.
 Version 3/170818 - Small documentation and comment tweaks.
 Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Moved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.

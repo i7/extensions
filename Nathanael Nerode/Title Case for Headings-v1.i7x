@@ -1,4 +1,4 @@
-Version 1.2.220521 of Title Case for Headings by Nathanael Nerode begins here.
+Version 1.2.220522 of Title Case for Headings by Nathanael Nerode begins here.
 
 "Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 10.1.0.  Requires Undo Output Control by Erik Temple or by Nathanael Nerode to handle the case of room name printing after UNDO."
 
@@ -112,8 +112,8 @@ Part - second implementation check (for use without Undo Output Control by Natha
 
 Section 5 - No Undo Fix (in place of Section 5 - Undo Fix in Title Case for Headings by Nathanael Nerode)
 
-[required to avoid compilation error]
-dummy_variable_97538642 is a truth state which varies.
+[required to avoid compilation error in 6M62 -- not needed in Inform v10 !  Yay!]
+[ dummy_variable_97538642 is a truth state which varies. ]
 
 
 Title Case for Headings ends here.
@@ -187,6 +187,15 @@ There is one annoying corner case.  When "undo" is successfully executed, the ro
 The newest version of Undo Output Control is on the "Friends of I7" extension page on Github.  I updated it specifically so that I could fix this bug.
 If you have trouble including Undo Output Control, you may just be willing to live with the bug.
 
+Section 5 - Changelog
+
+Version 1.2.220522: Example bugfix, remove unnecessary dummy variable, add Changelog
+Version 1.2.220521: Proper update to Inform v10
+Version 1.2: Partial update to Inform v10
+Version 1/170902: Version for inform 6M62
+
+Section 6 - Examples
+
 Example: * Meadow - The title is Meadow, the name is meadow
 
 The title in the status line and room description will be "Meadow".
@@ -251,8 +260,8 @@ names manually.
 	Instead of going to Pond-Center, say "[We]['re] not dressed for swimming."
 
 	After deciding the scope of an object (called character):
-	if the location of the character is a pond room:
-		Place Pond-Center in scope, but not its contents.
+		if the location of the character is a pond room:
+			Place Pond-Center in scope, but not its contents.
 
 	Pond-N, Pond-S, Pond-E, and Pond-W are pond rooms.
 	The title of Pond-N is "North of the Pond".
