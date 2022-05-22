@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:Nathanael Nerode/Nathanael's Cookbook.i7x
 Version 5/220520 of Nathanael's Cookbook by Nathanael Nerode begins here.
+========
+Version 6.0.220522 of Nathanael's Cookbook by Nathanael Nerode begins here.
+>>>>>>>> dcae7f0 (Nathanael Nerode's extensions: Fix version number SNAFU):Nathanael Nerode/Nathanael's Cookbook-v6.i7x
 
 "This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -101,6 +105,14 @@ and have one special rule which runs last and does not have that line -- this ru
 (1) Make sure there *isn't* a paragraph break.
 (2) Make sure there *is* a line break.
 (3) You can get a single line break from a paragraph break without a line break, but this is undesirable and always a bug.
+
+Section - Changelog
+
+	6.0.220522: First version for Inform 10.1.  Increment major version to deal with a version number SNAFU.
+
+Section - The Cookbook Proper
+
+Here is the main Cookbook.
 
 Example: * Line Breaks - Understand when Inform implicitly emits line breaks
 
