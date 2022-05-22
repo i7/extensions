@@ -1,8 +1,7 @@
 Version 4 of Inquiry by Zed Lopez begins here.
 
 "A framework for defining Y/N, multiple choice, or free-form
- questions to be asked immediately on game startup or subsequently.
- For 6M62."
+ questions to be asked immediately on game startup or subsequently."
 
 Book Main
 

@@ -2,7 +2,7 @@ Version 1 of Trial by Zed Lopez begins here.
 
 "Simple means to use a command ('try') to launch tests of code
 that isn't naturally command-centric. Facilitates testing such
-code with regtest. For 6M62."
+code with regtest."
 
 Use authorial modesty.
 
