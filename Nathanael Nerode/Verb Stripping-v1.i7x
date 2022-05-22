@@ -1,4 +1,4 @@
-Version 1/171007 of Verb Stripping by Nathanael Nerode begins here.
+Version 1.2.220521 of Verb Stripping by Nathanael Nerode begins here.
 
 "Removes a number of verbs from the standard rules; verbs which might cause confusion in a game whose theme is not adventure."
 
