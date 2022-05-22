@@ -39,4 +39,3 @@ Section - Changelog
 
 	2.0.220521: Update to Inform v10.1, which renamed sections of the Standard Rules, largely for the better.
 	1: First version.
- of Standard Rules Dead Code Removal by Nathanael Nerode begins here.

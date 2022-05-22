@@ -1,4 +1,4 @@
-Version 1.2.220521 of Verb Stripping by Nathanael Nerode begins here.
+Version 2.0.220521 of Verb Stripping by Nathanael Nerode begins here.
 
 "Removes a number of verbs from the standard rules; verbs which might cause confusion in a game whose theme is not adventure."
 
@@ -81,3 +81,8 @@ Likewise it removes attack and all its synonyms.
 It also removes "push", which actually is implemented for shoving objects from room to room.  This is probably not the most intuitive meaning of "push" in a socially oriented game.
 
 The selection of which verbs to leave was somewhat arbitrary, based on the game I was working on at the time.
+
+Changelog:
+
+	2.0.220521: Version for Inform v10 (after a version number snafu)
+	1/171007: Version for Inform 6M62
