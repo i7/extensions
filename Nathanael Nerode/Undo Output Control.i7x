@@ -1,6 +1,6 @@
-Version 5/170902 of Undo Output Control by Nathanael Nerode begins here.
+Version 6.0.220521 of Undo Output Control by Nathanael Nerode begins here.
 
-"Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows changing the words which invoke UNDO and OOPS, and allows the story to edit a blank command before analyzing it.  Updated to Inform 6M62."
+"Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 10.1."
 
 "based on the extension by Erik Temple; 
 integrates Empty Command Handling by Daniel Stelzer based on code by Matt Weiner"
@@ -56,26 +56,6 @@ Save undo state is a truth state that varies. Save undo state is usually true.
 To disable saving of/-- undo state: now save undo state is false.
 To enable saving of/-- undo state: now save undo state is true.
 
-Section - Word constants
-
-To decide which text is undo word #1:
-	(- 'undo' -)
-	
-To decide which text is undo word #2:
-	(- 'undo' -)
-	
-To decide which text is undo word #3:
-	(- 'undo' -)
-	
-To decide which text is oops word #1:
-	(- 'oops' -)
-
-To decide which text is oops word #2:
-	(- 'o//' -)
-	
-To decide which text is oops word #3:
-	(- 'oops' -)
-
 Section - Invoking Undo
 
 to undo the current turn:
@@ -85,7 +65,7 @@ Section - Empty Command Handling
 
 Repairing an empty command is an activity.
 
-Section - Undo Suspension (for use without Conditional Undo by Jesse McGrew)
+Section - Undo Suspension
 
 Temporary undo suspension is a truth state that varies. Temporary undo suspension is usually false.
 
@@ -104,21 +84,16 @@ Volume - Low Level Stuff
 
 Part - PerformUndo
 
-Section - Patches to PerformUndo (for use without Conditional Undo by Jesse McGrew)
+Section - Patches to PerformUndo
 
 Include (-
-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Undo Output Control replacement for OutOfWorld.i6t: Perform Undo
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
 [ Perform_Undo;
-	#ifdef PREVENT_UNDO; 
-	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
-		IMMEDIATELY_UNDO_RM('A'); new_line;
+	if (KIT_CONFIGURATION_BITMAP & PREVENT_UNDO_TCBIT) {
+		if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) {
+			IMMEDIATELY_UNDO_RM('A'); new_line;
 		}
-	return; 
-	#endif;
+		return;
+	}
 	if (IterationsOfTurnSequence == 0) {
 		FollowRulebook ( (+ before nothing to be undone failure rules +) );
 		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
@@ -146,7 +121,10 @@ Include (-
 		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
 		return; 
 	}
-	if ( (+ temporary undo suspension +) ) {FollowRulebook ( (+ report attempt to undo-while-disabled rules +) ); return;}
+	if ( (+ temporary undo suspension +) ) {
+		FollowRulebook ( (+ report attempt to undo-while-disabled rules +) );
+		return;
+	}
 	if (VM_Undo() == 0) {
 		! Undo failed because the interpreter failed to restore, probably because the undo limit was exceeded.
 		FollowRulebook ( (+ before interpreter undo failure rules +) );
@@ -156,72 +134,13 @@ Include (-
 		FollowRulebook ( (+ after interpreter undo failure rules +) );
 	}
 ];
--) instead of "Perform Undo" in "OutOfWorld.i6t".
-
-Section - Patches to PerformUndo (for use with Conditional Undo by Jesse McGrew)
-
-Include (-
-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Undo Output Control replacement for OutOfWorld.i6t: Perform Undo
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
-[ Perform_Undo;
-	#ifdef PREVENT_UNDO; 
-	if ( FollowRulebook( (+ report prevented undo rules +) ) && RulebookFailed()) { 
-		IMMEDIATELY_UNDO_RM('A'); new_line;
-		}
-	return; 
-	#endif;
-	if (IterationsOfTurnSequence == 0) {
-		FollowRulebook ( (+ before nothing to be undone failure rules +) );
-		if ( FollowRulebook( (+ report nothing to be undone failure rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('B'); new_line;
-		}
-		FollowRulebook ( (+ after nothing to be undone failure rules +) );
-		return; 
-	}
-	if (undo_flag == 0) { 
-		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
-		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('C'); new_line;
-		}
-		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
-		return; 
-	}
-	if (undo_flag == 1) { 
-		! Undo failed because the interpreter did not save a game when it was supposed to.
-		! This happens rarely under Z-Machine but may be thrown by a Glulx interpreter which can't save.
-		! For clarity of error message, this should be treated as an interpreter incapacity, not interpreter failure.
-		FollowRulebook ( (+ before interpreter-undo-incapacity rules +) );
-		if ( FollowRulebook( (+ report interpreter-undo-incapacity rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('D'); new_line;
-		}
-		FollowRulebook ( (+ after interpreter-undo-incapacity rules +) );
-		return; 
-	}
-	if (~~AllowUndo()) return;
-	if (VM_Undo() == 0) {
-		! Undo failed because the interpreter failed to restore, probably because the undo limit was exceeded.
-		FollowRulebook ( (+ before interpreter undo failure rules +) );
-		if ( FollowRulebook( (+ report interpreter undo failure rules +) ) && RulebookFailed()) {
-			IMMEDIATELY_UNDO_RM('F'); new_line;
-		}
-		FollowRulebook ( (+ after interpreter undo failure rules +) );
-	}
-];
--) instead of "Perform Undo" in "OutOfWorld.i6t".
+-) replacing "Perform_Undo".
 
 Part - Keyboard (for use without Unified Glulx Input by Andrew Plotkin)
 
-Section - Patches to Keyboard (for use without Conditional Undo by Jesse McGrew)
+Section - Patches to Keyboard
 
 Include (-
-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Undo Output Control replacement for Parser.i6t: Reading the Command
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
 [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
 	sline1 = score; sline2 = turns;
 
@@ -269,7 +188,7 @@ Include (-
 		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
 	
 		w = a_table-->1;
-		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
+		if (w == OOPS1__WD or OOPS2__WD or OOPS3__WD) {
 			if (oops_from == 0) { PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
 			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
 			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
@@ -326,194 +245,50 @@ Include (-
 
 		! Undo handling
 	
-		if ((w == (+ undo word #1 +) or (+ undo word #2 +) or (+ undo word #3 +)) && (nw==1)) {
-			if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed())
-				{ continue; }
+		if ((w == UNDO1__WD or UNDO2__WD or UNDO3__WD ) && (nw==1)) {
+			if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed()) { continue; }
 			Perform_Undo();
-			continue;
+			continue; ! if undo failed, get a new command
 		}
-		if ( (+ temporary undo suspension +) ) { return; }
+		if ( (+ temporary undo suspension +) ) { return nw; }
 
-		if (+ save undo state +) {
+		if ( (+ save undo state +) ) {
 			i = VM_Save_Undo();
 		}
 		else { i = -2; }
 
-		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
-		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
-		
-		if (i == -1) undo_flag = 0;
-		if (i == 0) undo_flag = 1;
+		if (KIT_CONFIGURATION_BITMAP & PREVENT_UNDO_TCBIT) undo_flag = 0;
+		else undo_flag = 2; ! Assume undo is available
+
+		if (i == -1) undo_flag = 0; ! Oh, I guess undo is not available
+		if (i == 0) undo_flag = 1; ! Oh, I guess undo is not available right now
 		if (i == 2) {
-			VM_RestoreWindowColours();
-			if ( FollowRulebook( (+ report undoing an action rules +) ) && RulebookFailed())
-			{
-				VM_Style(SUBHEADER_VMSTY);
-				SL_Location(); print "^";
-				! print (name) location, "^";
-				VM_Style(NORMAL_VMSTY);
-				IMMEDIATELY_UNDO_RM('E'); new_line;
-			}
-			FollowRulebook( (+ after undoing an action rules +) );
+			! We just came back from undo.  Print some stuff, then *get a new command*.
+			DealWithUndo();
 			continue;
 		}
 		return nw;
 	}
 ];
--) instead of "Reading the Command" in "Parser.i6t".
-
-Section - Patches to Keyboard (for use with Conditional Undo by Jesse McGrew)
+-) replacing "Keyboard"
 
 Include (-
-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Undo Output Control replacement for Parser.i6t: Reading the Command
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
-[ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
-	sline1 = score; sline2 = turns;
-
-	while (true) {
-		! Save the start of the buffer, in case "oops" needs to restore it
-		for (i=0 : i<64 : i++) oops_workspace->i = a_buffer->i;
-	
-		! In case of an array entry corruption that shouldn't happen, but would be
-		! disastrous if it did:
-		#Ifdef TARGET_ZCODE;
-		a_buffer->0 = INPUT_BUFFER_LEN;
-		a_table->0 = 15;  ! Allow to split input into this many words
-		#Endif; ! TARGET_
-	
-		! Print the prompt, and read in the words and dictionary addresses
-		PrintPrompt();
-		DrawStatusLine();
-		KeyboardPrimitive(a_buffer, a_table);
-	
-		! Set nw to the number of words
-		#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
-	
-		! If the line was blank, ask the game to fill it in.  If it doesn't, get a fresh line.
-		if (nw == 0) {
-			x2 = false; ! repurposing local variable as a flag
-
-			BeginActivity( (+ repairing an empty command +) );
-			if ( ForActivity( (+ repairing an empty command +) ) == false) {
-				@push etype; etype = BLANKLINE_PE;
-				players_command = 100;
-				BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-				if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
-					PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
-				}
-				EndActivity(PRINTING_A_PARSER_ERROR_ACT);
-				@pull etype;
-				x2 = true;
-			}
-
-			EndActivity( (+ repairing an empty command +) );
-			if (x2) continue; ! if the activity wasn't handled, get new command
-		}
-
-		! Unless the opening word was OOPS or UNDO, return
-		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
-	
-		w = a_table-->1;
-		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
-			if (oops_from == 0) {PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
-			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
-			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
-		
-			! So now we know: there was a previous mistake, and the player has
-			! attempted to correct a single word of it.
-		
-			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
-			#Ifdef TARGET_ZCODE;
-			x1 = a_table->9;  ! Start of word following "oops"
-			x2 = a_table->8;  ! Length of word following "oops"
-			#Ifnot; ! TARGET_GLULX
-			x1 = a_table-->6; ! Start of word following "oops"
-			x2 = a_table-->5; ! Length of word following "oops"
-			#Endif; ! TARGET_
-		
-			! Repair the buffer to the text that was in it before the "oops"
-			! was typed:
-			for (i=0 : i<64 : i++) a_buffer->i = oops_workspace->i;
-			VM_Tokenise(a_buffer,a_table);
-		
-			! Work out the position in the buffer of the word to be corrected:
-			#Ifdef TARGET_ZCODE;
-			w = a_table->(4*oops_from + 1); ! Start of word to go
-			w2 = a_table->(4*oops_from);    ! Length of word to go
-			#Ifnot; ! TARGET_GLULX
-			w = a_table-->(3*oops_from);      ! Start of word to go
-			w2 = a_table-->(3*oops_from - 1); ! Length of word to go
-			#Endif; ! TARGET_
-		
-			! Write spaces over the word to be corrected:
-			for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
-		
-			if (w2 < x2) {
-				! If the replacement is longer than the original, move up...
-				for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- )
-					a_buffer->i = a_buffer->(i-x2+w2);
-		
-				! ...increasing buffer size accordingly.
-				#Ifdef TARGET_ZCODE;
-				a_buffer->1 = (a_buffer->1) + (x2-w2);
-				#Ifnot; ! TARGET_GLULX
-				a_buffer-->0 = (a_buffer-->0) + (x2-w2);
-				#Endif; ! TARGET_
-			}
-		
-			! Write the correction in:
-			for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
-		
-			VM_Tokenise(a_buffer, a_table);
-			#Ifdef TARGET_ZCODE; nw = a_table->1; #Ifnot; nw = a_table-->0; #Endif;
-			return nw;
-		}
-
-		! Undo handling
-	
-		if ((w == (+ undo word #1 +) or (+ undo word #2 +) or (+ undo word #3 +)) && (nw==1)) {
-			if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed())
-				{ continue; }
-			Perform_Undo();
-			continue;
-		}
-		if ( (+ prevent undo flag +) ) {return;}
-
-		if (+ save undo state +) {
-			i = VM_Save_Undo();
-		}
-		else { i = -2; }
-
-		#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
-		#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
-
-		if (i == -1) undo_flag = 0;
-		if (i == 0) undo_flag = 1;
-		if (i == 2) {
-			!FollowRulebook( (+ before undoing an action rules +) );
-			VM_RestoreWindowColours();
-			if ( FollowRulebook( (+ report undoing an action rules +) ) && RulebookFailed())
-			{ 
-				VM_Style(SUBHEADER_VMSTY);
-				SL_Location(); print "^";
-				! print (name) location, "^";
-				VM_Style(NORMAL_VMSTY);
-				IMMEDIATELY_UNDO_RM('E'); new_line;
-			}
-			FollowRulebook( (+ after undoing an action rules +) );
-			continue;
-		}
-		return nw;
+[ DealWithUndo;
+  VM_RestoreWindowColours();
+  if ( FollowRulebook( (+ report undoing an action rules +) ) && RulebookFailed())
+  {
+    VM_Style(SUBHEADER_VMSTY);
+    SL_Location(); print "^";
+    VM_Style(NORMAL_VMSTY);
+    IMMEDIATELY_UNDO_RM('E'); new_line;
 	}
+	FollowRulebook( (+ after undoing an action rules +) );
 ];
--) instead of "Reading the Command" in "Parser.i6t".
+-) replacing "DealWithUndo"
 
 Part - ParserInput (for use with Unified Glulx Input by Andrew Plotkin)
 
-Chapter - Patching ParserInput (for use without Conditional Undo by Jesse McGrew)
+Chapter - Patching ParserInput
 
 Section - Patched ParserInput (in place of Section - ParserInput in Unified Glulx Input by Andrew Plotkin)
 
@@ -563,7 +338,7 @@ Include (-
 		
 		! Oops handling
 		
-		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
+		if (w == OOPS1__WD or OOPS2__WD or OOPS3_WD ) {
 			if (oops_from == 0) { PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
 			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
 			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
@@ -617,13 +392,13 @@ Include (-
 			}
 			if ( (+ temporary undo suspension +) ) { return; }
 
-			if (+ save undo state +) {
+			if ( (+ save undo state +) ) {
 				i = VM_Save_Undo();
 			}
 			else { i = -2; }			
 
-			#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
-			#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
+			if (KIT_CONFIGURATION_BITMAP & PREVENT_UNDO_TCBIT) undo_flag = 0;
+			else undo_flag = 2;
 
 			if (i == -1) undo_flag = 0;
 			if (i == 0) undo_flag = 1;
@@ -646,153 +421,14 @@ Include (-
 		return;
 	}
 ];
--) instead of "Reading the Command" in "Parser.i6t".
-
-Chapter - Patching ParserInput (for use with Conditional Undo by Jesse McGrew)
-
-Section - Patched ParserInput (in place of Section - ParserInput in Unified Glulx Input by Andrew Plotkin)
-
-Include (-
-! ParserInput: block and await acceptable input. Returns an event in a_event; tokenized line data will be in a_buffer and a_table.
-! This is a wrapper around AwaitInput which adds "OOPS" and "UNDO" support -- features appropriate for the main parser input loop. It also permits the game to customize what kinds of input are accepted for that loop.
-! This is called from Parser Letter A (primary command input) and NounDomain (disambig inputs).
-! (Context-specific questions, such as YesOrNo and the end-game question, do not use this wrapper. They call AwaitInput directly.)
-! In this function, unlike in AwaitInput, a_buffer and a_table are both mandatory. They may be either buffer/table (primary context) or buffer2/table2 (disambiguation context).
-[ ParserInput  incontext a_event a_buffer a_table    evtyp nw i w w2 x1 x2 undoable;
-	! Repeat loop until an acceptable input arrives.
-	while (true) {
-		! Save the start of the buffer, in case "oops" needs to restore it
-		Memcpy(oops_workspace, a_buffer, 64);
-		
-		! Set up the input requests. (Normally just line input, but the game can customize this.)
-		FollowRulebook((+ setting up input rules +), incontext, true);
-		
-		undoable = (+ setting-up-input-undoability-flag +);
-		
-		! The input deed itself.
-		AwaitInput(incontext, a_event, a_buffer, a_table);
-		! We have an input event now, but it could be any type. If it's line input, it's been tokenized.
-		
-		evtyp = a_event-->0;
-		nw = 0;
-		
-		if (evtyp == evtype_LineInput) {
-			! Set nw to the number of words
-			nw = a_table-->0;
-		}
-		
-		#ifndef PASS_BLANK_INPUT_LINES;
-		! If the line was blank, get a fresh line.
-		if (evtyp == evtype_LineInput && nw == 0) {
-			! The old Keyboard routine cleared players_command here (to 100). I'm not sure why. If we're on buffer2/table2, the players_command snippet doesn't apply at all.
-			EmptyInputParserError();
-			continue;
-		}
-		#endif; ! PASS_BLANK_INPUT_LINES;
-		
-		! If this is line input, fetch the opening word.
-		w = 0;
-		if (evtyp == evtype_LineInput && nw > 0) {
-			w = a_table-->1;
-		}
-		
-		! Oops handling
-		
-		if (w == (+ oops word #1 +) or (+ oops word #2 +) or (+ oops word #3 +)) {
-			if (oops_from == 0) { PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
-			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
-			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
-		
-			! So now we know: there was a previous mistake, and the player has
-			! attempted to correct a single word of it.
-		
-			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
-			x1 = a_table-->6; ! Start of word following "oops"
-			x2 = a_table-->5; ! Length of word following "oops"
-		
-			! Repair the buffer to the text that was in it before the "oops"
-			! was typed:
-			Memcpy(a_buffer, oops_workspace, 64);
-			VM_Tokenise(a_buffer,a_table);
-		
-			! Work out the position in the buffer of the word to be corrected:
-			w = a_table-->(3*oops_from);      ! Start of word to go
-			w2 = a_table-->(3*oops_from - 1); ! Length of word to go
-		
-			! Write spaces over the word to be corrected:
-			for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
-		
-			if (w2 < x2) {
-				! If the replacement is longer than the original, move up...
-				for ( i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- )
-					a_buffer->i = a_buffer->(i-x2+w2);
-		
-				! ...increasing buffer size accordingly.
-				a_buffer-->0 = (a_buffer-->0) + (x2-w2);
-			}
-		
-			! Write the correction in:
-			for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
-		
-			VM_Tokenise(a_buffer, a_table);
-			nw = a_table-->0;
-		
-			return;
-		}
-		! Undo handling -- check whether we got an undo command, and then save a new undo point. But we only do these if the setting-up-input rules said this is an undoable input.
-		if (undoable) {
-			InputRDataInit( (+ checking undo input rules +), a_event, a_buffer, a_table);
-			FollowRulebook((+ checking undo input rules +), incontext, true);
-			InputRDataFinal();
-			if (RulebookSucceeded()) {
-				if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed())
-					{ continue; }
-				Perform_Undo();
-				continue;
-			}
-			if ( (+ prevent undo flag +) ) { return; }
-
-			if (+ save undo state +) {
-				i = VM_Save_Undo();
-			}
-			else { i = -2; }			
-
-			#ifdef PREVENT_UNDO; undo_flag = 0; #endif;
-			#ifndef PREVENT_UNDO; undo_flag = 2; #endif;
-
-			if (i == -1) undo_flag = 0;
-			if (i == 0) undo_flag = 1;
-			if (i == 2) {
-				VM_RestoreWindowColours();
-				if ( FollowRulebook( (+ report undoing an action rules +) ) && RulebookFailed())
-				{  
-					VM_Style(SUBHEADER_VMSTY);
-					SL_Location(); print "^";
-					! print (name) location, "^";
-					VM_Style(NORMAL_VMSTY);
-					IMMEDIATELY_UNDO_RM('E'); new_line;
-				}
-				FollowRulebook( (+ after undoing an action rules +) );
-				continue;
-			}
-		}
-		
-		! Neither OOPS nor UNDO; we're done.
-		return;
-	}
-];
--) instead of "Reading the Command" in "Parser.i6t".
-
+-) replacing "ParserInput"
 
 Undo Output Control ends here.
-
 
 
 ---- DOCUMENTATION ----
 
 Undo Output Control patches the I6 template routines Keyboard(); and Perform_Undo(); so that we can use I7 rulebooks to hook into the UNDO command. These allow us to do anything we like--write new messages for UNDO responses and error text, keep track of variables (partially) independently of the game state as restored by UNDO, and even suspend UNDO programmatically.
-
-Undo Output Control is compatible with Conditional Undo by Jesse McGrew, which provides a more flexible framework for undo prevention. Using the extension with Conditional Undo does change some aspects of usage; see below.
 
 Section - Output rules
 
@@ -870,7 +506,7 @@ This can be done conditionally if needed. We just need to delete the table row b
 
 Section - Temporary suspension of game state saving
 
-Each turn, after the player has entered a command but before the command is parsed, Inform saves the state of the game into memory. This is the saved state to which the next UNDO command will revert. We can stop the game from saving the undo state, if desired. Once we've disabled saving, an UNDO typed later will revert back to the last saved state. If there are no saved undo states available, a message will print ("You cannot undo any further" by default).
+Each turn, after the player has entered a command but before the command is parsed, Inform saves the state of the game into memory. This is the saved state to which the next UNDO command will revert.  (When it comes back it will get a new command from the command line.)  We can stop the game from saving the undo state, if desired. Once we've disabled saving, an UNDO typed later will revert back to the last saved state. If there are no saved undo states available, a message will print ("You cannot undo any further" by default).
 
 Undo Output Control provides the following phrases for controlling undo saves:
 
@@ -879,36 +515,39 @@ Undo Output Control provides the following phrases for controlling undo saves:
 
 See the "Purgatory" example below for a demonstration of how this feature might be used.
 
-
 Section - Changing vocabulary for UNDO and OOPS
 
-As was mentioned above, UNDO is not an action. Along with OOPS, it is handled before the player's command is actually parsed. To decide whether the player has typed either of these commands, Inform looks at the first word--only!--of the player's input and compares it to a character string (defined as an I6 constant). Because there is no I7 type that is exactly equivalent to this I6 type, it is quite difficult for I7 writers to add to or change the vocabulary associated with these commands.
+As was mentioned above, UNDO is not an action. Along with OOPS, it is handled before the player's command is actually parsed. To decide whether the player has typed either of these commands, Inform looks at the first word--only!--of the player's input and compares it to a character string (defined as an I6 constant).
 
-Undo Output Control makes providing new vocabulary for UNDO and OOPS a bit easier. Each command has three "words" associated with it. These are, with their initial values:
+In v10 of Inform, there is a clean way to do this.  There are three "undo words" and three "oops words".  This is how to replace them (with their default values noted):
 
-	UNDO
-	undo word #1	"undo"
-	undo word #2	"undo"
-	undo word #3	"undo"
-	
-	OOPS
-	oops word #1	"oops"
-	oops word #2	"o//"
-	oops word #3	"oops"
+	Include (-
+		Constant UNDO1__WD = 'undo';
+	-) replacing "UNDO1__WD"
+	Include (-
+		Constant UNDO2__WD = 'undo';
+	-) replacing "UNDO2__WD"
+	Include (-
+		Constant UNDO3__WD = 'undo';
+	-) replacing "UNDO3__WD"
+	Include (-
+		Constant OOPS1__WD = 'oops';
+	-) replacing "OOPS1__WD"
+	Include (-
+		Constant OOPS2__WD = 'o//';
+	-) replacing "OOPS2__WD"
+	Include (-
+		Constant OOPS3__WD = 'oops';
+	-) replacing "OOPS3__WD"
 
-We can thus add up to two vocabulary words for each command, in addition to the standard "oops" and "undo", or we can replace all three slots for each word if we like. Note that oops word #2 is a single-letter abbreviation; two forward slashes are required after single-letter words for Inform to understand them.
+Note that oops word #2 is a single-letter abbreviation; two forward slashes are required after single-letter words for Inform to understand them.
 
-To change one of these vocabulary words, we need to define a phrase. For example:
+If the word contains a space, it will never be matched, as follows; this can be used to disable oops:
+	Include (-
+		Constant OOPS2__WD = ' x';
+	-) replacing "OOPS2__WD"
 
-	To decide which value is undo word #3:
-		(- 'revert' -)
-
-The word must be placed within single quotes, and only a single word can be matched. If your text contains a space, it will never be matched.
-
-To eliminate the "o" synonym for oops:
-	To decide which value is oops word #2:
-		(- 'oops' -)
-		
+There was not a clean way to do this in earlier versions, and so older versions of this extension provided one.  If you were using the "to decide which value is undo word #3" facility from a previous version of this extension, please update your code.
 
 Section - Undoing the current turn
 
@@ -935,24 +574,21 @@ For instance:
 
 This happens early enough in parsing that even special commands like "undo" and "oops", or a sequence of commands separated by periods, can be inserted.
 
+Section - Extension not compatible with Conditional Undo by Jesse McGrew
 
-Section - Using this extension with Conditional Undo by Jesse McGrew
-
-Jesse McGrew's Conditional Undo extension is compatible with Undo Output Control. It provides an activity-based interface to undo suspension which some authors may prefer. If Conditional Undo is included in our project, the "suspend undo" and "reinstate undo" phrases provided by Undo Output Control will not be available. IMPORTANT: The directive to include Conditional Undo must appear in your source text before the instruction to include Undo Output Control, or the extensions will not function as expected.
-
-Instead of using the "report attempt to undo-while-disabled" rulebook to respond to suspended UNDO, users of Conditional Undo should use the "rule for deciding whether to allow undo" activity (see the Conditional Undo documentation).
-
+The current version of this extension is no longer compatible with Jesse McGrew's Conditional Undo extension, which doesn't compile with Inform v10.1 anyway.  Everything in Conditional Undo can be done by this extension but the interface is substantially different.
 
 Section - Using this extension with Unified Glulx Input by Andrew Plotkin
 
-Unified Glulx Input has its own method for turning UNDO on and off; these all work, as do the methods in this extension.
+Unified Glulx Input support is UNTESTED in Inform v10.1 and is quite likely to be broken.
 
-Unified Glulx Input has its own method for redefining the words which trigger UNDO, so the method in this extension does not work for "undo" words.  However, "oops" words can still be changed using this extension.
+Unified Glulx Input has its own method for turning UNDO on and off; these all work, as do the methods in this extension.
 
 Unified Glulx Input has its own (superior) method for dealing with blank lines; "repairing an empty command" is not implemented.
 
+Section - Changelog
 
-Section - Change log
+	v6 - Update to Inform v10.1.0.  (Nathanael Nerode.)  Eliminate compatibility with Conditional Undo by Jesse McGrew.  Eliminate "undo word #1" in favor of new "Include (- -) replacing UNDO1__WD" syntax.
 
 	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)  Integrate Empty Command Handling by Daniel Stelzer.  Make compatible with Unified Glulx Input.
 
@@ -964,12 +600,15 @@ Section - Change log
 
 	v1 - Initial release.
 
+Section - Examples
+
+	All the examples are by Erik Temple from the original Undo Output Control.
 
 Example: * Mynah Undo - Presents report rules that reproduce Inform's default output. 
 
 	*: "Mynah Undo"
 	
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	
 	Laboratory is a room. The pen, the vial, the bunsen burner, the beaker, the banana, and the viol are in Laboratory.
 	
@@ -1014,7 +653,7 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 
 	*: "I Love the Sound of Breaking Glass"
 
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	
 	Report undoing an action:
 		say "[bracket]Previous turn undone.[close bracket][line break]";
@@ -1076,7 +715,9 @@ Note that we warn the player before allowing her to save during this purgatorial
 
 	*: "Purgatory"
 
-	Include Undo Output Control by Erik Temple.
+	The release number is 3.
+
+	Include Undo Output Control by Nathanael Nerode.
 	
 	Black Room is a room. There is a bottle of poison in Black Room.
 	
@@ -1110,12 +751,14 @@ Note that we warn the player before allowing her to save during this purgatorial
 			continue the action;
 		otherwise:
 			rule fails.
+
+	test purgatory with "look / drink poison / look / look / undo / look"
 			
 Example: ** Purgatory II - As an additional enhancement, we make an automatic undo attempt after the player has died.
 
 	*: "Purgatory II"
 
-	Include version 5 of Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	
 	The release number is 2.
 	
@@ -1156,4 +799,4 @@ Example: ** Purgatory II - As an additional enhancement, we make an automatic un
 		otherwise:
 			rule fails.
 
-
+	test purgatory with "look / drink poison / look / look / look"
