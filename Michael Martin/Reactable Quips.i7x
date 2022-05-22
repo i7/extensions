@@ -1,7 +1,8 @@
-Version 10/171116 of Reactable Quips by Michael Martin begins here.
+Version 10/220522 of Reactable Quips by Michael Martin begins here.
 
 "A table-based approach to NPC conversation chains, as well as allowing rules to fire on lines of conversation."
 
+[Version 10/220522 - Update for 10.1 by Nathanael Nerode.  Probably will still work with 6M62.]
 [Version 10/171116 - Update for 6M62 by climbingstars.]
 [Version 10 - Quick patch and update for 6E59, correcting the compilation problems and removing any reliance on deprecated features or syntax.]
 [Version 9 - Updated for 5T18, correcting run-time problems and ducking some library bugs.]
@@ -62,7 +63,7 @@ Carry out requesting a recap (this is the perform recap rule):
 	if rq_index is 0, say "[RQ no options][paragraph break]".
 
 Responding with is an action applying to one number.
-Understand "[number]" or "say [number]" as responding with when RQ is active.
+Understand "say [number]" as responding with when RQ is active.
 
 [This rule Can't Run, as the Understand commands stand..]
 [Carry out responding with when the pertinent quip is quip_null (this is the can't talk out of conversations rule): 
@@ -86,10 +87,10 @@ Before doing something [other than requesting a recap or responding with] when t
 
 The force conversation rule is listed first in the before rules.
 
-This is the reaction is instantaneous rule:
+This is the instant quip reaction rule:
 	if RQ is active, rule succeeds.
 
-The reaction is instantaneous rule is listed before the every turn stage rule in the turn sequence rules.
+The instant quip reaction rule is listed before the every turn stage rule in the turn sequence rules.
 
 Section 2 - Hitword-based conversation
 
@@ -145,11 +146,11 @@ quip (a quip)		option (text)		result (a quip)
 with 1 blank row
 
 Table of Ask Results
-NPC (a person)		topic (a topic)		result (a quip)
+NPC (a person)		topic		result (a quip)
 with 1 blank row
 
 Table of Tell Results
-NPC (a person)		topic (a topic)		result (a quip)
+NPC (a person)		topic		result (a quip)
 with 1 blank row
 
 Section 4 - Straightening out the parser
@@ -353,4 +354,3 @@ Example: ** When Injokes Collide - Mixing conversation with reactions, and match
 	test winning with "ask horace about people / 3 / 1".
 
 	test me with "tell horace about myself / ask horace about how awesome monkeys are / ask horace about humans / go east / repeat / 2 / ask horace about gibbons / ask horace about all his base".
-	
