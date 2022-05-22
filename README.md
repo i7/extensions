@@ -24,8 +24,8 @@ How to download *all* the extensions
 ------------------------------------
 1. Locate your current Extensions folder -- from within I7, select File -> Show Installed Extensions Folder -- then close I7.
 2. Go up to the parent directory and rename the `Extensions` folder to `Extensions Old` (for now).
-3. Download [this zip file](https://github.com/i7/extensions/archive/master.zip) and extract it into that location.
-4. Rename the `extensions-master` folder that it just created to just `Extensions` (such that this now contains subfolders with peoples' names).
+3. Download [this zip file](https://github.com/i7/extensions/archive/10.1.zip) and extract it into that location.
+4. Rename the `extensions-10.1` folder that it just created to just `Extensions` (such that this now contains subfolders with peoples' names).
 5. You now have all of the extensions in this repository, which includes those from the Public Library.  (Don't touch the blue or purple buttons in the Public Library tab, or you'll downgrade something.)
 6. If there's any extensions from your `Extensions Old` folder that you need to "rescue" (perhaps some you've written yourself, or installed from elsewhere), you can use File -> Install Extension to copy them from that folder into the new Extensions folder (or close down I7 and move them manually).
 7. To update in the future, you can either update the extensions one-by-one as above or you can download a fresh zip and install the whole thing over the top.
