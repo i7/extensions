@@ -1,6 +1,6 @@
-Version 1/170902 of Title Case for Headings by Nathanael Nerode begins here.
+Version 1.2.220521 of Title Case for Headings by Nathanael Nerode begins here.
 
-"Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 6M62.  Requires Undo Output Control by Erik Temple or by Nathanael Nerode to handle the case of room name printing after UNDO."
+"Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 10.1.0.  Requires Undo Output Control by Erik Temple or by Nathanael Nerode to handle the case of room name printing after UNDO."
 
 [Distinguish printing the *title* of a room in a heading, which should be titlecased, from printing the *name* of a room under other circumstances, which should not.  This allows more coherent use of room names like "a meadow".
 There are two "heading" usages in the Standard Rules: the room description heading, and the status line.  There is also a subtle third usage when the room name is printed after "undo".]
@@ -182,7 +182,7 @@ Section 4 - Making it work right with "Undo" - Include Undo Output Control
 
 There is one annoying corner case.  When "undo" is successfully executed, the room name is printed as a heading.  For this extension to process this heading correctly, it is necessary to:
 
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 
 The newest version of Undo Output Control is on the "Friends of I7" extension page on Github.  I updated it specifically so that I could fix this bug.
 If you have trouble including Undo Output Control, you may just be willing to live with the bug.
@@ -194,7 +194,7 @@ The title in the status line and room description will be "Meadow".
 
 	*: "Meadow"
 
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 
 	A meadow is a room.  "This is a meadow."
@@ -211,7 +211,7 @@ The title in the status line and room description will be "The Meadow".
 
 	*: "The Meadow"
 
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 
 	A meadow is a titled room.  "This is a meadow."
@@ -230,7 +230,7 @@ names manually.
 
 	*: "Around the Pond" by Nathanael Nerode
 	
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 	
 	After deciding the scope of an object (called character):
@@ -296,9 +296,9 @@ Note the careful attention to capitalization in the descriptions.  The title cas
 
 Test this by looking at all the rooms as John, and then by looking at all the rooms as Alice.
 
-*:  "People's Rooms" by Nathanael Nerode
+	*:  "People's Rooms" by Nathanael Nerode
 
-	Include Undo Output Control by Erik Temple.
+	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 
 	[This is critically important -- otherwise Alice will disappear from the listing in Alice's room]
