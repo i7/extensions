@@ -81,7 +81,11 @@ This is to avoid namespace conflicts with the game writer.  The game writer shou
 
 If you're defining a "drawer" kind, just call it a "drawer".  The game writer is going to have to write it repeatedly.  Likewise if you're defining a say-phrase for the game writer -- a say-phrase is a shorthand, so make its name short and clear.
 
-(13) To delete a section from another extension, replace it with a section containing nothing but a dummy variable.  Due to a bug in Inform 7 (6M62), you can't have a completely blank section.  There are examples of this in Gender Options ( search for dummy_variable_1234567890 ) and Title Case for Headings ( dummy_variable_97538642 ).
+(13) To delete a section from another extension, replace it with a section containing nothing.  In Inform 7 v10, this works.
+
+Often this is to avoid conflicts with other extensions, in which case it should be done inside a Chapter which selects based on whether that other extension is included.  There are examples in Gender Options and Title Case for Headings.  
+
+Due to a bug in version 6M62 and earlier of Inform 7, you can't have a completely blank section, so in 6M62, include a dummy variable.  There are examples of this in the 6M62/9.3 versions of Gender Options ( search for dummy_variable_1234567890 ) and Title Case for Headings ( dummy_variable_97538642 ).
 
 (14) Document your extension.
 
