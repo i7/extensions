@@ -5,15 +5,28 @@
 require 'erubi'
 require 'ostruct'
 require 'fileutils'
+require 'uri'
+require 'pathname'
+require 'cgi'
+
 extension_repo = 'https://github.com/i7/extensions'
 url_roots = { ext_root: 'blob', auth_root: 'tree' }
-vlist = [ '10.1', '9.3' ]
-versions = { '10.1' => { filedir: 'docs', url: '..', repo: extension_repo, label: 'v10.1' } }
-vlist.each do |v|
-  next if versions.key?(v)
-  versions[v] = { filedir: File.join('docs', v), url: v, repo: [ extension_repo, 'tree', v ].join('/') }
+default_version = '10.1'
+versions = { '10.1' => { label: nil }, '9.3' => { label: '6M62' } }
+versions.keys.each do |version|
+  vlabel = "v#{version}"
+  versions[version][:label] = versions[version][:label] ? [ versions[version][:label],vlabel ].join("/") : vlabel
+  versions[version][:filedir] = (version == default_version) ? 'docs' : File.join('docs', version)
+  versions[version][:url] = (version == default_version) ? '..' : version
+  versions[version][:repo] = (version == default_version) ? extension_repo : [ extension_repo, 'tree', version ].join('/') 
 end
-versions['9.3'][:label] = 'v9.3/6M62'
+#vlist = [ '10.1', '9.3' ]
+#versions = { '10.1' => { filedir: 'docs', url: '..', repo: extension_repo, label: 'v10.1' } }
+#vlist.each do |v|
+#  next if versions.key?(v)
+#  versions[v] = { filedir: File.join('docs', v), url: v, repo: 
+#end
+#versions['9.3'][:label] = 'v9.3/6M62'
 
 #versions = { '10.1' => { filedir: 'docs', url: '..' }, '9.3' => { filedir: File.join('docs', '9.3'), url: '9.3' } }
 
@@ -25,10 +38,6 @@ $conf = Hash[ url_roots.map {|k,v| [ k, [ extension_repo, v ].join('/') ] } ]
 # for reference for potential future use
 # raw_ext_url_root: "https://raw.githubusercontent.com/i7/extensions/"
 
-require 'uri'
-require 'erubi'
-require 'pathname'
-require 'cgi'
 
 class Extension
   attr_reader :author, :filename, :name, :desc, :doc, :version, :limiter
@@ -48,7 +57,7 @@ end
   end
 
   def ext_id
-    [ @author, @name].map(&:downcase)
+    [ @name, @author].map(&:downcase)
   end
 
 def text
@@ -76,6 +85,13 @@ globlist = [ '*', '*.i7x' ]
 
 version_ext = {}
 
+system("git checkout -- docs/index.html") or exit
+versions.keys.each do |version|
+  system("git checkout #{version}") or exit
+  system("git pull") or exit
+end
+
+  
 versions.keys.each do |version|
   version_ext[version] = { ext_hash: {}, errors: {} }
 #if !ARGV.empty?
@@ -86,7 +102,7 @@ versions.keys.each do |version|
 #  globlist.unshift(ARGV.first)
 #end
   
-system("git checkout #{version}")
+system("git checkout #{version}") or exit
   
 ext_hash = {}
 errors = {}
@@ -102,7 +118,7 @@ Dir[File.join(globlist)].each do |path|
     ext[:limiter] = (line.sub!(/(\s*\(\s*for\s+([-\w]+)\s+only\s*\))\Z/,'') ) ?  $2.capitalize : nil
     ext[:version] = (line.sub!(/\A(\s*version\s+(.*?)\s+of\s+)/i,'') ) ?  $2 : nil
     ext[:name] = line
-    identifier = [ext_author,ext_name].map(&:downcase) # extension names are case-insensitive
+    identifier = [ext_name,ext_author].map(&:downcase) # extension names are case-insensitive
     unless ext[:author] == ext[:ext_author]
       version_ext[version][:errors][identifier] = "Author name mismatch with #{ext[:name]} by #{ext[:author]}"
       next
@@ -111,7 +127,7 @@ Dir[File.join(globlist)].each do |path|
     ext[:desc] = $1 if slurp.match(/\A[^\n\r]+\s*(?:\[[^\]]*\]\s*)*"([^"]*)"/)
     ext[:doc] = $1 if slurp.match(/---- DOCUMENTATION ----\s+(\S.*?)(\r?\n\r?\n|\Z)/i)
   rescue StandardError => e
-    identifier = [ext_author,ext_name].map(&:downcase) # extension names are case-insensitive
+    identifier = [ext_name,ext_author].map(&:downcase) # extension names are case-insensitive
     version_ext[version][:errors][ identifier ] = e.message
     next
   end
@@ -209,7 +225,7 @@ p.omission { margin-bottom: .5rem; }
 <body>
 <header>
 <h1 class="title"><a class="title" href="<%= versions[version][:repo] %>">Friends of I7 Extensions for <%= versions[version][:label] %></a></h1>
-<div class="other-versions"><div>Looking for extensions for a different version?</div>
+<div class="other-versions"><div>Looking for extensions for another version?</div>
 <ul>
 <% versions.reject {|k,v| k == version }.each_pair do |vname, vhash| %>
 <li><span class="link"><a href="<%= [ vhash[:url], 'index.html' ].join('/') %>">List of extensions for Inform 7 <%= versions[vname][:label] %></a></span></li>
