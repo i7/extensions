@@ -1,6 +1,6 @@
-Version 5.0.220521 of Compliant Characters by Nathanael Nerode begins here.
+Version 5.0.220523 of Compliant Characters by Nathanael Nerode begins here.
 
-"Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Requires a patch to Parser.i6t as of 21 May 2022.  Tested with a patched version of Inform 10.1.0."
+"Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Tested with Inform 10.1.0."
 
 Include Neutral Standard Responses by Nathanael Nerode.  [This includes most of our callbacks into Inform 6, among other things]
 
@@ -8,51 +8,17 @@ Volume - Parser Errors
 
 [
 Problematically, "Jane, take hat" will fail if "hat" isn't recognized.  We want to make it clear what went wrong.
-We have to replicate most of the I6 code in "Parser Letter I".  Wonderful.
+
 "Check an actor answering something that" usually happens in case of a parser error.
 There's always a latest parser error and it's from the most recent command.
 
-Unfortunately, per default, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser,
-and leaves the error set to STUCK_PE.  This is addressed in a later Volume of this extension.
+Unfortunately, per default, 'answer "blah blah blah" to Jane' triggers "answering it that", bypasses the command parser, and leaves the error set to STUCK_PE.  This is addressed in a later Volume of this extension.
+
 It's passed through the new "ordering it that" action, which reparses it into an order.
-]
 
-Section - Patch the I6 Parser
-
-[ This is the patch to Parser Letter H which needs to be applied.  By hand.  Otherwise we'd have to replace the whole parser. ]
-[The I6 parser, infuriatingly, *resets* wn before passing it off to "answer".  We need to save it, for "the extraneous word".]
-[Annoyingly, even this is not reliable.]
-
-[
-diff --git a/inform7/Internal/Inter/CommandParserKit/Sections/Parser.i6t b/inform7/Internal/Inter/CommandParserKit/Sections/Parser.i6t
-index d795780e3..510cc9a9b 100644
---- a/inform7/Internal/Inter/CommandParserKit/Sections/Parser.i6t
-+++ b/inform7/Internal/Inter/CommandParserKit/Sections/Parser.i6t
-@@ -1282,6 +1282,9 @@ communicates a snippet of words to another character, just as if the
- player had typed ANSWER ARFLE BARFLE GLOOP TO PERSON. For I7 purposes, the
- fake action |##NotUnderstood| does not exist.
- 
-+In order to assist people who do want to parse that type of mistyped command
-+in extensions, wn is left pointing at the first misunderstood word.
-+
- =
-   .GiveError;
- 
-@@ -1291,6 +1294,7 @@ fake action |##NotUnderstood| does not exist.
-             verb_wordnum = usual_grammar_after;
-             jump AlmostReParse;
-         }
-+				m = wn; ! Save wn so extension authors can parse command errors if they want to
-         wn = 1;
-         while ((wn <= num_words) && (NextWord() ~= comma_word)) ;
-         parser_results-->ACTION_PRES = ##Answer;
-@@ -1299,6 +1303,7 @@ fake action |##NotUnderstood| does not exist.
-         parser_results-->INP2_PRES = 1; special_number1 = special_word;
-         actor = player;
-         consult_from = wn; consult_words = num_words-consult_from+1;
-+				wn = m; ! Restore wn so extension authors can parse command errors if they want to
-         rtrue;
-     }
+A new patch added to Inform 7 v10 on May 23, 2022 provides us with the necessary hook to give us
+"wn" (as "the extraneous word", used in Neutral Standard Responses) to allow proper parsing of errors
+from commands like JOHN, TAKE BAG SDFSDFS.
 ]
 
 Section - Debug Parser Errors For Commands (not for release)
@@ -793,11 +759,6 @@ First, download:
 Then add to your story file:
 	Include Compliant Characters by Nathanael Nerode.
 
-Then patch your core copy of Inform with the patch listed higher up in this file, and rebuild it
-completely.
-
-...I'm sorry.  I'm trying to get the patch committed upstream.
-
 You will still have to write a persuasion rule (as documented in Writing With Inform), such as:
 	Persuasion rule for asking John to try taking or removing or dropping or putting on or inserting into:
 		persuasion succeeds.
@@ -1046,6 +1007,9 @@ This extension depends on version 4 or later Neutral Standard Responses by Natha
 
 Chapter - Changelog
 
+5.0.220523 - Documentation changes and cleanup now that patches to core Inform aren't needed.
+           - Requires Inform 10.1 compiled after 23 May 2022.
+           - (this was very early in the beta phase for Inform 10.1, so most copies will be fine.)
 5.0.220521 - Adaptation to Inform 10.1.0 -- requires patch to Inform.
 4/210328 - Slicker handling for "say take box to jane".
          - Much slicker and faster handling for "say 'x' to jane" and other quotation marks typed by the player.
