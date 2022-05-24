@@ -1,6 +1,8 @@
-Version 1/150130 of Checkpoints by Peter Orme begins here. 
+Version 1.0.220524 of Checkpoints by Peter Orme begins here. 
 
 "A method of using assertions stored in a table to verify your game works as expected."
+
+[Version 1.0.220524: Updated for Inform v10.1 by Nathanael Nerode]
 
 Include Unit Testing by Peter Orme.
 
@@ -9,7 +11,7 @@ Chapter 1 - Checkpoint Assertions
 Section 1 - Table of Checkpoints
 
 Table of Checkpoints
-topic (a topic)	assertion (a text)	message (a text)
+topic	assertion (a text)	message (a text)
 --	--	--
 
 Section 2 - Checkpoint-asserting 
@@ -50,7 +52,7 @@ carry out checkpoint-going to the topic understood (this is the checkpoint going
 		say "There is no checkpoint script for [topic understood].";
 	
 Table of Checkpoint Scripts
-topic (a topic)	name (a text)	rule (a rule)
+topic	name (a text)	rule (a rule)
 --	--	--
 
 [
