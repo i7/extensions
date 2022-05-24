@@ -954,12 +954,22 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
-Version 4.0.220523 - Eliminate now-unnecessary dummy variable.
-Version 4.0.220521 - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.  Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.  Many whitespace fixes.  New example game.  Make opaque persons possible.  Apply my Style Guide principles -- don't number the headings!
-Version 3/210331 - Fix example / testsuite.
-Version 3/170818 - Small documentation and comment tweaks.
-Version 3/170816 - Replaced "always" with "usually" for man and woman.  Eliminated implications which didn't work.  Moved "person is usually not neuter" into correct section.  Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).  Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
-Version 2/170815 - First public release for gamma testing.
+	4.0.220524 - Format Changelog!
+	4.0.220523 - Eliminate now-unnecessary dummy variable.
+	4.0.220521 - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.
+	- Implement "unset pronouns from" in order to solve an issue noted on the forum without restricting options.
+	- Many whitespace fixes.
+	- New example game.
+	- Make opaque persons possible.
+	- Apply my Style Guide principles -- don't number the headings!
+	3/210331 - Fix example / testsuite.
+	3/170818 - Small documentation and comment tweaks.
+	3/170816 - Replaced "always" with "usually" for man and woman.
+	- Eliminated implications which didn't work.
+	- Moved "person is usually not neuter" into correct section.
+	- Removed androgyne kind and collective noun property for efficiency (they were syntactic sugar).
+	- Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
+	2/170815 - First public release for gamma testing.
 
 Example: * City Park 
 

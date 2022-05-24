@@ -1,4 +1,4 @@
-Version 5.0.220523 of Compliant Characters by Nathanael Nerode begins here.
+Version 5.0.220524 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Tested with Inform 10.1.0."
 
@@ -1007,23 +1007,24 @@ This extension depends on version 4 or later Neutral Standard Responses by Natha
 
 Chapter - Changelog
 
-5.0.220523 - Documentation changes and cleanup now that patches to core Inform aren't needed.
-           - Requires Inform 10.1 compiled after 23 May 2022.
-           - (this was very early in the beta phase for Inform 10.1, so most copies will be fine.)
-5.0.220521 - Adaptation to Inform 10.1.0 -- requires patch to Inform.
-4/210328 - Slicker handling for "say take box to jane".
-         - Much slicker and faster handling for "say 'x' to jane" and other quotation marks typed by the player.
-         - Documentation of ways to handle passwords and similar special cases.
-         - More Chapters, Volumes, Parts, etc. for better overriding.
-3/210313 - Additional handling for "say 'x' to jane", "tell jane 'x'"
-         - Additional handling for indirect orders
-         - Additional handling for "jane, take all"
-         - Additional handling for other corner cases 
-2/171007 - Update in association with version 4 of Neutral Standard Responses
-         - Fix misunderstood word reporting. 
-         - Fix several tricky paragraph break errors.
-1/171003 - Fix line break issue in scenery message.
-1/171002 - First version.
+	5.0.220524 - Format Changelog
+	5.0.220523 - Documentation changes and cleanup now that patches to core Inform aren't needed.
+	           - Requires Inform 10.1 compiled after 23 May 2022.
+	           - (this was very early in the beta phase for Inform 10.1, so most copies will be fine.)
+	5.0.220521 - Adaptation to Inform 10.1.0 -- requires patch to Inform.
+	4/210328 - Slicker handling for "say take box to jane".
+	         - Much slicker and faster handling for "say 'x' to jane" and other quotation marks typed by the player.
+	         - Documentation of ways to handle passwords and similar special cases.
+	         - More Chapters, Volumes, Parts, etc. for better overriding.
+	3/210313 - Additional handling for "say 'x' to jane", "tell jane 'x'"
+	         - Additional handling for indirect orders
+	         - Additional handling for "jane, take all"
+	         - Additional handling for other corner cases
+	2/171007 - Update in association with version 4 of Neutral Standard Responses
+	         - Fix misunderstood word reporting.
+	         - Fix several tricky paragraph break errors.
+	1/171003 - Fix line break issue in scenery message.
+	1/171002 - First version.
 
 Example: *** Jane - Regression test
 

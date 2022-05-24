@@ -1,4 +1,4 @@
-Version 6.0.220521 of Large Game Speedup by Nathanael Nerode begins here.
+Version 6.0.220524 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -7,7 +7,7 @@ Version 6.0.220521 of Large Game Speedup by Nathanael Nerode begins here.
 Use authorial modesty.
 
 [This broke in 6M62, but it's still very important.  Updated by Nathanael Nerode.]
-[It broke again in 10.1.0, and it's still just as important.]
+[It broke again in 10.1.0, and it's still just as important.  Updated again.]
 
 Chapter - Empty
 
@@ -532,15 +532,16 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
-Version 6.0.20220521 adapted to Inform v10.
-Version 5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
-Version 5/210325 added more section subdivision and reommitted some unnecessary code when Room Description Control is active.
-Version 5/210324 reverted the changes from 5/210322 as they caused unexpected errors.
-Version 5/210323 adopted the Inform 6M62-safe code for the *in phrases from the version in Counterfeit Monkey by Andrew Plotkin, solving a glaring bug which I didn't catch since I didn't test the more complicated invocations of those phrases.
-Version 5/210322 was updated by Nathanael Nerode to omit unnecessary code when working with Room Description Control by Emily Short.
-Version 5/171007 of Large Game Speedup was updated by Nathanael Nerode, adding the "Parts" section.
-Version 5/171006 of Large Game Speedup was updated by Nathanael Nerode for Inform 6M62 and the responses system.  Code was simplifed by using the "choose row I in Table" syntax.
-Version 4/140731 of Large Game Speedup was written by Andrew Plotkin for Inform 6G60 and was not tested with earlier or later releases.
+	6.0.20220524 reformatted the Changelog.
+	6.0.20220521 adapted to Inform v10.
+	5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
+	5/210325 added more section subdivision and reommitted some unnecessary code when Room Description Control is active.
+	5/210324 reverted the changes from 5/210322 as they caused unexpected errors.
+	5/210323 adopted the Inform 6M62-safe code for the *in phrases from the version in Counterfeit Monkey by Andrew Plotkin, solving a glaring bug which I didn't catch since I didn't test the more complicated invocations of those phrases.
+	5/210322 was updated by Nathanael Nerode to omit unnecessary code when working with Room Description Control by Emily Short.
+	5/171007 of Large Game Speedup was updated by Nathanael Nerode, adding the "Parts" section.
+	5/171006 of Large Game Speedup was updated by Nathanael Nerode for Inform 6M62 and the responses system.  Code was simplifed by using the "choose row I in Table" syntax.
+	4/140731 of Large Game Speedup was written by Andrew Plotkin for Inform 6G60 and was not tested with earlier or later releases.
 
 Example: ** Four Hundred Things - A small game with a lot of stuff.
 
