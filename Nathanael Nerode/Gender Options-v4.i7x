@@ -1,4 +1,4 @@
-Version 4.0.220523 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220524 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
