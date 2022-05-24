@@ -4,10 +4,10 @@ Chapter 1 - Universal opening commands - Not for release
 
 Section - universal opening all doors and things
 
-universal opening of doors is an action out of world applying to nothing.
-understand "openalldoors" as universal opening of doors. 
+universal door opening is an action out of world applying to nothing.
+understand "openalldoors" as universal door opening
 
-carry out universal opening of doors (this is the universal opening of doors rule):
+carry out universal door opening (this is the universal door opening rule):
 	repeat with chosen door running through every door:
 		if the chosen door is closed:
 			say "[The chosen door] - opening.";
@@ -16,11 +16,11 @@ carry out universal opening of doors (this is the universal opening of doors rul
 			say "[The chosen door] - already open.";
 	say "Now every door in the world should be open.";
 
-		
-universal opening of things is an action out of world applying to nothing. 
-Understand "openallthings" as universal opening of things.
 
-carry out universal opening of things (this is the universal opening of things rule):
+universal thing opening is an action out of world applying to nothing. 
+Understand "openallthings" as universal thing opening.
+
+carry out universal thing opening (this is the universal thing opening rule):
 	repeat with chosen item running through every openable thing which is not a door:
 		if the chosen item is closed:
 			say "[The chosen item] - opening.";
@@ -28,20 +28,20 @@ carry out universal opening of things (this is the universal opening of things r
 		otherwise:
 			say "[The chosen item] - already open.";
 	say "Now everything (except doors) in the world should be open.";
-	
-universal opening everything is an action out of world applying to nothing. Understand "openall" as universal opening everything;
 
-carry out universal opening everything (this is the universal opening of everything rule):
-	try universal opening of things;
-	try universal opening of doors;
+universal everything opening is an action out of world applying to nothing. Understand "openall" as universal everything opening;
 
-section - universal opening of single things
+carry out universal everything opening (this is the universal everything opening rule):
+	try universal thing opening;
+	try universal door opening;
+
+Section - universal opening of single things
 
 universal-opening is an action out of world applying to one thing.
 
-understand "openall [something]" as universal-opening.
+understand "openall [any thing]" as universal-opening.
 
-carry out universal-opening something (called chosen item)(this is the universal opening something specific rule):
+carry out universal-opening an object (called chosen item)  (this is the universal opening something specific rule):
 	if the chosen item is openable:
 		if the chosen item is closed:
 			now the chosen item is open;
@@ -61,13 +61,13 @@ Section: Testing commands available to the player
 
 The extension provides you with a "openall" command, available in several versions. 
 
-First of all you can open one single thing.If you have a safe and you want it open, just go "openall safe". This works both on doors and containers - anything that is "openable". Note that it does not unlock things, but rather just opens them, ignoring any locked property. 
+First of all you can open one single thing.  If you have a safe and you want it open, just go "openall safe". This works both on doors and containers - anything that is "openable". Note that it does not unlock things, but rather just opens them, ignoring any locked property. 
 
 Second, you can open lots of things at once. "openalldoors", in one word, will open all doors. All of them at once, that is.
 
 Third, you can do that to all things except doors. The command is "openallthings". 
 
-Fourth, you can open everything - all doors, and all things. The command is "just openall". 
+Fourth, you can open everything - all doors, and all things. The command is "openall". 
 
 Example: * The secure piggy bank - A piggy bank that you can put things inside, even it it's closed and locked. Including the key! In the test, you put the key in the locked piggy bank and use "openall bank" to make it open.
 
