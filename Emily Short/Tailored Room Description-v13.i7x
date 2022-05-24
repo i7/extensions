@@ -1,4 +1,4 @@
-Version 13/180515 of Tailored Room Description by Emily Short begins here.
+Version 13.2.220524 of Tailored Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, providing a different style of room description than the default. Parenthetical remarks such as (open) and (in which are...) are omitted in favor of full English sentences. Removes the requirement for Text Variations."
 
@@ -420,11 +420,11 @@ We may also swap these tables entirely for other tables of our own devising, as 
 		now the current-supporter-content-table is the Table of New Supporter Content.
 
 The purpose of this change is to make the extension more flexible and more useful to authors working with alternative viewpoints (to recast the prose in first-person past tense, for instance) or in other languages. It also substantially reduces the number of individual rules and quantity of redundant code in the extension.
+Changelog:
 
-Version 8 tweaks the reporting of character possessions and worn items to appear more natural. It also adds section headings to the documentation.
-
-Version 13/160601: Counterfeit Monkey version. Update for Inform 6M62. Fix tests. Remove dependency on Plurality.
-
+	Version 13.0.220524: Update for Inform 10.1.  Reformat Changelog.  (Modified by Nathanael Nerode.)
+	Version 13/160601: Counterfeit Monkey version. Update for Inform 6M62. Fix tests. Remove dependency on Plurality.
+	Version 8 tweaks the reporting of character possessions and worn items to appear more natural. It also adds section headings to the documentation.
 
 Example: * Doors and doors - Writing paragraphs about doors to generate sentences such as "Exits include the white door and the black door. The black door is open."
 

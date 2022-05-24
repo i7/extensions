@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:Nathanael Nerode/Nathanael's Cookbook.i7x
-Version 5/220520 of Nathanael's Cookbook by Nathanael Nerode begins here.
-========
 Version 6.0.220522 of Nathanael's Cookbook by Nathanael Nerode begins here.
->>>>>>>> dcae7f0 (Nathanael Nerode's extensions: Fix version number SNAFU):Nathanael Nerode/Nathanael's Cookbook-v6.i7x
 
 "This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
