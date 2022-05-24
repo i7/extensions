@@ -1,8 +1,6 @@
-Version 1/210620 of Scopability by Brady Garvin begins here.
+Version 2.0.220524 of Scopability by Brady Garvin begins here.
 
 "The ability to toggle objects' scopability; the parser does not acknowledge the existence of unscopable objects, even if they are explicitly added to scope."
-
-[ per https://intfiction.org/t/friends-of-i7-extension-testing/51284/14, fixed a compilation error by changing a ';' -> '.' ]
 
 Chapter "Scopability"
 
@@ -13,36 +11,28 @@ An unscopable thing is usually scenery.
 Chapter "Parser Changes to Honor Scopability"
 
 Include (-
-	[ DoScopeAction item;
-! BEGIN CHANGE FOR SCOPABILITY
-		if (~~GetEitherOrProperty(item, (+ scopable +))) {
-			return;
+[ DoScopeAction item;
+
+	! Next line added by Scopability
+	if (~~GetEitherOrProperty(item, (+ scopable +))) { return ; }
+
+	#Ifdef DEBUG;
+	if (parser_trace >= 6)
+		print "[DSA on ", (the) item, " with reason = ", scope_reason,
+			" p1 = ", parser_one, " p2 = ", parser_two, "]^";
+	#Endif; ! DEBUG
+
+	@push parser_one; @push scope_reason;
+
+	switch(scope_reason) {
+		TESTSCOPE_REASON: if (item == parser_one) parser_two = 1;
+		LOOPOVERSCOPE_REASON: if (parser_one ofclass Routine) indirect(parser_one, item);
+		PARSING_REASON, TALKING_REASON: MatchTextAgainstObject(item);
 		}
-! END CHANGE FOR SCOPABILITY
-#Ifdef DEBUG;
-		if (parser_trace >= 6) {
-			print "[DSA on ", (the) item, " with reason = ", scope_reason,
-				" p1 = ", parser_one, " p2 = ", parser_two, "]^";
-		}
-#Endif;
-		@push parser_one;
-		@push scope_reason;
-		switch (scope_reason) {
-		TESTSCOPE_REASON:
-			if (item == parser_one) {
-				parser_two = 1;
-			}
-		LOOPOVERSCOPE_REASON:
-			if (parser_one ofclass Routine) {
-				indirect(parser_one, item);
-			}
-		PARSING_REASON, TALKING_REASON:
-			MatchTextAgainstObject(item);
-		}
-		@pull scope_reason;
-		@pull parser_one;
-	];
--) instead of "DoScopeAction" in "Parser.i6t".
+
+	@pull scope_reason; @pull parser_one;
+];
+-) replacing "DoScopeAction"
 
 Scopability ends here.
 
@@ -59,6 +49,11 @@ non-scenery usually appears in room descriptions, which would contradict the
 supposed invisibility.  However, scopable and scenery status are toggled
 independently thereafter, so revealing an object usually means changing both
 properties.
+
+Changelog:
+	Version 2: Updated for Inform 10.1 by Nathanael Nerode
+	Version 1/210620: per https://intfiction.org/t/friends-of-i7-extension-testing/51284/14, fixed a compilation error by changing a ';' -> '.' (modified by Zed Lopez)
+	Version 1: Brady Garvin committed to Friends of I7 repo on Dec 28, 2013 with the note "Added my scopability code, per a forum request."
 
 Example: * The Visitor - An object that is present but unrevealed.
 
