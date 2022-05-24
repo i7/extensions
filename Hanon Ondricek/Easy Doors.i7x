@@ -8,8 +8,7 @@ An easydoor is a kind of thing.
 An easydoor is usually fixed in place.
 An easydoor can be enterable.  An easydoor is usually enterable.
 An easydoor can be scenery.
-An easydoor can be unopenable or openable.  An easydoor can be open or closed.  An easydoor is usually openable.
-
+An easydoor can be openable or unopenable. An easydoor can be open or closed.  An easydoor is usually openable.
 An easydoor can be lockable.  An easydoor can be locked or unlocked.
 
 An easydoor has a text called dooraction.  The dooraction of an easydoor is usually "".

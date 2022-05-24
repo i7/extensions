@@ -1,6 +1,8 @@
-Version 6 of Underside by Eric Eve begins here.
+Version 6/210627 of Underside by Eric Eve begins here.
    
 "Allows objects to be put under other objects. An underside usually starts out closed so that its contents are hidden from view. Requires Version 7 (or later) of Bulk Limiter; the space under objects is limited by bulk. Underside is compatible with Version 10 or later of Implicit Actions, but does not require it. Version 5 of Underside avoids features deprecated in Version 6E59 of Inform."
+
+[ 6/210627: fixed small error preventing compilation when Implicit Actions was included ]
 
 Part 1 - Includes
 
@@ -45,7 +47,7 @@ Chapter 2a - Before and Precondition Rules  (for use with Implicit Actions by Er
 
 Before placing something under something (this is the take before placing under rule):
   if the u-side is not nothing and the noun is in the u-side,
-     say "[The noun] [are] already under [the second noun]." instead (A);
+     say "[The noun] [are] already under [the second noun]." (A) instead;
   
 Precondition for placing something under something (this is the placing under precondition rule):
    if the noun is not carried, carry out the implicitly taking activity with the noun;

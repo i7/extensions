@@ -2,6 +2,8 @@ Version 1/200930 of Story Substrate by Jeff Nyman begins here.
 
 "Provides information about the substrate that a story is executing on."
 
+"utilizing some techniques from Interpreter Sniffing by Friends of I7"
+
 Chapter - Serial Number (for Glulx only)
 
 Include (-
@@ -18,11 +20,11 @@ Include (-
 ];
 -).
 
-Chapter - Serial Number Phrase
+Chapter - Serial Number Phrase (unindexed)
 
 To say story serial number: (- SerialNumber(); -).
 
-Chapter - IFID
+Chapter - IFID (unindexed)
 
 The print ID number rule translates into I6 as "UUID_R".
 
@@ -36,7 +38,7 @@ To say story IFID number: (- UUID_R(); -).
 
 Part - Inform Information
 
-Chapter - I7 (NI) Build
+Chapter - I7 (NI) Build (unindexed)
 
 Include (-
 [ I7_Build;
@@ -46,7 +48,7 @@ Include (-
 
 To say I7 build: (- I7_Build(); -).
 
-Chapter - I6 Build
+Chapter - I6 Build (unindexed)
 
 Include (-
 [ I6_Build;
@@ -56,7 +58,7 @@ Include (-
 
 To say I6 build: (- I6_Build(); -).
 
-Chapter - I6 Library
+Chapter - I6 Library (unindexed)
 
 Include (-
 [ I6_Library;
@@ -66,7 +68,7 @@ Include (-
 
 To say I6 library: (- I6_Library(); -).
 
-Chapter - I7 Identifier
+Chapter - I7 Identifier (unindexed)
 
 Include (-
 [ I7_Identity;
@@ -104,7 +106,7 @@ To decide what number is the bitwise and of (I - an arithmetic value) and (J - a
 To decide what number is (I - an arithmetic value) logically shifted (D - a number) bit/bits right:
 	(- is_logical_right_shift({I}, {D}) -).
 
-Chapter - Version Numbers
+Chapter - Version Numbers (unindexed)
 
 A terp version number is a kind of value.
 65535.255.255 specifies a terp version number.
@@ -117,6 +119,32 @@ To say (N - a terp version number):
 
 Chapter - Glulx Version
 
+Section - Glulx Values
+
+A Glulx implementation is a kind of value.
+Unknown Glulx implementation is a Glulx implementation.
+
+Section - Glulx Detected
+
+Glulx implementation already detected is a truth state that varies.
+Glulx implementation already detected is false.
+
+The cached result of Glulx implementation detection is a Glulx implementation that varies.
+
+Section - Detecting Glulx (unindexed)
+
+The Glulx implementation detection rulebook is a nothing based rulebook producing a Glulx implementation.
+
+To decide what Glulx implementation is the current Glulx implementation:
+	if Glulx implementation already detected is false:
+		now the cached result of Glulx implementation detection is the Glulx implementation produced by the Glulx implementation detection rulebook;
+		unless the rule succeeded:
+			now the cached result of Glulx implementation detection is Unknown Glulx implementation;
+		now Glulx implementation already detected is true;
+	decide on the cached result of Glulx implementation detection.
+
+Section - Detecting Glulx Version (unindexed)
+
 Include (-
 [ is_glulx_version;
 	@gestalt 0 0 sp;
@@ -126,7 +154,7 @@ Include (-
 
 To decide what terp version number is current Glulx version number: (- is_glulx_version() -).
 
-Chapter - Interpreter Version
+Chapter - Interpreter Version (unindexed)
 
 Include (-
 [ is_interpreter_version;
@@ -162,7 +190,7 @@ IO implementation already detected is false.
 
 The cached result of IO implementation detection is an IO implementation that varies.
 
-Section - Detecting IO
+Section - Detecting IO (unindexed)
 
 The IO implementation detection rulebook is a nothing based rulebook producing an IO implementation.
 
@@ -177,7 +205,7 @@ To decide what IO implementation is the current IO implementation:
 		now IO implementation already detected is true;
 	decide on the cached result of IO implementation detection.
 
-Section - Detecting IO Version
+Section - Detecting IO Version (unindexed)
 
 Include (-
 [ is_io_version
@@ -191,6 +219,48 @@ Include (-
 -).
 
 To decide what terp version number is the current IO version number: (- is_io_version() -).
+
+Part - Specific Glulx Implementation
+	
+Chapter - Git
+
+Git Glulx is a Glulx implementation.
+
+Chapter - Git Test (unindexed)
+
+Include (-
+[ is_git;
+	@gestalt 31040 0 sp;
+	@return sp;
+];
+-).
+
+To decide whether the Git gestalt is set: (- is_git() -).
+
+Chapter - Git Rule (unindexed)
+
+Glulx implementation detection (this is the test for Git rule):
+	if the Git gestalt is set:
+		rule succeeds with result Git Glulx.
+
+Part - Specific Interpreter Implementation
+
+Chapter - Interpreters
+
+An interpreter is a kind of value.
+Unknown interpreter is an interpreter.
+
+Git-based interpreter are interpreters.
+
+Section - Determine Interpreter (unindexed)
+
+To decide what interpreter is the current interpreter:
+	if the current IO implementation is:
+		-- Unknown Glk implementation:
+			if the current Glulx implementation is:
+				-- Git Glulx:
+					decide on Git-based interpreter;
+	decide on Unknown interpreter.
 
 Part - Action for Getting Substrate Information
 
@@ -206,7 +276,10 @@ Report reporting the substrate:
 	say "Inform 7 Identity: [I7 identity].";
 	say "Glulx version: [current Glulx version number].";
 	say "Interpreter version: [current interpreter version number].";
-	say "I/O version: [current IO version number]."
+	say "I/O version: [current IO version number].";
+	say "Current IO Implementation: [current IO implementation].";
+	say "Current Glulx Implementation: [current Glulx implementation].";
+	say "Current Interpreter: [current interpreter]."
 
 Story Substrate ends here.
 
@@ -269,3 +342,14 @@ There is yet one more level to consider which is the I/O implementation being us
 	say "I/O version: [current IO version number]."
 
 Whether the above information is useful really depends on whether you are using some effect or feature that is known to exist only within certain Glulx versions or with certain Glk I/O implementations. The interpreter version is less useful without knowing what the actual interpreter is so, for now, that's included for completeness of versioning information rather than as anything terribly useful.
+
+That said, I have implemented those parts of Interpreter Sniffing that attempt to look for the current implemenation of either the IO verison or the Glulx verison. You can have those displayed as such:
+	
+	say "Current IO Implementation: [current IO implementation].";
+	say "Current Glulx Implementation: [current Glulx implementation]."
+
+You can try to determine what the current interpreter is by the following:
+	
+	say "Current Interpreter: [current interpreter]."
+	
+However the mechanisms in place to be able to detect are extremely poor, at best. So it's unclear if this is has any real value.

@@ -1,10 +1,11 @@
-Version 16/140501 of Smarter Parser by Aaron Reed begins here.
+Version 16/210817 of Smarter Parser by Aaron Reed begins here.
 
 "Understands a broader range of input than the standard parser, and can direct new players towards proper syntax."
 
 
 [
 CHANGES:
+ -- Version 16/210817 Added an end if to the text for the unnecessary movement rule (fixes an incompatibility with Neutral Standard Responses by Nathanael Nerode)
  -- Version 16: Updated for latest build.
  -- Version 15: changes suggested post-IF Comp 11. Point players to the NOVICE OFF command the first time something is printed. Add an option/notification to turn auto-reparsing off with CORRECT OFF. Added support for a cross-story config file to remember these two settings. Removed "scandalous standardize swears" and "signs of frustration"; retooled "stripping interjections" to be simpler and less likely to conflict with existing code; simplified adverbs to only look for a commonly-used set; fixed bug in "noun alone examines" interpretation to do with typing "examine" without a noun; simplified some scope checks to improve speed; tweaked applicable examples for easier customization; made suggestion for ABOUT command customizable; removed clothing and body parts to a standalone extension, "Commonly Unimplemented"; rewrote punctuation replacement and "starts with" to do direct I6 string manipulation, for speed gain; rewrote displaying results to isolate text for easier replacement; rewrote documentation for clarity; rewrote error message selected to allow for table continuations rather than amendments (which don't work on rules); removed starting command with i as redundant with making assertions rule; rewrote unnecessary possessive's rule to only match if the "'s" word is not in the dictionary, which should cut down on false positives.
  -- Version 14: Added more enthusiastic blank line replacement code that allows for any command to run with time passing as normal. Tweaks to make the unnecessary movement rule more clear and specific; added code so item examples can choose the player's noun even without parsing; removed most references to "compass directions" in deference to down, out etc; clarified text of generic surroundings rule.
@@ -1008,7 +1009,7 @@ A smarter parser rule when sp_normal (this is the unnecessary movement rule):
 
 Table of Smarter Parser Messages (continued)
 rule name		message
-unnecessary movement rule		"[as the parser]If you can see an object, you can usually just interact with it directly without worrying about your position[if player is enclosed by something] (although since you're in or on something, you may need to type EXIT first)[end if]. Try a command like EXAMINE [get noun example] for a closer look at something[if the number of sp_viable directions is at least 1], LOOK to get a new description of this location, or a direction like [get direction example] to move to a different location.[otherwise], or LOOK to show the description of this location again.[as normal]"
+unnecessary movement rule		"[as the parser]If you can see an object, you can usually just interact with it directly without worrying about your position[if player is enclosed by something] (although since you're in or on something, you may need to type EXIT first)[end if]. Try a command like EXAMINE [get noun example] for a closer look at something[if the number of sp_viable directions is at least 1], LOOK to get a new description of this location, or a direction like [get direction example] to move to a different location.[otherwise], or LOOK to show the description of this location again.[end if][as normal]"
 
 
 Section - Stripping Vague Words

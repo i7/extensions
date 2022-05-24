@@ -1,4 +1,4 @@
-Version 15/200828 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15/220305 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -72,6 +72,9 @@ A g-window has a number called minimum size.
 A g-window has a number called the rock number.
 
 A g-window has a number called ref number.
+
+A g-window has a truth state called the border hint.
+The border hint of a g-window is usually true.
 
 A g-window can be g-required or g-unrequired.
 A g-window is usually g-unrequired.
@@ -314,6 +317,7 @@ Include (-
 		{
 			size = win.(+ measurement +);
 		}
+		if ( ~~win.(+ border hint +) ) method = method | winmethod_NoBorder;
 	}
 	type = win.(+ type +) + 2;
 	rock = win.(+ rock number +);
@@ -421,10 +425,8 @@ To set (win - a g-present textual g-window) as the acting main window:
 
 Chapter - Grid window cursors
 
-To set (win - a text grid g-window) cursor to row (row - a number) column (col - a number):
-	(-  glk_window_move_cursor({win}.(+ ref number +), {row} - 1, {col} - 1); -).
-
-
+To set (win - a text grid g-window) cursor to row (row - a number) and/-- column (col - a number):
+	(-  glk_window_move_cursor({win}.(+ ref number +), {col} - 1, {row} - 1); -).
 
 Chapter - Window measurements
 
@@ -484,7 +486,14 @@ A glulx resetting-windows rule (this is the find existing windows rule):
 		if win is the quote window:
 			now gg_quotewin is the current glulx rock-ref;
 
+[ Recalibrate windows during GGRecoverObjects, however do not delete the main and status windows when restarting. ]
 A first glulx object-updating rule (this is the recalibrate windows rule):
+	if the starting the virtual machine activity is going on:
+		if the main window is g-present:
+			now the main window is g-required;
+			now the current focus window is the main window;
+		if the status window is g-present and the no status line option is not active:
+			now the status window is g-required;
 	calibrate windows;
 	focus the current focus window;
 
@@ -1134,4 +1143,3 @@ Example: * Inventory Window - A simple example showing how to place a side windo
 	The Study is a room. In the study is an old oak desk. On the desk is a Parker pen, a letter, an envelope and twenty dollars.
 
 	Test me with "take pen/take letter/i/take all".
-

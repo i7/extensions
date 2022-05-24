@@ -1,10 +1,13 @@
-Version 1 of Scopability by Brady Garvin begins here.
+Version 1/210620 of Scopability by Brady Garvin begins here.
 
 "The ability to toggle objects' scopability; the parser does not acknowledge the existence of unscopable objects, even if they are explicitly added to scope."
 
+[ per https://intfiction.org/t/friends-of-i7-extension-testing/51284/14, fixed a compilation error by changing a ';' -> '.' ]
+
 Chapter "Scopability"
 
-An object can be scopable or unscopable; an object is usually scopable.
+An object can be scopable or unscopable.
+An object is usually scopable.
 An unscopable thing is usually scenery.
 
 Chapter "Parser Changes to Honor Scopability"
