@@ -10,6 +10,10 @@ An unscopable thing is usually scenery.
 
 Chapter "Parser Changes to Honor Scopability"
 
+[ DoScopeAction cannot be replaced!  Even with an identical copy of the version in the template! ]
+[ Inform 7 will fail trying to do this.  That's kind of wild, isn't it? ]
+[ Anyway, this means Scopability is hopeless. ]
+
 Include (-
 [ DoScopeAction item;
 
