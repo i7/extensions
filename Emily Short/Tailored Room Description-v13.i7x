@@ -1,4 +1,4 @@
-Version 13.0.220524 of Tailored Room Description by Emily Short begins here.
+Version 13.2.220524 of Tailored Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, providing a different style of room description than the default. Parenthetical remarks such as (open) and (in which are...) are omitted in favor of full English sentences. Removes the requirement for Text Variations."
 
