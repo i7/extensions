@@ -1,4 +1,4 @@
-Version 1/171007 of Character Portraits by Nathanael Nerode begins here.
+Version 1.0.220523 of Character Portraits by Nathanael Nerode begins here.
 
 "Provides a complex system for customzing the printed descriptions of characters wearing or carrying lots of stuff, similar to the room description system in Standard Rules.  Requires Large Game Speedup by Nathanael Nerode."
 
@@ -432,5 +432,6 @@ The body parts listing may not be what you want because the full name of each bo
 
 Section - Changelog
 
+	1.0.220523 - Update for Inform v 10.1 version numbering
 	1/171007 - Fix line breaks
 	1/171006 - First version
