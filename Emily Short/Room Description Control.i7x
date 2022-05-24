@@ -1,4 +1,4 @@
-Version 14.0.220524 of Room Description Control by Emily Short begins here.
+Version 14.1.220524 of Room Description Control by Emily Short begins here.
 
 "A framework by which the author can considerably change the listing of objects in a room description. Includes facilities for concealing objects arbitrarily and changing the order in which objects are listed."
 
@@ -270,7 +270,7 @@ A debugging verb PARAGRAPHS is provided. Turning PARAGRAPHS on will cause the de
 
 Section: Changelog
 
-	Version 14.0.220524: (Updated by Nathanael Nerode.)  Switch to Inform 10.1 version numbering.  Comments and whitespace fixes.  Shorten action names for paragraph debugging to avoid conflict and compile under 10.1.  Remove triple loop over all objects in favor of single loop over all objects.  Fix treatment of undescribed objects.  Reorganize Chaneglog.
+	Version 14.1.220524: (Updated by Nathanael Nerode.)  Switch to Inform 10.1 version numbering.  Comments and whitespace fixes.  Shorten action names for paragraph debugging to avoid conflict and compile under 10.1.  Remove triple loop over all objects in favor of single loop over all objects.  Fix treatment of undescribed objects.  Reorganize Chaneglog.
 	Version 14/210401: Improved paragraph debugging; comments and some style modernization.
 	Version 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.
 	Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurality.
