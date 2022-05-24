@@ -1,4 +1,4 @@
-Version 3.0.220523 of Gender Speedup by Nathanael Nerode begins here.
+Version 3.0.220524 of Gender Speedup by Nathanael Nerode begins here.
 
 "When using Gender Options, clean up some I6 internals with functions related to gender which are irrelevant to English or rendered obsolete with Gender Options.  Since these are called in the depths of ListWriter this should slightly improve speed.  Not included in Gender Options due to likely interference with other extensions.  Requires Gender Options.  Will not work with languages with gendered plurals.  Tested with Inform 10.1."
 
