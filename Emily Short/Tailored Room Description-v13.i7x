@@ -422,7 +422,7 @@ We may also swap these tables entirely for other tables of our own devising, as 
 The purpose of this change is to make the extension more flexible and more useful to authors working with alternative viewpoints (to recast the prose in first-person past tense, for instance) or in other languages. It also substantially reduces the number of individual rules and quantity of redundant code in the extension.
 Changelog:
 
-	Version 13.0.220524: Update for Inform 10.1.  (Modified by Nathanael Nerode.)
+	Version 13.0.220524: Update for Inform 10.1.  Reformat Changelog.  (Modified by Nathanael Nerode.)
 	Version 13/160601: Counterfeit Monkey version. Update for Inform 6M62. Fix tests. Remove dependency on Plurality.
 	Version 8 tweaks the reporting of character possessions and worn items to appear more natural. It also adds section headings to the documentation.
 
