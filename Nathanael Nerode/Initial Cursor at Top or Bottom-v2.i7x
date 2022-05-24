@@ -1,4 +1,4 @@
-Version 2.0.220521 of Initial Cursor at Top or Bottom by Nathanael Nerode begins here.
+Version 2.0.220524 of Initial Cursor at Top or Bottom by Nathanael Nerode begins here.
 
 "This small extension eliminates the three newlines printed before the banner.  It also provides a tool to attempt to place the cursor at the bottom of the screen, like old Infocom games.  Due to wild variance between interpreters, it is not reliable.".
 
@@ -154,8 +154,9 @@ Section - Thanks
 
 Section - Changelog
 
-Version 2.0.220521 adapted the extension to Inform v10.
-Version 1/170827 was the first released version.
+	2.0.220524 reformatted the Changelog.
+	2.0.220521 adapted the extension to Inform v10.
+	1/170827 was the first released version.
 
 Example: * Top
 

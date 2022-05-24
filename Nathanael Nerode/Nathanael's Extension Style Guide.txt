@@ -93,6 +93,17 @@ This should go without saying.
 
 But one specific thing you might want to document are how to override specific bits of the extension which people are likely to not want to use.  This might include the technique described above for deleting a section from an extension, or the method for removing a rule.
 
+(15) Include a Changelog in the documentation.
+
+Indent it as if it were sample code, so it formats nicely.  Put the newest version at the top.  This is oddly useful.  You can see many examples in my extensions, but here's a good way to do it:
+
+Section - Changelog:
+
+	2.0: broke old interface, rewrote from scratch
+	1.1: exciting new features
+	1.0.220525: repaired so it actually compiles
+	1.0.220510: first version
+
 ----
 That's all the advice I have so far.  This will make your extension more maintanable, upgradeable, and generally useable.
 
