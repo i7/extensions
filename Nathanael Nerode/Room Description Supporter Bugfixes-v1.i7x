@@ -1,6 +1,6 @@
-Version 1/210315 of Room Description Supporter Bugfixes by Nathanael Nerode begins here.
+Version 1.0.220523 of Room Description Supporter Bugfixes by Nathanael Nerode begins here.
 
-"Fixes some issues in Standard Rules related to printing room descriptions with enterable supporters.  Experimental."
+"Fixes some issues in Standard Rules related to printing room descriptions with enterable supporters."
 
 Include Large Game Speedup by Nathanael Nerode. [For rapid unmentioning.]
 
@@ -152,7 +152,7 @@ Room Description Supporter Bugfixes ends here.
 
 ---- DOCUMENTATION ----
 
-I do not currently recommend using this, but I am uploading it as documentation of both the problems in the Standard Rules and the minimally invasive solutions.  It is probably better to use a more comprehensive replacement of the room description rules.
+I do not currently recommend using this, but I am uploading it as documentation of both the problems in the Standard Rules and the minimally invasive solutions.  It is probably better to use a more comprehensive replacement of the room description rules; but this will do the minimum fix.
 
 Suppose you have an enterable supporter in a room: say, a bed or tabletop.
 Suppose it has a "rule for writing a paragraph about", giving it a special description.
@@ -190,3 +190,8 @@ This is hooked through the "items on supporters paragraph production" rulebook, 
 Unfortunately, things on the tabletop with special paragraphs will be listed before the tabletop itself.  This is a limitation of this architecture, which is why you may want to use Room Description Control by Emily Short instead.
 
 3. The Standard Rules will sometimes print "On the bed is nothing."  Before printing the "On the bed are..." phrase, the standard rules check that something which is not scenery, not undescribed, and not already mentioned is on the bed.  But if that something is concealed, or gets mentioned mid-description, it won't be printed, ending up with the "nothing" result!  This extension fixes this by correctly counting the items to be listed before deciding whether to print a sentence.
+
+Changelog:
+
+	1.0.220523 - Update to Inform v10 version numbering.  No other changes.  Large Game Speedup had to be fixed, though.
+	1/210315 - First version
