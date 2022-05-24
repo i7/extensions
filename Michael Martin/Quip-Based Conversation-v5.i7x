@@ -1,9 +1,10 @@
-Version 5/171116 of Quip-Based Conversation by Michael Martin begins here.
+Version 5.1 of Quip-Based Conversation by Michael Martin begins here.
 
 "An extension to Reactable Quips to allow for more traditional menu-based conversation."
 
-Include Version 10/171116 of Reactable Quips by Michael Martin.
+Include Version 10.1 of Reactable Quips by Michael Martin.
 
+[Version 5.1: Update for Inform 10.1 by Nathanael Nerode; just version number changes here and Reactable Quips.]
 [Version 5/171116: Update for 6M62 by climbingstars.]
 [Version 5: Update for 6E59. Removes references to deprecated features in Inform.]
 [Version 4: Update for 5T18. Syntax and documentation updates; Version 3 should still work as long as RQ is the right version.]
@@ -307,4 +308,3 @@ Example: *** Joe Schmoe Revisited - A reimplementation of David Glasser's PHTALK
 
 	test me with "talk to me / x joe / talk to joe / 1 / x me / 1 / repeat / 3 / x me / 1 / 1".
 	test xyzzy with "xyzzy / 1".
-	
