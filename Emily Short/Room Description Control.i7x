@@ -33,11 +33,22 @@ A description-priority rule (this is the marking rule):
 	now every thing is not marked for listing;
 	call the swift rule on everything in scope.
 
-[ Three loops through the entire object world.  Three!  FIXME. ]
+[ New implementation: one loop ]
 A description-priority rule (this is the mentioning tedious things rule):
-	now the player is not marked for listing; [ Needs to be corrected: should be undescribed things]
+	repeat with item running through every thing:
+		if item is undescribed:
+			now item is not marked for listing; [ Usually the player ]
+		if item is enclosed by the player:
+			now item is not marked for listing;
+		if item is scenery:
+			now item is not marked for listing;
+
+[ Old implementation: three loops over all objects ]
+[
+	now the player is not marked for listing;
 	now every thing enclosed by the player is not marked for listing;
 	now every scenery thing is not marked for listing;
+]
 
 A description-priority rule (this is the determining concealment rule): 
 	follow the description-concealing rules.
@@ -257,24 +268,15 @@ Section: Debugging
 
 A debugging verb PARAGRAPHS is provided. Turning PARAGRAPHS on will cause the description process to print out its table of seen things (with ranking numbers for all objects) before formulating the description.
 
-Section: Change Log
+Section: Changelog
 
-Version 5 fixes a small but very annoying bug preventing proper release of finished game files. 
-
-Version 6 updates to use "object-based rulebook" rather than "object-based-rulebook", as required by Inform 5G67, and also clears up a bug whereby an NPC entering an object could trigger a description of the location entered.
-
-Version 7 adds the don't mention things out of play rule; this means that if the author places some things in scope by hand, they will not be assumed to belong to the room description. This can be overridden by replacing or suspending the rule. Version 7 also adds section headings to the documentation.
-
-Version 8 adds a fix for bugs involving multiple identical objects, so that they will not each earn their own individual listings.
-
-Version 10 removes deprecated phrases.
-
-Version 12 does some cleanup and brings the extension in line with adaptive responses.
-
-Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurality.
-
-Vergion 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.
-
-Version 14/210401: Improved paragraph debugging; comments and some style modernization.
-
-Version 14.0.220524: (Updated by Nathanael Nerode.)  Switch to Inform 10.1 version numbering.  Comments and whitespace fixes.  Shorten action names for paragraph debugging to avoid conflict and compile under 10.1.
+	Version 14.0.220524: (Updated by Nathanael Nerode.)  Switch to Inform 10.1 version numbering.  Comments and whitespace fixes.  Shorten action names for paragraph debugging to avoid conflict and compile under 10.1.  Remove triple loop over all objects in favor of single loop over all objects.  Fix treatment of undescribed objects.  Reorganize Chaneglog.
+	Version 14/210401: Improved paragraph debugging; comments and some style modernization.
+	Version 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.
+	Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurality.
+	Version 12 does some cleanup and brings the extension in line with adaptive responses.
+	Version 10 removes deprecated phrases.
+	Version 8 adds a fix for bugs involving multiple identical objects, so that they will not each earn their own individual listings.
+	Version 7 adds the don't mention things out of play rule; this means that if the author places some things in scope by hand, they will not be assumed to belong to the room description. This can be overridden by replacing or suspending the rule. Version 7 also adds section headings to the documentation.
+	Version 6 updates to use "object-based rulebook" rather than "object-based-rulebook", as required by Inform 5G67, and also clears up a bug whereby an NPC entering an object could trigger a description of the location entered.
+	Version 5 fixes a small but very annoying bug preventing proper release of finished game files. 

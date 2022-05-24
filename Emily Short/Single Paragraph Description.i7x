@@ -1,4 +1,4 @@
-Version 7.0.220524 of Single Paragraph Description by Emily Short begins here.
+Version 7.0.220525 of Single Paragraph Description by Emily Short begins here.
 
 "A room description extension based on Room Description Control (which is required). All contents of a room are summarized in a single paragraph, starting with the regular room description."
 
@@ -94,13 +94,13 @@ Because these single-paragraph descriptions can grow quite long and hard to read
 
 If the game in question is set to BRIEF or SUPERBRIEF mode, Single Paragraph Description will omit the initial room description either when visiting the room for the second time (for brief) or always (for superbrief). Items in the room will still be mentioned.
 
-Version 3 removes a bug in which rooms with no description could crash the game.
+Changelog:
 
-Version 6/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
-
-Version 7/210331 auto-inserts the spaces after room descriptions and initial descriptions.  This actually works.  The example now replaces a response in order to match the sample text.  (Modified by Nathanael Nerode.)
-
-Version 7.0.220524 updates for Inform v10.1 and has a whitespace fix in the example.  (Modified by Nathanael Nerode.)
+	Version 7.0.220525 adds scenery to the example to verify that recent changes to Room Description Control work correctly. (Modified by Nathanael Nerode.)  Changelog is reordered.
+	Version 7.0.220524 updates for Inform v10.1. (Modified by Nathanael Nerode.)
+	Version 7/210331 auto-inserts the spaces after room descriptions and initial descriptions.  This actually works.  The example now replaces a response in order to match the sample text.  (Modified by Nathanael Nerode.)
+	Version 6/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
+	Version 3 removes a bug in which rooms with no description could crash the game.
 
 Example: * Scene Setting - The Amphitheater in full
 
@@ -113,6 +113,9 @@ Example: * Scene Setting - The Amphitheater in full
 	A play script and a ball of wax are here.
 
 	A mask is here. "On the floor [regarding the mask][are] a mask."
+
+	The valley is scenery in Amphitheater.  Understand "view" as the valley. 
+	The description of the valley is "The valley spreads out, green and lush, into the far distance."
 
 	The reporting items rule response (I) is "[We] can also [see] [a list of mentionable things] here. ";
 

@@ -84,10 +84,12 @@ The advantage of including it is that we can then make use of Room Description C
 
 For more detail on these abilities, see the documentation for Room Description Control.
 
-Version 4.0.220524 updated to Inform v10.1 version numbering.  (Modified by Nathanael Nerode.)
-Version 4/210333 added the missing space in "On the dresser are[ ]a set of sheets."
-Version 4/210332 stopped trying to print initial descriptions when the initial description was "".
-Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
+Changelog:
+
+	Version 4.0.220524 updated to Inform v10.1 version numbering.  (Modified by Nathanael Nerode.)
+	Version 4/210333 added the missing space in "On the dresser are[ ]a set of sheets."
+	Version 4/210332 stopped trying to print initial descriptions when the initial description was "".
+	Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Quiet Shelf - A scenery supporter which does not list its contents in the room description. 
 
