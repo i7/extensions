@@ -1,4 +1,4 @@
-Version 1/120223 of Universal Opening by Peter Orme begins here.
+Version 1.0.220524 of Universal Opening by Peter Orme begins here.
 
 Chapter 1 - Universal opening commands - Not for release
 
@@ -68,6 +68,10 @@ Second, you can open lots of things at once. "openalldoors", in one word, will o
 Third, you can do that to all things except doors. The command is "openallthings". 
 
 Fourth, you can open everything - all doors, and all things. The command is "openall". 
+
+Changelog:
+	1.0.220524: Update for v10.1.  Main issue was need to have short action names.  Also allow openall to be used on things not in scope. (Nathanael Nerode)
+	1/120223: First version.
 
 Example: * The secure piggy bank - A piggy bank that you can put things inside, even it it's closed and locked. Including the key! In the test, you put the key in the locked piggy bank and use "openall bank" to make it open.
 
