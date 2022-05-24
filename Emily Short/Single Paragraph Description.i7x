@@ -1,4 +1,4 @@
-Version 7/210331 of Single Paragraph Description by Emily Short begins here.
+Version 7.0.220524 of Single Paragraph Description by Emily Short begins here.
 
 "A room description extension based on Room Description Control (which is required). All contents of a room are summarized in a single paragraph, starting with the regular room description."
 
@@ -97,7 +97,10 @@ If the game in question is set to BRIEF or SUPERBRIEF mode, Single Paragraph Des
 Version 3 removes a bug in which rooms with no description could crash the game.
 
 Version 6/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
+
 Version 7/210331 auto-inserts the spaces after room descriptions and initial descriptions.  This actually works.  The example now replaces a response in order to match the sample text.  (Modified by Nathanael Nerode.)
+
+Version 7.0.220524 updates for Inform v10.1 and has a whitespace fix in the example.  (Modified by Nathanael Nerode.)
 
 Example: * Scene Setting - The Amphitheater in full
 
@@ -113,4 +116,4 @@ Example: * Scene Setting - The Amphitheater in full
 
 	The reporting items rule response (I) is "[We] can also [see] [a list of mentionable things] here. ";
 
-	Test me with "look / get all / look / drop all / look". 
+	Test me with "look / get all / look / drop all / look".

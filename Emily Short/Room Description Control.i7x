@@ -1,4 +1,4 @@
-Version 14/210401 of Room Description Control by Emily Short begins here.
+Version 14.0.220524 of Room Description Control by Emily Short begins here.
 
 "A framework by which the author can considerably change the listing of objects in a room description. Includes facilities for concealing objects arbitrarily and changing the order in which objects are listed."
 
@@ -7,13 +7,13 @@ Paragraph-debug-state is a number that varies. Paragraph-debug-state is 0.
 
 Section 0 - Data Structure
 
-[This is in its own section so authors can replace it with more or fewer rows.]	 
+[This is in its own section so authors can replace it with more or fewer rows.]
 
 Table of Seen Things
 output subject	current rank
 an object	a number
-with 60 blank rows. 
- 
+with 60 blank rows.
+
 Section 1 - Priority and Concealment Rules
 
 The new object description rule is listed instead of the room description paragraphs about objects rule in the carry out looking rules.
@@ -33,7 +33,7 @@ A description-priority rule (this is the marking rule):
 	now every thing is not marked for listing;
 	call the swift rule on everything in scope.
 
-[ Three loops through the entire object world.  Three!  Waste!]
+[ Three loops through the entire object world.  Three!  FIXME. ]
 A description-priority rule (this is the mentioning tedious things rule):
 	now the player is not marked for listing; [ Needs to be corrected: should be undescribed things]
 	now every thing enclosed by the player is not marked for listing;
@@ -146,25 +146,25 @@ A description-concealing rule while entering a container (called special-target)
 
 Section 3 - Debugging - Not for release
 
-Paragraph-debugging is an action out of world applying to one number.
-Paragraph-debugging-off is an action out of world.
-Paragraph-debugging-on is an action out of world.
-Understand "paragraphs [number]" as paragraph-debugging.
+para-debugging is an action out of world applying to one number.
+para-debug-off is an action out of world.
+para-debug-on is an action out of world.
+Understand "paragraphs [number]" as para-debugging.
 
-Understand "paragraphs off" as paragraph-debugging-off. 
-Carry out paragraph-debugging-off (this is the paragraph debugging off redirect rule):
-	try paragraph-debugging 0 instead;
+Understand "paragraphs off" as para-debug-off.
+Carry out para-debug-off (this is the paragraph debugging off redirect rule):
+	try para-debugging 0 instead;
 
-Understand "paragraphs" or "paragraphs on" as paragraph-debugging-on.
-Carry out paragraph-debugging-on (this is the paragraph debugging on redirect rule):
-	try paragraph-debugging 1 instead;
+Understand "paragraphs" or "paragraphs on" as para-debug-on.
+Carry out para-debug-on (this is the paragraph debugging on redirect rule):
+	try para-debugging 1 instead;
 
-Carry out paragraph-debugging a number (called n) (this is the default carry out paragraph debugging rule):
+Carry out para-debugging a number (called n) (this is the default carry out paragraph debugging rule):
 	if n < 0, now n is 0;
 	if n > 2, now n is 2;
 	now paragraph-debug-state is n.
 
-Report paragraph-debugging (this is the default report paragraph debugging rule):
+Report para-debugging (this is the default report paragraph debugging rule):
 	say "Paragraph debugging is now [if paragraph-debug-state is 2]level 2[else if paragraph-debug-state is 1]on[otherwise]off[end if]." (A)
 
 The table-debugging rule is listed after the description-ranking rule in the description-priority rules.
@@ -276,3 +276,5 @@ Version 13/160517: Update to work with Inform 6M62. Remove dependency on Plurali
 Vergion 14/210322: (Updated by Nathanael Nerode.) Name all rules so they can be replaced/removed by story authors.  Put Table of Seen Things in its own section so it can be overridden by authors.  Additional changes taken from Counterfeit Monkey version: Rename "output" column in Table of Seen Things to "output subject" column, to avoid conflicts.  Remove dependency on Complex Listing.
 
 Version 14/210401: Improved paragraph debugging; comments and some style modernization.
+
+Version 14.0.220524: (Updated by Nathanael Nerode.)  Switch to Inform 10.1 version numbering.  Comments and whitespace fixes.  Shorten action names for paragraph debugging to avoid conflict and compile under 10.1.
