@@ -1,7 +1,8 @@
-Version 10/220522 of Reactable Quips by Michael Martin begins here.
+Version 10/220523 of Reactable Quips by Michael Martin begins here.
 
 "A table-based approach to NPC conversation chains, as well as allowing rules to fire on lines of conversation."
 
+[Version 10/220523 - Restore the ability to type "3" as well as "say 3".  It works under 10.1 if specified separately.]
 [Version 10/220522 - Update for 10.1 by Nathanael Nerode.  Probably will still work with 6M62.]
 [Version 10/171116 - Update for 6M62 by climbingstars.]
 [Version 10 - Quick patch and update for 6E59, correcting the compilation problems and removing any reliance on deprecated features or syntax.]
@@ -64,6 +65,8 @@ Carry out requesting a recap (this is the perform recap rule):
 
 Responding with is an action applying to one number.
 Understand "say [number]" as responding with when RQ is active.
+
+Understand "[number]" as responding with when RQ is active.
 
 [This rule Can't Run, as the Understand commands stand..]
 [Carry out responding with when the pertinent quip is quip_null (this is the can't talk out of conversations rule): 
