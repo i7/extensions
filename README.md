@@ -42,7 +42,7 @@ If you want to contribute your own extension,
 
 If you would access to the repository to add your own extensions, please ask here: <http://www.intfiction.org/forum/viewtopic.php?f=7&t=5229>
 
-See [CONTRIBUTING.md)[./CONTRIBUTING.md) for more information on
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on
 how to create a contribution.
 
 Related sites
