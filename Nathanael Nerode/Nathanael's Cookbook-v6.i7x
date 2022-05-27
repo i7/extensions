@@ -112,7 +112,10 @@ Here is the main Cookbook.
 
 Example: * Line Breaks - Understand when Inform implicitly emits line breaks
 
-	*: "Line Breaks" by "Nathanael Nerode".
+	*: "Line Breaks"
+
+	The story author is "Nathanael Nerode".
+	The release number is 2.
 
 	Section - Everyone's Favorite Test Verb
 
