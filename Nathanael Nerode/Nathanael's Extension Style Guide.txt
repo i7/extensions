@@ -93,7 +93,7 @@ This should go without saying.
 
 But one specific thing you might want to document are how to override specific bits of the extension which people are likely to not want to use.  This might include the technique described above for deleting a section from an extension, or the method for removing a rule.
 
-(15) Include a Changelog in the documentation.
+(15) Consider including a Changelog in the documentation.
 
 Indent it as if it were sample code, so it formats nicely.  Put the newest version at the top.  This is oddly useful.  You can see many examples in my extensions, but here's a good way to do it:
 
@@ -103,6 +103,26 @@ Section - Changelog:
 	1.1: exciting new features
 	1.0.220525: repaired so it actually compiles
 	1.0.220510: first version
+
+(16) Specify the author in Examples -- How to Do It.
+
+Many examples are complex and not necessarily by the same author as the extension.  It's worth specifying the example author frequently.  For whatever reason, the automated tools shipped with Inform can't handle:
+
+	*: "Line Breaks" by Nathanael Nerode
+
+So instead, do this:
+
+	*: "Line Breaks"
+
+	The story author is "Nathanael Nerode".
+
+This will get the banner printing right.
+
+(17) Consider versioning the examples when you update them.
+
+As with the author, you can't do this the obvious way.  But you can write:
+
+	The release number is 3.
 
 ----
 That's all the advice I have so far.  This will make your extension more maintanable, upgradeable, and generally useable.
