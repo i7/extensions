@@ -1,4 +1,4 @@
-Version 3 of Ordinary Room Description by Emily Short begins here.
+Version 4.0.220524 of Ordinary Room Description by Emily Short begins here.
 
 "An extension to go with Room Description Control, which emulates as closely as possible the behavior of Inform defaults, but allows the intervention of Room Description Control."
 
@@ -30,21 +30,21 @@ Rule for disclosing supported contents of something (called the target) which en
 	say ".[paragraph break]" (B). 
 
 Rule for disclosing supported contents of something (called the target) (this is the default contents description rule):
-	say "On [the target]" (A);
+	say "On [the target] " (A);
 	list the contents of the target, giving brief inventory information, as a sentence, including contents, tersely, prefacing with is/are, not listing concealed items;
 	say ".[paragraph break]" (B). 
 
 Definition: a thing is initially-describable if it is initially-described and it is not handled.
 
-Definition: a thing is initially-described if it provides the property initial appearance.
+Definition: a thing is initially-described if it provides the property initial appearance and its initial appearance is not "".
 
 Section 2 - List Nondescript items
  
 A last description-priority rule (this is the nondescript items preparation rule):
 	now every thing is not marked for listing;
 	repeat through the Table of Seen things:
-		if the output entry is unmentioned:
-			now the output entry is marked for listing;
+		if the output subject entry is unmentioned:
+			now the output subject entry is marked for listing;
 	if a marked for listing thing is in the location:
 		carry out the listing nondescript items activity with the location.
 
@@ -83,6 +83,13 @@ This means that including Ordinary Room Description should, by itself, change no
 The advantage of including it is that we can then make use of Room Description Control to make slight tweaks to Inform's default behavior, as for instance by writing description-concealing rules or changing the priority of items so that they are listed in a different order from the usual within a room.
 
 For more detail on these abilities, see the documentation for Room Description Control.
+
+Changelog:
+
+	Version 4.0.220524 updated to Inform v10.1 version numbering.  (Modified by Nathanael Nerode.)
+	Version 4/210333 added the missing space in "On the dresser are[ ]a set of sheets."
+	Version 4/210332 stopped trying to print initial descriptions when the initial description was "".
+	Version 4/210322 is updated to work with version 14 of Room Description Control, which renamed the "output" column of the Table of Seen Things to "output subject" to reduce namespace conflicts with games.  (Modified by Nathanael Nerode.)
 
 Example: * Quiet Shelf - A scenery supporter which does not list its contents in the room description. 
 
