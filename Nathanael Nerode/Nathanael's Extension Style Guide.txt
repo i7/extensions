@@ -8,6 +8,8 @@ No matter what rule you write, some game writer will want to override it, insert
 
 If you name the rules, the game writers can override them.  If you don't, they can't, unless they replace an entire Section.  Name every rule.
 
+Please note that "decide phrases" and "say-phrases", where the definition begins with the word "to" ("to say" or "to decide"), are *not* rules.  They are subroutines.  They work differently, and for the story author to overrride them, the story author has to replace a Section.  For which see below.
+
 (2) Use Volume, Book, Part, Chapter, and Section profligately.
 
 Again, game writers will want to override parts of your extension. Make it easy for them.  Divide the extension into little bite-sized chunks so that the game writer can delete just a little tiny piece.
@@ -44,10 +46,12 @@ Replacing a section is the only way to override definitions.
 The game writer may want to override definitions and keep all your rules.
 You might put a few related Definitions together.
 
-(7) Each related group of say-phrases should get their own Section, with no rules in it.
+(7) Each related group of say-phrases or decide-phrases should get their own Section, with no rules in it.
 
 Replacing a section is, again, the only way to override say-phrases.
 You probably want one section for each say-phrase, unless you have several closely related say-phrases.  It is OK to put "to say a blorb", "to say the blorb", and "to say blorb" in the same section.
+
+The same is true of "to decide which..." phrases.  Each one should get its own Section.
 
 (8) Global variable definitions should often get their own Section.
 
