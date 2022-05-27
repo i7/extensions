@@ -1,4 +1,4 @@
-Version 4.0.220524 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220527 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
@@ -954,6 +954,7 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section 8 - Changelog
 
+	4.0.220527 - Example fixes to accomodate automated testing of examples
 	4.0.220524 - Format Changelog!
 	4.0.220523 - Eliminate now-unnecessary dummy variable.
 	4.0.220521 - Update for Inform v10.1.0, which restructured Standard Rules and the I6T code and the method of replacing I6T code.
@@ -971,13 +972,14 @@ Section 8 - Changelog
 	- Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
 	2/170815 - First public release for gamma testing.
 
-Example: * City Park 
+Example: * City Park
 
 This consists of a room with items featuring most of the combinations of gender and number options which seemed plausible.  Take special note of the toy ship (you can call it "she").  This is also the test suite for the extension.
 
-	*: "Everyone Comes To City Park" by Nathanael Nerode
+	*: "Everyone Comes To City Park"
 	
-	The release number is 4. [Third released version of this test suite]
+	The story author is "Nathanael Nerode".
+	The release number is 5. [Fifth released version of this test suite]
 	Include Gender Options by Nathanael Nerode.
 	City Park is a room.
 	The description of City Park is "Everyone comes to City Park!"
@@ -1102,7 +1104,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	test gender with "anthropomorphize / gender buck / gender puppy / gender shadow / objectify / gender buck / gender puppy / gender shadow / anthropomorphize / matriarchy / gender deity  / gender shadow  / x shadow / patriarchy / gender deity / gender shadow / x shadow" in City Park.
 	
 	test number with "gender girls / gender boys / gender sunbathers / gender dice" in City Park.
-	
+
 Example: ** It for All
 
 Some authors have requested that "it" apply to anything, plural or singular, of any gender, for the convenience of their players.

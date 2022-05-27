@@ -1,4 +1,4 @@
-Version 2.0.220524 of Title Case for Headings by Nathanael Nerode begins here.
+Version 2.0.220527 of Title Case for Headings by Nathanael Nerode begins here.
 
 "Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 10.1.0.  Requires Undo Output Control by Nathanael Nerode to handle the case of room name printing after UNDO."
 
@@ -189,6 +189,7 @@ If you have trouble including Undo Output Control, you may just be willing to li
 
 Section 5 - Changelog
 
+	2.0.220527: Revise examples to work with automated testing of examples
 	2.0.220524: Reformat Changelog
 	2.0.220522: Correct a version number SNAFU
 	1.2.220522: Example bugfix, remove unnecessary dummy variable, add Changelog
@@ -239,8 +240,10 @@ Pond rooms will have titles like "South of the Pond", which confuses Inform 7.  
 same name when printed in ordinary sentences, which also confuses Inform 7.  Accordingly they're privately-named and we handle
 names manually.
 
-	*: "Around the Pond" by Nathanael Nerode
-	
+	*: "Around the Pond"
+
+	The story author is "Nathanael Nerode".
+	The release number is 2.
 	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 	
@@ -307,8 +310,10 @@ Note the careful attention to capitalization in the descriptions.  The title cas
 
 Test this by looking at all the rooms as John, and then by looking at all the rooms as Alice.
 
-	*:  "People's Rooms" by Nathanael Nerode
+	*:  "People's Rooms"
 
+	The story author is "Nathanael Nerode".
+	The release number is 2.
 	Include Undo Output Control by Nathanael Nerode.
 	Include Title Case for Headings by Nathanael Nerode.
 
