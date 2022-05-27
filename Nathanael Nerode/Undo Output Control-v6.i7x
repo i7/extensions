@@ -1,4 +1,4 @@
-Version 6.0.220521 of Undo Output Control by Nathanael Nerode begins here.
+Version 6.0.220527 of Undo Output Control by Nathanael Nerode begins here.
 
 "Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 10.1."
 
@@ -588,16 +588,12 @@ Unified Glulx Input has its own (superior) method for dealing with blank lines; 
 
 Section - Changelog
 
+	6.0.220527: Example cleanups to facilitate automated testing.
 	v6 - Update to Inform v10.1.0.  (Nathanael Nerode.)  Eliminate compatibility with Conditional Undo by Jesse McGrew.  Eliminate "undo word #1" in favor of new "Include (- -) replacing UNDO1__WD" syntax.
-
 	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)  Integrate Empty Command Handling by Daniel Stelzer.  Make compatible with Unified Glulx Input.
-
 	v4 - Substantial updates by Nathanael Nerode.  Update to 6M62.  Fix bugs. Improve documentation.
-
 	v3 - Removed unnecessary check of the "before undoing an action" rulebook at the end of the game. This caused an UNDO typed at the end of the game to fail silently.
-
 	v2 - Added suspension of game state saving and the Breaking Glass and Purgatory examples. Also added the ability to change word constants. Fixed minor bug in operation of undo suspension.
-
 	v1 - Initial release.
 
 Section - Examples
@@ -653,6 +649,8 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 
 	*: "I Love the Sound of Breaking Glass"
 
+	The story author is Erik Temple.
+	The release number is 3.
 	Include Undo Output Control by Nathanael Nerode.
 	
 	Report undoing an action:
@@ -691,7 +689,7 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 	
 	Instead of reckless behavior:
 		say "The [noun] shatters into thousands of pieces.";
-		remove the noun from play;
+		now the noun is nowhere;
 		if the pile of broken glass is in the Laboratory:
 			say "[line break]The pile of broken glass is now a bit higher.";
 		otherwise:
@@ -715,7 +713,8 @@ Note that we warn the player before allowing her to save during this purgatorial
 
 	*: "Purgatory"
 
-	The release number is 3.
+	The story author is Erik Temple.
+	The release number is 4.
 
 	Include Undo Output Control by Nathanael Nerode.
 	
@@ -752,7 +751,7 @@ Note that we warn the player before allowing her to save during this purgatorial
 		otherwise:
 			rule fails.
 
-	test purgatory with "look / drink poison / look / look / undo / look"
+	test me with "look / drink poison / look / look / undo / look"
 			
 Example: ** Purgatory II - As an additional enhancement, we make an automatic undo attempt after the player has died.
 
@@ -760,7 +759,8 @@ Example: ** Purgatory II - As an additional enhancement, we make an automatic un
 
 	Include Undo Output Control by Nathanael Nerode.
 	
-	The release number is 2.
+	The story author is Erik Temple.
+	The release number is 3.
 	
 	Black Room is a room. There is a bottle of poison in Black Room.
 	
@@ -799,4 +799,4 @@ Example: ** Purgatory II - As an additional enhancement, we make an automatic un
 		otherwise:
 			rule fails.
 
-	test purgatory with "look / drink poison / look / look / look"
+	test me with "look / drink poison / look / look / look"
