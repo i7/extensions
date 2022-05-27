@@ -1,8 +1,21 @@
-Version 3 of Mood Variations by Emily Short begins here.
+Version 3.1 of Mood Variations by Emily Short begins here.
 
 "Allows the author to define a mood value for characters and then use text substitutions such as '[when bored]The king fidgets on his throne[or sleepy]The king snores[at other times]The king grins[end when].' Moods will be interpreted in 'writing a paragraph' and similar contexts as the mood of the person described in the paragraph, but at other times according to the mood of the person to whom the player is currently speaking."
 
-Mood is a kind of value. A person has a mood called the current mood. A person has a mood called the previous mood.
+Section - Mood kind
+
+Mood is a kind of value.
+
+[Note that the story writer will have to define the moods.]
+
+Section - Mood properties
+
+A person has a mood called the current mood.
+A person has a mood called the previous mood.
+
+Section - Set mood phrases
+
+[Note that the story writer will have to define the current interlocutor.]
 	
 To say set (attitude - a mood):
 	now the previous mood of the current interlocutor is the current mood of the current interlocutor;
@@ -11,45 +24,44 @@ To say set (attitude - a mood):
 To set (attitude - a mood):
 	now the previous mood of the current interlocutor is the current mood of the current interlocutor;
 	now the current mood of the current interlocutor is attitude.
-	
+
+Section - Mood rule
+
 Before reading a command (this is the mood record-keeping rule):
 	repeat with target running through people:
 		now the previous mood of the target is the current mood of the target.
- 
-Include (-
 
-[ CurMood;
-	 if ( (+ item described +) && (+ item described +) has animate )
-		return (+ current mood of the item described +);
-	if ( (+ current interlocutor +) )
-		return (+ current mood of the current interlocutor +); 
-	return 0;
-];
+Section - Active mood phrase
 
--)
+to decide which mood is the active mood:
+	if the item described is a person:
+		decide on the current mood of the item described;
+	otherwise:
+		decide on the current mood of the current interlocutor.
 
-	To say when (N - a mood) -- beginning say_by_mood:
-		(-  
-			switch( curMood() )
-			{-open-brace}
-			{N}:
-		-);
+Section - Implementation in Inter
+
+To say when (N - a mood) -- beginning say_by_mood:
+	(-
+		switch( (+ the active mood +) )
+		{-open-brace}
+		{N}:
+	-).
 	
-	To say or (N - a mood) -- continuing say_by_mood:
-		(- 
-			{N}: 
-		-);
+To say or (N - a mood) -- continuing say_by_mood:
+	(-
+		{N}:
+	-).
 	
-	To say at other times -- continuing say_by_mood:
-		(-
-			default:
-		-)
+To say at other times -- continuing say_by_mood:
+	(-
+		default:
+	-).
 	
-	To say end when -- ending say_by_mood:
-		(-
-			{-close-brace}
-		-)
-
+To say end when -- ending say_by_mood:
+	(-
+		{-close-brace}
+	-).
 
 Mood Variations ends here.
 
@@ -90,6 +102,10 @@ As long as "set..." is followed by the name of a mood, the current interlocutor 
 		set furious.
 
 A restriction of this system is that it does not offer phrases for setting or checking moods for NPCs other than the current interlocutor. This is because the extension is designed as a fairly streamlined solution for games in which the player is usually talking to one person at a time. It would be more complicated syntactically (to the point of not offering a useful shortcut) if we were to require the author to say *whose* moods were being checked during print options.
+
+Changelog:
+
+	Version 3.1 was adapted to Inform 10 by Nathanael Nerode, by replacing I6 code with I7 code (how clean!), fixing whitespace issues, and adding sections.  Because of the change in version number format, this will only work with Inform 10, but if you change the version number back to old-style, it would probably still work with older versions.  The interface for the story writer is unchanged.
 
 Example: * Don't Mention The Chicken - A character who has moody reactions to certain conversation triggers, and displays her mood changes in her speech and behavior.
 
