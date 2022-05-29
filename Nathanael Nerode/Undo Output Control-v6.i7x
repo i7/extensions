@@ -1,4 +1,4 @@
-Version 6.0.220527 of Undo Output Control by Nathanael Nerode begins here.
+Version 6.0.220529 of Undo Output Control by Nathanael Nerode begins here.
 
 "Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 10.1."
 
@@ -588,6 +588,7 @@ Unified Glulx Input has its own (superior) method for dealing with blank lines; 
 
 Section - Changelog
 
+	6.0.220529: Example cleanups idenified by automated testing.
 	6.0.220527: Example cleanups to facilitate automated testing.
 	v6 - Update to Inform v10.1.0.  (Nathanael Nerode.)  Eliminate compatibility with Conditional Undo by Jesse McGrew.  Eliminate "undo word #1" in favor of new "Include (- -) replacing UNDO1__WD" syntax.
 	v5 - Add "undo the current turn", documentation, and example.  (Nathanael Nerode)  Integrate Empty Command Handling by Daniel Stelzer.  Make compatible with Unified Glulx Input.
@@ -604,6 +605,7 @@ Example: * Mynah Undo - Presents report rules that reproduce Inform's default ou
 
 	*: "Mynah Undo"
 	
+	The story author is "Erik Temple".
 	Include Undo Output Control by Nathanael Nerode.
 	
 	Laboratory is a room. The pen, the vial, the bunsen burner, the beaker, the banana, and the viol are in Laboratory.
@@ -649,7 +651,7 @@ Note that Inform saves the game state even for out-of-world actions, so if the p
 
 	*: "I Love the Sound of Breaking Glass"
 
-	The story author is Erik Temple.
+	The story author is "Erik Temple".
 	The release number is 3.
 	Include Undo Output Control by Nathanael Nerode.
 	
@@ -713,8 +715,8 @@ Note that we warn the player before allowing her to save during this purgatorial
 
 	*: "Purgatory"
 
-	The story author is Erik Temple.
-	The release number is 4.
+	The story author is "Erik Temple".
+	The release number is 5.
 
 	Include Undo Output Control by Nathanael Nerode.
 	
@@ -750,8 +752,6 @@ Note that we warn the player before allowing her to save during this purgatorial
 			continue the action;
 		otherwise:
 			rule fails.
-
-	test me with "look / drink poison / look / look / undo / look"
 			
 Example: ** Purgatory II - As an additional enhancement, we make an automatic undo attempt after the player has died.
 
@@ -759,7 +759,7 @@ Example: ** Purgatory II - As an additional enhancement, we make an automatic un
 
 	Include Undo Output Control by Nathanael Nerode.
 	
-	The story author is Erik Temple.
+	The story author is "Erik Temple".
 	The release number is 3.
 	
 	Black Room is a room. There is a bottle of poison in Black Room.
