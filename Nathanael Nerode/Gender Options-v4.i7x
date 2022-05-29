@@ -802,13 +802,13 @@ Gender Options ends here.
 
 ---- DOCUMENTATION ----
 
-Section 1 - Summary
+Section - Summary
 
 Gender Options makes male, female, and neuter into independent on-off properties, each of which determines respectively whether "HE", "SHE", or "IT" can be used to refer to the thing.  It makes "THEY" refer to any plural-named or ambiguously plural thing.  It also allows some authorial choices over which pronoun to print for things with multiple valid genders or numbers.  It should be just as fast and efficient as the standard rules.
 
 I have a taste for writing stuff with odd gender behavior, and so I decided to do this in a general-purpose manner.  There are several purposes most of which are shown in the City Park example.
 
-Section 2 - Gender/Number Model and Pronouns
+Section - Gender/Number Model and Pronouns
 
 In the new model, male, female, and neuter are each separate properties, so that a thing is "male" or "not male", "female" or "not female", and "neuter" or "not neuter".  This allows for maximum flexibility short of adding new pronouns (which is much more complicated and probably slower).
 
@@ -838,7 +838,7 @@ So an amibguously plural, male, female, neuter thing can be referred to by any o
 
 The concept of "ambiguously plural" items is present in the Standard Rules but is not fully implemented.  (A singular-named ambiguously plural item will not match "they" in the Standard Rules.  It will match with Gender Options active.)
 
-Section 3 - Advice on the gender model
+Section - Advice on the gender model
 
 This is designed to be a plug-in extension which requires no change in existing code and keeps the same behavior if you have been using "man", "woman", or "animal".  If you have been using "person" to refer to generic non-gendered people and using "ambiguously plural" appropriately, this should simply improve the pronoun behavior with no code changes necessary.   But there may be some changes required if you have been using explicit gender adjectives.
 
@@ -864,13 +864,13 @@ Similarly, if you make an animal female, the player can refer to the animal as b
 	
 This is usually desirable.
 
-Section 4 - Unsetting pronouns
+Section - Unsetting pronouns
 
 By default, if you are changing the gender of characters, it doesn't change any pronoun referents already set by the player.  So if "him" is currently referring to Alex, and Alex stops being male, "him" will continue to refer to Alex until the player looks at another male character.  Under some circumstances, this satisfies "principle of least surprise" -- but under others it doesn't.  If you want to make sure that Alex can not be referenced as him:
 
 	unset pronouns from Alex
 
-Section 5 - Gender in output messages
+Section - Gender in output messages
 
 Gender and number is used for a second purpose other than recognizing pronouns in the English Language extension, and we must fix this up too.
 It shows up in message substitutions such as [those].
@@ -898,7 +898,7 @@ This is all implemented with the following decide phrase.  If you don't like the
 
 	To decide which grammatical gender is the printing gender for (o - an object):
 
-Section 6 - Number in output messages
+Section - Number in output messages
 
 Ambiguously plural items (like "pair of shoes") will be treated as plural or singular by output messages depending on whether they are "plural-named" or "singular-named"  This is standard behavior.  This does not affect the ability to refer to them by pronouns (you can always use both "they" and the singular pronouns for their gender).
 
@@ -906,7 +906,7 @@ The plural-named property is also used for the items like "the trees" which are 
 
 Please note that for a thing which is ambiguously plural but singular-named, such as "pair of dice", the substitution "[they're]" will produce "that's", while "[they]['re]" will produce "it's".  Choose wisely!
 
-Section 7 - Printing differences from standard behavior
+Section - Printing differences from standard behavior
 
 For reference, this is the procedure currently used in the Standard Rules as of the time of writing:
 
@@ -931,14 +931,14 @@ In contrast, this was the procedure in Emily Short's Plurality:
 
 Changing the gender model causes these to be two different procedures, which is why I wrote an entirely new and more versatile procedure.
 
-Section 8 - Miscellaneous Changes
+Section - Miscellaneous Changes
 
 In Standard Rules, a person is always transparent -- their contents can be seen and interacted with.
 This is perfectly reasonable as a baseline but can be restrictive for some story authors, so instead,
 with this extension, a person is usually transparent.  Which changes nothing unless you as the story
 author decide to create a non-transparent person.
 
-Section 9 - Interaction with Other Extensions
+Section - Interaction with Other Extensions
 
 Gender Options replaces parts of Standard Rules by Graham Nelson and should be included after it.
 Gender Options replaces most of English Language by Graham Nelson and should be included after it.
@@ -952,8 +952,10 @@ Gender Options is compatible with Plurality by Emily Short in that it is safe to
 
 Gender Options is incompatible with Second Gender by Felix Larsson.  The two do very similar things, but IMO Gender Options does so in a cleaner and more comprehensive fashion.  It was developed completely independently.
 
-Section 8 - Changelog
+Section - Changelog
 
+	4.0.220530 - Section number removal in documentation to accomodate automatic section numbering
+	4.0.220529 - Example fixes to accomodate automated testing of examples
 	4.0.220527 - Example fixes to accomodate automated testing of examples
 	4.0.220524 - Format Changelog!
 	4.0.220523 - Eliminate now-unnecessary dummy variable.

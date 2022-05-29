@@ -1,4 +1,4 @@
-Version 2.0.220527 of Title Case for Headings by Nathanael Nerode begins here.
+Version 2.0.220529 of Title Case for Headings by Nathanael Nerode begins here.
 
 "Applies title case to room names printed as a heading or in the status line.  Creates the printing a heading activity for further customization.  Tested with Inform 10.1.0.  Requires Undo Output Control by Nathanael Nerode to handle the case of room name printing after UNDO."
 
@@ -120,7 +120,7 @@ Title Case for Headings ends here.
 
 ---- DOCUMENTATION ----
 
-Section 1 - The Problem
+Section - The Problem
 
 It is traditional to give rooms titlecased names, like "The Meadow".  However, it is also often desirable to put a room into scope.  This may be done so that people can say "look at the meadow", or so that people can look at faraway rooms.  When the room is in scope, or for other reasons, the room name may be printed in various other contexts, including some of the responses in the Standard Rules.  And often we don't want those to be titlecase.
 
@@ -146,7 +146,7 @@ And if you try this, 'take meadow' will print "You would have to get out of the 
 
 When you start having rooms with possessive names like "John's Hotel Room", it gets even more complicated. You probably want it to be called "the hotel room" in text but "John's Hotel Room" in the status line and headings.
 
-Section 2 - The Solution
+Section - The Solution
 
 This extension will convert names like "babbling brook" to "Babbling Brook" (or "box" to "Box", etc.) for the heading at the
 top of the room description, and for the status line, but otherwise keep them in lowercase.  So we will see:
@@ -161,7 +161,7 @@ In addition, if a room or other object has the property "title", that will be us
 
 The examples The Meadow and Near the Pond do this.
 
-Section 3 - Advanced Solution - the printing a heading activity
+Section - Advanced Solution - the printing a heading activity
 
 This extension also introduces the "printing a heading" activity.
 
@@ -178,7 +178,7 @@ By default, printing a heading will apply title case to the printed name of the 
 
 The example "People's Rooms" implements a complex naming scheme involving possessives, which change depending on who the player character is.
 
-Section 4 - Making it work right with "Undo" - Include Undo Output Control
+Section - Making it work right with "Undo" - Include Undo Output Control
 
 There is one annoying corner case.  When "undo" is successfully executed, the room name is printed as a heading.  For this extension to process this heading correctly, it is necessary to:
 
@@ -187,8 +187,9 @@ There is one annoying corner case.  When "undo" is successfully executed, the ro
 The newest version of Undo Output Control is on the "Friends of I7" extension page on Github.  I updated it specifically so that I could fix this bug.
 If you have trouble including Undo Output Control, you may just be willing to live with the bug.
 
-Section 5 - Changelog
+Section - Changelog
 
+	2.0.220529: Remove documentation section numbers to allow for automated numbering
 	2.0.220527: Revise examples to work with automated testing of examples
 	2.0.220524: Reformat Changelog
 	2.0.220522: Correct a version number SNAFU
