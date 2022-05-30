@@ -1,5 +1,5 @@
-Version 3 of Limited Implicit Actions by Eric Eve begins here.
-"A cut-down version of Implicit Actions for use where code size may be restricted and the full functionality of Implicit Actions is not needed. Requires Plurality by Emily Short and is compatible with Locksmith by Emily Short."
+Version 3.0.1 of Limited Implicit Actions by Eric Eve begins here.
+"A cut-down version of Implicit Actions for use where code size may be restricted and the full functionality of Implicit Actions is not needed. Compatible with Locksmith by Emily Short."
 
 Volume 1 -  Implicit Action Framework
 
@@ -354,7 +354,7 @@ This example incorporates all the various example code snippets for doors and ke
 	  increase the score by 10000;
 	  say "You relock the front door and slip the brass key under the mat, and then turn to saunter triumphantly down the drive, the Eye of Balinor in the pocket of your dinner jacket.";
 	  end the story finally saying "You have won".
-
+	
 	The front door is a closed lockable locked openable door.
 	It is north of the Hall and south of the Drive.
 
@@ -409,12 +409,3 @@ This example incorporates all the various example code snippets for doors and ke
 	Book 3 - Testing
 
 	Test me with "look under mat/unlock front door with key/s/lock front door/e/x safe/x desk/look in pencil case/unlock drawer with small key/look in drawer/unlock safe with silver key/look in safe/x diamond/take eye/lock safe/put silver in drawer/lock drawer/put small key in case/close case/w/n/lock door"
-
-
-
-
-
-
-
-
-
