@@ -1,4 +1,4 @@
-Version 2.0.220522 of Extension Style Guide for Inform 7 v10 by Nathanael Nerode begins here.
+Version 2.0.220531 of Extension Style Guide for Inform 7 v10 by Nathanael Nerode begins here.
 
 After writing, and editing, a number of Inform 7 extensions, I have some advice for extension writers.  More like hard-and-fast rules, really.
 
