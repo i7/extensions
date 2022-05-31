@@ -1,4 +1,4 @@
-Version 2.0.220522 of Extension Style Guide for Inform 7 v10 by Nathanael Nerode begins here.
+Version 2.0.220531 of Extension Style Guide for Inform 7 v10 by Nathanael Nerode begins here.
 
 After writing, and editing, a number of Inform 7 extensions, I have some advice for extension writers.  More like hard-and-fast rules, really.
 
@@ -8,7 +8,7 @@ No matter what rule you write, some game writer will want to override it, insert
 
 If you name the rules, the game writers can override them.  If you don't, they can't, unless they replace an entire Section.  Name every rule.
 
-Please note that "decide phrases" and "say-phrases", where the definition begins with the word "to" ("to say" or "to decide"), are *not* rules.  They are subroutines.  They work differently, and for the story author to overrride them, the story author has to replace a Section.  For which see below.
+Please note that "to phrases", "decide phrases" and "say-phrases", where the definition begins with the word "to" ("to say", "to decide", or "to whatever"), are *not* rules.  They are subroutines.  They work differently, and for the story author to overrride them, the story author has to replace a Section.  For which see below.
 
 (2) Use Volume, Book, Part, Chapter, and Section profligately.
 
@@ -20,7 +20,7 @@ After you've broken it into bite-sized sections, you can organize those bitses i
 
 Neutral Standard Responses is a good example here.
 
-(3) Name every Volume, Book, Chapter, Section, so they can be overridden -- but DO NOT usually number them.
+(3) Name every Volume, Book, Chapter, Section, so they can be overridden -- but DO NOT usually number them
 
 You generally want to keep a section name the same when you update the extension, so that any game which overrides it will continue to do so in later versions of the extensions.
 
@@ -75,7 +75,7 @@ The major version should be incremented whenever you make a change which might b
 
 The minor or patch version should be changed *every time you release a new version*, even if you think the change is insignificant.  If you have two or more versions released in one day, go ahead and increment the patch version to a day in the near future.  It's more important to increment the version than it is for it to be an accurate release date.
 
-Standard Rules by Graham Nelson does not follow this versioning rule, which is a pain; there are different versions floating around with identical version numbers.  Never do this!
+Standard Rules by Graham Nelson, and Rideable Vehicles by Graham Nelson version 3, did not follow this versioning rule, which is a pain; there are different versions floating around with identical version numbers.  Never do this!
 
 (11) Use longer, more verbose, more elaborate names for implementation details, including most rules, sections, internally-used global variables, column names in tables, etc.
 
@@ -85,11 +85,9 @@ This is to avoid namespace conflicts with the game writer.  The game writer shou
 
 If you're defining a "drawer" kind, just call it a "drawer".  The game writer is going to have to write it repeatedly.  Likewise if you're defining a say-phrase for the game writer -- a say-phrase is a shorthand, so make its name short and clear.
 
-(13) To delete a section from another extension, replace it with a section containing nothing.  In Inform 7 v10, this works.
+(13) To delete a section from another extension, replace it with a section containing nothing.  In Inform 7 v10.1, this works.
 
 Often this is to avoid conflicts with other extensions, in which case it should be done inside a Chapter which selects based on whether that other extension is included.  There are examples in Gender Options and Title Case for Headings.  
-
-Due to a bug in version 6M62 and earlier of Inform 7, you can't have a completely blank section, so in 6M62, include a dummy variable.  There are examples of this in the 6M62/9.3 versions of Gender Options ( search for dummy_variable_1234567890 ) and Title Case for Headings ( dummy_variable_97538642 ).
 
 (14) Document your extension.
 
@@ -108,23 +106,15 @@ Section - Changelog:
 	1.0.220525: repaired so it actually compiles
 	1.0.220510: first version
 
-(16) Specify the author in Examples -- How to Do It.
+(16) Specify the author in Examples if it wasn't the extension author
 
-Many examples are complex and not necessarily by the same author as the extension.  It's worth specifying the example author frequently.  For whatever reason, the automated tools shipped with Inform can't handle:
+	This is a matter of politeness.  This works as of the May 31, 2022 updates to Inform 10.1:
 
 	*: "Line Breaks" by Nathanael Nerode
 
-So instead, do this:
-
-	*: "Line Breaks"
-
-	The story author is "Nathanael Nerode".
-
-This will get the banner printing right.
-
 (17) Consider versioning the examples when you update them.
 
-As with the author, you can't do this the obvious way.  But you can write:
+You can't do this the obvious way.  But you can write:
 
 	The release number is 3.
 
