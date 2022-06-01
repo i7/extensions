@@ -1,4 +1,5 @@
 Version 4 of Variable Time Control by Eric Eve begins here.
+
 "Allows individual actions to take a different number of seconds, or no time at all. Also allows the standard time taken per turn to be defined as so many seconds, which can be varied during the course of play".
 
 Part 1 - Time Control Mechanism
