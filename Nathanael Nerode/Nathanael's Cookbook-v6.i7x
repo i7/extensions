@@ -1,4 +1,4 @@
-Version 6.0.220522 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 6.0.220604 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -104,6 +104,7 @@ and have one special rule which runs last and does not have that line -- this ru
 
 Section - Changelog
 
+	6.0.220604: Formatting fixes.
 	6.0.220522: First version for Inform 10.1.  Increment major version to deal with a version number SNAFU.
 
 Section - The Cookbook Proper
@@ -217,12 +218,7 @@ Example: * Line Breaks - Understand when Inform implicitly emits line breaks
 	Carry out thinking (this is the seventh thinking rule):
 		follow the rubbernecking rulebook;
 
-
-Chapter - Everything Else
-
-And now for the other examples.
-
-Example: * Careful Startup -- displaying messages at the right time during startup
+Example: * Careful Startup - displaying messages at the right time during startup
 
 	*: "Careful Startup"
 
@@ -271,7 +267,7 @@ Example: * Careful Startup -- displaying messages at the right time during start
 		initial room description rule
 	]
 
-Example: * Mention Unmention -- controlling whether something is mentioned
+Example: * Mention Unmention - controlling whether something is mentioned
 
 	*: "Mention Unmention"
 
@@ -291,7 +287,7 @@ Example: * Mention Unmention -- controlling whether something is mentioned
 
 	The banana and the orange are in the fruit room.
 
-Example: * Examine Room -- putting the room in scope
+Example: * Examine Room - putting the room in scope
 
 If you're in a room called "Main Street", you probably want "look at main street" to work.  By default, it doesn't.
 
@@ -308,7 +304,7 @@ If you're in a room called "Main Street", you probably want "look at main street
 
 	test me with "examine street/examine main street/take all".
 
-Example: * Meeting Place -- using arbitrary binary relations
+Example: * Meeting Place - using arbitrary binary relations
 
 Use the full power of arbitrary binary relations, which are poorly documented in the Inform 7 manual.  Show how to specify an action applying to a thing in the room and a thing not in the room.
 
@@ -341,7 +337,7 @@ Use the full power of arbitrary binary relations, which are poorly documented in
 		else:
 			say "[Who] [say] 'Nice people there, but I wouldn't want to live under their government.'";
 
-Example: *** Confusion -- polite responses for failed commands to actors
+Example: *** Confusion - polite responses for failed commands to actors
 
 The default "There is no reply" is completely surreal for certain types of games.  This gives a reply which a *compliant* person might give.
 
@@ -394,7 +390,7 @@ The default "There is no reply" is completely surreal for certain types of games
 			say response entry;
 		stop the action.
 
-Example: *** Early Command Parsing -- process certain commands specially
+Example: *** Early Command Parsing - process certain commands specially
 
 This is an offcut from Compliant Characters.i7x.  While I found a much better way to do what I needed there, the code pattern serves as reference for the hooks available in early parsing.
 

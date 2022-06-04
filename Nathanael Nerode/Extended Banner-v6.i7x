@@ -1,4 +1,4 @@
-Version 6.0.220524 of Extended Banner by Nathanael Nerode begins here.
+Version 6.0.220604 of Extended Banner by Nathanael Nerode begins here.
 
 "More control over what is printed in a banner, including an easily-included copyright line."
 
@@ -77,9 +77,34 @@ Extended Banner provides all of the tools necessary to rewrite the banner that i
 
 Section: Fully Customizable Banner
 
-By default, it primarily defines several new text substitutions: the extended story headline, the story serial number, and the I7 version number. For example, the following game has a rule which would print a version of the banner that's the same as the default one:
+By default, it primarily defines several new text substitutions: the extended story headline, the story serial number, and the I7 version number. For example, the game "Totally Normal Banner" has a rule which would print a version of the banner that's the same as the default one.
 
-Example: * Totally Normal Banner
+You can tweak this, as with the example game "Less Normal Banner".
+
+Section: Predefined Copyright Options
+
+To add a copyright line to the banner, you don't have to write a rule like the one in "Totally Normal Banner". Instead, you can define the story copyright string with the year or years for which you're claming copyright:
+
+	The story copyright string is "2005-6".
+
+You can also change the rights you are claiming by changing the story rights string (this is only printed if you specify the story copyright string):
+
+	The story rights statement is "Released under the Creative Commons Attribution-NonCommercial-ShareAlike 2.5 License"
+
+By default the story rights statement is "All rights reserved".
+
+Note that if you replace the default story copyright line rule then it won't print the story copyright string or story rights statement, but you can still use these in your own rule.
+
+Changelog:
+
+	6.0.220604: rearrange examples & documentation to format nicely
+	version 6: rewritten by Nathanael Nerode to compile in Inform 10.1 and to foolproof blank string handling; also provide a copy-pasteable example, and reorganize
+	version 5: updated by Gavin Lambert to compile in 6M62 and make it easier to entirely replace the copyright line
+	version 4 and earlier: originally by Stephen Granade
+
+Example: * Totally Normal Banner - Same as default banner
+
+Note: the "if story author is not blank" text substitution here uses a new pair of say-phrases from this extension which determine whether or not a piece of text is blank.
 
 	*: "Totally Normal Banner"
 
@@ -91,11 +116,7 @@ Example: * Totally Normal Banner
 
 	Test room is a room.
 
-The "if story author is not blank" text substitution above uses a new pair of say-phrases in this extension which determine whether or not a piece of text is blank.
-
-You can obviously tweak this:
-
-Example: * Less Normal Banner
+Example: * Less Normal Banner - A little bit of custom text
 
 	*: "Normal Banner"
 
@@ -107,20 +128,7 @@ Example: * Less Normal Banner
 
 	Test room is a room.
 
-
-Section: Predefined Copyright Options
-
-To add a copyright line to the banner, you don't have to write a rule like the one above. Instead, you can define the story copyright string with the year or years for which you're claming copyright:
-
-	The story copyright string is "2005-6".
-
-You can also change the rights you are claiming by changing the story rights string (this is only printed if you specify the story copyright string):
-
-	The story rights statement is "Released under the Creative Commons Attribution-NonCommercial-ShareAlike 2.5 License"
-
-By default the story rights statement is "All rights reserved".
-
-Example:
+Example: * A Simple Copyright - A copyright and license statement
 
 	*: "A Simple Copyright"
 
@@ -134,7 +142,7 @@ Attribution-NonCommercial-ShareAlike 2.5 License"
 
 If you have something more complicated to say for your copyright statement, you can replace or adjust the "printing the story copyright line" activity:
 
-Example:
+Example: * A Silly Copyright - A bogus copyright and licence statement
 
 	*: "A Silly Copyright"
 
@@ -150,13 +158,3 @@ Example:
 		say "You can discuss this story in the forum at https://my.awesome.website/[line break]"
 
 	Badger Land is a room.
-
-
-Note that if you replace the default story copyright line rule then it won't print the story copyright string or story rights statement, but you can still use these in your own rule.
-
-Changelog:
-
-	version 6: rewritten by Nathanael Nerode to compile in Inform 10.1 and to foolproof blank string handling; also provide a copy-pasteable example, and reorganize
-	version 5: updated by Gavin Lambert to compile in 6M62 and make it easier to entirely replace the copyright line
-	version 4 and earlier: originally by Stephen Granade
-
