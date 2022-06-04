@@ -1,4 +1,4 @@
-Version 4.0.220530 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.220604 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
@@ -974,9 +974,7 @@ Section - Changelog
 	- Revised documentation, comments, and City Park exmaple.  Added "It for All" example.
 	2/170815 - First public release for gamma testing.
 
-Example: * City Park
-
-This consists of a room with items featuring most of the combinations of gender and number options which seemed plausible.  Take special note of the toy ship (you can call it "she").  This is also the test suite for the extension.
+Example: * City Park - This consists of a room with items featuring most of the combinations of gender and number options which seemed plausible.  Take special note of the toy ship (you can call it "she").  This is also the test suite for the extension.
 
 	*: "Everyone Comes To City Park"
 	
@@ -1107,9 +1105,7 @@ This consists of a room with items featuring most of the combinations of gender 
 	
 	test number with "gender girls / gender boys / gender sunbathers / gender dice" in City Park.
 
-Example: ** It for All
-
-Some authors have requested that "it" apply to anything, plural or singular, of any gender, for the convenience of their players.
+Example: ** It for All - Some authors have requested that "it" apply to anything, plural or singular, of any gender, for the convenience of their players.
 
 	*: "It for All"
 	
@@ -1131,9 +1127,7 @@ Some authors have requested that "it" apply to anything, plural or singular, of 
 	
 	test pronouns with "x soldiers / pronouns / x observer / pronouns".
 
-Example: * No0neman's Test
-
-No0neman wanted to make sure that Alex would no longer be able to be referred to by the old gender, not even for a little while.
+Example: * No0neman's Test - No0neman wanted to make sure that Alex would no longer be able to be referred to by the old gender, not even for a little while.
 
 	*: "No0neman's Test"
 
