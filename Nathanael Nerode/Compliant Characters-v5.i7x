@@ -1,4 +1,4 @@
-Version 5.0.220524 of Compliant Characters by Nathanael Nerode begins here.
+Version 5.0.220604 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Tested with Inform 10.1.0."
 
@@ -1002,11 +1002,12 @@ The additonal ways to give orders can be disabled as noted above.
 
 Chapter - Interactions with other Extensions
 
-This extension depends on Parser Error Number Bugfix by Nathanael Nerode, which fixes a bug in the Standard Rules which left two parser errors misnamed.
-This extension depends on version 4 or later Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+This version of this extension depends on version 5 or later Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+This version of this extension depends on Inform 10.1 compiled after 23 May 2022 for its support hooks.
 
 Chapter - Changelog
 
+	5.0.220604 - Small documentation fixes
 	5.0.220524 - Format Changelog
 	5.0.220523 - Documentation changes and cleanup now that patches to core Inform aren't needed.
 	           - Requires Inform 10.1 compiled after 23 May 2022.
