@@ -1,4 +1,4 @@
-Version 2/190831 of Graphical Map (for Glulx only) by Xavid begins here.
+Version 3 of Graphical Map (for Glulx only) by Xavid begins here.
 
 "Provides support for an image-based map with a static background and icons for the player and optionally other things or doors."
 
@@ -20,6 +20,8 @@ When play begins (this is the size map window by map height rule):
 	if the measurement of the map window is 0:
 		now the measurement of the map window is the image-height of the Figure of Map.
 
+The map scaling factor is a number that varies. The map scaling factor is usually 1.
+
 Chapter 2 - Drawing the Map
 
 The map origin is a list of numbers that varies. The map origin is {0, 0}.
@@ -27,8 +29,9 @@ Rule for refreshing the map window (this is the draw map rule):
 	let fig be the map figure of the location;				
 	if fig is the Figure of Cover:
 		now fig is the Figure of Map;
-	let the horizontal scroll be ((the width of the map window) minus the image-width of fig) divided by 2;
-	if (the width of the map window is less than the image-width of fig or the hide unvisited rooms in map option is active) and the fixed map option is not active:
+	let IW be the image-width of fig divided by the map scaling factor;
+	let the horizontal scroll be ((the width of the map window) minus IW) divided by 2;
+	if (the width of the map window is less than IW or the hide unvisited rooms in map option is active) and the fixed map option is not active:
 		let the horizontal scroll be ((((the width of the map window) minus the map grid size) divided by 2) minus ((entry 1 of the map padding) plus (the map grid size times (entry 1 of the real grid pos of the location)))) to the nearest whole number;
 		if the zero-based map grid option is not active:
 			let the horizontal scroll be the horizontal scroll plus the map grid size;
@@ -36,10 +39,11 @@ Rule for refreshing the map window (this is the draw map rule):
 		if the hide unvisited rooms in map option is not active:
 			if the horizontal scroll is greater than 0:
 				let the horizontal scroll be 0;
-			if the horizontal scroll is less than (the width of the map window) minus the image-width of fig:
-				let the horizontal scroll be (the width of the map window) minus the image-width of fig;
+			if the horizontal scroll is less than (the width of the map window) minus IW:
+				let the horizontal scroll be (the width of the map window) minus IW;
 	let the vertical scroll be 0;
-	if (the height of the map window is less than the image-height of fig or the hide unvisited rooms in map option is active) and the fixed map option is not active:
+	let IH be the image-height of fig divided by the map scaling factor;
+	if (the height of the map window is less than IH or the hide unvisited rooms in map option is active) and the fixed map option is not active:
 		let the vertical scroll be ((((the height of the map window) minus the map grid size) divided by 2) minus ((entry 2 of the map padding) plus (the map grid size times (entry 2 of the real grid pos of the location)))) to the nearest whole number;
 		if the zero-based map grid option is not active:
 			let the vertical scroll be the vertical scroll plus the map grid size;
@@ -47,9 +51,12 @@ Rule for refreshing the map window (this is the draw map rule):
 		if the hide unvisited rooms in map option is not active:
 			if the vertical scroll is greater than 0:
 				let the vertical scroll be 0;
-			if the vertical scroll is less than (the height of the map window) minus the image-height of fig:
-				let the vertical scroll be (the height of the map window) minus the image-height of fig;
-	display fig in the map window at the horizontal scroll x the vertical scroll;
+			if the vertical scroll is less than (the height of the map window) minus IH:
+				let the vertical scroll be (the height of the map window) minus IH;
+	if the map scaling factor is not 1:
+		display fig in the map window at the horizontal scroll x the vertical scroll with dimensions IW by IH;
+	else:
+		display fig in the map window at the horizontal scroll x the vertical scroll;
 	now entry 1 of the map origin is the horizontal scroll plus entry 1 of the map padding;
 	now entry 2 of the map origin is the vertical scroll plus entry 2 of the map padding;
 	repeat with R running through plotted rooms:
@@ -82,7 +89,10 @@ After looking for the first time:
 	refresh the map window.
 
 To map draw (T - thing) at (X - a number) x (Y - a number):
-	display the map icon of T in the map window at ((entry 1 of the map origin) plus X) x ((entry 2 of the map origin) plus Y).
+	if the map scaling factor is not 1:
+		display the map icon of T in the map window at ((entry 1 of the map origin) plus X) x ((entry 2 of the map origin) plus Y) with dimensions (the image-width of the map icon of T / the map scaling factor) by (the image-height of the map icon of T / the map scaling factor);
+	else:
+		display the map icon of T in the map window at ((entry 1 of the map origin) plus X) x ((entry 2 of the map origin) plus Y).
 
 Map drawing is a thing based rulebook. Map drawing rules have default success.
 
