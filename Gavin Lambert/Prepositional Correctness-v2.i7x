@@ -1,4 +1,4 @@
-Version 2.3 of Prepositional Correctness by Gavin Lambert begins here.
+Version 2.3.1 of Prepositional Correctness by Gavin Lambert begins here.
 
 "Provides a way to customise the prepositions used to refer to containment or support, and perhaps other custom relationships added by other extensions."
 
@@ -127,7 +127,7 @@ Prepositional Correctness ends here.
 
 Chapter - Compatibility
 
-This extension was written for Inform 6M62.  Since it delves heavily into Standard Library messages it is likely incompatible with any other version of Inform, but YMMV.
+This extension was written for Inform 6M62 and verified with Inform 10.1.2.  Since it delves heavily into Standard Library messages it is likely incompatible with any other version of Inform, but YMMV.
 
 It does not depend on any other extensions, but does introduce some extra features to enhance "Rideable Vehicles by Graham Nelson" if you happen to be using that as well.
 
@@ -198,7 +198,15 @@ The response text for several actions (notably, the "putting it on" and "inserti
 
 If you want to recognise additional custom prepositions in player commands, then you will need to define additional commands and/or amend the grammar yourself.  Since Inform's parser is (in general) a left-to-right one, it isn't really feasible to have these parse using a preposition property for a not-yet-known second noun.
 
-Example: * Excessive Comfort
+Chapter - Using with non-English languages
+
+While this is heavily based on the English language version of the Standard Rules, it should in theory be feasible to provide similar support for other languages, provided they at least follow a somewhat similar grammatical structure.  This requires writing another extension that either entirely replaces this, or includes this along with a replacement section thusly:
+	
+	Section - Another Language (in place of Section - English Language in Prepositional Correctness by Gavin Lambert)
+	
+	Your definitions go here.
+
+Example: * Excessive Comfort - Hiding in a closet, draping on a sofa, and lying on a bed.
 
 	*: "Excessive Comfort"
 	
@@ -241,7 +249,7 @@ Example: * Excessive Comfort
 
 	Test me with "enter closet / l / close closet / l / open closet / sit on sofa / l / sit on bed / l".
 
-Example: * Horseback
+Example: * Horseback - Riding a horse with Rideable Vehicles.
 
 	*: "Horseback"
 	

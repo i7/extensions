@@ -1,4 +1,4 @@
-Version 4 of Exit Lister by Gavin Lambert begins here.
+Version 4.0.1 of Exit Lister by Gavin Lambert begins here.
 
 "Automatic listing of available exits, with a reasonable dose of customisation built in."
 
@@ -261,7 +261,7 @@ This example asks the player up front what they want to see in the exit list, in
 	The pink door is east of hallway and west of Bathroom. It is a door and scenery.
 	The description of the bathroom is "Everything in here is pink. The tiles on the walls, the toilet bowl, the bathtub, the floor, and even the ceiling. The only thing not pink is a large mirror on the wall, but since all it reflects is pink that hardly matters.".
 	A large mirror is scenery in bathroom. Instead of examining mirror, say "Don't be vain, you look fine.".
-        Rule for listing exits when the location is Bathroom: say "All this pink numbs your brain, and you can't remember how you got here."
+		Rule for listing exits when the location is Bathroom: say "All this pink numbs your brain, and you can't remember how you got here."
 
 	The brown door is west of hallway and east of the Living Room. It is a door and scenery. The closed text of the brown door is "(barred)".
 	The description of the living room is "You are in a well decorated room here, there are numerous pictures on the walls, some comfy looking chairs, and a big television set."
@@ -345,4 +345,7 @@ For ease of testing the different behaviour, this example also asks the player w
 		otherwise try turning exits off;
 		say "[paragraph break]You can always turn the exit list on or off with the commands EXITS ON and EXITS OFF. You can also always ask for an exit list with the command EXITS.[paragraph break]";
 
-	Test me with "w / x door / pull lever / x wall / pull lever / w"
+	[The first of these is for testing interactively, as when pasting this example.  The others are for automated testing in an extension project.]
+	Test me with "w / x door / pull lever / x wall / pull lever / w".
+	[Test me with "y / w / x door / pull lever / x wall / pull lever / w".]
+	[Test me with "n / w / x door / pull lever / x wall / pull lever / w".]
