@@ -1,4 +1,4 @@
-Version 1.3 of Brief Room Descriptions by Gavin Lambert begins here.
+Version 1.3.1 of Brief Room Descriptions by Gavin Lambert begins here.
 
 "Alters BRIEF mode to display a room's brief description instead of nothing."
 
@@ -39,7 +39,7 @@ It still respects player preferences, however, so if they explicitly request "ve
 
 The "superbrief" mode remains unaffected by this and will not display either kind of description.  We presume the player knows what they're doing if they request this.
 
-Example: * Brevity is Beautiful
+Example: * Brevity is Beautiful - Demonstration of brief descriptions.
 
 	*: "Brevity is Beautiful"
 	

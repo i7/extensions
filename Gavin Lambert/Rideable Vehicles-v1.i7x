@@ -1,4 +1,4 @@
-Version 1.3 of Rideable Vehicles by Gavin Lambert begins here.
+Version 1.3.1 of Rideable Vehicles by Gavin Lambert begins here.
 
 "Improves how rideable vehicles and animals interact with other supporters."
 
@@ -20,7 +20,7 @@ It was inspired by the thread https://intfiction.org/t/limiting-requiring-vehicl
 
 The "Back to the Hoverboard" example was inspired by Matt Weiner's post in the same thread.
 
-Example: * Back to the Hoverboard
+Example: * Back to the Hoverboard - Riding on a hoverboard.
 
 	*: "Back to the Hoverboard"
 	
