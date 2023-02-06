@@ -1,4 +1,4 @@
-Version 3 of Exit Descriptions by Matthew Fletcher begins here.
+Version 3.0.0 of Exit Descriptions by Matthew Fletcher begins here.
 
 "Appends a list of exit directions and names any previously visited rooms at the end of a room description."
 
