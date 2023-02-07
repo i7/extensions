@@ -3,7 +3,7 @@ Version 9.0.1 of Keyword Interface by Aaron Reed begins here.
 "This extension emulates Blue Lacuna's emphasized keyword system for simplifying common IF input. Nouns, directions, and topics can be typed without a verb to examine, go, or discuss. Works with Glulx or z-code."
 
 [Changelog:
-  -- Version 9: Updated for latest build and to be adaptive.
+  -- Version 9: Updated for latest build and to be adaptive. Changes version numbering to Semantic Versioning. Includes bug fixes to resolve issues with example code and test scripts by Danya D. Smith.
   -- Version 8: Updated for compatibility with Neutral Library Messages and Player Experience Upgrade
   -- Version 7: Updated for build 6F95; simplified method for setting default state of different keyword types without needing a "when play begins" rule; expanded American Dialect checks to cover all default message appearances of "emphasize," "recognize," and "color" and their variants; changed "things" command to omit items carried by the player; fixed a bug with a post-keyword setting "look" not happening in games without required keywords; many changes to the documentation to make it more accurate and clear.
   -- Version 6: Now emphasizes objects listed after opening an opaque container; omit release number in welcome message if it is not set.
