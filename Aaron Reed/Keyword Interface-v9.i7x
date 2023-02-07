@@ -1,4 +1,4 @@
-Version 9/150607 of Keyword Interface by Aaron Reed begins here.
+Version 9.0.1 of Keyword Interface by Aaron Reed begins here.
 
 "This extension emulates Blue Lacuna's emphasized keyword system for simplifying common IF input. Nouns, directions, and topics can be typed without a verb to examine, go, or discuss. Works with Glulx or z-code."
 
@@ -576,9 +576,14 @@ The flexibility of Keyword Interface means it can be used for multiple purposes.
 
 	Object keyword highlighting is false. The style of direction-word is keyword-bold-style.
 
-	Labyrinth is south of Passage and west of Halls. Halls is south of Dungeon and west of Pit. Pit is south of Harrows. Harrows is east of Dungeon and south of Caverns. Dungeon is east of Passage and south of Abyss. Passage is south of Abattoir. Abbattoir is west of Abyss and north of Passage. Abyss is west of Caverns.   
+	Labyrinth is south of Passage and west of Halls. Halls is south of Dungeon and west of Pit. Pit is south of Harrows. Harrows is east of Dungeon and south of Caverns. Dungeon is east of Passage and south of Abyss. Passage is south of Abattoir. Abattoir is west of Abyss and north of Passage. Abyss is west of Caverns.   
 
 	After looking: try listing exits.
+
+	[This is the correct order for test commands, but for some reason they are running in reverse]
+	[Test me with "north / north / east / south / south / east / north / north / west / west / south / south".]
+	[So test with this instead:]
+	Test me with "south / south / west / west / north / north / east / south / south / east / north / north".
 
 Example: ** The Gnome's Holiday - A full example of emphasized objects, compassless directions, and conversation topics.
 
@@ -658,6 +663,7 @@ We implement an extremely simple conversation system to demonstrate emphasized t
 
 	After going to Treasure-Strewn Wonderland for the first time: say "You enter the land of treasure. Congratulations!"; end the story saying "You have won". Understand "wonderland" as east when location is Gnome's Garden.
 
-	Test me with "copy / drawbridge / door / open door / path / x path / gnome / drawbridge / dragon / Quinnabel / personality / path / unlock door / open it / exits / door / pull lever / out / wonderland".
-
-
+	[This is the correct order for test commands, but for some reason they are running in reverse]
+	[Test me with "N / ABOUT / copy / path / gnome /  drawbridge / weather / dragon / Quinnabel / personality / creature / path / unlock door / open door / door / door /  lever / pull lever / out / wonderland".]
+	[So test with this instead:]
+	Test me with " wonderland / out / pull lever / lever / door / open door / unlock door / path / creature / personality / Quinnabel / dragon / weather / drawbridge / gnome / path / copy / ABOUT / N".
