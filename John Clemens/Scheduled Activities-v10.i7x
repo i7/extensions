@@ -1,6 +1,6 @@
 Version 10.1 of Scheduled Activities by John Clemens begins here.
 
-"An extension to allow scheduling of activities. For 6M62"
+"An extension to allow scheduling of activities."
 
 Section 1 - Scheduling Rule
 
@@ -549,6 +549,8 @@ Example: ** Bunnies - Grouping activity reports.
 
 
 Section Changelog
+
+version 10.1.1 2023-04-01 removed "for 6M62" from rubric for v10 version
 
 version 10 January 10, 2022
 	updated for 6M62 by Zed Lopez
