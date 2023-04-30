@@ -1,4 +1,4 @@
-Version 5 of Clues and Conversation by Brian Rushton begins here.
+Version 6 of Clues and Conversation by Brian Rushton begins here.
 
 "A simple system for building conversations."
 
@@ -363,7 +363,7 @@ The print standard inventory rule is not listed in the carry out taking inventor
 [We don't want quips showing up in regular inventory]
 
 Carry out taking inventory (this is the quip-based inventory rule):
-	if the number of physical things carried by the player is 0:
+	if the number of physical things enclosed by the player is 0:
 		say "[We] [are] carrying nothing." (A);
 	otherwise:
 		now all things enclosed by the player are marked for listing;
