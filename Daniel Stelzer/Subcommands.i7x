@@ -1,12 +1,66 @@
-Subcommands by Daniel Stelzer begins here.
+Version 2/221104 of Subcommands by Daniel Stelzer begins here.
 
 "Exposes the snippets referring to each noun."
+
+"incorporating fixes from Vince Laviano"
+
+Chapter - Globals
 
 An object has a snippet called the subcommand. The subcommand property translates into I6 as "parsed_snippet".
 
 Include (-
 Property parsed_snippet;
+Constant EmptySnippet = 100;
 -) after "Definitions.i6t".
+
+Chapter - NounDomain
+
+[In the header of NounDomain, add `snip` as a local variable]
+
+[In NounDomain (Parser.i6t), after the line wn = match_from+match_length;]
+[
+	! === NEW ===
+	if (match_length == 0) {
+		snip = EmptySnippet;
+	} else {
+		snip = 100 * match_from + match_length;
+	}
+	! === END ===
+]
+
+[In NounDomain, before the line return i;]
+[
+		! === NEW ===
+		i.parsed_snippet = snip;
+		! === END ===
+]
+
+[In NounDomain, within the loop for (j=0 : j<number_matched-1 : j++ ) {]
+[
+				! === NEW ===
+				(match_list-->j).parsed_snippet = snip;
+				! === END ===
+]
+[After that loop]
+[
+			! === NEW ===
+			(match_list-->(number_matched-1)).parsed_snippet = snip;
+			! === END ===
+]
+
+[Before the line if (dont_infer) return i;]
+[
+		! === NEW ===
+		i.parsed_snippet = snip;
+		! === END ===
+]
+
+[Before the line return match_list-->0;]
+[
+		! === NEW ===
+		(match_list-->0).parsed_snippet = snip;
+		! === END ===
+]
 
 Include (-
 [ NounDomain domain1 domain2 context dont_ask
@@ -43,9 +97,14 @@ Include (-
     #Endif; ! DEBUG
 
     wn = match_from+match_length;
-    ! === NEW ===
-    snip = 100*match_from + match_length;
-    ! === END ===
+    
+	! === NEW ===
+	if (match_length == 0) {
+		snip = EmptySnippet;
+	} else {
+		snip = 100 * match_from + match_length;
+	}
+	! === END ===
 
     ! If nothing worked at all, leave with the word marker skipped past the
     ! first unmatched word...
@@ -59,9 +118,11 @@ Include (-
     if (match_from <= num_words) {
         if (number_matched == 1) {
             i=match_list-->0;
-	! === NEW ===
-	i.parsed_snippet = snip;
-	! === END ===
+            
+			! === NEW ===
+			i.parsed_snippet = snip;
+			! === END ===
+			
             return i;
         }
 
@@ -99,10 +160,11 @@ Include (-
     }
     if (number_matched > 1) {
 		i = true;
-		if (number_matched > 1)
-			for (j=0 : j<number_matched-1 : j++){
+	    if (number_matched > 1){
+	    	for (j=0 : j<number_matched-1 : j++){
 				if (Identical(match_list-->j, match_list-->(j+1)) == false)
 					i = false;
+				
 				! === NEW ===
 				(match_list-->j).parsed_snippet = snip;
 				! === END ===
@@ -110,6 +172,7 @@ Include (-
 			! === NEW ===
 			(match_list-->(number_matched-1)).parsed_snippet = snip;
 			! === END ===
+		}
 		if (i) dont_infer = true;
         i = Adjudicate(context);
         if (i == -1) rfalse;
@@ -127,9 +190,10 @@ Include (-
     ! (Except, we don't note which of a pile of identical objects.)
 
     if (i ~= 0) {
-	! === NEW ===
-	i.parsed_snippet = snip;
-	! === END ===
+		! === NEW ===
+		i.parsed_snippet = snip;
+		! === END ===
+		
     	if (dont_infer) return i;
         if (inferfrom == 0) inferfrom=pcount;
         pattern-->pcount = i;
@@ -137,10 +201,10 @@ Include (-
     }
 
 	if (dont_ask){
-	! === NEW ===
-	(match_list-->0).parsed_snippet = 100*match_from + match_length;
-	! === END ===
-	 return match_list-->0;
+		! === NEW ===
+		(match_list-->0).parsed_snippet = snip;
+		! === END ===
+		return match_list-->0;
 	}
 
     ! If we get here, there was no obvious choice of object to make.  If in
@@ -252,14 +316,14 @@ Include (-
     #Ifdef TARGET_ZCODE;
     k = WordAddress(match_from) - buffer; l=buffer2->1+1;
     for (j=buffer + buffer->0 - 1 : j>=buffer+k+l : j-- ) j->0 = 0->(j-l);
-    for (i=0 : i<l : i++ ) buffer->(k+i) = buffer2->(2+i);
+    for (i=0 : i<l : i++) buffer->(k+i) = buffer2->(2+i);
     buffer->(k+l-1) = ' ';
     buffer->1 = buffer->1 + l;
     if (buffer->1 >= (buffer->0 - 1)) buffer->1 = buffer->0;
     #Ifnot; ! TARGET_GLULX
     k = WordAddress(match_from) - buffer;
     l = (buffer2-->0) + 1;
-    for (j=buffer+INPUT_BUFFER_LEN-1 : j>=buffer+k+l : j-- ) j->0 = j->( -l);
+    for (j=buffer+INPUT_BUFFER_LEN-1 : j>=buffer+k+l : j-- ) j->0 = j->(-l);
     for (i=0 : i<l : i++) buffer->(k+i) = buffer2->(WORDSIZE+i);
     buffer->(k+l-1) = ' ';
     buffer-->0 = buffer-->0 + l;
@@ -305,7 +369,7 @@ Include (-
 	for (i=1 : i<=answer_words : i++)
 		if (WordFrom(i, parse2) == comma_word) {
 			VM_CopyBuffer(buffer, buffer2);
-			return REPARSE_CODE;
+			jump RECONSTRUCT_INPUT;
 		}
 
     first_word=(parse2-->1);
@@ -322,7 +386,7 @@ Include (-
         j = first_word->#dict_par1;
         if ((0 ~= j&1) && ~~LanguageVerbMayBeName(first_word)) {
             VM_CopyBuffer(buffer, buffer2);
-            return REPARSE_CODE;
+            jump RECONSTRUCT_INPUT;
         }
     }
 
@@ -418,12 +482,137 @@ Include (-
     for (: i<INPUT_BUFFER_LEN : i++) buffer->i = ' ';
     #Endif; ! TARGET_ZCODE
 
-    return REPARSE_CODE;
+    jump RECONSTRUCT_INPUT;
 
 ]; ! end of NounDomain
 
 [ PARSER_CLARIF_INTERNAL_R; ];
 -) instead of "Noun Domain" in "Parser.i6t".
+
+Chapter - ActionVariablesNotTypeSafe
+
+[In ActionVariablesNotTypeSafe (Actions.i6t), at the end of the block that calls SUPPLYING_A_MISSING_NOUN_ACT]
+[
+			! === NEW ===
+			noun.parsed_snippet = EmptySnippet;
+			! === END ===
+]
+
+[In ActionVariablesNotTypeSafe (Actions.i6t), at the end of the block that calls SUPPLYING_A_MISSING_SECOND_ACT]
+[
+			! === NEW ===
+			second.parsed_snippet = EmptySnippet;
+			! === END ===
+]
+
+Include (-
+[ ActionVariablesNotTypeSafe mask noun_kova second_kova at;
+	at = FindAction(-1); if (at == 0) rfalse; ! For any I6-defined actions
+
+	noun_kova = ActionData-->(at+AD_NOUN_KOV);
+	second_kova = ActionData-->(at+AD_SECOND_KOV);
+
+	!print "at = ", at, " nst = ", noun_kova, "^";
+	!print "consult_from = ", consult_from, " consult_words = ", consult_from, "^";
+	!print "inp1 = ", inp1, " noun = ", noun, "^";
+	!print "inp2 = ", inp2, " second = ", second, "^";
+	!print "sst = ", second_kova, "^";
+
+	if (noun_kova == SNIPPET_TY or UNDERSTANDING_TY) {
+	    if (inp1 ~= 1) { inp2 = inp1; second = noun; }
+	    parsed_number = 100*consult_from + consult_words;
+	    inp1 = 1; noun = nothing; ! noun = parsed_number;
+	}
+	if (second_kova == SNIPPET_TY or UNDERSTANDING_TY) {
+	    parsed_number = 100*consult_from + consult_words;
+	    inp2 = 1; second = nothing; ! second = parsed_number;
+	}
+
+	mask = ActionData-->(at+AD_REQUIREMENTS);
+	if (mask & OUT_OF_WORLD_ABIT) { meta = 1; rfalse; }
+	meta = 0;
+
+	if (inp1 == 1) {
+	    if (noun_kova == OBJECT_TY) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('B'); new_line; }
+	        rtrue;
+	    }
+	} else {
+	    if (noun_kova ~= OBJECT_TY) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('C'); new_line; }
+	        rtrue;
+	    }
+	    if ((mask & NEED_NOUN_ABIT) && (noun == nothing)) {
+	    	@push act_requester; act_requester = nothing;
+	        CarryOutActivity(SUPPLYING_A_MISSING_NOUN_ACT);
+	        @pull act_requester;
+	        
+			! === NEW ===
+			noun.parsed_snippet = EmptySnippet;
+			! === END ===
+	        
+	        if (noun == nothing) {
+	        	if (say__p) rtrue;
+		    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('D'); new_line; }
+		        rtrue;
+	    	}
+	    }
+	    if (((mask & NEED_NOUN_ABIT) == 0) && (noun ~= nothing)) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('E'); new_line; }
+	        rtrue;
+	    }
+	}
+
+	if (inp2 == 1) {
+	    if (second_kova == OBJECT_TY) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('F'); new_line; }
+	        rtrue;
+	    }
+	} else {
+	    if (second_kova ~= OBJECT_TY) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('G'); new_line; }
+	        rtrue;
+	    }
+	    if ((mask & NEED_SECOND_ABIT) && (second == nothing)) {
+	        @push act_requester; act_requester = nothing;
+	        CarryOutActivity(SUPPLYING_A_MISSING_SECOND_ACT);
+	        @pull act_requester;
+	        
+			! === NEW ===
+			second.parsed_snippet = EmptySnippet;
+			! === END ===
+	        
+	        if (second == nothing) {
+	        	if (say__p) rtrue;
+		    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('H'); new_line; }
+		        rtrue;
+	        }
+	    }
+	    if (((mask & NEED_SECOND_ABIT) == 0) && (second ~= nothing)) {
+	    	if (actor == player) { ACTION_PROCESSING_INTERNAL_RM('I'); new_line; }
+	        rtrue;
+	    }
+	}
+
+	rfalse;
+];
+-) instead of "Type Safety" in "Actions.i6t".
+
+Chapter - VerbSubcommand
+
+To decide what snippet is the/-- subcommand of the/-- verb: (- VerbSubcommand() -).
+
+Include (-
+[ VerbSubcommand i;
+	if(verb_wordnum == 0) return EmptySnippet;
+	for(i=1 : i<pcount : i++ ){ ! See PrintCommand to understand why this works
+		if((pattern-->i) < REPARSE_CODE){
+			break;
+		}
+	}
+	return verb_wordnum*100 + i;
+];
+-).
 
 Subcommands ends here.
 
@@ -435,16 +624,22 @@ This extension exposes the snippet which refers to each individual object, as it
 
 If the player types "take the wand", referring to the black rod with a rusty star on the end, then the subcommand of the rod is "wand". This can be useful in disambiguation, or in adapting a description to use the player's phrasing.
 
+As of version 2, it now also provides the subcommand of the verb:
+
+	the subcommand of the verb -> snippet
+
+This provides all the literal text at the beginning of the grammar line: in I6 terms, the verb and all following prepositions.
+
 Example: ** Subcommand Laboratory - A simple demonstration of how subcommands affect the parser.
 
-Include Subcommands by Daniel Stelzer.
+Include Subcommands 6M62 by Daniel Stelzer.
 
-Before doing anything:
+Every turn:
+	say "Verb subcommand: [the subcommand of the verb].";
 	if the noun is not nothing:
 		say "Noun subcommand: [the subcommand of the noun].";
 	if the second noun is not nothing:
 		say "Second noun subcommand: [the subcommand of the second noun].";
-	continue the action.
 
 The Laboratory is a room. A red apple, a green apple, a red pear, and a green pear are in the Laboratory.
 A shiny wooden box is a container in the Laboratory. It is closed and locked. The player carries a silver metal key.
@@ -454,3 +649,4 @@ Does the player mean taking the green apple when the subcommand of the green app
 
 Test fruit with "get red / drop it / get apple / get pear".
 Test box with "unlock the shiny wooden box with the silver key".
+Test verbs with "x me / look at me / throw box at me".
