@@ -1,4 +1,4 @@
-Version 5.1.0 of Hypothetical Questions (for Glulx only) by Jesse McGrew begins here.
+Version 5.1.0 of Hypothetical Questions (for Glulx only) by Tara McGrew begins here.
 
 "Allows us to test the consequences of a phrase or action without permanently changing the game state."
 
@@ -173,7 +173,7 @@ Here we use the extension to the give the player a bit of clairvoyance. After mo
 
 	*: "A Sense of Adventure"
 	
-	Include Hypothetical Questions by Jesse McGrew.
+	Include Hypothetical Questions by Tara McGrew.
 	
 	Use scoring.
 	
