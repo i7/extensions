@@ -1,4 +1,4 @@
-Version 4.0.220604 of Gender Options by Nathanael Nerode begins here.
+Version 4.0.230722 of Gender Options by Nathanael Nerode begins here.
 
 "More broad-minded English language gender/number model where male, female, and neuter are three separate true-false properties.  Allows for objects to respond to any specified combination of HE, SHE, IT, and THEY.  As fast as the Standard Rules.  Tested with Inform v10.1.0."
 
@@ -115,7 +115,7 @@ method, but this is the least invasive, unbelievably.]
 Include (-
 
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Gender Options replacement for Language.i6t: Pronouns
+! Gender Options replacement for Language.i6t: Pronouns (from EnglishLanguageKit)
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 
 Array LanguagePronouns table
@@ -221,6 +221,7 @@ Include (-
 Section - PronounNotice
 
 [Replace GetGNAOfObject call with GetGNABitfield call.  This is the main hook.]
+[ This replaces a routine in CommandParserKit in Parser.i6t.]
 
 Include (-
 [ PronounNotice obj x bm;
@@ -943,6 +944,9 @@ Section - Interaction with Other Extensions
 Gender Options replaces parts of Standard Rules by Graham Nelson and should be included after it.
 Gender Options replaces most of English Language by Graham Nelson and should be included after it.
 
+Gender Options replaces parts of CommandParserKit.
+Gender Options replaces parts of EnglishLanguageKit.
+
 Gender Options is compatible with Neutral Standard Responses by Nathanael Nerode.
 Gender Options is incompatible with Neutral Library Messages by Aaron Reed, which predates the "responses" system.  Neutral Standard Responses is intended as a replacement.
 
@@ -954,6 +958,7 @@ Gender Options is incompatible with Second Gender by Felix Larsson.  The two do 
 
 Section - Changelog
 
+  4.0.230722 - Comment changes regarding code moved around in Core Inform.
 	4.0.220530 - Section number removal in documentation to accomodate automatic section numbering
 	4.0.220529 - Example fixes to accomodate automated testing of examples
 	4.0.220527 - Example fixes to accomodate automated testing of examples
