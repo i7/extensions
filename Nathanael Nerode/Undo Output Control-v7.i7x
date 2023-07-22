@@ -1,4 +1,4 @@
-Version 7.0.230722 of Undo Output Control by Nathanael Nerode begins here.
+Version 7.0.230723 of Undo Output Control by Nathanael Nerode begins here.
 
 "Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 10.1."
 
@@ -304,7 +304,9 @@ Include (-
 		return nw;
 	}
 ];
--) replacing "Keyboard"
+-) replacing "Keyboard".
+
+Section - Replace DealWithUndo
 
 Include (-
 [ DealWithUndo;
@@ -318,7 +320,7 @@ Include (-
 	}
 	FollowRulebook( (+ after undoing an action rules +) );
 ];
--) replacing "DealWithUndo"
+-) replacing "DealWithUndo".
 
 Part - ParserInput (for use with Unified Glulx Input by Andrew Plotkin)
 
@@ -455,7 +457,8 @@ Include (-
 		return;
 	}
 ];
--) replacing "ParserInput"
+-) replacing "ParserInput".
+
 
 Undo Output Control ends here.
 
