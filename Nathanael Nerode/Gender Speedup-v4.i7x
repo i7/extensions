@@ -1,4 +1,4 @@
-Version 3.0.220524 of Gender Speedup by Nathanael Nerode begins here.
+Version 4.0.230722 of Gender Speedup by Nathanael Nerode begins here.
 
 "When using Gender Options, clean up some I6 internals with functions related to gender which are irrelevant to English or rendered obsolete with Gender Options.  Since these are called in the depths of ListWriter this should slightly improve speed.  Not included in Gender Options due to likely interference with other extensions.  Requires Gender Options.  Will not work with languages with gendered plurals.  Tested with Inform 10.1."
 
@@ -269,9 +269,9 @@ Include (-
 	if (mixed_parentage) common_parent = nothing;
 
 	if (length == 0) {
-		if (in_style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
-		else if (in_style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
-		else LIST_WRITER_INTERNAL_RM('Y');
+		if (in_style & ISARE_BIT ~= 0) LW_Response('W');
+		else if (in_style & CFIRSTART_BIT ~= 0) LW_Response('X');
+		else LW_Response('Y');
 	} else {
 		@push MarkedObjectArray; @push MarkedObjectLength;
 		MarkedObjectArray = RequisitionStack(length);
@@ -330,6 +330,7 @@ Fluid Pronouns by Zed Lopez touches all of this code and is likely to conflict w
 
 Section - Changelog:
 
+  4.0.230722: Update to new version of Inform.
 	3.0.220534: Section documentation.  Format Changelog.
 	3.0.220523: Adaptation to Inform 10.1.  Additional documentation on extension conflicts.
 	2/210331: Change disambiguation treatment with names of rooms.  Should fix Counterfeit Monkey regtests
