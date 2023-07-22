@@ -1,4 +1,4 @@
-Version 7.0.230722 of Large Game Speedup by Nathanael Nerode begins here.
+Version 7.0.230723 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -282,7 +282,7 @@ Include (-
 
     first = c_iterator(first, depth, 0, START_ITF);
 	if (first == nothing) {
-		if (in_style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W'); else LIST_WRITER_INTERNAL_RM('Y');
+		if (in_style & ISARE_BIT ~= 0) LW_Response('W'); else LW_Response('Y');
         if (in_style & NEWLINE_BIT ~= 0) new_line;
     } else {
 		if ((noactivity) || (iter)) {
@@ -319,9 +319,9 @@ Include (-
 	}
 
 	if (length == 0) {
-		if (in_style & ISARE_BIT ~= 0) LIST_WRITER_INTERNAL_RM('W');
-		else if (in_style & CFIRSTART_BIT ~= 0) LIST_WRITER_INTERNAL_RM('X');
-		else LIST_WRITER_INTERNAL_RM('Y');
+		if (in_style & ISARE_BIT ~= 0) LW_Response('W');
+		else if (in_style & CFIRSTART_BIT ~= 0) LW_Response('X');
+		else LW_Response('Y');
 	} else {
 		@push MarkedObjectArray; @push MarkedObjectLength;
 		MarkedObjectArray = RequisitionStack(length);
@@ -534,6 +534,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+  7.0.230723 updated to new version of Inform.
 	6.0.20220524 reformatted the Changelog.
 	6.0.20220521 adapted to Inform v10.
 	5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
