@@ -1,4 +1,4 @@
-Version 2.0.220604 of Initial Cursor at Top or Bottom by Nathanael Nerode begins here.
+Version 3.0.230722 of Initial Cursor at Top or Bottom by Nathanael Nerode begins here.
 
 "This small extension eliminates the three newlines printed before the banner.  It also provides a tool to attempt to place the cursor at the bottom of the screen, like old Infocom games.  Due to wild variance between interpreters, it is not reliable.".
 
@@ -66,24 +66,9 @@ The interpreter start line is usually 1.
 Section 4 - Suppress Initial Newlines
 
 [* There are three bogus newlines included because of the behavior of obsolete ITF and Zip inteprereters.
-Get rid of them.]
+Get rid of them.  In the latest version we do not need to drop into I6 to do this.]
 
-Include (-
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-! Initial Cursor at Top or Bottom replacement for OrderOfPlay.i6t: Virtual Machine Startup Rule
-! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-
-[ VIRTUAL_MACHINE_STARTUP_R;
-  CarryOutActivity(STARTING_VIRTUAL_MACHINE_ACT);
-  VM_Initialise();
-  ! It is now safe for the paragraph breaking between rules mechanism to work
-  if (say__pc & PARA_NORULEBOOKBREAKS) say__pc = say__pc - PARA_NORULEBOOKBREAKS;
-  ! print "^^^"; ! This useless historical artifact is being removed
-  rfalse;
-];
-
--) replacing "VIRTUAL_MACHINE_STARTUP_R".
-
+The initial whitespace rule is not listed in any rulebook.
 
 Initial Cursor at Top or Bottom ends here.
 
@@ -154,6 +139,7 @@ Section - Thanks
 
 Section - Changelog
 
+  3.0.237022 updated for the latest version of Inform (changes in 10.1 or later)
 	2.0.220604 reformatted the examples.
 	2.0.220524 reformatted the Changelog.
 	2.0.220521 adapted the extension to Inform v10.
