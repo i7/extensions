@@ -1,4 +1,4 @@
-Version 3.0.220522 of Nathanael's Debug Tools by Nathanael Nerode begins here.
+Version 4.0.230722 of Nathanael's Debug Tools by Nathanael Nerode begins here.
 
 "Miscellaneous stuff I like to have built in when debugging and programming, but would never want to relase."
 
@@ -15,7 +15,7 @@ Include (-
 
 Section - Startup Debugging
 
-Use startup rules tracing translates as (- CONSTANT STARTUP_RULES_TRACING; -).
+Use startup rules tracing translates as (- Constant STARTUP_RULES_TRACING; -).
 
 [ See RulesOnSub in Tests.i6t for reference ]
 To turn rules tracing on:
@@ -26,8 +26,8 @@ This is the trace rules at startup rule:
 		turn rules tracing on;
 
 [ We want to let the game initialize memory, start the virtual machine, and seed the RNG before tracing starts.]
-The trace rules at startup rule is listed after the seed random number generator rule in the startup rulebook.
-The trace rules at startup rule is listed before the update chronological records rule in the startup rulebook.
+The trace rules at startup rule is listed after the initial whitespace rule in the after starting the virtual machine rules.
+The trace rules at startup rule is listed before the update chronological records rule in the after starting the virtual machine rules.
 
 [ The first rule which will actually trace is the "start in the correct scenes" rule.
 This is because NI doesn't instrument the earlier startup rules with the debug code, at least in 6M62.
@@ -53,3 +53,5 @@ This eliminates the "Are you sure?" question when quitting; useful to speed up t
 
 Tracing startup rules is important when you need it, and requires a decent chunk of code to set up (included here).  It is rather annoying when you don't need it.  It's enabled with
 	Use startup rules tracing
+
+Version 4.0: Update for 2023-07-02 version of Inform

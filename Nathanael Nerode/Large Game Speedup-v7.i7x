@@ -1,4 +1,4 @@
-Version 6.0.220524 of Large Game Speedup by Nathanael Nerode begins here.
+Version 7.0.230722 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -8,6 +8,7 @@ Use authorial modesty.
 
 [This broke in 6M62, but it's still very important.  Updated by Nathanael Nerode.]
 [It broke again in 10.1.0, and it's still just as important.  Updated again.]
+[Broke again with Inform 2023-07-22.  Updated again.]
 
 Chapter - Empty
 
@@ -49,23 +50,24 @@ Include (-
 ];
 -)
 
-This is the optimized declare everything unmentioned rule:
+This is the optimized declare everything unmentioned each turn rule:
+	rapidly set all things not mentioned;
+
+This is the optimized declare everything unmentioned for looking rule:
 	rapidly set all things not mentioned;
 
 Section - Replacing the Unmentioning Rules
 
 [ Gets its own section for ease of overriding ]
 
-The optimized declare everything unmentioned rule is listed instead of
-	the declare everything initially unmentioned rule
-	in the startup rulebook.
+[ In the new version, things aren't declared unmentioned during startup pre-start.  Relies on initialization. ]
 
-[Not clear that this one is *desirable*, even though it's in the standard rules: a bit redundant]
-The optimized declare everything unmentioned rule is listed instead of
+[ Not clear that this one is *desirable*, even though it's in the standard rules: a bit redundant ]
+The optimized declare everything unmentioned each turn rule is listed instead of
 	the declare everything initially unmentioned rule
 	in the turn sequence rulebook.
 
-The optimized declare everything unmentioned rule is listed instead of
+The optimized declare everything unmentioned for looking rule is listed instead of
 	the declare everything unmentioned rule
 	in the carry out looking rulebook.
 
