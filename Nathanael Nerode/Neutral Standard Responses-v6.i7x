@@ -1,4 +1,4 @@
-Version 5.0.220521 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 6.0.230722 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 10.1.0."
 
@@ -981,7 +981,7 @@ Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 
 [ PrintRankName i j v;
-  if (KIT_CONFIGURATION_BITMAP & RANKING_TABLE_TCBIT) {
+  if (WorldModelKit`RANKING_TABLE_GIVEN) {
     j = TableRows(RANKING_TABLE);
     for ( i=j:i>=1:i-- )
 			if (score >= TableLookUpEntry(RANKING_TABLE, 1, i)) {
@@ -999,7 +999,7 @@ Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 
 [ DoesRankingTableExist; 
-  if (KIT_CONFIGURATION_BITMAP & RANKING_TABLE_TCBIT) {
+  if (WorldModelKit`RANKING_TABLE_GIVEN) {
 		return true;
 	} else {
 		return false;
@@ -1062,7 +1062,7 @@ This is the full-sentence report preferring abbreviated room descriptions rule:
 Chapter - Requesting the Pronoun Meanings
 
 [This is a complicated construction.  To do this, access the I6 code as a phrase instead of a rule.  In order to avoid a spurious line break we must duplicate all the I6 code. This is the code of
-ANNOUNCE_PRONOUN_MEANINGS_R except for the one change.]
+ANNOUNCE_PRONOUN_MEANINGS_R except for the one change.  Must be updated when core Inform updates this.]
 
 Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
@@ -1086,8 +1086,8 @@ Include (-
     d++;
     if (d < c-1) print ", ";
     if (d == c-1) {
-      if (KIT_CONFIGURATION_BITMAP & SERIAL_COMMA_TCBIT) print ",";
-      LIST_WRITER_INTERNAL_RM('C');
+      if (BasicInformKit`SERIAL_COMMA_CFGF) print ",";
+      LW_Response('C');
     }
   }
   if (player ~= selfobj) {
@@ -1411,6 +1411,7 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+  Version 6.0.230722: adapt to new (work in progress) version of Inform.
 	Version 5.0.220521: adapt to Inform v10.1.0.
 	Version 4/210908: in several rule responses, changed "here" to "[here]" (which will only ever matter outside of present tense) -- ZL
 	Version 4/171007:
