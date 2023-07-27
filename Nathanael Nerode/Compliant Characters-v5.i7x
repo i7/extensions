@@ -1,4 +1,4 @@
-Version 5.0.220524 of Compliant Characters by Nathanael Nerode begins here.
+Version 5.1.230727 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Tested with Inform 10.1.0."
 
@@ -190,32 +190,32 @@ Chapter - Taking
 Section - Taking
 
 Unsuccessful attempt by an actor taking (this is the actor failed to take rule):
-	if the reason the action failed is:
-		-- the can't take yourself rule:
-			say "[The actor] [can't] take [themselves]." (A);
-		-- the can't take other people rule:
-			say "[The actor] [can't] pick up [the noun][or it's the wrong time][or that's not the way]." (B);
-		-- the can't take component parts rule:
-			say "[text of the can't take component parts rule response (A)][line break]" (C);
-		-- the general can't take people's possessions rule:
-			do nothing; [N.B.: This is handled by rewriting the rule, so we don't have to compute the owner twice.]
-		-- the can't take items out of play rule:
-			say "[as the parser][regarding the noun][Those] [aren't] available to [the actor].[as normal][line break]" (E);
-		-- the can't take what you're inside rule:
-			say "[The actor] [would have] to get [if noun is a supporter]off[otherwise]out of[end if] [the noun] first." (F);
-		-- the can't take what's already taken rule:
-			say "[The actor] already [have] [regarding the noun][those]." (G);
-		-- the can't take scenery rule:
-			[Thanks to parser styling, this triggers several line break bugs.  Careful...]
-			say "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken by [the actor].[as normal][line break]" (H);
-		-- the can only take things rule:
-			say "[The actor] [cannot] carry [the noun]." (I);
-		-- the can't take what's fixed in place rule:
-			say "[text of the can't take what's fixed in place rule response (A)][line break]" (J);
-		-- the can't exceed carrying capacity rule:
-			say "[The actor] [are] carrying too many things already." (K);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't take yourself rule:
+		say "[The actor] [can't] take [themselves]." (A);
+	else if rf is the can't take other people rule:
+		say "[The actor] [can't] pick up [the noun][or it's the wrong time][or that's not the way]." (B);
+	else if rf is the can't take component parts rule:
+		say "[text of the can't take component parts rule response (A)][line break]" (C);
+	else if rf is the general can't take people's possessions rule:
+		do nothing; [N.B.: This is handled by rewriting the rule, so we don't have to compute the owner twice.]
+	else if rf is the can't take items out of play rule:
+		say "[as the parser][regarding the noun][Those] [aren't] available to [the actor].[as normal][line break]" (E);
+	else if rf is the can't take what you're inside rule:
+		say "[The actor] [would have] to get [if noun is a supporter]off[otherwise]out of[end if] [the noun] first." (F);
+	else if rf is the can't take what's already taken rule:
+		say "[The actor] already [have] [regarding the noun][those]." (G);
+	else if rf is the can't take scenery rule:
+		[Thanks to parser styling, this triggers several line break bugs.  Careful...]
+		say "[as the parser][regarding the noun][Those]['re] just scenery, and [can't] be taken by [the actor].[as normal][line break]" (H);
+	else if rf is the can only take things rule:
+		say "[The actor] [cannot] carry [the noun]." (I);
+	else if rf is the can't take what's fixed in place rule:
+		say "[text of the can't take what's fixed in place rule response (A)][line break]" (J);
+	else if rf is the can't exceed carrying capacity rule:
+		say "[The actor] [are] carrying too many things already." (K);
+	else:
+		make no decision.
 
 Section - Taking people's possessions
 
@@ -313,44 +313,44 @@ Unsuccessful attempt by an actor removing something from (this is the debug remo
 Section - Removing
 
 Unsuccessful attempt by an actor removing something from (this is the actor failed to remove rule):
-	if the reason the action failed is:
-		-- the can't take component parts rule:
-			if the noun is part of something (called the whole):
-				[This is guaranteed]
-				say "[text of the can't take component parts rule response (A)][line break]" (A);
-		-- the can't remove what's not inside rule:
-			say "[text of the can't remove what's not inside rule response (A)][line break]" (B);
-		-- the can't remove from people rule:
-			let the owner be the holder of the noun;
-			if the owner is the player:
-				say "[The actor] [can't] remove [regarding the noun][those] because [those] [seem] to belong to [us]." (C);
-			otherwise:
-				say "[The actor] [can't] remove [regarding the noun][those] because [those] [seem] to belong to [the owner]." (D);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't take component parts rule:
+		if the noun is part of something (called the whole):
+			[This is guaranteed]
+			say "[text of the can't take component parts rule response (A)][line break]" (A);
+	else if rf is the can't remove what's not inside rule:
+		say "[text of the can't remove what's not inside rule response (A)][line break]" (B);
+	else if rf is the can't remove from people rule:
+		let the owner be the holder of the noun;
+		if the owner is the player:
+			say "[The actor] [can't] remove [regarding the noun][those] because [those] [seem] to belong to [us]." (C);
+		otherwise:
+			say "[The actor] [can't] remove [regarding the noun][those] because [those] [seem] to belong to [the owner]." (D);
+	else:
+		make no decision.
 
 Chapter - Dropping
 
 Section - Dropping
 
 Unsuccessful attempt by an actor dropping (this is the actor failed to drop rule):
-	if the reason the action failed is:
-		-- the can't drop yourself rule:
-			say "[The actor] [can't] drop [themselves]." (A);
-		-- the can't drop body parts rule:
-			say "[The actor] [can't] drop part of [themselves]." (B);
-		-- the can't drop what's already dropped rule:
-			say "[text of the can't drop what's already dropped rule response (A)]" (C);
-		-- the can't drop what's not held rule:
-			say "[The actor] [haven't] got [regarding the noun][those]." (D);
-		-- the can't drop if this exceeds carrying capacity rule:
-			let the receptacle be the holder of the actor;
-			if the receptacle is a supporter:
-				say "[text of the can't drop if this exceeds carrying capacity rule response (A)]" (E);
-			otherwise if the receptacle is a container:
-				say "[text of the can't drop if this exceeds carrying capacity rule response (B)]" (F);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't drop yourself rule:
+		say "[The actor] [can't] drop [themselves]." (A);
+	else if rf is the can't drop body parts rule:
+		say "[The actor] [can't] drop part of [themselves]." (B);
+	else if rf is the can't drop what's already dropped rule:
+		say "[text of the can't drop what's already dropped rule response (A)]" (C);
+	else if rf is the can't drop what's not held rule:
+		say "[The actor] [haven't] got [regarding the noun][those]." (D);
+	else if rf is the can't drop if this exceeds carrying capacity rule:
+		let the receptacle be the holder of the actor;
+		if the receptacle is a supporter:
+			say "[text of the can't drop if this exceeds carrying capacity rule response (A)]" (E);
+		otherwise if the receptacle is a container:
+			say "[text of the can't drop if this exceeds carrying capacity rule response (B)]" (F);
+	else:
+		make no decision.
 
 Section - Dropping Clothes
 
@@ -370,32 +370,32 @@ Chapter - Putting (on top of supporter)
 Section - Putting (on top of supporter)
 
 Unsuccessful attempt by an actor putting something on (this is the actor failed to put on rule):
-	if the reason the action failed is:
-		-- the can't put something on itself rule:
-			say "[The actor] [can't put] something on top of itself." (A);
-		-- the can't put onto what's not a supporter rule:
-			say "[text of the can't put onto what's not a supporter rule response (A)]" (B);
-		-- the can't put if this exceeds carrying capacity rule:
-			say "[text of the can't put if this exceeds carrying capacity rule response (A)]" (C);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't put something on itself rule:
+		say "[The actor] [can't put] something on top of itself." (A);
+	else if rf is the can't put onto what's not a supporter rule:
+		say "[text of the can't put onto what's not a supporter rule response (A)]" (B);
+	else if rf is the can't put if this exceeds carrying capacity rule:
+		say "[text of the can't put if this exceeds carrying capacity rule response (A)]" (C);
+	else:
+		make no decision.
 
 Chapter - Inserting (into container)
 
 Section - Inserting (into container)
 
 Unsuccessful attempt by an actor inserting something into (this is the actor failed to insert into rule):
-	if the reason the action failed is:
-		-- the can't insert something into itself rule:
-			say "[The actor] [can't put] something inside itself." (A);
-		-- the can't insert into closed containers rule:
-			say "[text of the can't insert into closed containers rule response (A)]" (B);
-		-- the can't insert into what's not a container rule:
-			say "[text of the can't insert into what's not a container rule response (A)]" (C);
-		-- the can't insert if this exceeds carrying capacity rule:
-			say "[text of the can't insert if this exceeds carrying capacity rule response (A)]" (D);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't insert something into itself rule:
+		say "[The actor] [can't put] something inside itself." (A);
+	else if rf is the can't insert into closed containers rule:
+		say "[text of the can't insert into closed containers rule response (A)]" (B);
+	else if rf is the can't insert into what's not a container rule:
+		say "[text of the can't insert into what's not a container rule response (A)]" (C);
+	else if rf is the can't insert if this exceeds carrying capacity rule:
+		say "[text of the can't insert if this exceeds carrying capacity rule response (A)]" (D);
+	else:
+		make no decision.
 			
 Section - Inserting Clothes
 
@@ -415,28 +415,28 @@ Chapter - Wearing
 Section - Wearing
 
 Unsuccessful attempt by an actor wearing (this is the actor failed to wear rule):
-	if the reason the action failed is:
-		-- the can't wear what's not clothing rule:
-			say "[The actor] [can't wear] [regarding the noun][those]." (A);
-		-- the can't wear what's not held rule:
-			say "[The actor] [aren't] holding [regarding the noun][those]." (B);
-		-- the can't wear what's already worn rule:
-			say "[The actor] [are] already wearing [regarding the noun][those]." (C);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't wear what's not clothing rule:
+		say "[The actor] [can't wear] [regarding the noun][those]." (A);
+	else if rf is the can't wear what's not held rule:
+		say "[The actor] [aren't] holding [regarding the noun][those]." (B);
+	else if rf is the can't wear what's already worn rule:
+		say "[The actor] [are] already wearing [regarding the noun][those]." (C);
+	else:
+		make no decision.
 
 Chapter - Taking off
 
 Section - Taking off
 
 Unsuccessful attempt by an actor taking off (this is the actor failed to take off rule):
-	if the reason the action failed is:
-		-- the can't take off what's not worn rule:
-			say "[The actor] [aren't] wearing [the noun]." (A);
-		-- the can't exceed carrying capacity when taking off rule:
-			say "[The actor] [are] carrying too many things already." (B);
-		-- otherwise:
-			make no decision;
+	let rf be the reason the action failed;
+	if rf is the can't take off what's not worn rule:
+		say "[The actor] [aren't] wearing [the noun]." (A);
+	else if rf is the can't exceed carrying capacity when taking off rule:
+		say "[The actor] [are] carrying too many things already." (B);
+	else:
+		make no decision;
 
 Section - Holdall when taking off
 
@@ -449,15 +449,15 @@ Chapter - Giving
 Section - Giving
 
 Unsuccessful attempt by an actor giving something to (this is the actor failed to give rule):
-	if the reason the action failed is:
-		-- the can't give what you haven't got rule:
-			say "[The actor] [aren't] holding [the noun]." (A);
-		-- the can't give to a non-person rule:
-			say "[text of the can't give to a non-person rule response (A)]" (B);
-		-- the can't exceed carrying capacity when giving rule:
-			say "[text of the can't exceed carrying capacity when giving rule response (A)]" (C);
-		-- otherwise:
-			make no decision.
+	let rf be the reason the action failed;
+	if rf is the can't give what you haven't got rule:
+		say "[The actor] [aren't] holding [the noun]." (A);
+	else if rf is the can't give to a non-person rule:
+		say "[text of the can't give to a non-person rule response (A)]" (B);
+	else if rf is the can't exceed carrying capacity when giving rule:
+		say "[text of the can't exceed carrying capacity when giving rule response (A)]" (C);
+	else: 
+		make no decision.
 
 Section - Giving Clothes
 
@@ -871,15 +871,17 @@ This breaking your fallback to the default!  So you must explicitly write this:
 		-- otherwise:
 			make no decision;
 
-This actually works and is the form you should use.  The actual code in this extension is:
+This actually worked... until Inform 10.1 which broke the switch statements.  NICE WORK, GRAHAM.  So we have to use if-else chains.
+
+The actual code in this extension is:
 	Unsuccessful attempt by an actor taking off (this is the actor failed to take off rule):
-		if the reason the action failed is:
-			-- the can't take off what's not worn rule:
-				say "[The actor] [aren't] wearing [the noun]." (A);
-			-- the can't exceed carrying capacity when taking off rule:
-				say "[The actor] [are] carrying too many things already." (B);
-			-- otherwise:
-				make no decision;
+		let rf be the reason the action failed;
+		if rf is the can't take off what's not worn rule:
+			say "[The actor] [aren't] wearing [the noun]." (A);
+		else if the can't exceed carrying capacity when taking off rule:
+			say "[The actor] [are] carrying too many things already." (B);
+		else:
+			make no decision;
 
 If you've already printed a failure message in a check rule, you'll need to suppress the unsuccessful attempt message, such as this example:
 	Check an actor giving something enterable to (this is the don't accept things with people in them rule):
@@ -1002,11 +1004,13 @@ The additonal ways to give orders can be disabled as noted above.
 
 Chapter - Interactions with other Extensions
 
-This extension depends on Parser Error Number Bugfix by Nathanael Nerode, which fixes a bug in the Standard Rules which left two parser errors misnamed.
-This extension depends on version 4 or later Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
+This extension depends on version 4 or later of Neutral Standard Responses by Nathanael Nerode; it uses low-level code from that extension and reuses some of those responses (so that the story author only has to override the response in one place).
 
 Chapter - Changelog
 
+  5.1.230727 - Release version 10.1 of Inform BROKE the switch statements on rules.
+	           - Replace with else if chains.
+	           - On the other hand, Parser Error Number Bugfix isn't needed any more.
 	5.0.220524 - Format Changelog
 	5.0.220523 - Documentation changes and cleanup now that patches to core Inform aren't needed.
 	           - Requires Inform 10.1 compiled after 23 May 2022.
