@@ -1,4 +1,4 @@
-Version 7.0.230723 of Undo Output Control by Nathanael Nerode begins here.
+Version 7.1.230728 of Undo Output Control by Nathanael Nerode begins here.
 
 "Provides hooks into UNDO processing, including multiple ways to suspend UNDO temporarily, to place limitations on UNDO (such as allowing only one UNDO in a row), to undo the current turn from code, and to control when the game state is saved. Using the latter, we can effectively control which turn UNDO returns us to.  Also allows the story to edit a blank command before analyzing it.  Updated to Inform 10.1."
 
@@ -153,79 +153,78 @@ Include (-
 		! Save the start of the buffer, in case "oops" needs to restore it
 		#Iftrue CHARSIZE == 1;
 		for (i=0 : i<64 : i++) oops_workspace->i = a_buffer->i;
-    #Ifnot;
+		#Ifnot;
 		for (i=0 : i<64 : i++) oops_workspace-->i = a_buffer-->i;
-    #Endif;
-	
+		#Endif;
+
 		! In case of an array entry corruption that shouldn't happen, but would be
 		! disastrous if it did:
 		#Iftrue CHARSIZE == 1;
 		a_buffer->0 = INPUT_BUFFER_LEN;
 		a_table->0 = 15;  ! Allow to split input into this many words
 		#Endif; ! TARGET_
-	
+
 		! Print the prompt, and read in the words and dictionary addresses
 		PrintPrompt();
 		KeyboardPrimitive(a_buffer, a_table, DrawStatusLine);
-	
-    ! Set nw to the number of words
-    #Iftrue CHARSIZE == 1;
-    nw = a_table->1;
-    #Ifnot;
-    nw = a_table-->0;
-    #Endif;
-	
-		! If the line was blank, ask the game to fill it in.  If it doesn't, get a fresh line.
+
+		! Set nw to the number of words
+		#Iftrue CHARSIZE == 1;
+		nw = a_table->1;
+		#Ifnot;
+		nw = a_table-->0;
+		#Endif;
+
+		! If the line was blank, ask the game to fill it in.  If it doesn't, get a fresh line
 		if (nw == 0) {
 			x2 = false; ! repurposing local variable as a flag
-
 			BeginActivity( (+ repairing an empty command +) );
 			if ( ForActivity( (+ repairing an empty command +) ) == false) {
 				@push etype; etype = BLANKLINE_PE;
 				players_command = 100;
 				BeginActivity(PRINTING_A_PARSER_ERROR_ACT);
-				if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false)  {
+				if (ForActivity(PRINTING_A_PARSER_ERROR_ACT) == false) {
 					PARSER_ERROR_INTERNAL_RM('X', noun); new_line;
 				}
 				EndActivity(PRINTING_A_PARSER_ERROR_ACT);
 				@pull etype;
 				x2 = true;
 			}
-
 			EndActivity( (+ repairing an empty command +) );
 			if (x2) continue; ! if the activity wasn't handled, get new command
 		}
-	
+
 		! Unless the opening word was OOPS or UNDO, return
 		! Conveniently, a_table-->1 is the first word on both the Z-machine and Glulx
-	
+
 		w = a_table-->1;
 		if (w == OOPS1__WD or OOPS2__WD or OOPS3__WD) {
 			if (oops_from == 0) { PARSER_COMMAND_INTERNAL_RM('A'); new_line; continue; }
 			if (nw == 1) { PARSER_COMMAND_INTERNAL_RM('B'); new_line; continue; }
 			if (nw > 2) { PARSER_COMMAND_INTERNAL_RM('C'); new_line; continue; }
-		
+
 			! So now we know: there was a previous mistake, and the player has
 			! attempted to correct a single word of it.
-		
-			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
+
 			#Iftrue CHARSIZE == 1;
+			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2->i = a_buffer->i;
 			x1 = a_table->9;  ! Start of word following "oops"
 			x2 = a_table->8;  ! Length of word following "oops"
 			#Ifnot;
+			for (i=0 : i<INPUT_BUFFER_LEN : i++) buffer2-->i = a_buffer-->i;
 			x1 = a_table-->6; ! Start of word following "oops"
 			x2 = a_table-->5; ! Length of word following "oops"
 			#Endif;
-		
+
 			! Repair the buffer to the text that was in it before the "oops"
 			! was typed:
-      #Iftrue CHARSIZE == 1;
-      for (i=0 : i<64 : i++) a_buffer->i = oops_workspace->i;
-      #Ifnot;
-      for (i=0 : i<64 : i++) a_buffer-->i = oops_workspace-->i;
-      #Endif;
+			#Iftrue CHARSIZE == 1;
+			for (i=0 : i<64 : i++) a_buffer->i = oops_workspace->i;
+			#Ifnot;
+			for (i=0 : i<64 : i++) a_buffer-->i = oops_workspace-->i;
+			#Endif;
 			VM_Tokenise(a_buffer,a_table);
-		
+
 			! Work out the position in the buffer of the word to be corrected:
 			#Iftrue CHARSIZE == 1;
 			w = a_table->(4*oops_from + 1); ! Start of word to go
@@ -234,76 +233,75 @@ Include (-
 			w = a_table-->(3*oops_from);      ! Start of word to go
 			w2 = a_table-->(3*oops_from - 1); ! Length of word to go
 			#Endif;
-		
+
 			! Write spaces over the word to be corrected:
-      #Iftrue CHARSIZE == 1;
-      for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
-      #Ifnot;
-      for (i=0 : i<w2 : i++) a_buffer-->(i+w) = ' ';
-      #Endif;
-		
+			#Iftrue CHARSIZE == 1;
+			for (i=0 : i<w2 : i++) a_buffer->(i+w) = ' ';
+			#Ifnot;
+			for (i=0 : i<w2 : i++) a_buffer-->(i+w) = ' ';
+			#Endif;
+
 			if (w2 < x2) {
 				! If the replacement is longer than the original, move up...
-        #Iftrue CHARSIZE == 1;
-        for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i--)
-          a_buffer->i = a_buffer->(i-x2+w2);
-        #Ifnot;
-        for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i--)
-          a_buffer-->i = a_buffer-->(i-x2+w2);
-        #Endif;
+				#Iftrue CHARSIZE == 1;
+				for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- ) ! Note: don't close Include
+					a_buffer->i = a_buffer->(i-x2+w2);
+				#Ifnot;
+				for (i=INPUT_BUFFER_LEN-1 : i>=w+x2 : i-- ) ! Note: don't close Include
+					a_buffer-->i = a_buffer-->(i-x2+w2);
+				#Endif;
 
-        ! ...increasing buffer size accordingly.
-        #Iftrue CHARSIZE == 1;
-        a_buffer->1 = (a_buffer->1) + (x2-w2);
-        #Ifnot;
-        a_buffer-->0 = (a_buffer-->0) + (x2-w2);
-        #Endif;
+				! ...increasing buffer size accordingly.
+				#Iftrue CHARSIZE == 1;
+				a_buffer->1 = (a_buffer->1) + (x2-w2);
+				#Ifnot;
+				a_buffer-->0 = (a_buffer-->0) + (x2-w2);
+				#Endif;
 			}
-		
-      ! Write the correction in:
-      #Iftrue CHARSIZE == 1;
-      for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
-      #Ifnot;
-      for (i=0 : i<x2 : i++) a_buffer-->(i+w) = buffer2-->(i+x1);
-      #Endif;
 
-      VM_Tokenise(a_buffer, a_table);
-      #Iftrue CHARSIZE == 1;
-      nw = a_table->1;
-      #Ifnot;
-      nw = a_table-->0;
-      #Endif;
+			! Write the correction in:
+			#Iftrue CHARSIZE == 1;
+			for (i=0 : i<x2 : i++) a_buffer->(i+w) = buffer2->(i+x1);
+			#Ifnot;
+			for (i=0 : i<x2 : i++) a_buffer-->(i+w) = buffer2-->(i+x1);
+			#Endif;
 
-      return nw;
+			VM_Tokenise(a_buffer, a_table);
+			#Iftrue CHARSIZE == 1;
+			nw = a_table->1;
+			#Ifnot;
+			nw = a_table-->0;
+			#Endif;
+
+			return nw;
 		}
 
 		! Undo handling
-	
-		if ((w == UNDO1__WD or UNDO2__WD or UNDO3__WD ) && (nw==1)) {
-			if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed()) { continue; }
+
+		if ((w == UNDO1__WD or UNDO2__WD or UNDO3__WD) && (nw==1)) {
+			if (FollowRulebook( (+ before undoing an action rules +) ) && RulebookFailed() ) { continue; }
 			Perform_Undo();
 			continue; ! if undo failed, get a new command
 		}
 		if ( (+ temporary undo suspension +) ) { return nw; }
-
-		if ( (+ save undo state +) ) {
+		if ( (+ save_undo_state + ) {
 			i = VM_Save_Undo();
 		}
-		else { i = -2; }
+		else { i = -2 };
 
 		if (CommandParserKit`UNDO_PREVENTION_CFGF) undo_flag = 0;
-		else undo_flag = 2; ! Assume undo is available
-
-		if (i == -1) undo_flag = 0; ! Oh, I guess undo is not available
-		if (i == 0) undo_flag = 1; ! Oh, I guess undo is not available right now
+		else undo_flag = 2;
+		if (i == -1) undo_flag = 0; ! Undo not available
+		if (i == 0) undo_flag = 1; ! Undo not available temporarily
 		if (i == 2) {
-			! We just came back from undo.  Print some stuff, then *get a new command*.
+			! We just came back from Undo.  Print some stuff, then get a new command.
 			DealWithUndo();
 			continue;
 		}
 		return nw;
 	}
 ];
+
 -) replacing "Keyboard".
 
 Section - Replace DealWithUndo
@@ -625,7 +623,8 @@ Unified Glulx Input has its own (superior) method for dealing with blank lines; 
 
 Section - Changelog
 
-  7.9.230722: Update to current version of Inform (cleanups in the core code which we copy)
+	7.1.230728: Fix accidental -) which prevented compilation & additional conformity with core inform code.
+  7.0.230722: Update to current version of Inform (cleanups in the core code which we copy)
 	6.0.220529: Example cleanups idenified by automated testing.
 	6.0.220527: Example cleanups to facilitate automated testing.
 	v6 - Update to Inform v10.1.0.  (Nathanael Nerode.)  Eliminate compatibility with Conditional Undo by Jesse McGrew.  Eliminate "undo word #1" in favor of new "Include (- -) replacing UNDO1__WD" syntax.
