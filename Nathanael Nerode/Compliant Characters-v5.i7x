@@ -1,4 +1,4 @@
-Version 5.2.230728 of Compliant Characters by Nathanael Nerode begins here.
+Version 5.2.230729 of Compliant Characters by Nathanael Nerode begins here.
 
 "Report parsing errors to the player when ordering other characters to do things.  Inform 7 normally redirects these errors to 'answer <topic>' so that the character can respond to arbitrary statements.  But in an story with compliant characters who the player orders around routinely, that is frustrating to a player who has made a typo; this helps out the player.  Requires version 5 of Neutral Standard Responses.  Tested with Inform 10.1.0."
 
@@ -625,7 +625,8 @@ Chapter - Core Reparsing
 
 Section - Command Debugging
 
-Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+[ Inform 10.2 requires the word Constant to be in Sentence Case (!?!?). ]
+Use command debugging translates as (- Constant COMMAND_DEBUGGING; -).
 
 Section - Reparsing orders
 
@@ -1007,6 +1008,7 @@ This version of this extension depends on Inform 10.2 for its support hooks and 
 
 Chapter - Changelog
 
+	5.2.230729 - Change "CONSTANT" to "Constant" to compile under Inform 10.2.
 	5.2.230728 - Revert changes necessary due to bug in released version of Inform 10.1 but fixed for 10.2.
 	5.1.230727 - Large changes needed to work around bug in released version of Inform 10.1
 	5.0.220604 - Small documentation fixes
