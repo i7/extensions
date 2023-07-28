@@ -284,7 +284,7 @@ Include (-
 			continue; ! if undo failed, get a new command
 		}
 		if ( (+ temporary undo suspension +) ) { return nw; }
-		if ( (+ save_undo_state +) ) {
+		if ( (+ save undo state +) ) {
 			i = VM_Save_Undo();
 		}
 		else { i = -2 };
