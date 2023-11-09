@@ -1,8 +1,19 @@
-Version 3.0 of Guide Mode by Wade Clarke begins here.
+Version 4.0 of Guide Mode by Wade Clarke begins here.
 
 "Enables you to add a guide mode to your game. The guide mode walks the player through the game one command at a time. The author creates the table of commands for the game to supply. The player can accept and enter each displayed command by pressing ENTER. If the player types a different in world command, guide mode is paused (and no more guide commands are displayed) allowing the player to experiment or explore. The player can leave guide mode by typing GUIDE OFF. Otherwise, when they UNDO during pause mode, they will be rewound to the moment just before they paused, and put back in guide mode."
 
-[VERSION 3: 2023-10-24
+[VERSION 4: 2023-11-09
+
+IMPROVEMENTS SINCE VERSION 3:
+
+* Extension now incorporates Daniel Stelzer's Autosave. This allows it to work across sessions in autosaving interpreters like Parchment because it no longer has to retrieve the Guide Mode rewind point from the UNDO stack; it gets it from an autosave snapshot file instead. Thanks Drew Cook for pointing out the issue.
+* Extension now requires that the game author gives their autosave file a game-specific name. This requirement is described in the documentation..
+* Extension no longer makes use of 'file of resumation'.
+* Fixed a bug: Repeatedly entering G or AGAIN in Guide Mode no longer quotes G/AGAIN as the previous command. Instead, the real command that's being repeated is quoted.
+
+TODO - Low priority: After cancelling a RESTART or QUIT, it takes two UNDOs to reach the previous guide command, instead of one as in the case of a cancelled SAVE or RESTORE. This is because SAVE and RESTORE 'cancel this turn' when they're aborted. There's no easy opportunity to do the same after a cancelled RESTART or QUIT, only slightly uneasy ones. Given that default Inform projects already have this two-undos-needed after cancelling issue, this extension is already behaving better than default Inform.
+
+TODO- Low priority: If you UNDO to a rewind point, UNDO again, enter 1+ non-guide commands then UNDO to the new rewind point, there's an extra line break. Annoying, but cosmetic only.
 
 IMPROVEMENTS SINCE VERSION 2:
 
@@ -16,13 +27,14 @@ IMPROVEMENTS SINCE VERSION 1:
 * Parser errors no longer cause the guide to pause.
 * G/AGAIN are now interchangeable as far as the player and guide author are concerned. If the guide command is G/AGAIN, the automatic expansion shows what command the player will actually be entering.
 * Out of world commands are now handled by a whitelist table. The author must add any out of world commands they create to this table. Thanks Drew Cook for this idea.
-* Fixed a bug: Guide mode no longer breaks if player cancels a SAVE/RESTORE/RESTART/QUIT on the first turn of the game, though some extra linebreaks might be generated upon the cancel. That's the cost of victory.
+* Fixed a bug: Guide mode no longer breaks if player cancels a SAVE/RESTORE/RESTART/QUIT on the first turn of the game, though some extra linebreaks might be generated upon the cancel. That's the cost of victory.]
 
-TODO - Low priority. After cancelling a RESTART or QUIT, it takes two UNDOs to reach the previous guide command, instead of one as in the case of a cancelled SAVE or RESTORE. This is because SAVE and RESTORE 'cancel this turn' when they're aborted. There's no easy opportunity to do the same after a cancelled RESTART or QUIT, only slightly uneasy ones. Given that default Inform projects already have this two-undos-needed after cancelling issue, this extension is already behaving better than default Inform.]
+
 
 Volume - Prerequisites
 
 Include Undo Output Control by Nathanael Nerode.
+Include Autosave by Daniel Stelzer.
 
 
 Volume - Variables, files and a couple of tables
@@ -44,8 +56,8 @@ last-player-command is initially "".
 testing-command is initially "".
 
 The file of writability is called "writability".
-The file of resumation is called "resumation".
 The file of undoation is called "undoation".
+[DEAR GAME AUTHOR - The autosave file must be named in your project.]
 
 
 table of temp guide files[a dummy table - it exists just so that we can create temporary named files from it. Its contents are irrelevant]
@@ -88,11 +100,6 @@ Include (-
 
 Volume - Rules, phrases and actions
 
-To delete resumation:
-	if file of resumation exists:
-		file-delete file of resumation;
-		[say "JUST DELETED FILE OF RESUMATION.";]
-
 To delete undoation:
 	if file of undoation exists:
 		file-delete file of undoation;
@@ -104,12 +111,11 @@ To say guide-mode-about:
 
 This is the invite player to use guide mode rule:[includes a safety check - this rule will do nothing if guide mode can't be run]
 	if guide-mode-supported is true:
-		say "* This game can be started in an optional Guide Mode. Would you like to read about the features of Guide Mode?";
+		say "* This game can be started in an optional Guide Mode. Would you like to read about the features of Guide Mode?[line break]>";
 		if the player consents:
 			say line break;
 			say guide-mode-about;
-			say line break;
-		say "* Would you like to start the game with Guide Mode on?";
+		say "[line break]* Would you like to start the game with Guide Mode on?[line break]>";
 		if the player consents:
 			follow the reset guide mode rule;
 
@@ -192,6 +198,7 @@ To pause guide mode now:
 	say "[italic type]Because you entered a non-guide command, Guide Mode is now paused. During the pause, the guide will no longer suggest commands and you can play however you like. You have the ability to safely rewind the game to this pause point and start receiving suggestions again by entering UNDO. To fully exit guide mode at any point from now (for completely independent play) enter GUIDE OFF.[roman type] ";[deliberate trailing space]
 	say line break;
 	disable saving of undo state;
+	now pause-guide-mode-signal is false;
 
 To end guide mode because there are no more commands to execute:
 	say "[italic type]There are no more commands in the guide, so Guide Mode has been turned off.[roman type][line break]";
@@ -199,14 +206,26 @@ To end guide mode because there are no more commands to execute:
 
 
 Before undoing an action:[phrase from Undo Output Control]
+	follow the guide mode snapback rule;
+
+This is the guide mode snapback rule:
 	if guide-paused is true:
-		write file of resumation from table of temp guide files;[The file's presence is a signal that we don't want to see a 'previous turn undone' message after this rewinding undo]
-		now guide-paused is false;[probably a redundant line - after the undo point is restored, this variable will be false anyway]
+		say "[italic type]You have rewound the game to the moment before you paused Guide Mode. Guide Mode is now resumed.[roman type]";
+		[No need to set guide-paused to false here. In the autosave we're about to resume from, it will be false.]
+		autorestore the game;
 
 Before reading a command (this is the consider a request to pause guide mode that was generated during the previous turn rule):[It's crucial to deactivate guide mode just before the prompt is printed, as the prompt figures in guide mode]
-	if pause-guide-mode-signal is true and guide-paused is false:[the pause only goes ahead if we're not already paused]
-		pause guide mode now;
-	now pause-guide-mode-signal is false;
+	if guide-paused is false:
+		if pause-guide-mode-signal is true:
+			[say "WE GOT THE SIGNAL TO PAUSE GUIDE MODE. DOING IT NOW...";]
+			pause guide mode now;
+		otherwise:[if we're not paused, it's safe to create a new rewind spot]
+			[say "WE JUST AUTOSAVED (A).";]
+			autosave the game;
+			if we restored from an autosave:
+				say line break;
+				try looking;
+				[say "WE JUST AUTORESTORED (A)";]
 
 
 This is the check if the current guide action is whitelisted rule:
@@ -227,7 +246,6 @@ Rule for repairing an empty command:[A function from Undo Output Control]
 			follow pre-command-rule in row guide-row-pointer of guide-table-pointer;
 
 After reading a command (this is the preserve the entered command rule):
-	let GUIDE-MODE-TWEAKED-THE-COMMAND be false;
 	if guide-mode-active is true:
 		let test-cmd be the substituted form of "[the player's command]" in lower case;
 		if test-cmd exactly matches the regular expression "g|again":[if player used 'again', we won't preserve the g/again itself - we'll let the last-player-command variable continue to hold the command they're repeating]
@@ -235,9 +253,8 @@ After reading a command (this is the preserve the entered command rule):
 			if (guide-command is "g" and test-cmd is "again") or (guide-command is "again" and test-cmd is "g"):[code to make g/again interchangeable in terms of matching what player typed to a guide command]
 				[say "G-AGAIN SWAP MATCH.";]
 				change the text of the player's command to "[guide-command]";
-				now GUIDE-MODE-TWEAKED-THE-COMMAND is true;
-	if GUIDE-MODE-TWEAKED-THE-COMMAND is false:
-		now last-player-command is the substituted form of "[the player's command]";[we preserve exactly what the player typed (or accepted, if in guide mode) in this variable until the next command is entered]
+		otherwise:[we won't preserve the text of the most recent entered command if it was G or AGAIN]
+			now last-player-command is the substituted form of "[the player's command]";[we preserve exactly what the player typed (or accepted, if in guide mode) in this variable until the next command is entered]
 
 After reading a command (this is the test whether we should remain in guide mode or not rule):
 	if guide-mode-active is true:
@@ -295,11 +312,14 @@ To say variable undo recovery message:
 		file-delete file of undoation;
 		[say "JUST DELETED FILE OF UNDOATION.";]
 		say run paragraph on;
-	otherwise if file of resumation exists:[if this was a special rewind-in-guide-mode undo...]
-		say "[italic type]You have rewound the game to the moment before you paused Guide Mode. Guide Mode is now resumed.[roman type] ";[deliberate trailing space]
-		file-delete file of resumation;
 	otherwise:
 		say "[bracket]Previous turn undone.[close bracket] ";[deliberate trailing space]
+		[say "WE JUST AUTOSAVED (B).";]
+		autosave the game;
+		if we restored from an autosave:
+			say line break;
+			try looking;
+			[say "WE JUST AUTORESTORED (B).";]
 
 To say variable no undo possible message:
 	delete undoation;[if this UNDO was triggered by a 'cancel this turn' from an aborted SAVE or RESTORE, we need to get rid of the file of undoation now, after the failure of the attempted UNDO.]
@@ -327,17 +347,16 @@ When play begins (this is the prepare prompt and responses for guide mode if gui
 		now the save the game rule response (A) is "Save cancelled. [cancel this turn]";
 		now the restore the game rule response (A) is "Restore cancelled. [cancel this turn]";
 		delete undoation;
-		delete resumation;
+		delete the autosave file;
 		repeat through Table of Final Question Options:
 			if final question wording entry is "UNDO the last command":
 				now final response rule entry is final question undo rule;
 				break;
 
-[For whatever reason, an UNDO made via the final question doesn't go through Undo Output Control's 'Before undoing an action' mechanism, meaning it has no chance to write a file of resumation. I've tweaked the Table of Final Question Options to make such an UNDO also write the file.]
+[An UNDO made via the final question doesn't go through Undo Output Control's 'Before undoing an action' mechanism, meaning it has no chance to autorestore. I've tweaked the Table of Final Question Options to make such an UNDO follow the guide mode snapback rule.]
 
 This is the final question undo rule:
-	if guide-mode-active is false and guide-paused is true:
-		write file of resumation from table of temp guide files;
+	follow the guide mode snapback rule;
 	follow the immediately undo rule;
 
 
@@ -424,26 +443,48 @@ This extension was written and tested in Inform 10.2. It's based on ideas and su
 
 Note that Guide Mode must be turned on at the start of the game, or at least at the start of a discrete section of the game prepared by the author. It depends on the game behaving the way the author knows it will. Guide Mode can not be turned on at some arbitrary moment during the game; it's more a lived walkthrough on rails, with the ability to adapt a little bit, and giving the player the ability to explore a bit and then snap back onto the rails. Guide Mode is not a dynamic help system.
 
-THE MINIMUM THAT'S REQUIRED OF YOU TO MAKE GUIDE MODE WORK IN YOUR GAME:
+THE MINIMUM THAT'S REQUIRED OF YOU TO MAKE GUIDE MODE WORK IN YOUR GAME (FIVE STEPS):
 
-1. Include this extension in your project.
+1. Include this extension in your project's source.
+
+i.e.
+
+	Include Guide Mode by Wade Clarke.
+
+This extension requires that you've already installed the extensions Undo Output Control by Nathanael Nerode and Autosave by Daniel Stelzer in Inform. You can probably get these extensions here: https://github.com/i7/extensions/
 
 2. Edit or add to the table of guidance in the extension, or make a continuation of it in your own game's source, with your guide commands in it. You can use the table of guidance from the example project, The Sawyer Place, as a template.
 
 Note that the first line of the table of guidance, the one in the extension itself, can be left with its blank entries. Any lines in the table of guidance that have a blank prose entry will automatically be skipped when your game is running.
 
-3. If you've created any new out of world commands for your game, you must add them to the table of whitelisted commands, either by editing this extension or making an extension of that table in your game. (More details down in the features section.)
+3. If you've created any new out of world commands for your game AND you are including one or more of them in your table of guidance, you must add these commands to the table of whitelisted commands. Do this either by editing this extension or making a continuation of that table in your game. (Full details down in the features section.)
 
-4. Call the extension's default startup sequence from your game with the following code:
+4. When you include this extension, your game is going to create an autosave file during play to track undo states.
 
-When play begins:
-	follow the invite player to use guide mode rule;
+You must give this file a name specific to your game, in your source. Inform is fussy about this kind of file name. It has to be short (3-23 characters) and consist of only letters and numbers.
 
-This rule explains the features of guide mode if the player wants to read them, and asks them if they want to start with the mode on or off. Then it will turn it on if necessary by using the phrase 'reset guide mode'. This is the phrase that actually throws the switch, and it has to happen before play begins.
+I suggest your autosave file name takes the form "somethingauto" where the 'something' is an abbrevation of your game's name.
+
+To name the autosave file, you must add a 'when play begins' rule to your source, like this:
+
+	When play begins:
+		now the autosave filename is "something auto";
+
+Here's an example: Let's say your game is called World War 7. A good name for your autosave file would be "ww7auto". To set this, you'd put the following code in your source:
+
+	When play begins:
+		now the autosave filename is "ww7auto";
+
+5. Call the extension's default startup sequence from your game with the following code:
+
+	When play begins:
+		follow the invite player to use guide mode rule;
+
+This rule optionally explains the features of guide mode to the player then asks them if they want to start with the mode on or off. It will turn the mode on if necessary by using the phrase 'reset guide mode'. This is the phrase that actually throws the switch, and it has to happen before play begins.
 
 Call your own rule instead if you want to alter or customise the startup questions or instructions. Another way to customise things would be to edit the 'invite player to use guide mode' rule in the extension, and/or the about text printed by the phrase 'say guide-mode-about'.
 
--> In the unlikely circumstances the extension performs its initial sanity check and finds it can't write temp files to disk, the 'follow the invite player to use guide mode rule' won't do anything.
+-> In the unlikely circumstances the extension performs its initial sanity check and finds it can't write temp files to disk, the 'follow the invite player to use guide mode rule' won't do anything and guide mode won't be available.
 
 
 * ONE IMPORTANT NOTE: BEHIND THE SCENES, IT'S ALL LOWER CASE
@@ -481,9 +522,17 @@ YOU CAN INCLUDE OUT OF WORLD COMMANDS IN YOUR GUIDE
 
 It's handy for players to be able to enter non-suggested out of world commands like SAVE or TRANSCRIPT during Guide Mode without these commands causing the guide to pause or get stuck. Also, if your guide actually suggests an out of world command, it's important that after the player enters that command, the guide does indeed continue on to the next command.
 
-To make all of this work, all out of world commands in your game must be listed in the table of whitelisted commands. The table comes pre-filled with all the default out of world action commands for an Inform game, so if you don't create any new out of world commands yourself, you don't need to add to or edit the table.
+To make all of this work, the extension uses a table of whitelisted commands. They're whitelisted in the sense that although they are out of world, if the guide asks the player to enter one of these and the player accepts the suggestion, the guide will not get stuck.
 
-Make sure to include all alternate spellings / phrasings of your commands in separate lines of the table of whitelisted commands.
+The table comes pre-populated with all of Inform's default out of world commands (SAVE, RESTORE etc.) but it requires that you add to it any new out of world commands you create THAT ARE ALSO USED IN YOUR GUIDE MODE.
+
+Therefore, if you haven't added any new out of world commands to your game, you don't need to touch the table.
+
+If you have added new out of world commands to your game, but your guide never asks the player to enter any of them, you still don't have to touch the table.
+
+If you have added new out of world commands to your game and any of them appear in your table of guidance, you must add those commands to the table of whitelisted commands (you only have to add a command once, even if your guide uses it more than once). Do this either by adding to the table of whitelisted commands in this extension, or making a continuation of the table of whitelisted commands in your game. (See the example project, The Sawyer Place, for an example of a whitelist continuation.) 
+
+Make sure to include all alternate spellings / phrasings of your new commands in separate lines of the table of whitelisted commands.
 
 YOU CAN JUMP TO A DIFFERENT ROW IN YOUR GUIDE TABLE DURING PLAY
 
@@ -520,7 +569,10 @@ Example: ** The Sawyer Place - A short adventure demonstrating most features of 
 	*: "The Sawyer Place"
 
 	Include Guide Mode by Wade Clarke.
-		
+	
+	When play begins:
+		now the autosave filename is "sawyerauto";
+	
 	When play begins (this is the ask player if they want guide mode rule):
 		follow the invite player to use guide mode rule;
 	
@@ -544,7 +596,7 @@ Example: ** The Sawyer Place - A short adventure demonstrating most features of 
 	Vestibule is a room. "You're in the vestibule of Old Lady Sawyer's decrepit mansion. The front door is south, but you're not ready to leave yet. Other doors go west, north and east.".
 	
 	Check going south in vestibule:
-		instead say "You're not ready to leave yet.";
+		instead say "You're not ready to leave this house yet.";
 	
 	
 	Slanting Corridor is west of vestibule. "You're in a corridor that slants down to the west. You've got a bad feeling about it. The vestibule is east.".
