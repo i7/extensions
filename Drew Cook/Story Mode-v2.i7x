@@ -1,4 +1,4 @@
-Version 2 of Story Mode by Drew Cook begins here.
+Version 2.0.0 of Story Mode by Drew Cook begins here.
 
 [this is an Inform 10.1.2 extension. It has not been tested with any other version of Inform 7.]
 
