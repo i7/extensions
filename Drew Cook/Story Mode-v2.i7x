@@ -1,4 +1,4 @@
-Version 2.0.0 of Story Mode by Drew Cook begins here.
+Version 2.0.1 of Story Mode by Drew Cook begins here.
 
 [this is an Inform 10.1.2 extension. It has not been tested with any other version of Inform 7.]
 
@@ -371,7 +371,7 @@ after reading a command when the player is guided (this is the big story mode ru
 				now the player is in-scene;
 				say "[bk][it]Temporarily leaving story mode. You can return at any time by entering a blank/empty command or else typing RESUME.
 
-If you wish to permanently leave story mode, simply *LEAVE MODE*[dot][rt][cb][lb]";
+If you wish to permanently leave story mode, simply *LEAVE STORY MODE*[dot][rt][cb][lb]";
 				now the command prompt is "[bk][it]Story mode paused. Press *ENTER* to *RESUME*.[rt][cb][pb]>".
 
 [
