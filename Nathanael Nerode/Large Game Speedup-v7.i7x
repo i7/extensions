@@ -1,4 +1,4 @@
-Version 7.0.230723 of Large Game Speedup by Nathanael Nerode begins here.
+Version 7.1.240107 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -9,6 +9,7 @@ Use authorial modesty.
 [This broke in 6M62, but it's still very important.  Updated by Nathanael Nerode.]
 [It broke again in 10.1.0, and it's still just as important.  Updated again.]
 [Broke again with Inform 2023-07-22.  Updated again.]
+[Broke again with Inform 2024-01-07.  Updated to use IssueRTP, but worth checking if it's used right.]
 
 Chapter - Empty
 
@@ -85,8 +86,9 @@ Include (-
 [ TableSortPartial tab rows col dir test_flag algorithm i j k f;
 	for (i=1:i<=tab-->0:i++) {
 		j = tab-->i; ! Address of column table
-		if ((j-->1) & TB_COLUMN_DONTSORTME)
-			return RunTimeProblem(RTP_TABLE_CANTSORT, tab);
+		if ((j-->1) & TB_COLUMN_DONTSORTME) {
+			return IssueRTP("RTP_TABLE_CANTSORT", "Attempt to sort a table whose ordering must remain fixed.", BasicInformKitRTPs);
+        }
 	}
 	if (col >= 100) col=TableFindCol(tab, col, false);
 	k = rows; ! Not the entire table
@@ -326,7 +328,9 @@ Include (-
 		@push MarkedObjectArray; @push MarkedObjectLength;
 		MarkedObjectArray = RequisitionStack(length);
 		MarkedObjectLength = length;
-		if (MarkedObjectArray == 0) return RunTimeProblem(RTP_LISTWRITERMEMORY); 
+		if (MarkedObjectArray == 0) {
+            return IssueRTP("RTP_LISTWRITERMEMORY", "The list-writer has run out of memory.", BasicInformKitRTPs); 
+        }
 
 		! common_parent is always set
 		ObjectTreeCoalesce(child(common_parent));
@@ -412,7 +416,7 @@ to decide which list of objects is the/-- list of components of (obj - an object
 Chapter - Static Object Grouping
 
 [This is *untested* in 6M62 and 10.1.0.]
-
+[
 Use static object grouping translates as (- Constant STATIC_OBJECT_GROUPING; -). 
 
 The initially listing contents rules are a rulebook.
@@ -439,7 +443,7 @@ Include (-
 	}
 ];
 -).
-
+]
 Large Game Speedup ends here.
 
 ---- DOCUMENTATION ----
@@ -534,7 +538,8 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
-  7.0.230723 updated to new version of Inform.
+    7.1.240107 updated to new version of Inform (RunTimeError->IssueRTP)
+    7.0.230723 updated to new version of Inform.
 	6.0.20220524 reformatted the Changelog.
 	6.0.20220521 adapted to Inform v10.
 	5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL
