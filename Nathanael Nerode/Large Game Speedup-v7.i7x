@@ -1,4 +1,4 @@
-Version 7.1.240107 of Large Game Speedup by Nathanael Nerode begins here.
+Version 7.1.240108 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -9,7 +9,7 @@ Use authorial modesty.
 [This broke in 6M62, but it's still very important.  Updated by Nathanael Nerode.]
 [It broke again in 10.1.0, and it's still just as important.  Updated again.]
 [Broke again with Inform 2023-07-22.  Updated again.]
-[Broke again with Inform 2024-01-07.  Updated to use IssueRTP, but worth checking if it's used right.]
+[Broke again with Inform 2024-01-07.  Updated to use IssueRTP.]
 
 Chapter - Empty
 
@@ -87,8 +87,12 @@ Include (-
 	for (i=1:i<=tab-->0:i++) {
 		j = tab-->i; ! Address of column table
 		if ((j-->1) & TB_COLUMN_DONTSORTME) {
-			return IssueRTP("RTP_TABLE_CANTSORT", "Attempt to sort a table whose ordering must remain fixed.", BasicInformKitRTPs);
-        }
+			IssueRTP("SortedTableWithFixedOrdering",
+				"Tried to sort a table whose ordering must remain fixed.", BasicInformKitRTPs);
+			print "*** Tried to sort a table whose ordering must remain fixed: table '",
+				(PrintTableName) tab, "'.^";
+			return;
+		}
 	}
 	if (col >= 100) col=TableFindCol(tab, col, false);
 	k = rows; ! Not the entire table
@@ -252,8 +256,8 @@ Include (-
 ! ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 [ WriteListFrom first in_style depth noactivity iter i a ol;
 	@push c_iterator; @push c_style; @push c_depth; @push c_margin;
-    if (iter) c_iterator = iter; else c_iterator = ObjectTreeIterator;
-    c_style = in_style; c_depth = depth;
+	if (iter) c_iterator = iter; else c_iterator = ObjectTreeIterator;
+	c_style = in_style; c_depth = depth;
 	c_margin = 0; if (in_style & EXTRAINDENT_BIT) c_margin = 1;
 
 	! Set or clear the list_filter_permits flag. Try to do it efficiently.
@@ -282,11 +286,11 @@ Include (-
 		}
 	}
 
-    first = c_iterator(first, depth, 0, START_ITF);
+	first = c_iterator(first, depth, 0, START_ITF);
 	if (first == nothing) {
 		if (in_style & ISARE_BIT ~= 0) LW_Response('W'); else LW_Response('Y');
-        if (in_style & NEWLINE_BIT ~= 0) new_line;
-    } else {
+		if (in_style & NEWLINE_BIT ~= 0) new_line;
+	} else {
 		if ((noactivity) || (iter)) {
 			WriteListR(first, c_depth, true);
 			say__p = 1;
@@ -300,7 +304,7 @@ Include (-
 		}
 	}
 
-    @pull c_margin; @pull c_depth; @pull c_style; @pull c_iterator;
+	@pull c_margin; @pull c_depth; @pull c_style; @pull c_iterator;
 ];
 -) replacing "WriteListFrom".
 
@@ -329,8 +333,8 @@ Include (-
 		MarkedObjectArray = RequisitionStack(length);
 		MarkedObjectLength = length;
 		if (MarkedObjectArray == 0) {
-            return IssueRTP("RTP_LISTWRITERMEMORY", "The list-writer has run out of memory.", BasicInformKitRTPs); 
-        }
+			return IssueRTP("ListWriterRanOutOfMemory", "The list-writer has run out of memory.^", BasicInformKitRTPs); 
+		}
 
 		! common_parent is always set
 		ObjectTreeCoalesce(child(common_parent));
@@ -538,8 +542,9 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
-    7.1.240107 updated to new version of Inform (RunTimeError->IssueRTP)
-    7.0.230723 updated to new version of Inform.
+	7.1.240108 fixed formatting.
+	7.1.240107 updated to new version of Inform (RunTimeError->IssueRTP)
+	7.0.230723 updated to new version of Inform.
 	6.0.20220524 reformatted the Changelog.
 	6.0.20220521 adapted to Inform v10.
 	5/210908 added some missing rule response labels to the optimized you-can-also-see rule, and changed a "here" to "[here]" -- ZL

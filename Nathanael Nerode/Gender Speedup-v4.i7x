@@ -1,4 +1,4 @@
-Version 4.0.230722 of Gender Speedup by Nathanael Nerode begins here.
+Version 4.1.240107 of Gender Speedup by Nathanael Nerode begins here.
 
 "When using Gender Options, clean up some I6 internals with functions related to gender which are irrelevant to English or rendered obsolete with Gender Options.  Since these are called in the depths of ListWriter this should slightly improve speed.  Not included in Gender Options due to likely interference with other extensions.  Requires Gender Options.  Will not work with languages with gendered plurals.  Tested with Inform 10.1."
 
@@ -212,7 +212,7 @@ Include (-
 		}
 		if (prior_named_list == 2) break; ! This is all we need to know in English.
 	}
-	return;	
+	return;
 ];
 -) replacing "RegardingMarkedObjects"
 
@@ -276,7 +276,10 @@ Include (-
 		@push MarkedObjectArray; @push MarkedObjectLength;
 		MarkedObjectArray = RequisitionStack(length);
 		MarkedObjectLength = length;
-		if (MarkedObjectArray == 0) return RunTimeProblem(RTP_LISTWRITERMEMORY); 
+		if (MarkedObjectArray == 0) {
+			return IssueRTP("ListWriterRanOutOfMemory",
+				"The list-writer has run out of memory.^", BasicInformKitRTPs);
+		}
 
 		if (common_parent) {
 			ObjectTreeCoalesce(child(common_parent));
@@ -330,7 +333,8 @@ Fluid Pronouns by Zed Lopez touches all of this code and is likely to conflict w
 
 Section - Changelog:
 
-  4.0.230722: Update to new version of Inform.
+	4.0.240107: Update to new version of Inform.
+	4.0.230722: Update to new version of Inform.
 	3.0.220534: Section documentation.  Format Changelog.
 	3.0.220523: Adaptation to Inform 10.1.  Additional documentation on extension conflicts.
 	2/210331: Change disambiguation treatment with names of rooms.  Should fix Counterfeit Monkey regtests
