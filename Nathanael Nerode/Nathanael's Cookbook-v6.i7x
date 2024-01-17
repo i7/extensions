@@ -1,4 +1,4 @@
-Version 6.0.220604 of Nathanael's Cookbook by Nathanael Nerode begins here.
+Version 6.1.240117 of Nathanael's Cookbook by Nathanael Nerode begins here.
 
 "This is just a collection of documentation and worked examples illustrating various features of Inform.  There isn't much in the extension per se, but the examples in the documentation can be click-pasted in the Inform IDE for convenience."
 
@@ -104,6 +104,9 @@ and have one special rule which runs last and does not have that line -- this ru
 
 Section - Changelog
 
+Version
+
+	6.1.240117: Add inaccessible room example.
 	6.0.220604: Formatting fixes.
 	6.0.220522: First version for Inform 10.1.  Increment major version to deal with a version number SNAFU.
 
@@ -269,6 +272,8 @@ Example: * Careful Startup - displaying messages at the right time during startu
 
 Example: * Mention Unmention - controlling whether something is mentioned
 
+Check this out and carefully watch what's described when.
+
 	*: "Mention Unmention"
 
 	To say mention (item - a thing):
@@ -396,7 +401,7 @@ This is an offcut from Compliant Characters.i7x.  While I found a much better wa
 
 	*: "Early Command Parsing"
 
-	Use command debugging translates as (- CONSTANT COMMAND_DEBUGGING; -).
+	Use command debugging translates as a configuration flag.
 
 	Section - Say quoted text
 
@@ -432,3 +437,58 @@ This is an offcut from Compliant Characters.i7x.  While I found a much better wa
 	The testing location is a room.
 	Barbie is a person in the testing location.
 	The widget is a thing in the testing location.
+
+Example: * Inaccessible rooms
+
+This provides a substantially cleaner way to model outdoor rooms than "Instead of going north...".  There is less repeated coding.
+
+	*: "Inaccessible rooms"
+
+	An outside room is a kind of room.
+	An outside room has a list of rooms called views.
+
+	["look north"]
+	Check examining a direction (called direction D) when the location is an outside room:
+		let the target be the room-or-door direction D from the location;
+		if the target is listed in the views of the location:
+			try examining the target instead;
+		if the target is a door in the location:
+			try examining the target instead;
+		[ otherwise pass back to standard rules]
+		make no decision.
+
+	[This allows the player to refer to rooms by name.]
+	After deciding the scope of an object (called character):
+		let loc be the location of the character;
+		Place the loc in scope, but not its contents;
+		if loc is an outside room:
+			repeat with view running through the views of location:
+				Place view in scope;
+
+	An inaccessible room is a kind of room.
+	An inaccessible room has a text called the no go text.
+	The no go text of an inaccessible room (called target) is usually "[the description of the target]".
+	[This actually implements the you-can't-go-that-way response.]
+	Instead of going to an inaccessible room (called target):
+		say "[the no go text of the target][line break]".
+
+	Carry out looking when the location is an inaccessible room:
+		say "[italic type]You have found a bug in the game.  You should not be able to be in this location.  Please report this bug with a transcript to the author.[roman type][line break]".
+
+	Empty field is an outside room.
+	"This is an empty field, surrounded by the vast, inhospitable wilderness."
+
+	Vast wilderness is an inaccessible room.
+	"The wilderness is vast, and inhospitable."
+	Understand "inhospitable" as the vast wilderness.
+	The no go text for the vast wilderness is "You quake at the thought of being lost in the vast wilderness, and decide not to go that way."
+
+	The views of the empty field are {vast wilderness}.
+	North of empty field is vast wilderness.
+	South of empty field is vast wilderness.
+	East of empty field is vast wilderness.
+	West of empty field is vast wilderness.
+	Northeast of empty field is vast wilderness.
+	Northwest of empty field is vast wilderness.
+	Southeast of empty field is vast wilderness.
+	Southwest of empty field is vast wilderness.
