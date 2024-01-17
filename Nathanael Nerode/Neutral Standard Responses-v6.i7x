@@ -1,4 +1,4 @@
-Version 6.0.230722 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 6.0.240114 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 10.1.0."
 
@@ -88,7 +88,7 @@ Section - Debug (not for release)
 
 [This is too useful not to have it in place, but should never be in a published game.]
 
-Use parser error debugging translates as (- Constant PARSER_ERROR_DEBUGGING; -);
+Use parser error debugging translates as a configuration flag.
 
 Before printing a parser error (this is the debug parser errors rule):
 	If the parser error debugging option is active:
@@ -1157,7 +1157,7 @@ Chapter - Traditional can't see any such thing rule
 
 [For those story authors who do not want to explain what words are not in the dictionary.]
 
-Use traditional can't see any such thing translates as (- Constant TRADITIONAL_CANT_SEE; -).
+Use traditional can't see any such thing translates as a configuration flag.
 
 Rule for printing a parser error when the latest parser error is the can't see any such thing error and the traditional can't see any such thing option is active (this is the traditional can't see any such thing rule):
 	say "[ text of the parser error internal rule response (E) ]";
@@ -1411,7 +1411,8 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
-  Version 6.0.230722: adapt to new (work in progress) version of Inform.
+    Version 6.0.240114: Use "as a configuration flag" syntax from new version of Inform.
+    Version 6.0.230722: adapt to new (work in progress) version of Inform.
 	Version 5.0.220521: adapt to Inform v10.1.0.
 	Version 4/210908: in several rule responses, changed "here" to "[here]" (which will only ever matter outside of present tense) -- ZL
 	Version 4/171007:

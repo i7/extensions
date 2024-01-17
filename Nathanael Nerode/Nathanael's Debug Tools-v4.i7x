@@ -1,4 +1,4 @@
-Version 4.0.230722 of Nathanael's Debug Tools by Nathanael Nerode begins here.
+Version 4.1.240114 of Nathanael's Debug Tools by Nathanael Nerode begins here.
 
 "Miscellaneous stuff I like to have built in when debugging and programming, but would never want to relase."
 
@@ -15,7 +15,7 @@ Include (-
 
 Section - Startup Debugging
 
-Use startup rules tracing translates as (- Constant STARTUP_RULES_TRACING; -).
+Use startup rules tracing translates as a configuration flag.
 
 [ See RulesOnSub in Tests.i6t for reference ]
 To turn rules tracing on:
@@ -54,4 +54,5 @@ This eliminates the "Are you sure?" question when quitting; useful to speed up t
 Tracing startup rules is important when you need it, and requires a decent chunk of code to set up (included here).  It is rather annoying when you don't need it.  It's enabled with
 	Use startup rules tracing
 
+Version 4.1.2024014: Use 'configuration flag' syntax.
 Version 4.0: Update for 2023-07-02 version of Inform

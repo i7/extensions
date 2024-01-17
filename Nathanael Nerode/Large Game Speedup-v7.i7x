@@ -1,4 +1,4 @@
-Version 7.1.240108 of Large Game Speedup by Nathanael Nerode begins here.
+Version 7.1.240114 of Large Game Speedup by Nathanael Nerode begins here.
 
 "Performance improvements for games with many objects, or with nested loops over objects, by avoiding looping over all objects."
 
@@ -419,9 +419,9 @@ to decide which list of objects is the/-- list of components of (obj - an object
 
 Chapter - Static Object Grouping
 
-[This is *untested* in 6M62 and 10.1.0.]
+[This is *untested* in 6M62 and 10.1.0 and 10.2.]
 [
-Use static object grouping translates as (- Constant STATIC_OBJECT_GROUPING; -). 
+Use static object grouping translates as the configuration flag STATIC_OBJECT_GROUPING.
 
 The initially listing contents rules are a rulebook.
 
@@ -542,6 +542,7 @@ Do *not* use the standard "group X together" phrases when static option grouping
 
 Chapter - Changelog
 
+	7.1.240114 used the new "configuration flag" syntax.
 	7.1.240108 fixed formatting.
 	7.1.240107 updated to new version of Inform (RunTimeError->IssueRTP)
 	7.0.230723 updated to new version of Inform.
