@@ -1,6 +1,8 @@
-Version 4.0.240121 of Command Prompt on Cue by Ron Newcomb begins here.
+Version 4.1.240122 of Command Prompt on Cue by Ron Newcomb begins here.
 
 "Creates a situation without a command prompt where the player may simply press space or enter to WAIT.  But if the player instead begins to type a command, the command prompt will then appear."
+
+Include Undo Output Control by Nathanael Nerode [for 'repairing an empty command']
 
 Book 1 - The Command Prompt on Cue extension
 
@@ -12,7 +14,7 @@ Unobtrusive player is a truth state that varies.
 
 Chapter 2 - mere details - unindexed
 
-Section 1 - main 
+Section 1 - main
 
 To decide if the player is pressing SPACE: (- Interrupt_test() -).
 
@@ -37,11 +39,11 @@ Global unobtrusive_player;
 			unobtrusive_player = false;  ! then player will take action
 			print (TEXT_TY_Say) (+ saved optional command prompt +);
 #IFDEF TARGET_GLULX;
-			style bold;
+			glk_set_style(style_Input);
 #ENDIF;
 			print (char) interrupting_key;
 #IFDEF TARGET_GLULX;
-			style roman;
+			glk_set_style(style_Normal); ! relevant only for 1-character commands
 #ENDIF;
 			rfalse;
 		}
@@ -81,13 +83,16 @@ First after reading a command when command prompt on cue is true  (this is the c
 	if unobtrusive player is true, replace the player's command with the implicit unobtrusive command;
 	otherwise prepend the interrupting key to the player's command.
 
+Chapter 3A - single letter commands
+
+For repairing an empty command when command prompt on cue is true  (this is the command prompt on cue recognize single-letter commands rule):
+	rule succeeds; [tell the parser empty is OK, we'll deal with it later]
 
 Chapter 4 - handy for debugging - not for release
 
 Rule for printing a parser error when the latest parser error is the not a verb I recognise error (this is the command prompt on cue debugging rule):
 	if command prompt on cue is true:
 		say "'[player's command]' is not something I recognise."
-
 
 Chapter 5 - parser error rules
 
@@ -133,7 +138,8 @@ The truth state variable "command prompt on cue" is the master switch for the ex
 
 Section : Caveats
 
-Due to technical reasons, the extension does not deal well with single-letter commands.  When our player tries to interrupt with a L (for LOOK) or i (for INVENTORY), a spurious "I beg your pardon" error will result.  The player may then proceed normally.  Secondly, the player cannot delete the first typed letter.  Finally, fast typists may lose the second letter -- understanding "ak" and "tll" may be called for.
+Due to technical reasons, the player cannot delete the first typed letter.
+Finally, fast typists may lose the second letter -- understanding "ak" and "tll" may be called for.
 
 Section : Changelog & License
 
@@ -142,6 +148,7 @@ The latest version of this extension can be found at <https://github.com/i7/exte
 
 Changelog:
 
+	4.1.240122: Solve the one-letter command bug.  Fix styling of the first character.
 	4.0.240121: Updated for Inform version 10.2 by Nathanael Nerode.  Probably won't work with earlier versions.
 	6L02 Compatibility Update:  This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform.
 
