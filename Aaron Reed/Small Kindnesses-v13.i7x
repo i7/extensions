@@ -1,8 +1,9 @@
-Version 13.2 of Small Kindnesses by Aaron Reed begins here.
+Version 13.3 of Small Kindnesses by Aaron Reed begins here.
 
 "Provides a number of small interface improvements for players, understanding commands like GO BACK and GET IN, an EXITS command which automatically runs after failed movement, a USE verb, and more. Compatible with Modified Exit and Approaches by Emily Short, Keyword Interface by Aaron Reed, and Implicit Actions by Eric Eve."
 
 [Changelog:
+ -- Version 13.3: Remove gratuitous incompatibility with Neutral Standard Responses & others.
  -- Version 13: Updated for latest build and made adaptive.
  -- Version 12: Fixed a bug and improved the efficiency of "examining the room"; thanks very much to capmikee for the improved code. Added "Leave to exit" section to allow commands like "leave [location]" or "leave room" to work like exit.
  -- Version 11: Minor fixes
@@ -15,12 +16,6 @@ Version 13.2 of Small Kindnesses by Aaron Reed begins here.
  -- Version 4: Updated to remove deprecated features.
  -- Version 3: Removed several sections incorporated into build 6859, including "Automatically leave enterables before going," "Describe contents of containers / supporters", "Understand Get Down as exiting", "Understand Get In as vague entering," as well as several sections that are better handled by other extensions (mention of which was added to the documentation). Also made rules more precise and modified them to use standard library messages whenever possible.
  -- Version 2: fixed a bug where containers/supporters without descriptions showed their contents twice; made the exits lister fail in darkness; added "Allow for switching things in darkness"; added "Prepositionless alternatives."; improved automatically taking indirectly held things to allow for locking/unlocking; removed "Describe contents of containers/supporters."]
-
-Chapter - Compatibility
-
-Section - Parser Speak (for use without Keyword Interface by Aaron Reed)
-
-To say as the parser: do nothing. To say as normal: do nothing.
 
 Chapter - Exit leaves when there's only one way to go
 
