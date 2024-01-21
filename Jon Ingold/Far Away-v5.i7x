@@ -1,4 +1,4 @@
-Version 5/160517 of Far away by Jon Ingold begins here.
+Version 5.2 of Far away by Jon Ingold begins here.
 
 "Creates an adjective for far-off items which cannot be touched."
 
