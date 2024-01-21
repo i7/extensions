@@ -1,8 +1,12 @@
-Version 9/140430 of Remembering by Aaron Reed begins here.
+Version 10.0.240121 of Remembering by Aaron Reed begins here.
 
 "Replaces 'You can't see any such thing' for a seen but out-of-scope noun with a message acknowledging that the parser recognizes the object. With Glulx, also keeps track of where the player last saw that object."
 
 [Changelog:
+ -- Version 10: Updated to use version 9 of Epistemology by Eric Eve (so, now compiles).
+                Made compatible with Neutral Standard Responses by Nathanael Nerode.
+                Serious rewrite using Reparse by Nathanael Nerode and Snippetage by Dave Robinson.
+                Now behaves properly rather than stomping on verbs.
  -- Version 9: Updated for latest build and made adaptive. 
  -- Version 8: Made reporting remembered locations into an activity.
  -- Version 7: updated rule names to be consistent
@@ -13,38 +17,54 @@ Version 9/140430 of Remembering by Aaron Reed begins here.
 
 ]
 
-Chapter - Compatibility
+Volume - Compatibility
 
 Section - Inclusions
 
-Include Version 6 of Epistemology by Eric Eve. 
+Include version 9 of Epistemology by Eric Eve.
+Include version 2 of Snippetage by Dave Robinson.
+Include version 1 of Reparse by Nathanael Nerode.
+
+Chapter - Parser Speak (for use without Neutral Standard Responses by Nathanael Nerode)
 
 Section - Parser Speak (for use without Keyword Interface by Aaron Reed)
 
 To say as the parser: do nothing. To say as normal: do nothing.
 
-
-Chapter - Remembering Main
+Chapter - Explicit Verbs
 
 Section - Grammar Line
 
-[Future: any way to make this work for any reference to an object?]
-
 Understand
-"examine [any seen thing]" or
-"x [any seen thing]" or
-"look at/for [any seen thing]" or
-"take [any seen thing]" or
-"get [any seen thing]" or
-"pick up [any seen thing]" or
-"pick [any seen thing] up" or
-"drop [any seen thing]" or
-"put down [any seen thing]" or
-"put [any seen thing] down" or
-"drop [any seen thing] away" or
-"drop away [any seen thing]" or
 "find [any seen thing]" or
 "where is/are [any seen thing]" as remembering.
+
+Chapter - Implicit invocation with reparsing
+
+Section - Saved Oops
+
+To decide which number is the saved oops position:
+	(- saved_oops -)
+
+Section - Misunderstood word
+
+To decide which snippet is the misunderstood word:
+	decide on the snippet at the saved oops position of 1.
+
+Section - Remaining text
+
+To decide which snippet is the command from the misunderstood word onwards:
+	decide on the command from the saved oops position onwards.
+
+Section - Parser Error Reparse Rule
+
+[This is horrifyingly sneaky.  Reparse as a remembering command.]
+Rule for printing a parser error when the latest parser error is the can't see any such thing error and the misunderstood word is in the dictionary:
+	let the new command text be "find [the command from the misunderstood word onwards]";
+	reparse with new command text, silently;
+	stop the action;
+
+Chapter - Actions
 
 Section - The Remembering Action
 
@@ -64,12 +84,14 @@ Section - Fix in this context message
 [ Since we've used an "any" grammar token, we'll get the "That noun did not make sense in that context." message for any unrecognized word or not visible noun. Restore this to the normal behavior. Note: if your game features other uses of "any" tokens, you'll need to replace this rule. ]
 
 Rule for printing a parser error when the latest parser error is the noun did not make sense in that context error (this is the Remembering replace did not make sense in that context rule):
-	now the latest parser error is the can't see any such thing error;
+	[Since it's a parser error, we don't have access to action names, so we have to match these manually]
+	if the verb word matches "find" or the verb word matches "where":
+		now the latest parser error is the can't see any such thing error;
 	make no decision.
 
 Section - Avoiding Disambiguation
 
- [In practice, it doesn't really matter which of several unavailable items the player was referring to; it's quite annoying to be asked which one you meant and then told it isn't there anyway. Unfortunately, there's no easy way to bypass the disambiguation process since it's hard-coded into the Inform 6 templates. Here we do a trick, simply printing a refusal message instead of the disambiguation question. This mostly works, EXCEPT if the player tries to type a direction word: since directions aren't understood as verbs, the parser tries to insert the command into the misunderstood line, leading to "You can't see any such thing."]
+[In practice, it doesn't really matter which of several unavailable items the player was referring to; it's quite annoying to be asked which one you meant and then told it isn't there anyway. Unfortunately, there's no easy way to bypass the disambiguation process since it's hard-coded into the Inform 6 templates. Here we do a trick, simply printing a refusal message instead of the disambiguation question. This mostly works, EXCEPT if the player tries to type a direction word: since directions aren't understood as verbs, the parser tries to insert the command into the misunderstood line, leading to "You can't see any such thing."]
 
 Rule for asking which do you mean while remembering (this is the Remembering don't disambiguate while remembering rule): say "[as the parser]That's not something [we] [can see].[as normal][line break]" (A).
 
@@ -79,7 +101,7 @@ Section - The Remembered Location
 
 Every thing has an object called the remembered location. The remembered location of a thing is usually nothing.
 
-Section - Rules
+Section - Rules for the Remembered Location
 
 Last when play begins (this is the Remembering update remembered positions for first turn rule):
 	follow the Remembering update remembered positions of things rule.
@@ -117,10 +139,10 @@ To say was-were of (N - an object):
 
 To say at the (place - an object):
 	carry out the saying the location name activity with place.
-		
+
 
 Section - The Activity
-	
+
 saying the location name of something is an activity on objects.
 
 For saying the location name of a room (called place) (this is the Remembering saying room name rule): say "at '[the place]'" (A).
@@ -142,7 +164,12 @@ Remembering ends here.
 
 The parser message "You can't see any such thing." is used both when the player types a noun the game does not understand, and when he types one that is not currently visible. This extension replaces the message in the latter case (if the player knows about the object in question) with a message acknowledging that the game knows that object exists. In Glulx games, the extension also tracks where each object was last seen and shares that info with the player.
 
-We do this with a new internal verb, "to remember," which is triggered by any attempt to examine, take, or drop a "seen" but not visible noun. ("Seen" is defined in the required Epistemology by Eric Eve extension.) 
+We do this with a new action "remembering" which is triggered by the command ``find [seen thing]`` or ``where is [seen thing]``.
+("Seen" is defined in the required Epistemology by Eric Eve extension.) 
+
+When an word in the dictionary is mentioned but the "you can't see any such thing" error would be triggered, the program
+silently goes back to the parser and tells it to parse "find [rest of command]", thus triggering this passively.
+(This is done using the Snippetage by Dave Robinson and Reparse by Nathanael Nerode extensions.)
 
 Disambiguation questions during remembering are usually fairly pointless, since the command isn't going to succeed anyway. We replace them with a generic "You can't see that" style message that doesn't reference a specific noun. If you *do* want to ask disambiguation questions while remembering, add the following line to your code:
 
