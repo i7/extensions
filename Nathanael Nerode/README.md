@@ -1,4 +1,6 @@
-The "master" branch of the directory contains extensions for use with the most recent development version of Inform (10.2).
+Within the "Nathanael Nerode" drectory (this does not necessarily apply to other directories):
+
+The "master" branch of this directory contains extensions for use with the most recent development version of Inform (10.2).
 The "10.1" branch contains extensions for use with the 10.1 version of Inform.
 
 The files in this directory, to the extent that they are written by Nathanael Nerode,
