@@ -1,18 +1,31 @@
-Version 3.0.240121 of Tab Removal by Nathanael Nerode begins here.
+Version 3.0.240122 of Tab Removal by Nathanael Nerode begins here.
 
 "For commands with tabs in them, replaces tabs with spaces before passing them on to the game.  Prevents all kinds of confusing weirdness when the player types tabs."
 
 [
-Many interpreters unfortunately pass tabs through into the command.  Tabs are treated as *letters* which are part of a word, unhelpfully, which leads to confusing error responses with embedded tabs.  Worse, when Glulxe goes to print the error message with the embedded tab, it issues a runtime error saying that it can't print character 9* (the tab character) -- in the middle of this "word"!  This is a pretty cryptic error message.
+Many interpreters unfortunately pass tabs through into the command.
+Tabs are treated as *letters* which are part of a word, unhelpfully, which leads to confusing error responses with embedded tabs.
+Worse, when Glulxe goes to print the error message with the embedded tab,
+it issues a runtime error saying that it can't print character 9* (the tab character)
+-- in the middle of this "word"!  This is a pretty cryptic error message.
 
 By contrast, Glulxe will, hilariously, print "[unicode 9]" with no complaints... it prints a tab! :-)
 
 The implementation for the Z-machine is straightforwardly done with "after reading a command".
 
-But while the straightforward implementation works for the Z-machine, *it fails for Glulx*.  In both glulxe and git, the "\t" regular expression does not match the tab as it should.  It matches tabs inserted into your code using [unicode 9], but not tabs typed at the command line.  I can't figure out why.
-This is still breaking with Inform 10.2.
+But while the straightforward implementation works for the Z-machine, *it fails for Glulx*.
+In both glulxe and git, the "\t" regular expression does not match the tab as it should.
+It matches tabs inserted into your code using [unicode 9], but not tabs typed at the command line.
 
-So for Glulx we replace the tokenizer.  (We can't replace the tokenizer with the Z-machine because on the Z-machine the tokenizer is on the interpreter-side.)
+This is actually a combination of two problems:
+(1) weirdness (arguably a bug) in the Glk specification, which disallows printing tabs.
+(2) weirdness where Inform 7 uses the print routines to convert snippets to text.
+(3) weirdness (definitely a bug) in Inform 7's Glk input routines, which blindly pass tabs through to the snippet.
+These also pass through other control characters, but none of those have a history of being passed through by the interpreter.
+
+This is still breaking with Inform 10.2.
+So for Glulx we replace the tokenizer.  
+(We can't replace the tokenizer with the Z-machine because on the Z-machine the tokenizer is on the interpreter-side.)
 
 In Inform v10.2, the tokenizer is in the Architecture32Kit in the "Input Output.i6t" file, for reference.
 ]
@@ -23,6 +36,7 @@ The tab removal rule is listed first in the after reading a command rulebook.
 After reading a command (this is the tab removal rule):
 	let cmdln be text;
 	let cmdln be the substituted form of "[the player's command]"; [Yes it has to be in quotes and brackets]
+    [The preceding line is the one which breaks under Glulxe.  The Inform 6 veneer code puts an error message into cmdln!]
 	if cmdln matches the regular expression "\t": [a literal tab]
 		replace the regular expression "\t" in cmdln with " ";
 		change the text of the player's command to cmdln;
@@ -36,7 +50,7 @@ Include (-
     buf = buf+WORDSIZE;
     
     ! The following was added by the Tab Removal extension.
-    ! Tab removal is done here since it can't be matched in I7 due to bugs in Glulxe.
+    ! Tab removal is done here since it can't be matched in I7 due to issues in Glk implementations.
     cx = 0;
     while (cx < len) {
         if (buf-->cx == 9) {  ! it's a tab character
@@ -123,6 +137,7 @@ The Glulx implementation has been tested with Inform v10.2, but it is dependent 
 
 Changelog:
 
+	3.0.240122: Comment improvements
 	3.0.240121: Adapt to changes made for Unicde in Inform v10.2.
 	2.0.220522: Docs typo fix.
 	2.0.220520: Adapt to Inform 7 v10, by changing the method of replacing I6 code.
