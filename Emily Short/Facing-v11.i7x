@@ -1,4 +1,4 @@
-Version 11/160611 of Facing by Emily Short begins here.
+Version 11.2 of Facing by Emily Short begins here.
 
 "Provides actions to face a direction, look toward a named room, or look through a named door."
 
