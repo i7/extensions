@@ -1,4 +1,4 @@
-Version 10/190320 of Numbered Disambiguation Choices by Aaron Reed begins here.
+Version 10.2 of Numbered Disambiguation Choices by Aaron Reed begins here.
 
 "Numbers the options in disambiguation questions, to help new players and solve the 'disambiguation loop' problem caused by indistinguishable objects."
 

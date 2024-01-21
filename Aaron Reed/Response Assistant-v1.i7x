@@ -1,4 +1,4 @@
-Response Assistant by Aaron Reed begins here.
+Version 1 of Response Assistant by Aaron Reed begins here.
 
 "Adds some helpful testing commands for changing default responses."
 

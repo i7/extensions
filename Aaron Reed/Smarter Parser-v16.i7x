@@ -1,10 +1,11 @@
-Version 16/210817 of Smarter Parser by Aaron Reed begins here.
+Version 16.1 of Smarter Parser by Aaron Reed begins here.
 
 "Understands a broader range of input than the standard parser, and can direct new players towards proper syntax."
 
 
 [
 CHANGES:
+ -- Version 16.1 updated for v10
  -- Version 16/210817 Added an end if to the text for the unnecessary movement rule (fixes an incompatibility with Neutral Standard Responses by Nathanael Nerode)
  -- Version 16: Updated for latest build.
  -- Version 15: changes suggested post-IF Comp 11. Point players to the NOVICE OFF command the first time something is printed. Add an option/notification to turn auto-reparsing off with CORRECT OFF. Added support for a cross-story config file to remember these two settings. Removed "scandalous standardize swears" and "signs of frustration"; retooled "stripping interjections" to be simpler and less likely to conflict with existing code; simplified adverbs to only look for a commonly-used set; fixed bug in "noun alone examines" interpretation to do with typing "examine" without a noun; simplified some scope checks to improve speed; tweaked applicable examples for easier customization; made suggestion for ABOUT command customizable; removed clothing and body parts to a standalone extension, "Commonly Unimplemented"; rewrote punctuation replacement and "starts with" to do direct I6 string manipulation, for speed gain; rewrote displaying results to isolate text for easier replacement; rewrote documentation for clarity; rewrote error message selected to allow for table continuations rather than amendments (which don't work on rules); removed starting command with i as redundant with making assertions rule; rewrote unnecessary possessive's rule to only match if the "'s" word is not in the dictionary, which should cut down on false positives.
@@ -647,7 +648,7 @@ Include (- [ Keyboard  a_buffer a_table  nw i w w2 x1 x2;
 		}
 		return nw;
 	}
-]; -) instead of "Reading the Command" in "Parser.i6t".
+]; -) replacing "Keyboard".
 
 The blank line replacement is an indexed text variable.
 The blank line replacement is usually "look".

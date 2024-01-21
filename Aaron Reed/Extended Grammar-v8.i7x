@@ -1,4 +1,4 @@
-Version 8/140501 of Extended Grammar by Aaron Reed begins here.
+Version 8.2 of Extended Grammar by Aaron Reed begins here.
 
 "Adds some of the most commonly attempted verb synonyms and alternate grammar lines. Based on the Inform 6 extension ExpertGrammar.h by Emily Short."
 

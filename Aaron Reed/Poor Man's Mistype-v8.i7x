@@ -17,7 +17,7 @@ Chapter - Compatibility
 
 Section - Inclusions
 
-Include Version 15 of Smarter Parser by Aaron Reed.
+Include Version 16 of Smarter Parser by Aaron Reed.
 
 Chapter - Sequence
 
@@ -91,11 +91,11 @@ This extension tries to fix spelling errors in misunderstood input by looking fo
 
 The extension requires version 12 or higher of Smarter Parser by Aaron Reed, which includes much more functionality for recognizing misunderstood input. If you want to disable this and use mistype correction alone, simply add the following line to your source:
 
-	Use empty Smarter Parser rulebook.	
+	Use empty Smarter Parser rulebook.
 
-Example: * Potatoe Farm -
+Example: * Potatoe Farm
 
-	*: "Potatoe Farm".
+	*: "Potatoe Farm"
 
 	Include Poor Man's Mistype by Aaron Reed.
 

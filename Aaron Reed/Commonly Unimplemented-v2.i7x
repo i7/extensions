@@ -2,15 +2,11 @@ Version 2 of Commonly Unimplemented by Aaron Reed begins here.
 
 "Responds to attempts to interact with unimplemented clothing, body parts, or generic surroundings. Requires Smarter Parser by Aaron Reed."
 
-[Changelog:
-Version 2: 
-]
-
 Chapter - Compatibility
 
 Section - Inclusions
 
-Include Version 15 of Smarter Parser by Aaron Reed.
+Include Version 16 of Smarter Parser by Aaron Reed.
 
 Chapter - Sequence
 
