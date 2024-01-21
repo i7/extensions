@@ -1,4 +1,4 @@
-Version 1/190811 of Highscores (for Glulx only) by Dannii Willis begins here.
+Version 1.2 of Highscores (for Glulx only) by Dannii Willis begins here.
 
 "Record and review highscores to an external file"
 

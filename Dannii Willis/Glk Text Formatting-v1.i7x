@@ -1,4 +1,4 @@
-Version 1/180324 of Glk Text Formatting (for Glulx only) by Dannii Willis begins here.
+Version 1.2 of Glk Text Formatting (for Glulx only) by Dannii Willis begins here.
 
 "Provides functions for controlling colours and reverse styling at character granularity"
 

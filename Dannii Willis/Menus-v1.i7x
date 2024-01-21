@@ -1,4 +1,4 @@
-Version 1/160728 of Menus by Dannii Willis begins here.
+Version 1.2 of Menus by Dannii Willis begins here.
 
 "Display full-screen menus defined by tables"
 

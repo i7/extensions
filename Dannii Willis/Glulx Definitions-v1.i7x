@@ -1,4 +1,4 @@
-Version 1/160919 of Glulx Definitions (for Glulx only) by Dannii Willis begins here.
+Version 1.2 of Glulx Definitions (for Glulx only) by Dannii Willis begins here.
 
 "Core definitions which other Glulx/Glk extensions depend on"
 
