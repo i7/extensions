@@ -1,4 +1,4 @@
-Version 6/150607 of Conversation Suggestions by Eric Eve begins here.
+Version 6.2 of Conversation Suggestions by Eric Eve begins here.
 "Provides a means of suggesting topics of conversation to the player, either in response to a TOPICS command or when NPCs are greeted. This extension requires Conversation Framework. Version 3 makes use of Complex Listing by Emily Short if it's included in the same game rather than indexed text to generate a list of suggestions."
 
 Book 1 - Includes

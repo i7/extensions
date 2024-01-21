@@ -2,15 +2,14 @@ Version 9 of Bulk Limiter by Eric Eve begins here.
 
 "Containers and actors that limit their contents by bulk"
 
-A thing has a number called bulk. 
-The bulk of a thing is normally 1.
-
 A container has a number called bulk capacity. 
 The bulk capacity of a container is normally 10.
 
 A person has a number called bulk capacity.
 The bulk capacity of a person is normally 100.
 
+A thing has a number called bulk. 
+The bulk of a thing is normally 1.
 
 Check an actor inserting into when the second noun provides the property bulk capacity (this is the bulk test rule):   
    if the bulk of the noun is greater than the bulk capacity of the second noun,  
@@ -62,15 +61,15 @@ Example: * The Basket, the Bricks and the Spoon - Putting things in a container 
 	The bulk capacity of a person is normally 10.
 
 	The Kitchen is a room. "The only furniture of interest is the table." 
-            A table is a scenery supporter in the kitchen. 
-            A small spoon is on the table.
+	A table is a scenery supporter in the kitchen. 
+	A small spoon is on the table.
 
 	A large hamper is in the kitchen. The bulk is 100.
   
 	On the table is a container called the wicker basket.
 
 	A brick is a kind of thing. The bulk of a brick is normally 5. Two bricks are here.
-  		
-  	Understand "put [things] in [something]" as inserting it into.	
+
+	Understand "put [things] in [something]" as inserting it into.	
 
 	Test me with "Put bricks in basket/put spoon in basket/take brick/put spoon in basket/put brick in basket/put spoon in basket/take brick/take spoon/take hamper".
