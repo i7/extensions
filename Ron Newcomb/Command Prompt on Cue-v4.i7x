@@ -1,4 +1,4 @@
-Version 3/140513 of Command Prompt on Cue by Ron Newcomb begins here.
+Version 4.0.240121 of Command Prompt on Cue by Ron Newcomb begins here.
 
 "Creates a situation without a command prompt where the player may simply press space or enter to WAIT.  But if the player instead begins to type a command, the command prompt will then appear."
 
@@ -47,7 +47,7 @@ Global unobtrusive_player;
 		}
 	} 
 ];
--) after "Definitions.i6t".
+-)
 
 
 Section 2 - fix a bug when command prompt on cue is on during the very first turn
@@ -55,10 +55,12 @@ Section 2 - fix a bug when command prompt on cue is on during the very first tur
 When play begins (this is the initialize command prompt on cue rule): 
 	prepend the interrupting key to the player's command.  
 
+Chapter 3 - the main rules
+
 To prepend the interrupting key to the player's command: 
 (-	
 #IFDEF TARGET_GLULX;
-	LTI_Insert(4, interrupting_key); 
+	LTI_Insert(1, interrupting_key);
 #IFNOT;
 	LTI_Insert(2, interrupting_key); 
 #ENDIF;
@@ -66,9 +68,6 @@ To prepend the interrupting key to the player's command:
 	players_command = 100 + WordCount();
 -).
 
-
-
-Chapter 3 - the main rules
 
 Last for reading a command when command prompt on cue is true (this is the Optional Command Prompt rule):
 	now the saved optional command prompt is the command prompt; 
@@ -79,14 +78,15 @@ Last for reading a command when command prompt on cue is true (this is the Optio
 
 First after reading a command when command prompt on cue is true  (this is the command prompt on cue restoration rule):
 	now the command prompt is the saved optional command prompt; 
-	if unobtrusive player is true, 	replace the player's command with the implicit unobtrusive command;
+	if unobtrusive player is true, replace the player's command with the implicit unobtrusive command;
 	otherwise prepend the interrupting key to the player's command.
 
 
 Chapter 4 - handy for debugging - not for release
 
-Rule for printing a parser error when the latest parser error is not a verb I recognise error and command prompt on cue is true (this is the command prompt on cue debugging rule):
-	say "'[player's command]' is not something I recognise."
+Rule for printing a parser error when the latest parser error is the not a verb I recognise error (this is the command prompt on cue debugging rule):
+	if command prompt on cue is true:
+		say "'[player's command]' is not something I recognise."
 
 
 Chapter 5 - parser error rules
@@ -95,7 +95,8 @@ Before printing a parser error when the latest parser error is I beg your pardon
 	now the command prompt is the saved optional command prompt;
 	now interrupting key is 32; [a space, so the player re-types their L, Z, or G, it will work the 2nd time ]
 
-After printing a parser error when command prompt on cue is true (this is the command prompt on cue fixes whitespace issue rule): say "[line break][run paragraph on]".	
+After printing a parser error when command prompt on cue is true (this is the command prompt on cue fixes whitespace issue rule):
+	say "[line break][run paragraph on]".
 
 
 Command Prompt on Cue ends here.
@@ -130,17 +131,20 @@ The truth state variable "command prompt on cue" is the master switch for the ex
 
 "Unobtrusive player" is a readout.  When true, it means that this turn, our player has merely pressed SPACE -- he or she has decided not to intervene.  When false, it means our player had decided to join in and try a command.  This allows us to distinguish why the implicit action was called.
 
-
-
 Section : Caveats
 
 Due to technical reasons, the extension does not deal well with single-letter commands.  When our player tries to interrupt with a L (for LOOK) or i (for INVENTORY), a spurious "I beg your pardon" error will result.  The player may then proceed normally.  Secondly, the player cannot delete the first typed letter.  Finally, fast typists may lose the second letter -- understanding "ak" and "tll" may be called for.
 
-Section : 6L02 Compatibility Update
-
-This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform. The latest version of this extension can be found at <https://github.com/i7/extensions>. 
+Section : Changelog & License
 
 This extension is released under the Creative Commons Attribution licence. Bug reports, feature requests or questions should be made at <https://github.com/i7/extensions/issues>.
+The latest version of this extension can be found at <https://github.com/i7/extensions>.
+
+Changelog:
+
+	4.0.240121: Updated for Inform version 10.2 by Nathanael Nerode.  Probably won't work with earlier versions.
+	6L02 Compatibility Update:  This extension differs from the author's original version: it has been modified for compatibility with version 6L02 of Inform.
+
 
 Example: * It Must Be the Argument Clinic - John and Marsha need some time away from each other.
 
@@ -171,13 +175,13 @@ As we use the SPACE bar a lot, a TEST ME script does not perform well.  When run
 	
 	Instead of answering Marsha that, say "'He never listens,' she says to you."
 	
-	Instead of asking John about, say "He shakes his head.  It seems [the topic understood] angers him."	
+	Instead of asking John about, say "He shakes his head.  It seems [the topic understood] angers him."
 	
 	Instead of asking Marsha about, say "'Oh John knows all about [italic type][topic understood][roman type].  Ask him anything, he knows it all!'".	
 	
-	Instead of telling John about, say "'Try telling her that!'"	
+	Instead of telling John about, say "'Try telling her that!'"
 	
-	Instead of telling Marsha about, say "'I know you're trying to help, but there's no help for him.'"	
+	Instead of telling Marsha about, say "'I know you're trying to help, but there's no help for him.'"
 	
 	Understand "ask [someone] [text]" as asking it about.
 	Understand "ak [someone] [text]" as asking it about.
