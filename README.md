@@ -3,12 +3,9 @@ The Friends of Inform 7 extensions group
 
 Here you'll find many Inform 7 extensions -- some are ready for public use, others are barely working experiments. Enjoy!
 
-The full list of extensions is visible here: https://i7.github.io/extensions/
+The full list of extensions is visible here: <https://i7.github.io/extensions/>
 
-If you would access to the repository to add your own extensions, please ask here: http://www.intfiction.org/forum/viewtopic.php?f=7&t=5229
-
-It may help to know that the I7 Public Library of extensions (integrated with the 6L38 IDE) can be found at:
-http://www.emshort.com/pl/payloads/
+Inform (aka Inform 7) is a programming language used for interactive fiction and other creative purposes. For user documentation, and downloads of the apps, go to the Inform home page at: <http://www.inform7.com>.
 
 If you find a bug in any of these extensions, or indeed in any Inform 7 extension at all, please make a new issue and we may be able to help. The purpose of the group is that we can all work together to maintain and develop these extensions. Sharing the load will make it easier on us all, while experienced programmers can help those just starting out.
 
@@ -36,3 +33,23 @@ How to download *all* the extensions
 7. To update in the future, you can either update the extensions one-by-one as above or you can download a fresh zip and install the whole thing over the top.
 
 (Alternatively, if you're familiar with Git then you can use a Git clone in place of downloading the zip, if you prefer.)
+
+How to contribute your own extensions
+-------------------------------------
+
+If you want to contribute your own extension,
+[create a pull request](https://github.com/i7/extensions/pulls).
+
+If you would access to the repository to add your own extensions, please ask here: <http://www.intfiction.org/forum/viewtopic.php?f=7&t=5229>
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on
+how to create a contribution.
+
+Related sites
+-------------
+
+The main repository for Inform (Inform 7) itself is:
+<https://github.com/ganelson/inform>.
+
+It may help to know that the I7 Public Library of extensions (integrated with the 6L38 IDE) can be found at:
+http://www.emshort.com/pl/payloads/
