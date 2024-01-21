@@ -1,4 +1,4 @@
-Version 2/180528 of Postures by Emily Short begins here.
+Version 2.2 of Postures by Emily Short begins here.
 
 "Postures defines three postures -- seated, standing, and reclining -- and allows pieces of furniture to specify which postures are possible and preferred when the player is on those furnishings."
 
