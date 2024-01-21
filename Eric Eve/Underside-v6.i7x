@@ -1,4 +1,4 @@
-Version 6/210627 of Underside by Eric Eve begins here.
+Version 6.1 of Underside by Eric Eve begins here.
    
 "Allows objects to be put under other objects. An underside usually starts out closed so that its contents are hidden from view. Requires Version 7 (or later) of Bulk Limiter; the space under objects is limited by bulk. Underside is compatible with Version 10 or later of Implicit Actions, but does not require it. Version 5 of Underside avoids features deprecated in Version 6E59 of Inform."
 
@@ -6,7 +6,7 @@ Version 6/210627 of Underside by Eric Eve begins here.
 
 Part 1 - Includes
 
-Include Version 7 of Bulk Limiter by Eric Eve. 
+Include Version 9 of Bulk Limiter by Eric Eve. 
 
 Part 2 - The Underside Kind
 
@@ -323,7 +323,7 @@ Example: * Lost Sock - Putting and Finding Objects Under Other Objects.
 	The pen is a thing.
 
 	Before looking under the desk when the pen is off-stage:
- 	 move the pen under the desk.
+	  move the pen under the desk.
 
 	Test me with "Drop ball/look under bed/put red sock under bed/look under bed/take odd sock/take ball/take red sock/look under bed/take chair/look/take all/look under desk/take all".
 

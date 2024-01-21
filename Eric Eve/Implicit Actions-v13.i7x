@@ -1,8 +1,8 @@
-Version 13 of Implicit Actions by Eric Eve begins here.
-"Provides implicit taking, opening, closing, locking and unlocking actions for a variety of cases where this makes for smoother game play. The extension also defines phrases which make it easy to define additional implicit actions if desired. Version 11 can be used with Locksmith by Emily Short (although Implicit Actions covers most of what Locksmith does, and in most cases it will be better to use Implicit Actions without Locksmith). Requires  Version 5 (or above) of Text Capture by Eric Eve."
+Version 13.1 of Implicit Actions by Eric Eve begins here.
 
-Include Version 5 of Text Capture by Eric Eve.
+"Provides implicit taking, opening, closing, locking and unlocking actions for a variety of cases where this makes for smoother game play. The extension also defines phrases which make it easy to define additional implicit actions if desired. Version 11 can be used with Locksmith by Emily Short (although Implicit Actions covers most of what Locksmith does, and in most cases it will be better to use Implicit Actions without Locksmith). Requires  Version 8.1 (or above) of Text Capture by Eric Eve."
 
+Include Version 8.1 of Text Capture by Eric Eve.
 
 Volume 1 -  Implicit Action Framework
 
@@ -618,8 +618,8 @@ All the example we have seen so far have reported implicit actions in parenthese
 
 This is done via a global variable rather than a use option, so that we can (should we wish) change the style during the course of the game. To switch off the parenthesized style of implicit action right from the start, include the following:
 
-	*:when play begins:
-	 now parenthesize implicit actions is false.
+	*: when play begins:
+	now parenthesize implicit actions is false.
 
 Section: Overriding or Preventing Implicit Actions
 
@@ -835,8 +835,8 @@ This little game exhibits what Implicit Actions does straight out of the box, by
 
 When you've tried running this example, you might like to try it again with the following added, to see the difference in reporting style:
 
-	*:when play begins:
-	 now parenthesize implicit actions is false.
+	*: when play begins:
+	  now parenthesize implicit actions is false.
 
 
 
@@ -925,25 +925,25 @@ Example: *** Poison Trap - Preventing implicit actions in specific cases
 	The cabinet is on the plain wooden table.
 
 	After opening the dangerous cabinet:
-	  if the gas mask is worn begin;
-	  	say "The green gas escapes into the room, but is soon extracted by the ventillator.";
-	  	now the cabinet is safe;
-	  otherwise;
-	  	say "The green gas escapes into the room, killing you in seconds.";
-	   	end the story saying "You have died". ;
-	  end if;
-
+	if the gas mask is worn begin;
+	  say "The green gas escapes into the room, but is soon extracted by the ventillator.";
+	  now the cabinet is safe;
+	otherwise;
+	  say "The green gas escapes into the room, killing you in seconds.";
+	  end the story saying "You have died.";
+	end if;
+        
 	The brass key is a key. The brass key is in the cabinet.
 
 	A plain wooden table is a scenery supporter in the Study.
 
 	Instead of looking under the plain wooden table when the gas mask is not handled:
 	  if the gas mask is off-stage begin;
-		      move the gas mask to the Study;
-		      say "You find a gas mask under the table.";
-		      increase the score by 2;
+	    move the gas mask to the Study;
+	    say "You find a gas mask under the table.";
+	    increase the score by 2;
 	  otherwise;
-		     say "There's a gas mask under the table.";
+	   say "There's a gas mask under the table.";
 	  end if.
 
 	A scorpion is in the Study. "A scorpion is crawling about on the floor."
@@ -986,9 +986,3 @@ Example: *** Poison Trap - Preventing implicit actions in specific cases
 	Test scorpion with "put scorpion on table/take scorpion"
 
 	Test me with "n/x cabinet/take key/put key on table/put scorpion on table/look under table/wear gas mask/open cabinet/x cabinet/north"
-
-
-	
-
-	 
-

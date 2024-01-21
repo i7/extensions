@@ -1,4 +1,4 @@
-Version 8 of Text Capture by Eric Eve begins here.
+Version 8.1 of Text Capture by Eric Eve begins here.
 
 "Allows the capture of text that would otherwise be sent to the screen, so that the text can be further manipulated, displayed at some other point, or simply discarded. Version 6/120511 allows the use of unicode in Glulx."
 
@@ -42,7 +42,7 @@ Chapter Z - Z-Machine Version (for Z-Machine Only)
 
 Include (-
 
-Array captured_text -> CAPTURE_BUFFER_LEN + 3;
+Array captured_text -> (CAPTURE_BUFFER_LEN + 3);
 
 [ StartCapture;
 	if (capture_active ==1)
@@ -77,7 +77,7 @@ Chapter G - Glulx (for Glulx Only)
 
 Include (-
 
-Array captured_text --> CAPTURE_BUFFER_LEN + 1;
+Array captured_text --> (CAPTURE_BUFFER_LEN + 1);
 
 Global text_capture_old_stream = 0;
 Global text_capture_new_stream = 0;
@@ -248,6 +248,6 @@ One way round this is to capture the output from the take action, then test whet
 	A spare sock is here.
 
 	A bust of King George V is here.
-            Instead of taking the bust: say "The bust is too heavy for you to lift."
+	Instead of taking the bust: say "The bust is too heavy for you to lift."
 
 	Test me with "put comb in box/put sock on table/put table in box/put bust on table."
