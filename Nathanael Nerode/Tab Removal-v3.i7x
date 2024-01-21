@@ -1,6 +1,4 @@
-Version 2.0.220522 of Tab Removal by Nathanael Nerode begins here.
-
-Use authorial modesty.
+Version 3.0.240121 of Tab Removal by Nathanael Nerode begins here.
 
 "For commands with tabs in them, replaces tabs with spaces before passing them on to the game.  Prevents all kinds of confusing weirdness when the player types tabs."
 
@@ -12,10 +10,11 @@ By contrast, Glulxe will, hilariously, print "[unicode 9]" with no complaints...
 The implementation for the Z-machine is straightforwardly done with "after reading a command".
 
 But while the straightforward implementation works for the Z-machine, *it fails for Glulx*.  In both glulxe and git, the "\t" regular expression does not match the tab as it should.  It matches tabs inserted into your code using [unicode 9], but not tabs typed at the command line.  I can't figure out why.
+This is still breaking with Inform 10.2.
 
 So for Glulx we replace the tokenizer.  (We can't replace the tokenizer with the Z-machine because on the Z-machine the tokenizer is on the interpreter-side.)
 
-In Inform v10, the tokenizer is in the BasicInformKit in the Glulx.i6t file, for reference.
+In Inform v10.2, the tokenizer is in the Architecture32Kit in the "Input Output.i6t" file, for reference.
 ]
 
 Section - The Easy Way (for Z-machine only)
@@ -32,36 +31,36 @@ Section - The Hard Way (for Glulx only)
 
 Include (-
 [ VM_Tokenise buf tab
-    cx numwords len bx ix wx wpos wlen val res dictlen entrylen;
+    cx numwords len bx ix wx wpos wlen val res dictlen ch bytesperword uninormavail;
     len = buf-->0;
     buf = buf+WORDSIZE;
-
-    ! First, split the buffer up into words. We use the standard Infocom
-    ! list of word separators (comma, period, double-quote).
-
+    
     ! The following was added by the Tab Removal extension.
     ! Tab removal is done here since it can't be matched in I7 due to bugs in Glulxe.
     cx = 0;
     while (cx < len) {
-        if (buf->cx == 9) {  ! it's a tab character
-            buf->cx = ' '; ! now it's a space character
+        if (buf-->cx == 9) {  ! it's a tab character
+            buf-->cx = ' '; ! now it's a space character
         }
         cx++;
     }
     ! This ends the changes made by the Tab Removal extension.
 
+    ! First, split the buffer up into words. We use the standard Infocom
+    ! list of word separators (comma, period, double-quote).
+
     cx = 0;
     numwords = 0;
     while (cx < len) {
-        while (cx < len && buf->cx == ' ') cx++;
+        while (cx < len && buf-->cx == ' ') cx++;
         if (cx >= len) break;
         bx = cx;
-        if (buf->cx == '.' or ',' or '"') cx++;
+        if (buf-->cx == '.' or ',' or '"') cx++;
         else {
-            while (cx < len && buf->cx ~= ' ' or '.' or ',' or '"') cx++;
+            while (cx < len && buf-->cx ~= ' ' or '.' or ',' or '"') cx++;
         }
         tab-->(numwords*3+2) = (cx-bx);
-        tab-->(numwords*3+3) = WORDSIZE+bx;
+        tab-->(numwords*3+3) = 1+bx;
         numwords++;
         if (numwords >= MAX_BUFFER_WORDS) break;
     }
@@ -70,21 +69,37 @@ Include (-
     ! Now we look each word up in the dictionary.
 
     dictlen = #dictionary_table-->0;
-    entrylen = DICT_WORD_SIZE + 7;
+    bytesperword = DICT_WORD_SIZE * WORDSIZE;
+    uninormavail = glk_gestalt(16, 0);
 
     for (wx=0 : wx<numwords : wx++) {
         wlen = tab-->(wx*3+2);
         wpos = tab-->(wx*3+3);
 
         ! Copy the word into the gg_tokenbuf array, clipping to DICT_WORD_SIZE
-        ! characters and lower case.
+        ! characters and lower case. We'll do this in two steps, because
+        ! lowercasing might (theoretically) condense characters and allow more
+        ! to fit into gg_tokenbuf.
+        if (wlen > LOWERCASE_BUF_SIZE) wlen = LOWERCASE_BUF_SIZE;
+        cx = wpos - 1;
+        for (ix=0 : ix<wlen : ix++) {
+            ch = buf-->(cx+ix);
+            gg_lowercasebuf-->ix = ch;
+        }
+        wlen = glk_buffer_to_lower_case_uni(gg_lowercasebuf, LOWERCASE_BUF_SIZE, wlen);
+        if (uninormavail) {
+            ! Also normalize the Unicode -- combine accent marks with letters
+            ! where possible.
+            wlen = glk_buffer_canon_normalize_uni(gg_lowercasebuf, LOWERCASE_BUF_SIZE, wlen); ! buffer_canon_normalize_uni
+        }
         if (wlen > DICT_WORD_SIZE) wlen = DICT_WORD_SIZE;
-        cx = wpos - WORDSIZE;
-        for (ix=0 : ix<wlen : ix++) gg_tokenbuf->ix = VM_UpperToLowerCase(buf->(cx+ix));
-        for (: ix<DICT_WORD_SIZE : ix++) gg_tokenbuf->ix = 0;
-
+        for (ix=0: ix<wlen : ix++) {
+            gg_tokenbuf-->ix = gg_lowercasebuf-->ix;
+        }
+        for (: ix<DICT_WORD_SIZE : ix++) gg_tokenbuf-->ix = 0;
+        
         val = #dictionary_table + WORDSIZE;
-        @binarysearch gg_tokenbuf DICT_WORD_SIZE val entrylen dictlen 1 1 res;
+        @binarysearch gg_tokenbuf bytesperword val DICT_ENTRY_BYTES dictlen 4 1 res;
         tab-->(wx*3+1) = res;
     }
 ];
@@ -104,9 +119,11 @@ Accordingly, I recommend that everyone use this extension at all times for all g
 
 The Z-machine implementation is pretty clean and should continue to work in all versions.
 
-The Glulx implementation has been tested with Inform v10.1.0, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
+The Glulx implementation has been tested with Inform v10.2, but it is dependent on the internals of the Inform implementation.  (This is because of a nasty bug in the implementation of Inform for Glulx which I haven't been able to track down, where it doesn't translate correctly from the input alphabet to the output alphabet.)
 
 Changelog:
+
+	3.0.240121: Adapt to changes made for Unicde in Inform v10.2.
 	2.0.220522: Docs typo fix.
 	2.0.220520: Adapt to Inform 7 v10, by changing the method of replacing I6 code.
               Minor documentation updates.  Use authorial modesty on this one.
