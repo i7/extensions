@@ -1,4 +1,4 @@
-Version 2 of Real Date and Time (for Glulx only) by Ron Newcomb begins here.
+Version 3.0.240121 of Real Date and Time (for Glulx only) by Ron Newcomb begins here.
 
 "Allows the author to get the real-world time and date from the player's computer."
 
@@ -12,7 +12,7 @@ A timezone is a kind of value. [ It's just an alternate way of printing a time a
 Represent time locally is a truth state that varies. The represent time locally variable translates into I6 as "UTCvsLocal". [Represent time locally is usually true.]
 
 
-To decide if the player's time/date is available:			(- (glk($0004, 20, 0) ~= 0) -). [! gestalt_DateTime]
+To decide if the player's time/date is available:			(- (glk_gestalt(gestalt_DateTime, 0) ~= 0) -).
 
 To decide what number	is the player's year:			(- GetNthDateTimeComponent(0) -).
 To decide what month	is the player's month:			(- GetNthDateTimeComponent(1) -).
@@ -48,12 +48,12 @@ Global UTCvsLocal = 1;      ! truth state: 1 = local time; 0 = GMT otherwise kno
 Global suspend_glk_get_time = 0;  !   0 = not suspended; 1 = suspended
 
 [ GetNthDateTimeComponent n;
-   if (glk($0004, 20, 0) == 0) return 0;  !  glk_gestalt_DateTime(20, 0);
+   if (glk_gestalt(gestalt_DateTime, 0) == 0) return 0; 
    if (~~suspend_glk_get_time) 
    {
-	   glk($0160, countofseconds); !  glk_current_time(timeval);
-	   if (UTCvsLocal)	glk($0169, countofseconds, datetime); ! glk_time_to_date_local(tv, date);
-	   else			glk($0168, countofseconds, datetime); ! glk_time_to_date_utc(tv, date);
+       glk_current_time(countofseconds);
+       if (UTCvsLocal) glk_time_to_date_local(countofseconds, datetime);
+       else glk_time_to_date_utc(countofseconds, datetime);
    }
    if (n == -1) return 1;    ! used by "while suspending time"
    if (n == 3) return datetime-->3 + 1;
@@ -64,20 +64,18 @@ Global suspend_glk_get_time = 0;  !   0 = not suspended; 1 = suspended
 Array countofseconds2 --> 3;	! as above, for timezone calculations.  
 Array datetime2 --> 8;		! This is so player can use it inside "while suspending time".  Otherwise, it corrupts the held time.
 [ GetPlayersTimezone zonesec zonemin zonehour firstsecondcount;
-   if (glk($0004, 20, 0) == 0) return 0;  !  glk_gestalt_DateTime(20, 0);
-   glk($0160, countofseconds2); ! glk_current_time()
-   glk($0169, countofseconds2, datetime2); ! glk_time_to_date_local()
+   if (glk_gestalt(gestalt_DateTime, 0) == 0) return 0;
+   glk_current_time(countofseconds2);
+   glk_time_to_date_local(countofseconds2, datetime2);
    firstsecondcount = countofseconds2-->1;
-   glk($016C, datetime2, countofseconds2); ! glk_date_to_time_utc()
+   glk_time_to_date_utc(countofseconds2, datetime2);
    zonesec = (countofseconds2-->1 - firstsecondcount);          ! UTC - local 
    zonehour = zonesec / 3600;
    zonesec = zonesec % 3600;
    zonemin = zonesec / 60;
    return (zonehour * 60) + zonemin;   
 ];
--) after "Definitions.i6t".
-
-
+-)
 
 Real Date and Time ends here.
 
@@ -130,6 +128,10 @@ A microsecond is one millionth of a second.  If we need milliseconds (which are 
 
 It is likely not worth mentioning that "the player's seconds" can occasionally hit 60 for a leap second.  
 
+Changelog:
+
+    Version 3.0.240121 was updated by Nathanael Nerode for Inform 10.1 / 10.2.
+
 Example: * Time Capsules of the Future! - A test case from the year 2423! (Allegedly.)
 	
 	*: "Time Capsules of the Future!"
@@ -156,8 +158,3 @@ Example: * Time Capsules of the Future! - A test case from the year 2423! (Alleg
 	There is a room. 
 	
 	Release along with the "Quixe" interpreter.
-	
-	
-	
-
-
