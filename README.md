@@ -1,3 +1,11 @@
+** This is the "development" branch. Extensions here may or may not work for any given release of Inform or may have *never* worked anywhere. **
+
+For extensions that *are* believed to work, see:
+
+- [Friends of I7 10.1 extensions](https://i7.github.io/extensions/) or the [Friends of I7 10.1 extensions repo](https://github.com/i7/extensions/tree/10.1) itself
+- [Friends of I7 9.3/6M62 extensions](https://i7.github.io/extensions/9.3) or the [Friends of I7 9.3 extensions repo](https://github.com/i7/extensions/tree/10.1) itself
+
+
 The Friends of Inform 7 extensions group
 ========================================
 
