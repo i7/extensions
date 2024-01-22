@@ -1,13 +1,11 @@
-** This is the "development" branch. Extensions here may or may not work for any given release of Inform or may have *never* worked anywhere. **
+# The Friends of Inform 7 extensions development branch
+
+** Extensions in this branch may or may not work for any given release of Inform or may have *never* worked anywhere. **
 
 For extensions that *are* believed to work, see:
 
 - [Friends of I7 10.1 extensions](https://i7.github.io/extensions/) or the [Friends of I7 10.1 extensions repo](https://github.com/i7/extensions/tree/10.1) itself
 - [Friends of I7 9.3/6M62 extensions](https://i7.github.io/extensions/9.3) or the [Friends of I7 9.3 extensions repo](https://github.com/i7/extensions/tree/10.1) itself
-
-
-The Friends of Inform 7 extensions group
-========================================
 
 Here you'll find many Inform 7 extensions -- some are ready for public use, others are barely working experiments. Enjoy!
 
@@ -20,12 +18,12 @@ http://www.emshort.com/pl/payloads/
 
 If you find a bug in any of these extensions, or indeed in any Inform 7 extension at all, please make a new issue and we may be able to help. The purpose of the group is that we can all work together to maintain and develop these extensions. Sharing the load will make it easier on us all, while experienced programmers can help those just starting out.
 
-Public Library
--------------
+## Public Library
+
 This repository now includes all of the extensions in the Public Library as of 2020-10-10, so you don't need to download them separately.  Sadly they're not organised by theme any more, so you'll have to use other means to find the particular extensions that you want to use.
 
-How to download a few extensions
---------------------------------
+## How to download a few extensions
+
 1. Locate the extension that you want to use via the GitHub website.
 2. Click on the Raw button.
 3. Download the resulting file anywhere on your computer.
@@ -33,8 +31,8 @@ How to download a few extensions
 5. Repeat this for any other extensions that the one you wanted also includes (and you don't already have).
 6. Repeat all of this for any other extensions that you want.
 
-How to download *all* the extensions
-------------------------------------
+## How to download *all* the extensions
+
 1. Locate your current Extensions folder -- from within I7, select File -> Show Installed Extensions Folder -- then close I7.
 2. Go up to the parent directory and rename the `Extensions` folder to `Extensions Old` (for now).
 3. Download [this zip file](https://github.com/i7/extensions/archive/master.zip) and extract it into that location.
