@@ -1,4 +1,4 @@
-Version 6.0.240114 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 6.1.240129 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 10.1.0."
 
@@ -243,6 +243,7 @@ To sleep is a verb.
 [To throw is a verb.]
 [To climb is a verb.]
 [To order is a verb.]
+To think is a verb.
 
 [These are all also *irregular* verbs, obnoxiously!]
 
@@ -652,9 +653,9 @@ Section 14 - Yes, No, Burn, Wake, Think
 
 The block saying yes rule response (A) is "Saying yes here has no effect.".  [was "That was a rhetorical question."]
 The block saying no rule response (A) is "Saying no here has no effect.".  [was "That was a rhetorical question."]
-The block burning rule response (A) is "You can't burn [the noun][or that's not the way].".  [was "This dangerous act [would achieve] little."]
+The block burning rule response (A) is "[We] [can't] burn [the noun][or that's not the way].".  [was "This dangerous act [would achieve] little."]
 The block waking up rule response (A) is "As far as [we] [know], [we]['re] already awake.".  [was "The dreadful truth [are], this [are not] a dream."]
-The block thinking rule response (A) is "Time passes.".  [was "What a good idea."]
+The block thinking rule response (A) is "[We] [think].".  [was "What a good idea."]
 
 Section 15 - Smell, Listen, Taste
 
@@ -1411,8 +1412,9 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
-    Version 6.0.240114: Use "as a configuration flag" syntax from new version of Inform.
-    Version 6.0.230722: adapt to new (work in progress) version of Inform.
+	Version 6.1.240129: Improved responses for "burn" and "think".
+	Version 6.0.240114: Use "as a configuration flag" syntax from new version of Inform.
+	Version 6.0.230722: adapt to new (work in progress) version of Inform.
 	Version 5.0.220521: adapt to Inform v10.1.0.
 	Version 4/210908: in several rule responses, changed "here" to "[here]" (which will only ever matter outside of present tense) -- ZL
 	Version 4/171007:
