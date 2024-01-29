@@ -1,4 +1,4 @@
-Version 1.0.240128 of Variable Time Control by Nathanael Nerode begins here.
+Version 1.0.240129 of Variable Time Control by Nathanael Nerode begins here.
 
 "Allows individual actions to take a different number of seconds, or no time at all. Also allows the standard time taken per turn to be defined as so many seconds, which can be varied during the course of play".
 
@@ -139,22 +139,20 @@ to advance (dt - a datetime) by (x - a number) day/days:
 
 to advance weekday for (dt - a datetime):
 	[This is meant to be used as a subroutine.]
+    [In a fascinating undocumented feature, "weekday-value after" will always loop.]
+    [Same with "before".]
 	let old be the weekday of dt;
-	if old is the last value of weekday-value:
-		[It's Saturday.]
-		now the weekday of dt is the first value of weekday-value; [Sunday]
-	otherwise:
-		now the weekday of dt is the weekday-value after old;
+	now the weekday of dt is the weekday-value after old;
 
 to advance (dt - a datetime) by 1 month/months:
 	[WARNING: doesn't advance the weekday!  This is meant to be used as a subroutine.]
+    [In a fascinating undocumented feature, "month-value after" will always loop.]
+    [Same with "before".]
 	let old be the month of dt;
 	if old is the last value of month-value:
 		[It's December.]
 		advance dt by 1 year;
-		now the month of dt is the first value of month-value; [January]
-	otherwise:
-		now the month of dt is the month-value after old;
+	now the month of dt is the month-value after old;
 
 to advance (dt - a datetime) by (x - a number) year/years:
 	[By far the simplest, and the only one with no carries]
