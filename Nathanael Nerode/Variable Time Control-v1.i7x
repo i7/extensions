@@ -1,4 +1,4 @@
-Version 1.0.240129 of Variable Time Control by Nathanael Nerode begins here.
+Version 1.0.240130 of Variable Time Control by Nathanael Nerode begins here.
 
 "Allows individual actions to take a different number of seconds, or no time at all. Also allows the standard time taken per turn to be defined as so many seconds, which can be varied during the course of play".
 
@@ -89,6 +89,7 @@ A datetime has a number called day.
 A datetime has a number called hour.
 A datetime has a number called minute.
 A datetime has a number called second.
+A datetime has a truth state called modified flag.
 
 Section - Advance time
 
@@ -99,6 +100,7 @@ to advance (dt - a datetime) by (x - a number) second/seconds:
 	let new result be the remainder after dividing new total by 60;
 	now the second of dt is new result;
 	advance dt by carry minutes;
+	now the modified flag of dt is true;
 
 to advance (dt - a datetime) by (x - a number) minute/minutes:
 	let old be the minute of dt;
@@ -107,6 +109,7 @@ to advance (dt - a datetime) by (x - a number) minute/minutes:
 	let new result be the remainder after dividing new total by 60;
 	now the minute of dt is new result;
 	advance dt by carry hours;
+	now the modified flag of dt is true;
 
 to advance (dt - a datetime) by (x - a number) hour/hours:
 	let old be the hour of dt;
@@ -115,6 +118,7 @@ to advance (dt - a datetime) by (x - a number) hour/hours:
 	let new result be the remainder after dividing new total by 24;
 	now the hour of dt is new result;
 	advance dt by carry days;
+	now the modified flag of dt is true;
 
 to advance (dt - a datetime) by (x - a number) day/days:
 	[First advance the weekdays.]
@@ -136,33 +140,41 @@ to advance (dt - a datetime) by (x - a number) day/days:
 		now the current year is the year of dt;
 		now the month length is the length of current month in year current year;
 	now the day of dt is new total;
+	now the modified flag of dt is true;
 
 to advance weekday for (dt - a datetime):
 	[This is meant to be used as a subroutine.]
-    [In a fascinating undocumented feature, "weekday-value after" will always loop.]
-    [Same with "before".]
+	[In a fascinating undocumented feature, "weekday-value after" will always loop.]
+	[Same with "before".]
 	let old be the weekday of dt;
 	now the weekday of dt is the weekday-value after old;
+	now the modified flag of dt is true;
 
 to advance (dt - a datetime) by 1 month/months:
 	[WARNING: doesn't advance the weekday!  This is meant to be used as a subroutine.]
-    [In a fascinating undocumented feature, "month-value after" will always loop.]
-    [Same with "before".]
+	[In a fascinating undocumented feature, "month-value after" will always loop.]
+	[Same with "before".]
 	let old be the month of dt;
 	if old is the last value of month-value:
 		[It's December.]
 		advance dt by 1 year;
 	now the month of dt is the month-value after old;
+	now the modified flag of dt is true;
 
 to advance (dt - a datetime) by (x - a number) year/years:
 	[By far the simplest, and the only one with no carries]
 	let old be the year of dt;
 	let new total be old + x;
 	now the year of dt is new total;
+	now the modified flag of dt is true;
 
 Section - say the time
 
 [FIXME.  This is mostly for testing purposes.  To be improved as needed]
+
+[The following has to be done instead of 'to say (dt - a datetime)']
+Rule for printing the name of a datetime (called dt):
+	say the dt fully;
 
 To say (dt - a datetime) fully:
 	say "[the weekday of dt] [the year of dt] [the month of dt] [the day of dt] [the hour of dt]:[the minute of dt]:[the second of dt]";
@@ -214,8 +226,110 @@ Carry out advancing the clock a number (called x) seconds:
 	if the default start datetime is on-stage, say "whoops, default start datetime shouldn't be onstage";
 	say the primary game datetime fully;
 
+Volume - Default time advancement
 
+Section - Reset modified flag
 
+[Reset this very early in the turn sequence.]
+This is the declare time unmodified rule:
+	now the modified flag of the primary game datetime is false;
+
+The declare time unmodified rule is listed before the early scene changing stage rule in the turn sequence rulebook.
+[Immediately after the generate action rule]
+
+Section - Default time advancement rule
+
+The default seconds per turn is a number that varies.
+the default seconds per turn is 60.
+
+This is the advance time by default rule:
+	if the modified flag of the the primary game datetime is false:
+		advance the primary game datetime by default seconds per turn seconds;
+
+[ TODO FIXME: incorporate Modified Timekeeping by Daniel Stelzer to fix implicit actions ]
+[ He does this:
+The record action success rule is listed before the carry out stage rule in the specific action-processing rulebook.
+This is the record action success rule: now the action-processing success flag is true; make no decision.
+
+This means we hit success at the top of the carry out stack.
+The catch is that we want varying amounts of time in the carry out stack.
+]
+
+Section - Patch Carry Out rulebooks
+
+[Now we have to add it to ALL the standard actions.]
+[This provides a solid reference for the exact names of the standard action rulebooks.]
+The advance time by default rule is listed last in the carry out taking inventory rulebook.
+The advance time by default rule is listed last in the carry out taking rulebook.
+The advance time by default rule is listed last in the carry out dropping rulebook.
+The advance time by default rule is listed last in the carry out putting it on rulebook.
+The advance time by default rule is listed last in the carry out inserting it into rulebook.
+The advance time by default rule is listed last in the carry out eating rulebook.
+The advance time by default rule is listed last in the carry out going rulebook.
+The advance time by default rule is listed last in the carry out entering rulebook.
+The advance time by default rule is listed last in the carry out exiting rulebook.
+The advance time by default rule is listed last in the carry out getting off rulebook.
+The advance time by default rule is listed last in the carry out looking rulebook.
+The advance time by default rule is listed last in the carry out examining rulebook.
+The advance time by default rule is listed last in the carry out looking under rulebook.
+The advance time by default rule is listed last in the carry out searching rulebook.
+The advance time by default rule is listed last in the carry out locking it with rulebook.
+The advance time by default rule is listed last in the carry out unlocking it with rulebook.
+The advance time by default rule is listed last in the carry out switching on rulebook.
+The advance time by default rule is listed last in the carry out switching off rulebook.
+The advance time by default rule is listed last in the carry out opening rulebook.
+The advance time by default rule is listed last in the carry out closing rulebook.
+The advance time by default rule is listed last in the carry out wearing rulebook.
+The advance time by default rule is listed last in the carry out taking off rulebook.
+The advance time by default rule is listed last in the carry out giving it to rulebook.
+The advance time by default rule is listed last in the carry out showing it to rulebook.
+The advance time by default rule is listed last in the carry out waking rulebook.
+The advance time by default rule is listed last in the carry out throwing it at rulebook.
+The advance time by default rule is listed last in the carry out attacking rulebook.
+The advance time by default rule is listed last in the carry out kissing rulebook.
+The advance time by default rule is listed last in the carry out answering it that rulebook.
+The advance time by default rule is listed last in the carry out telling it about rulebook.
+The advance time by default rule is listed last in the carry out asking it about rulebook.
+The advance time by default rule is listed last in the carry out asking it for rulebook.
+The advance time by default rule is listed last in the carry out waiting rulebook.
+The advance time by default rule is listed last in the carry out touching rulebook.
+The advance time by default rule is listed last in the carry out waving rulebook.
+The advance time by default rule is listed last in the carry out pulling rulebook.
+The advance time by default rule is listed last in the carry out pushing rulebook.
+The advance time by default rule is listed last in the carry out turning rulebook.
+The advance time by default rule is listed last in the carry out pushing it to rulebook.
+The advance time by default rule is listed last in the carry out squeezing rulebook.
+The advance time by default rule is listed last in the carry out saying yes rulebook.
+The advance time by default rule is listed last in the carry out saying no rulebook.
+The advance time by default rule is listed last in the carry out burning rulebook.
+The advance time by default rule is listed last in the carry out waking up rulebook.
+The advance time by default rule is listed last in the carry out thinking rulebook.
+The advance time by default rule is listed last in the carry out smelling rulebook.
+The advance time by default rule is listed last in the carry out listening to rulebook.
+The advance time by default rule is listed last in the carry out tasting rulebook.
+The advance time by default rule is listed last in the carry out cutting rulebook.
+The advance time by default rule is listed last in the carry out jumping rulebook.
+The advance time by default rule is listed last in the carry out tying it to rulebook.
+The advance time by default rule is listed last in the carry out drinking rulebook.
+The advance time by default rule is listed last in the carry out saying sorry rulebook.
+The advance time by default rule is listed last in the carry out swinging rulebook.
+The advance time by default rule is listed last in the carry out rubbing rulebook.
+The advance time by default rule is listed last in the carry out setting it to rulebook.
+The advance time by default rule is listed last in the carry out waving hands rulebook.
+The advance time by default rule is listed last in the carry out buying rulebook.
+The advance time by default rule is listed last in the carry out climbing rulebook.
+The advance time by default rule is listed last in the carry out sleeping rulebook.
+
+[We skip the out of world actions]
+
+Section - Dialogue-related actions (for dialogue language element only)
+
+[Note that this isn't active by default.]
+
+[Note that there's a problem with Standard Rules:
+it has "Stop the Action" in a "Carry Out" rule, which is forbidden and will break things.]
+
+The advance time by default rule is listed last in the carry out talking about rulebook.
 
 
 Chapter - Time Control Variables
