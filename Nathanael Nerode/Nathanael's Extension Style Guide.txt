@@ -48,7 +48,9 @@ You might put a few related Definitions together.
 
 (7) Each related group of say-phrases or decide-phrases should get their own Section, with no rules in it.
 
-Replacing a section is, again, the only way to override say-phrases.
+Replacing a section is, again, the only reliable way to override say-phrases.
+Inform 7 will let you make multiple identical say-phrases and has a priority system for overriding,
+but it's far too finicky to rely on.
 You probably want one section for each say-phrase, unless you have several closely related say-phrases.  It is OK to put "to say a blorb", "to say the blorb", and "to say blorb" in the same section.
 
 The same is true of "to decide which..." phrases.  Each one should get its own Section.
