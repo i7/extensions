@@ -1,10 +1,12 @@
-Version 2.0.220521 of Standard Rules Dead Code Removal by Nathanael Nerode begins here.
+Version 2.0.240129 of Standard Rules Dead Code Removal by Nathanael Nerode begins here.
 
 "Reduce the size of games using Room Description Control by removing unused Standard Rules material.  This version tested with Inform v10.1."
 
 Volume - Strip locale apparatus (for use with Room Description Control by Emily Short)
 
-Section 7 - Response Texts and Vestigial Locale Activities (in place of Section 7 - Locale descriptions - Unindexed in Standard Rules by Graham Nelson)
+[Note that you must leave out the word Unindexed but include the dash in order to get this to match.]
+[At least you don't need to include the space after the dash.]
+Section 7 - Response Texts and Vestigial Locale Activities (in place of Section 7 - Locale descriptions - in Standard Rules by Graham Nelson)
 
 [ The stub for "to describe locale" is needed because it's hooked by:
 	(a) two rules in Standard Rules which are deleted from rulebooks by Room Description Control;
@@ -37,5 +39,6 @@ On the first successful test, this stripped 31KB out of Counterfeit Monkey.  Not
 
 Section - Changelog
 
+	2.0.240129: Update to current Inform v10.2/11, which is very picky about how to name replaced sections.
 	2.0.220521: Update to Inform v10.1, which renamed sections of the Standard Rules, largely for the better.
 	1: First version.
