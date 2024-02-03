@@ -1,4 +1,4 @@
-Version 6.1.240129 of Neutral Standard Responses by Nathanael Nerode begins here.
+Version 6.2.240303 of Neutral Standard Responses by Nathanael Nerode begins here.
 
 "Replaces misleading, vague, and narratively-voiced parser messages with instructive, clarifying, and neutral versions, respectively.  For Inform 10.1.0."
 
@@ -1186,18 +1186,29 @@ Rule for printing a parser error when the latest parser error is the can't see a
 
 Volume - Fix Remove Action
 
-[We have to patch a nasty bug in the Standard Rules.  Because the grammar lines don't recognize "remove [thing not inside] from [container]", the check rules for Remove never trigger, and it defaults to "you can't see any such thing"!  We displace the bad "things inside" token with "things", and then introduce a rule for "all" to prevent it from including things not on the table.]
+[This code exists solely to give gracious responses to commands like TAKE CAT FROM BOX when the cat isn't
+in the box.
 
-Understand "take [things] from [something]" as removing it from.
-Understand "take [things] off [something]" as removing it from.
-Understand "get [things] from [something]" as removing it from.
-Understand "remove [things] from [something]" as removing it from.
+In order to implement TAKE ALL FROM BOX, the grammar lines for the regular remove action
+have to use the 'things inside' token in order to look forward in the line, and parse the word BOX,
+to decide what to put into "ALL".
 
-Rule for deciding whether all includes a thing (called item) while removing (this is the don't remove things not there rule):
-	if the holder of the item is not the second noun:
-		it does not;
-	otherwise:
-		make no decision;
+But this triggers the message 'You can't see any such thing' for TAKE CAT FROM BOX when the cat
+is in the room.
+
+If we do a [things] line, unfortunately, we lose special-case error coding for TAKE ALL FROM BOX
+which is buried in the I6 parser.
+
+So to solve the simplest case, we just use [something].
+We'll still get odd results for REMOVE CAT AND BEAR FROM BOX, but this is an improvement at any rate.
+]
+
+[The [something] grammar line must come after the [things inside] grammar line in each case; it is for error message purposes only]
+
+Understand "take [something] from [something]" as removing it from.
+Understand "take [something] off [something]" as removing it from.
+Understand "get [something] from [something]" as removing it from.
+Understand "remove [something] from [something]" as removing it from.
 
 Volume - Enhanced oops
 
@@ -1412,6 +1423,8 @@ I also made one philosophical design change.  Messages are styled "as the parser
 Section - Changelogs
 
 Neutral Standard Responses:
+	Version 6.2.240303: Repair "remove all from container" responses
+	                    while retaining improved message for "remove cat from box" when cat isn't in box.
 	Version 6.1.240129: Improved responses for "burn" and "think".
 	Version 6.0.240114: Use "as a configuration flag" syntax from new version of Inform.
 	Version 6.0.230722: adapt to new (work in progress) version of Inform.
