@@ -1,4 +1,4 @@
-Version 1 of Make Test by Philip Riley begins here.
+Version 1.0.0 of Make Test by Philip Riley begins here.
 
 "Allows automatic creation of 'test' phrases"
 
