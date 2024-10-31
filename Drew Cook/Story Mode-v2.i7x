@@ -21,9 +21,10 @@ Release History:
 	
 VERSION 1: Attempted to avoid use of external files as a design goal. Primary pause-suspend look relied on action processing-type hooks in Undo Output Control by Nathanael Nerode. Autopopulated input field while story mode was active using a table of commands. Prevented select commands from pausing story mode via use of a whitelist.
 
-VERSION 2: Major teardown/rewrite due to Parchment autosave incompatibility. Now relying on Daniel Stelzer's Autosave for resume purposes. With this came changes in the way commands were processed. Still avoids file writes with the exception of the autosave. Additionally, the following changes have been made:
+VERSION 2: Major rewrite to avoid dependency on undo stack. With this came changes in the way commands were processed. Still avoids file writes with the exception of the autosave. Additionally, the following changes have been made:
 
 * Added check to determine if the story can read/write external files.
+* Added check/write to final question options to replace UNDO with RESUME when story mode is paused.
 * Set story mode to automatically name the save file based on title and version number.
 * Several bug fixes and tweaks to output text.
 * Set default freedoms (autonomous) for all persons in-game.
@@ -31,7 +32,6 @@ VERSION 2: Major teardown/rewrite due to Parchment autosave incompatibility. Now
 * Added all out-of-world commands to whitelist in extension to spare author the trouble of keying them in manually.
 * Added substantial text substitutions for commonly used punctuation and style modifiers. For instance, substituting "[it]" for "[italic type]"
 * Spoofed UNDO responses on the first turn to populate prompt and/or roll back action count.
-* Added dynamic updates to the Table of Final Questions Options to reflect the current mode of play.
 * Added example story.
 
 ]
@@ -201,6 +201,7 @@ input
 "pronouns"
 "resume"
 "leave story mode"
+"
 
 [
 
@@ -590,9 +591,9 @@ Story Mode ends here.
 
 ---- DOCUMENTATION ----
 
-This is version 2 of Story Mode. Why version 2? Version 1 relied on the Undo Output Control extension to resume story mode after a pause. After playtesting with multiple testers using Lectrote, I discovered that Parchment's autosave was not compatible with this method. This is the new, Parchment-supported version of Story Mode.
+This is version 2 of Story Mode. Why version 2? Version 1 relied on the Undo Output Control extension to resume story mode after a pause. Some instability was discovered with relying on undo across interpreter-level autosaves. This new version should work with any interpreter, provided it can save to file.
 
-Story mode is one of a few efforts to provide a more accessible experience in parser games. I got the idea from John Ziegler, as he included this feature in his IFComp 2023 entry. This extension guides the player by preloading walkthrough commands from a table. Players need only press "enter" to proceed through the story. The preload is handled by Daniel Stelzer's "Command Preloading" extension. Pressing enter when the line is blank will progress the walkthrough as well. The other feature is a sandbox mode that players can use to experiment of familiarize themselves with parser gameplay. If a player enters a command that is not part of the walkthrough, story mode will pause until resumed by the player. In the interim, it is safe to experiment with with the game; there is no way to disrupt the walkthrough or damage the game world. This resume feature is realized via Daniel Stelzer's "Autosave extension." I should mention Wade Clarke, who made his own "Guide Mode" extension, and gave me advice and encouragement. His solution is definitely worth a look.
+Story mode is one of a few efforts to provide a more accessible experience in parser games. I got the idea from John Ziegler, as he included this feature in his IFComp 2023 entry. This extension guides the player by preloading walkthrough commands from a table. Players need only press "enter" to proceed through the story. The preload is handled by Daniel Stelzer's "Command Preloading" extension. Pressing enter when the line is blank will progress the walkthrough as well. The other feature is a sandbox mode that players can use to experiment of familiarize themselves with parser gameplay. If a player enters a command that is not part of the walkthrough, story mode will pause until resumed by the player. In the interim, it is safe to experiment with with the game; there is no way to disrupt the walkthrough or damage the game world. This resume feature is realized via Daniel Stelzer's "Autosave extension." I should mention Wade Clarke, who made his own "Guide Mode" extension, and gave me advice and encouragement. His solution is definitely worth a look; I'm sure it is more competently written.
 
 The primary goal of this effort is improved accessibility in parser games. Learn more about the Interactive Fiction Technology Foundation's report on disability testing here:
 	
