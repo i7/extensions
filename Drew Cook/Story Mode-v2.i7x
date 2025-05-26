@@ -30,7 +30,6 @@ VERSION 2: Major teardown/rewrite due to conflicts with autosaving and the undo 
 * Set default freedoms (autonomous) for all persons in-game.
 * Added templates to copy/paste for extending tables and modifying rules
 * Added all out-of-world commands to whitelist in extension to spare author the trouble of keying them in manually.
-* Added substantial text substitutions for commonly used punctuation and style modifiers. For instance, substituting "[italic type]" for "[italic type]"
 * Spoofed UNDO responses on the first turn to populate prompt and/or roll back action count.
 * Added example story.
 
