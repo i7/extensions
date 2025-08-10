@@ -2136,3 +2136,8 @@ command (text)	imperative (text)
 
 
 Spanish Language ends here.
+
+---- DOCUMENTATION ----
+
+Puedes revisar la documentación de su repositorio en github:
+https://github.com/sarganar/I7-Spanish
