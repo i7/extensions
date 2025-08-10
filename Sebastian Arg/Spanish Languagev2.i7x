@@ -1,4 +1,4 @@
-Version 2 of Spanish Language by Sebastian Arg begins here.
+Version 2.0.0 of Spanish Language by Sebastian Arg begins here.
 
 "To make Spanish the language of play. Release 230724"
 
