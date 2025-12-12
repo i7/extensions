@@ -1,0 +1,75 @@
+Flexible Windows Template.
+
+Implementation functions for the Flexible Windows extension.
+
+@h Definitions.
+A few definitions needed by our functions.
+
+=
+Constant GLK_COLOUR_UNSET = -100;
+
+@h Constructing a window.
+Handles the actual construction of a window.
+
+=
+[ FW_ConstructGlkWindow win parentwin method size;
+	win = parameter_value;
+	! Fill in parentwin, method and size only if the window is not the main window
+	if (win ~= Main_Window) {
+		! TODO: does this work? Probably not right now
+		parentwin = parent(win).glk_ref;
+		if (win.split_method == winmethod_inherited_placement) {
+			IssueRTP("InvalidWindowSplitMethod", "FW_ConstructGlkWindow: invalid split method.", FWKitRTPs);
+			rfalse;
+		}
+		method = win.split_method | win.split_dir;
+		if (~~win.split_border) {
+			method = method | winmethod_NoBorder;
+		}
+		size = win.split_size;
+	}
+	win.glk_ref = FW_glk_window_open(parentwin, method, size, win.glk_window_type, win.glk_rock);
+	rfalse;
+];
+
+[ FW_glk_window_open _vararg_count ret;
+	! glk_window_open(window, uint, uint, uint, uint) => window
+	@glk 35 _vararg_count ret;
+	return ret;
+];
+
+@h Deconstructing a window.
+Deconstructing a window is much simpler however.
+
+=
+[ FW_DeconstructGlkWindow win;
+	win = parameter_value;
+	FW_glk_window_close(win.glk_ref);
+	win.glk_ref = 0;
+	rfalse;
+];
+
+[ FW_glk_window_close _vararg_count;
+  ! glk_window_close(window, &{uint, uint})
+  @glk 36 _vararg_count 0;
+  return 0;
+];
+
+@h Clearing a window.
+We have to augment the basic window clearing function to account for graphics window colours.
+
+=
++replacing(from BasicInformKit) [ Main;
+	rulebook_without_variables = ACTION_PROCESSING_RB;
+	Startup();
+	while (true) {
+		while (deadflag == false) {
+			EarlyInTurnSequence = true;
+			action = ##Wait; meta = false; noun = nothing; second = nothing;
+			actor = player;
+			FollowRulebook(TURN_SEQUENCE_RB);
+			IterationsOfTurnSequence++;
+		}
+		if (FollowRulebook(SHUTDOWN_RB) == false) return;
+	}
+];

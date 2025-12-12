@@ -1,0 +1,24 @@
+new base GLK_WINDOW_POSITION_TY {
+	conforms-to: ENUMERATED_VALUE_TY
+	singular: Glk window position
+	plural: Glk window positions
+
+	specification-text: Specifies which direction a Glk window will be split off from its parent window.
+
+	instance: inherited    = winmethod_inherited_placement = -1
+	instance: placed left  = winmethod_Left_               = 0
+	instance: placed right = winmethod_Right_              = 1
+	instance: placed above = winmethod_Above_              = 2
+	instance: placed below = winmethod_Below_              = 3
+}
+
+new base GLK_WINDOW_SPLIT_METHOD_TY {
+	conforms-to: ENUMERATED_VALUE_TY
+	singular: Glk window split method
+	plural: Glk window split methods
+
+	specification-text: Specifies how the size of a new window will be calculated.
+
+	instance: fixed size           = winmethod_Fixed_        = $10
+	instance: proportionally sized = winmethod_Proportional_ = $20
+}
