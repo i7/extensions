@@ -6,3 +6,5 @@ Licence: Creative Commons Atribution 4.0 license.
 Web Syntax Version: 2
 
 Sections
+	Flexible Windows
+	Replacements

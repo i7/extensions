@@ -44,9 +44,9 @@ Chapter - The spawning relationship
 
 Spawning relates various glk windows to one glk window (called the spawner).
 
-The verb to spawn means the spawning relation.
-The verb to be ancestral to implies the spawning relation.
-The verb to be descended from implies the reversed spawning relation.
+The verb to spawn means the reversed spawning relation.
+The verb to be ancestral to implies the reversed spawning relation.
+The verb to be descended from implies the spawning relation.
 
 Chapter - The built in windows
 
@@ -60,6 +60,8 @@ The position of the status window is placed above.
 The split method of the status window is fixed size.
 The measurement of the status window is 1.
 
+Use no status line translates as a configuration flag.
+
 The quote window is spawned by the main window.
 
 The open built in windows using Flexible Windows rule is listed instead of the open built in windows rule in the for starting the virtual machine rulebook.
@@ -72,7 +74,7 @@ This is the open built in windows using Flexible Windows rule:
 		close the status window;
 	otherwise:
 		open the status window;
-	close the quite window;
+	close the quote window;
 	continue the activity;
 
 
@@ -86,8 +88,9 @@ To open up/-- (win - a glk window), as the acting main window:
 		now win is required;
 		now every glk window ancestral to win is required;
 		calibrate windows;
-		if as the acting main window:
-			set win as the acting main window;
+		[TODO]
+		[if as the acting main window:
+			set win as the acting main window;]
 
 To close (win - a glk window):
 	if win is on-screen:
@@ -108,11 +111,11 @@ To calibrate windows:
 	while there is a not currently being processed unrequired on-screen childless glk window (called win):
 		[ Only run each window once, even if we end up back in this loop (by open/close being called in a before rule), to prevent infinite loops ]
 		now win is currently being processed;
-		safely carry out the deconstruction activity with win;
+		safely carry out the deconstructing activity with win;
 		now win is not currently being processed;
 	while there is a not currently being processed required off-screen next-step glk window (called win):
 		now win is currently being processed;
-		safely carry out the construction activity with win;
+		safely carry out the constructing activity with win;
 		now win is not currently being processed;
 
 Section - Constructing a window
@@ -125,7 +128,7 @@ Before constructing a glk window (called win) (this is the fix the split method 
 		continue the activity;
 	[ Check invalid measurement ]
 	if the split method of win is proportionally sized:
-		if the measurement of win > 100 or the measurement of win is < 0s:
+		if the measurement of win > 100 or the measurement of win < 0:
 			issue the run-time problem "InvalidProportionalMeasurement";
 			say "*** Cannot open window with invalid proportionally sized measurement";
 			now win is unrequired;
@@ -145,9 +148,18 @@ First after constructing a glk window (called win) (this is the check if the win
 
 Section - Deconstructing windows
 
-Deconstructing something is an activity on g-windows.
+Deconstructing something is an activity on glk windows.
 
 The basic deconstruction rule is listed in the for deconstructing rules.
 The basic deconstruction rule translates into I6 as "FW_DeconstructGlkWindow".
+
+Chapter - Focus and changing the active window
+
+[ Focus refers to where we are sending text right now. The "active window" is a broader concept, and is used to determine which window input requests will be made in, which window to return to after filling in the status window, etc. ]
+
+[ TODO: focus ]
+
+The active window is a glk window variable.
+The active window variable is defined by Inter as "active_window".
 
 Flexible Windows ends here.

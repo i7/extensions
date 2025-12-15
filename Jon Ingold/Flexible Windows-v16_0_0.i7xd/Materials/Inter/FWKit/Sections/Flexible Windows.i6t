@@ -8,6 +8,8 @@ A few definitions needed by our functions.
 =
 Constant GLK_COLOUR_UNSET = -100;
 
+Global active_window = Main_Window;
+
 @h Constructing a window.
 Handles the actual construction of a window.
 
@@ -59,17 +61,4 @@ Deconstructing a window is much simpler however.
 We have to augment the basic window clearing function to account for graphics window colours.
 
 =
-+replacing(from BasicInformKit) [ Main;
-	rulebook_without_variables = ACTION_PROCESSING_RB;
-	Startup();
-	while (true) {
-		while (deadflag == false) {
-			EarlyInTurnSequence = true;
-			action = ##Wait; meta = false; noun = nothing; second = nothing;
-			actor = player;
-			FollowRulebook(TURN_SEQUENCE_RB);
-			IterationsOfTurnSequence++;
-		}
-		if (FollowRulebook(SHUTDOWN_RB) == false) return;
-	}
-];
+! TODO
