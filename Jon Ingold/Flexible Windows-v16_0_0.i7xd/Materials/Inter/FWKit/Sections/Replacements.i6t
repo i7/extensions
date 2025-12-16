@@ -41,6 +41,18 @@ Replace all the functions which reference |gg_mainwin|, |gg_statuswin|, or |gg_q
 	}
 ];
 
++replacing(from BasicInformKit) [ DrawStatusLine width posb;
+	#ifdef TARGET_GLULX;
+		if (Status_Window.glk_ref == 0) return;
+	#endif;
+	@push say__p; @push say__pc;
+	VM_MoveCursorInStatusLine(1, 1);
+	CarryOutActivity(CONSTRUCTING_STATUS_LINE_ACT);
+	VM_MainWindow();
+	ClearParagraphing(18);
+	@pull say__pc; @pull say__p;
+];
+
 +replacing(from Architecture32Kit) [ Fatal_Error msg gg_mainwin;
 	gg_mainwin = glk_window_open(0, 0, 0, wintype_TextBuffer, GG_MAINWIN_ROCK);
 	glk_set_window(gg_mainwin);

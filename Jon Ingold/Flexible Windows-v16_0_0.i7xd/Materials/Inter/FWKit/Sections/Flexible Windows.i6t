@@ -2,13 +2,15 @@ Flexible Windows Template.
 
 Implementation functions for the Flexible Windows extension.
 
-@h Definitions.
-A few definitions needed by our functions.
+@h Definitions and globals.
+A few definitions and globals needed by our functions.
 
 =
 Constant GLK_COLOUR_UNSET = -100;
 
 Global active_window = Main_Window;
+Global current_focus_window = Main_Window;
+Global current_root_window;
 
 @h Constructing a window.
 Handles the actual construction of a window.
@@ -16,10 +18,9 @@ Handles the actual construction of a window.
 =
 [ FW_ConstructGlkWindow win parentwin method size;
 	win = parameter_value;
-	! Fill in parentwin, method and size only if the window is not the main window
-	if (win ~= Main_Window) {
-		! TODO: does this work? Probably not right now
-		parentwin = parent(win).glk_ref;
+	! Fill in parentwin, method and size if needed
+	if (glk_window_get_root() ~= nothing) {
+		parentwin = GProperty(OBJECT_TY, win, window_spawner).glk_ref;
 		if (win.split_method == winmethod_inherited_placement) {
 			IssueRTP("InvalidWindowSplitMethod", "FW_ConstructGlkWindow: invalid split method.", FWKitRTPs);
 			rfalse;
@@ -52,13 +53,26 @@ Deconstructing a window is much simpler however.
 ];
 
 [ FW_glk_window_close _vararg_count;
-  ! glk_window_close(window, &{uint, uint})
-  @glk 36 _vararg_count 0;
-  return 0;
+	! glk_window_close(window, &{uint, uint})
+	@glk 36 _vararg_count 0;
+	return 0;
 ];
 
-@h Clearing a window.
-We have to augment the basic window clearing function to account for graphics window colours.
+@h Focus a window.
+We have to augment the basic window focus function to remember the window.
 
 =
-! TODO
++replacing(from Architecture32Kit) [ WindowFocus win;
+	if (win) {
+		if (win.glk_ref) {
+			glk_set_window(win.glk_ref);
+			current_focus_window = win;
+		}
+		else {
+			IssueRTP("WindowIsClosed", "WindowFocus: Cannot perform this Glk window operation on a closed window.", Architecture32KitRTPs);
+		}
+	}
+	else {
+		IssueRTP("WindowIsNothing", "WindowFocus: Cannot perform this Glk window operation on nothing.", Architecture32KitRTPs);
+	}
+];

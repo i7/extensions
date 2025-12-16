@@ -20,7 +20,10 @@ Part - Windows
 
 Chapter - Expanding the Glk window kind
 
-[ In Inform 11 a glk window kind is now build in, but we still need to add many additional properties. ]
+[ In Inform 11 a Glk window kind is now build in, but we still need to add many additional properties. ]
+
+Definition: a glk window is graphical rather than textual if the window type of it is graphics window type.
+Definition: a glk window is buffering rather than non-buffering if the window type of it is text buffer window type.
 
 A glk window has a glk window position called position.
 The position property translates into Inter as "split_dir".
@@ -42,11 +45,12 @@ A glk window can be required or unrequired.
 
 Chapter - The spawning relationship
 
-Spawning relates various glk windows to one glk window (called the spawner).
+Spawning relates one glk window (called the spawner) to various glk windows.
+The spawner property is accessible to Inter as "window_spawner".
 
-The verb to spawn means the reversed spawning relation.
-The verb to be ancestral to implies the reversed spawning relation.
-The verb to be descended from implies the spawning relation.
+The verb to spawn means the spawning relation.
+The verb to be ancestral to implies the spawning relation.
+The verb to be descended from implies the reversed spawning relation.
 
 Chapter - The built in windows
 
@@ -60,8 +64,6 @@ The position of the status window is placed above.
 The split method of the status window is fixed size.
 The measurement of the status window is 1.
 
-Use no status line translates as a configuration flag.
-
 The quote window is spawned by the main window.
 
 The open built in windows using Flexible Windows rule is listed instead of the open built in windows rule in the for starting the virtual machine rulebook.
@@ -70,12 +72,16 @@ This is the open built in windows using Flexible Windows rule:
 		open the main window;
 	otherwise:
 		clear the main window;
-	if the no status line option is active:
+	focus the main window;
+	if the no status window option is active:
 		close the status window;
 	otherwise:
 		open the status window;
 	close the quote window;
 	continue the activity;
+
+Rule for refreshing the status window (this is the refresh the status window rule):
+	redraw the status window;
 
 
 
@@ -83,20 +89,38 @@ Part - The Flexible Windows API
 
 Chapter - Opening and closing windows
 
-To open up/-- (win - a glk window), as the acting main window:
-	if win is off-screen and (win is the main window or the main window is ancestral to win):
+To open up/-- (win - a glk window):
+	if win is off-screen:
+		[ Check that this window is connected to the current root window ]
+		let root be the root of win;
+		if the current root window is nothing:
+			now the current root window is root;
+		otherwise if root is not the current root window:
+			issue the run-time problem "CannotOpenDisconnectedWindow";
+			say "*** Cannot open window which is not related by spawning to the open window tree";
+			stop;
 		now win is required;
 		now every glk window ancestral to win is required;
 		calibrate windows;
-		[TODO]
-		[if as the acting main window:
-			set win as the acting main window;]
 
 To close (win - a glk window):
 	if win is on-screen:
 		now win is unrequired;
 		now every glk window descended from win is unrequired;
 		calibrate windows;
+		if win is the current root window:
+			now the current root window is nothing;
+
+Section - Root window - unindexed
+
+The current root window is a glk window variable.
+The current root window variable is defined by Inter as "current_root_window".
+
+To decide what glk window is the root of (win - a glk window):
+	let parent be the spawner of win;
+	if parent is nothing:
+		decide on win;
+	decide on the root of parent;
 
 Section - Calibrating windows - unindexed
 
@@ -104,7 +128,7 @@ A glk window can be currently being processed.
 
 Definition: a glk window is parental rather than childless if it spawns an on-screen glk window.
 
-Definition: a glk window is next-step if it is the main window or it is spawned by something on-screen.
+Definition: a glk window is next-step if it is the current root window or it is spawned by an on-screen glk window.
 
 To calibrate windows:
 	[ Close windows that shouldn't be open, and then open windows that shouldn't be closed ]
@@ -133,10 +157,9 @@ Before constructing a glk window (called win) (this is the fix the split method 
 			say "*** Cannot open window with invalid proportionally sized measurement";
 			now win is unrequired;
 			abandon the constructing activity;
-	[ Tile windows automatically ]
+	[ Arrange windows automatically ]
 	if the position of win is inherited:
 		now the position of win is the position of parent;
-	[ TODO: using minimum method ]
 
 The construct a g-window rule is listed in the for constructing rules.
 The construct a g-window rule translates into I6 as "FW_ConstructGlkWindow".
@@ -153,11 +176,57 @@ Deconstructing something is an activity on glk windows.
 The basic deconstruction rule is listed in the for deconstructing rules.
 The basic deconstruction rule translates into I6 as "FW_DeconstructGlkWindow".
 
-Chapter - Focus and changing the active window
+Chapter - Clearing and refreshing windows
+
+[ The Glk foundations now has a clear window phrase. Do we need to do anything to augment it here? Perhaps to account for altered window background colours? ]
+
+To refresh (win - a glk window):
+	safely carry out the refreshing activity with win;
+
+To refresh all/-- windows:
+	repeat with win running through on-screen non-buffering glk windows:
+		refresh win;
+
+Refreshing something is an activity on glk windows.
+The refreshing activity has a glk window called the stored current focus window.
+
+Before refreshing a glk window (called win) (this is the prepare for refreshing rule):
+	now the stored current focus window is the current focus window;
+	if win is on-screen:
+		clear win;
+		focus win;
+
+A first for refreshing a glk window (called win) (this is the check the window is on-screen rule):
+	if win is on-screen:
+		continue the activity;
+
+After refreshing a glk window (this is the refocus the current focus window rule):
+	if the stored current focus window is not nothing:
+		focus the stored current focus window;
+	otherwise:
+		now the current focus window is nothing;
+
+After constructing a glk window (called win) (this is the refresh the window rule):
+	refresh win;
+
+A glk event handling rule for a screen resize event (this is the refresh windows after screen resized rule):
+	refresh all windows;
+
+A glk event handling rule for a graphics window lost event (this is the refresh graphical windows rule):
+	repeat with win running through on-screen graphical glk windows:
+		refresh win;
+
+A glk object updating rule (this is the refresh windows after restoring rule):
+	refresh all windows;
+
+Chapter - The current focus and active windows
 
 [ Focus refers to where we are sending text right now. The "active window" is a broader concept, and is used to determine which window input requests will be made in, which window to return to after filling in the status window, etc. ]
 
-[ TODO: focus ]
+The current focus window is a glk window variable.
+The current focus window variable is defined by Inter as "current_focus_window".
+
+[ The WindowFocus function from the Glk foundations will be augmented to remember the focus window. ]
 
 The active window is a glk window variable.
 The active window variable is defined by Inter as "active_window".
