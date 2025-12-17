@@ -6,11 +6,10 @@ Implementation functions for the Flexible Windows extension.
 A few definitions and globals needed by our functions.
 
 =
-Constant GLK_COLOUR_UNSET = -100;
+Constant GLK_COLOUR_UNSET = $4A4122;
 
 Global active_window = Main_Window;
 Global current_focus_window = Main_Window;
-Global current_root_window;
 
 @h Constructing a window.
 Handles the actual construction of a window.
@@ -47,7 +46,7 @@ Deconstructing a window is much simpler however.
 =
 [ FW_DeconstructGlkWindow win;
 	win = parameter_value;
-	FW_glk_window_close(win.glk_ref);
+	FW_glk_window_close(win.glk_ref, 0);
 	win.glk_ref = 0;
 	rfalse;
 ];
@@ -76,3 +75,63 @@ We have to augment the basic window focus function to remember the window.
 		IssueRTP("WindowIsNothing", "WindowFocus: Cannot perform this Glk window operation on nothing.", Architecture32KitRTPs);
 	}
 ];
+
+@h Clearing a window.
+Augment the |WindowClear| function to handle background colours.
+
+=
++replacing(from Architecture32Kit) [ WindowClear win;
+	if (win && win.glk_ref) {
+		if (win.background_colour ~= GLK_COLOUR_UNSET && win.glk_window_type == wintype_Graphics) {
+			glk_window_set_background_color(win.glk_ref, win.background_colour);
+		}
+		glk_window_clear(win.glk_ref);
+	}
+];
+
+@h Background colours.
+Apply a textual window's background colour.
+
+=
+[ FW_Apply_Background_Colour win wintype col i;
+	wintype = win.glk_window_type;
+	col = win.background_colour;
+	for (i = 0: i < style_NUMSTYLES : i++) {
+		glk_stylehint_set(wintype, i, stylehint_BackColor, col);
+	}
+];
+
+[ FW_Unapply_Background_Colour win wintype i;
+	wintype = win.glk_window_type;
+	for (i = 0: i < style_NUMSTYLES : i++) {
+		glk_stylehint_clear(wintype, i, stylehint_BackColor);
+	}
+];
+
+@h The page margin.
+We try to detect the default page margin colour.
+
+=
+Global default_page_margin_colour = GLK_COLOUR_UNSET;
+
+[ FW_Detect_Page_Margin_Colour res;
+	res = glk_style_measure(Page_Margin_Test_Window.glk_ref, style_Normal, stylehint_BackColor, gg_arguments);
+	if (res) {
+		default_page_margin_colour = gg_arguments-->0;
+	}
+];
+
+[ FW_Set_Default_Page_Margin_Colour;
+	if (default_page_margin_colour == GLK_COLOUR_UNSET) {
+		glk_stylehint_clear(wintype_TextBuffer, style_Normal, stylehint_BackColor);
+	}
+	else {
+		glk_stylehint_set(wintype_TextBuffer, style_Normal, stylehint_BackColor, default_page_margin_colour);
+	}
+];
+
+@h Interjecting for unscheduled constructions.
+We no longer allow windows to be constructed via I6.
+
+=
+! TODO

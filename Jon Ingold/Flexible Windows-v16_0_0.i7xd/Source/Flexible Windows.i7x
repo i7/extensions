@@ -14,6 +14,10 @@ Part - I6 helpers - unindexed
 To safely carry out the (A - activity on value of kind K) activity with (val - K):
 	(- @push say__p; @push say__pc; CarryOutActivity({A}, {val}); @pull say__pc; @pull say__p; -).
 
+[ Because glk window is now a subkind of abstract object we can no longer set a glk window variable to "nothing", so instead we will use this. ]
+To decide which glk window is the null window:
+	(- (nothing) -).
+
 
 
 Part - Windows
@@ -26,19 +30,19 @@ Definition: a glk window is graphical rather than textual if the window type of 
 Definition: a glk window is buffering rather than non-buffering if the window type of it is text buffer window type.
 
 A glk window has a glk window position called position.
-The position property translates into Inter as "split_dir".
+The position property is accessible to Inter as "split_dir".
 Definition: a glk window is vertically positioned rather than horizontally positioned if the position of it is at least placed above.
 
 A glk window has a glk window split method called split method.
-The split method property translates into Inter as "split_method".
+The split method property is accessible to Inter as "split_method".
 The split method of a glk window is usually proportionally sized.
 
 A glk window has a number called measurement.
-The measurement property translates into Inter as "split_size".
+The measurement property is accessible to Inter as "split_size".
 The measurement of a glk window is usually 40.
 
 A glk window can be either split with a border or split without a border.
-The split with a border property translates into Inter as "split_border".
+The split with a border property is accessible to Inter as "split_border".
 A glk window is usually split without a border.
 
 A glk window can be required or unrequired.
@@ -53,8 +57,6 @@ The verb to be ancestral to implies the spawning relation.
 The verb to be descended from implies the reversed spawning relation.
 
 Chapter - The built in windows
-
-[ TODO: add windows above the main window ]
 
 [ Set the position of the main window just so that we can automatically arrange windows ]
 The position of the main window is placed below.
@@ -91,6 +93,7 @@ A reset glk references rule (this is the reset window properties rule):
 		now the glk window handle of win is 0;
 		now win is not currently being processed;
 
+[ The Glk object recovery rules will iterate through all Glk windows, include pair windows which we don't track, so while generally we don't support Glk windows without an I7 representation, we have to here. ]
 The find existing windows rule is listed instead of the identify built in windows rule in the identify glk windows rules.
 An identify glk windows rule (this is the find existing windows rule):
 	let win be the window with rock number current glk object rock number;
@@ -99,6 +102,11 @@ An identify glk windows rule (this is the find existing windows rule):
 
 [ Recalibrate windows during GGRecoverObjects, however do not delete the main and status windows when restarting. ]
 A first glk object updating rule (this is the recalibrate windows rule):
+	now the current root window is the null window;
+	repeat with win running through glk windows:
+		if win is on-screen:
+			now the current root window is the root of win;
+			break;
 	if the starting the virtual machine activity is going on:
 		if the main window is on-screen:
 			now the main window is required;
@@ -111,16 +119,12 @@ A first glk object updating rule (this is the recalibrate windows rule):
 
 Section - Helper phrases - unindexed
 
-[ The Glk object recovery rules will iterate through all Glk windows, include pair windows which we don't track, so while generally we don't support Glk windows without an I7 representation, we have to here. ]
-To decide which glk window is the invalid window:
-	(- (nothing) -).
-
 To decide which glk window is the window with rock number (rock - a number):
 	if rock is not 0:
 		repeat with win running through glk windows:
 			if the rock number of win is rock:
 				decide on win;
-	decide on the invalid window;
+	decide on the null window;
 
 
 
@@ -148,12 +152,11 @@ To close (win - a glk window):
 		now every glk window descended from win is unrequired;
 		calibrate windows;
 		if win is the current root window:
-			now the current root window is nothing;
+			now the current root window is the null window;
 
 Section - Root window - unindexed
 
 The current root window is a glk window variable.
-The current root window variable is defined by Inter as "current_root_window".
 
 To decide what glk window is the root of (win - a glk window):
 	let parent be the spawner of win;
@@ -201,7 +204,7 @@ Before constructing a glk window (called win) (this is the fix the split method 
 		now the position of win is the position of parent;
 
 The construct a g-window rule is listed in the for constructing rules.
-The construct a g-window rule translates into I6 as "FW_ConstructGlkWindow".
+The construct a g-window rule is defined by Inter as "FW_ConstructGlkWindow".
 
 First after constructing a glk window (called win) (this is the check if the window was created rule):
 	if win is off-screen:
@@ -213,11 +216,9 @@ Section - Deconstructing windows
 Deconstructing something is an activity on glk windows.
 
 The basic deconstruction rule is listed in the for deconstructing rules.
-The basic deconstruction rule translates into I6 as "FW_DeconstructGlkWindow".
+The basic deconstruction rule is defined by Inter as "FW_DeconstructGlkWindow".
 
-Chapter - Clearing and refreshing windows
-
-[ The Glk foundations now has a clear window phrase. Do we need to do anything to augment it here? Perhaps to account for altered window background colours? ]
+Chapter - Refreshing windows
 
 To refresh (win - a glk window):
 	safely carry out the refreshing activity with win;
@@ -240,10 +241,10 @@ A first for refreshing a glk window (called win) (this is the check the window i
 		continue the activity;
 
 After refreshing a glk window (this is the refocus the current focus window rule):
-	if the stored current focus window is not nothing:
+	if the stored current focus window is not nothing and the stored current focus window is on-screen:
 		focus the stored current focus window;
 	otherwise:
-		now the current focus window is nothing;
+		now the current focus window is the null window;
 
 After constructing a glk window (called win) (this is the refresh the window rule):
 	refresh win;
@@ -269,5 +270,81 @@ The current focus window variable is defined by Inter as "current_focus_window".
 
 The active window is a glk window variable.
 The active window variable is defined by Inter as "active_window".
+
+Before deconstructing a glk window (called win) (this is the fix the current windows rule):
+	let parent be the spawner of win;
+	if parent is nothing:
+		continue the activity;
+	if win is the active window:
+		now the active window is parent;
+	if win is the current focus window:
+		now the current focus window is parent;
+
+
+
+Part - Additional features
+
+[ We include several non-core features which many authors will find useful ]
+
+Chapter - Window background colours - unindexed
+
+[ The Garglk extensions would probably be simpler than using stylehints, but unfortunately they are very broken in Garglk itself!
+See https://github.com/garglk/garglk/issues/149 and https://intfiction.org/t/specifying-gargoyles-glk-extensions/12915/13 ]
+
+[ We would prefer to have a colour that is not a valid RGB colour, but that is not currently possible. So I chose a colour that is close to Pantone 448 C (the "ugliest colour in the world"), but also not quite that, so that it's even less likely to be used by an author. ]
+The unset colour is always #4A4123.
+
+A glk window has an RGB colour called the background colour.
+The background colour property is defined by Inter as "background_colour".
+The background colour of a glk window is usually the unset colour.
+
+[ For text windows we set the colour with stylehints. ]
+
+Before constructing a textual glk window (called win) (this is the set the background colour of textual windows rule):
+	if the background colour of win is not the unset colour:
+		apply the background colour of win;
+
+After constructing a textual glk window (called win) (this is the reset the background colour of textual windows rule):
+	if the background colour of win is not the unset colour:
+		unapply the background colour of win;
+
+[ Setting the background color of graphics windows is handled by WindowClear which we will augment to handle background colours. It also allows you to change the background colour of graphics windows, but not text windows. That would be possible using the Garglk extensions if Garglk itself is ever fixed. Authors could try doing so themselves, at their own risk. ]
+
+To apply the background colour of (W - a glk window):
+	(- FW_Apply_Background_Colour({W}); -).
+
+To unapply the background colour of (W - a glk window):
+	(- FW_Unapply_Background_Colour({W}); -).
+
+Chapter - Page margin
+
+[ The "page margin" is not officially part of the Glk model, but many interpreters support it. The page margin exists outside any actual Glk windows. Some interpreters will change its colour when stylehints are used, so to reduce unexpected changes we will manually set it to the active window's background colour. ]
+
+Last after constructing a textual glk window (this is the set the page margin colour rule):
+	if the background colour of the active window is not the unset colour:
+		set the page margin to the background colour of the active window;
+	otherwise:
+		set the page margin to its default;
+
+To set the page margin to (C - RGB colour):
+	(- glk_stylehint_set(wintype_TextBuffer, style_Normal, stylehint_BackColor, {C}); -).
+
+Section - Page margin detection - unindexed
+
+[ Unfortunately interpreters are not very consistent when trying to unset the page margin. So in interpreters that support it we will try to detect the default page margin colour. ]
+
+The page margin test window is a text buffer window.
+The page margin test window object is accessible to Inter as "Page_Margin_Test_Window".
+
+Before starting the virtual machine (this is the try to detect the default page margin colour rule):
+	open the page margin test window;
+	try to detect the default page margin colour;
+	close the page margin test window;
+
+To try to detect the default page margin colour:
+	(- FW_Detect_Page_Margin_Colour(); -).
+
+To set the page margin to its default:
+	(- FW_Set_Default_Page_Margin_Colour(); -).
 
 Flexible Windows ends here.
