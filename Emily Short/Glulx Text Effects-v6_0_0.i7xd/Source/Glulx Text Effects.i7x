@@ -73,17 +73,17 @@ To apply styles for (W - glk window):
 		if window is all-windows:
 			now window type is 0;
 		otherwise if window is all-buffer-windows:
-			if W is not nothing and the type of W is not text buffer:
+			if W is not nothing and the window type of W is not text buffer window type:
 				next;
 			now window type is 3;
 		otherwise if window is all-grid-windows:
-			if W is not nothing and the type of W is not text grid:
+			if W is not nothing and the window type of W is not text grid window type:
 				next;
 			now window type is 4;
 		otherwise:
 			if W is nothing or window is not W:
 				next;
-			if the type of W is text buffer:
+			if the window type of W is text buffer window type:
 				now window type is 3;
 			otherwise:
 				now window type is 4;
