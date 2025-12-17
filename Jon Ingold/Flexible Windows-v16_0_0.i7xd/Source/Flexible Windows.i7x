@@ -73,15 +73,54 @@ This is the open built in windows using Flexible Windows rule:
 	otherwise:
 		clear the main window;
 	focus the main window;
-	if the no status window option is active:
-		close the status window;
-	otherwise:
+	if the no status window option is not active:
 		open the status window;
-	close the quote window;
 	continue the activity;
 
 Rule for refreshing the status window (this is the refresh the status window rule):
 	redraw the status window;
+
+Chapter - Object recovery
+
+A reset glk references rule (this is the reset window properties rule):
+	let i be 1000;
+	repeat with win running through glk windows:
+		if the rock number of win is 0:
+			now the rock number of win is i;
+			increase i by 10;
+		now the glk window handle of win is 0;
+		now win is not currently being processed;
+
+The find existing windows rule is listed instead of the identify built in windows rule in the identify glk windows rules.
+An identify glk windows rule (this is the find existing windows rule):
+	let win be the window with rock number current glk object rock number;
+	if win is not nothing:
+		now the glk window handle of win is the current glk object reference number;
+
+[ Recalibrate windows during GGRecoverObjects, however do not delete the main and status windows when restarting. ]
+A first glk object updating rule (this is the recalibrate windows rule):
+	if the starting the virtual machine activity is going on:
+		if the main window is on-screen:
+			now the main window is required;
+			now the current focus window is the main window;
+		if the status window is on-screen and the no status window option is not active:
+			now the status window is required;
+	calibrate windows;
+	if the current focus window is on-screen:
+		focus the current focus window;
+
+Section - Helper phrases - unindexed
+
+[ The Glk object recovery rules will iterate through all Glk windows, include pair windows which we don't track, so while generally we don't support Glk windows without an I7 representation, we have to here. ]
+To decide which glk window is the invalid window:
+	(- (nothing) -).
+
+To decide which glk window is the window with rock number (rock - a number):
+	if rock is not 0:
+		repeat with win running through glk windows:
+			if the rock number of win is rock:
+				decide on win;
+	decide on the invalid window;
 
 
 
