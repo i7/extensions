@@ -393,4 +393,68 @@ The try to detect the default page margin colour rule is defined by Inter as "FW
 To set the page margin to its default:
 	(- FW_Set_Default_Page_Margin_Colour(); -).
 
+Chapter - Screen measurement
+
+The screen height measurement window is a graphics window.
+The screen height measurement window is spawned by the main window.
+The position of the screen height measurement window is placed left.
+The split method of the screen height measurement window is fixed size.
+The measurement of the screen height measurement window is 0.
+
+The screen width measurement window is a graphics window.
+The screen width measurement window is spawned by the main window.
+The position of the screen width measurement window is placed above.
+The split method of the screen width measurement window is fixed size.
+The measurement of the screen width measurement window is 0.
+
+Adjusted original screen height is a number variable.
+Original screen width is a number variable.
+
+After constructing the main window (this is the open the screen measurement windows rule):
+	open the screen height measurement window;
+	open the screen width measurement window;
+	[ Save the screen height * 0.7 ]
+	now adjusted original screen height is (the height of the screen height measurement window * 7) / 10;
+	now original screen width is the width of the screen width measurement window;
+
+To decide what number is the screen height in pixels:
+	if the screen height measurement window is off-screen:
+		issue the run-time problem "MainWindowNotOpen";
+		say "*** Cannot get the screen height before the main window is open";
+		decide on 0;
+	decide on the height of the screen height measurement window;
+
+To decide what number is the screen width in pixels:
+	if the screen height measurement window is off-screen:
+		issue the run-time problem "MainWindowNotOpen";
+		say "*** Cannot get the screen width before the main window is open";
+		decide on 0;
+	decide on the width of the screen width measurement window;
+
+To decide if the screen is landscape:
+	if the screen height measurement window is off-screen:
+		issue the run-time problem "MainWindowNotOpen";
+		say "*** Cannot get the screen orientation before the main window is open";
+		decide no;
+	decide on whether or not the width of the screen width measurement window > the height of the screen height measurement window;
+
+To decide if the screen is portrait:
+	if the screen height measurement window is off-screen:
+		issue the run-time problem "MainWindowNotOpen";
+		say "*** Cannot get the screen orientation before the main window is open";
+		decide no;
+	decide on whether or not the height of the screen height measurement window > the width of the screen width measurement window;
+
+To decide what real number is the screen aspect ratio:
+	if the screen height measurement window is off-screen:
+		issue the run-time problem "MainWindowNotOpen";
+		say "*** Cannot get the screen aspect ratio before the main window is open";
+		decide on 0.0;
+	decide on (the width of the screen width measurement window times 1.0) divided by the height of the screen height measurement window;
+
+To decide if there is probably a virtual keyboard on-screen:
+	if the screen width in pixels is original screen width and the screen height in pixels < adjusted original screen height:
+		decide yes;
+	decide no;
+
 Flexible Windows ends here.

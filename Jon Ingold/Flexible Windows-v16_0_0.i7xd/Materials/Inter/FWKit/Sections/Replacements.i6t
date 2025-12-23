@@ -1,4 +1,4 @@
-Replacements Template.
+Replacements.
 
 Replacements of Architecture32Kit code to refer to the Glk Window objects rather than storing their reference IDs separately.
 
