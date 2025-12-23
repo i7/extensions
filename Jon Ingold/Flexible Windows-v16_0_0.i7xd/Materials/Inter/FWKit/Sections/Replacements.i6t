@@ -145,7 +145,6 @@ Replace all the functions which reference |gg_mainwin|, |gg_statuswin|, or |gg_q
 	}
 	if (Status_Window.glk_ref && window == WIN_ALL or WIN_STATUS) {
 		glk_window_clear(Status_Window.glk_ref);
-		Status_Window.glk_ref = 0;
 	}
 ];
 

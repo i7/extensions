@@ -1,0 +1,26 @@
+Example: ** The Gallic War - An excuse to print a large, fancily-formatted bit of text using custom styles.
+
+	*: "The Gallic War" by Julius Caesar.
+	
+	The story headline is "An interactive campaign".
+	
+	Lessons is a room.
+	
+	Include Glulx Text Effects by Emily Short.
+	
+	Table of User Styles (continued)
+	style name	justification	italic	indentation	first line indentation	font weight	color
+	special-style-2	left-right-justified	true	15	-4	light-weight	#888888 [ medium-grey ]
+	
+	When play begins:
+		now the left hand status line is "";
+		now right hand status line is "";
+		say "[second custom style]Gallia est omnis divisa in partes tres, quarum unam incolunt Belgae, aliam Aquitani, tertiam qui ipsorum lingua Celtae, nostra Galli appellantur. Hi omnes lingua, institutis, legibus inter se differunt. Gallos ab Aquitanis Garumna flumen, a Belgis Matrona et Sequana dividit. 
+	
+Horum omnium fortissimi sunt Belgae, propterea quod a cultu atque humanitate provinciae longissime absunt, minimeque ad eos mercatores saepe commeant atque ea quae ad effeminandos animos pertinent important, proximique sunt Germanis, qui trans Rhenum incolunt, quibuscum continenter bellum gerunt. Qua de causa Helvetii quoque reliquos Gallos virtute praecedunt, quod fere cotidianis proeliis cum Germanis contendunt, cum aut suis finibus eos prohibent aut ipsi in eorum finibus bellum gerunt.";
+		pause the game;
+		say roman type;
+		now the left hand status line is "[location]";
+		now the right hand status line is "[turn count]".
+	
+	Bank of the Garumna is a room.

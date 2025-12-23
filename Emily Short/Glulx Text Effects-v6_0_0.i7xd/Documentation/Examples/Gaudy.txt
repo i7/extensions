@@ -1,0 +1,31 @@
+Example: * Gaudy - A visually overpowering exercise in modifying all the built-in text styles.
+
+	*: "Gaudy"
+	
+	Include Glulx Text Effects by Emily Short.	
+	
+	Use scoring.
+	
+	Texty Room is a room. "This is a room of [bold type]bold[roman type] and [italic type]italic[roman type] texts as well as messages in [fixed letter spacing]fixed width[variable letter spacing] text."
+	
+	Table of User Styles (continued)
+	style name	relative size	color	background color
+	italic-style	-1	#0000FF [ blue ]	--
+	fixed-letter-spacing-style	--	#444444 [ dark-grey ]	--
+	header-style	10	--	--
+	bold-style	2	#888888 [ medium-grey ]	#80DAEB
+	alert-style	5	#FF0000 [ red ]
+	note-style	--	#00FF00 [ green ]
+	blockquote-style	--	#FFFF00 [ yellow ]
+	input-style	-1	#FF00FF [ magenta ]
+	
+	Instead of waiting:
+		increase the score by 5.
+	
+	Instead of jumping:
+		end the story finally.
+	
+	Every turn:
+		display the boxed quotation "Tempus fugit." 
+	
+	Test me with "z / z / z / jump".

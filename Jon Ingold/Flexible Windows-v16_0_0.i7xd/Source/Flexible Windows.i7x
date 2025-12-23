@@ -204,7 +204,7 @@ Before constructing a glk window (called win) (this is the fix the split method 
 		now the position of win is the position of parent;
 
 The construct a g-window rule is listed in the for constructing rules.
-The construct a g-window rule is defined by Inter as "FW_ConstructGlkWindow".
+The construct a g-window rule is defined by Inter as "FW_CONSTRUCT_WINDOW_R".
 
 First after constructing a glk window (called win) (this is the check if the window was created rule):
 	if win is off-screen:
@@ -216,7 +216,7 @@ Section - Deconstructing windows
 Deconstructing something is an activity on glk windows.
 
 The basic deconstruction rule is listed in the for deconstructing rules.
-The basic deconstruction rule is defined by Inter as "FW_DeconstructGlkWindow".
+The basic deconstruction rule is defined by Inter as "FW_DECONSTRUCT_WINDOW_R".
 
 Chapter - Refreshing windows
 
@@ -316,6 +316,60 @@ To apply the background colour of (W - a glk window):
 To unapply the background colour of (W - a glk window):
 	(- FW_Unapply_Background_Colour({W}); -).
 
+Chapter - Glulx Text Effects (for use with Glulx Text Effects by Emily Short)
+
+[ This doesn't work, filed as https://inform7.atlassian.net/browse/I7-2644 ]
+[The apply the Glulx Text Effects styles rule is not listed in the before starting the virtual machine rules.]
+
+[ So instead just unapply them... ]
+The unapply the Glulx Text Effects styles rule is listed after the apply the Glulx Text Effects styles rule in the before starting the virtual machine rules.
+Before starting the virtual machine (this is the unapply the Glulx Text Effects styles rule):
+	unapply styles for the not a glk window;
+
+Before constructing a textual glk window (called win) (this is the apply window styles rule):
+	apply styles for win;
+
+After constructing a textual glk window (called win) (this is the unapply window styles rule):
+	unapply styles for win;
+
+Section - Unapplying styles - unindexed
+
+To unapply styles for (W - glk window):
+	repeat through the Table of User Styles:
+		let window be the window entry;
+		if window is all-buffer-windows:
+			if W is not nothing and the window type of W is not text buffer window type:
+				next;
+		otherwise if window is all-grid-windows:
+			if W is not nothing and the window type of W is not text grid window type:
+				next;
+		otherwise if window is not all-windows:
+			if W is nothing or window is not W:
+				next;
+		if there is a background color entry:
+			unapply window style (style name entry) stylehint 8;
+		if there is a color entry:
+			unapply window style (style name entry) stylehint 7;
+		if there is a first line indentation entry:
+			unapply window style (style name entry) stylehint 1;
+		if there is a fixed width entry:
+			unapply window style (style name entry) stylehint 6;
+		if there is a font weight entry:
+			unapply window style (style name entry) stylehint 4;
+		if there is a indentation entry:
+			unapply window style (style name entry) stylehint 0;
+		if there is a italic entry:
+			unapply window style (style name entry) stylehint 5;
+		if there is a justification entry:
+			unapply window style (style name entry) stylehint 2;
+		if there is a relative size entry:
+			unapply window style (style name entry) stylehint 3;
+		if there is a reversed entry:
+			unapply window style (style name entry) stylehint 9;
+
+To unapply (W - a glk window) style (S - a glulx text style) stylehint (H - a number):
+	(- FW_Unapply_Stylehint({W}.glk_window_type, {S}, {H}); -).
+
 Chapter - Page margin
 
 [ The "page margin" is not officially part of the Glk model, but many interpreters support it. The page margin exists outside any actual Glk windows. Some interpreters will change its colour when stylehints are used, so to reduce unexpected changes we will manually set it to the active window's background colour. ]
@@ -333,16 +387,8 @@ Section - Page margin detection - unindexed
 
 [ Unfortunately interpreters are not very consistent when trying to unset the page margin. So in interpreters that support it we will try to detect the default page margin colour. ]
 
-The page margin test window is a text buffer window.
-The page margin test window object is accessible to Inter as "Page_Margin_Test_Window".
-
-Before starting the virtual machine (this is the try to detect the default page margin colour rule):
-	open the page margin test window;
-	try to detect the default page margin colour;
-	close the page margin test window;
-
-To try to detect the default page margin colour:
-	(- FW_Detect_Page_Margin_Colour(); -).
+The try to detect the default page margin colour rule is listed in the before starting the virtual machine rules.
+The try to detect the default page margin colour rule is defined by Inter as "FW_DETECT_PAGE_MARGIN_COLOUR_R".
 
 To set the page margin to its default:
 	(- FW_Set_Default_Page_Margin_Colour(); -).

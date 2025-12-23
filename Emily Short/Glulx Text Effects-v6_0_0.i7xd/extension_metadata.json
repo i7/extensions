@@ -1,0 +1,17 @@
+{
+    "is": {
+        "type": "extension",
+        "title": "Glulx Text Effects",
+        "author": "Emily Short",
+        "version": "6.0.0"
+    },
+    "compatibility": "Glulx only",
+    "needs": [
+        {
+            "need": {
+                "type": "kit",
+                "title": "GTEKit"
+            }
+        }
+    ]
+}

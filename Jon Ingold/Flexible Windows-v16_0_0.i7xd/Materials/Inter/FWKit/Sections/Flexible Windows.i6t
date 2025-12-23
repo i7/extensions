@@ -6,7 +6,8 @@ Implementation functions for the Flexible Windows extension.
 A few definitions and globals needed by our functions.
 
 =
-Constant GLK_COLOUR_UNSET = $4A4122;
+Constant FW_style_All = -1;
+Constant GLK_COLOUR_UNSET = $4A4123;
 
 Global active_window = Main_Window;
 Global current_focus_window = Main_Window;
@@ -15,13 +16,13 @@ Global current_focus_window = Main_Window;
 Handles the actual construction of a window.
 
 =
-[ FW_ConstructGlkWindow win parentwin method size;
+[ FW_CONSTRUCT_WINDOW_R win parentwin method size;
 	win = parameter_value;
 	! Fill in parentwin, method and size if needed
 	if (glk_window_get_root() ~= nothing) {
 		parentwin = GProperty(OBJECT_TY, win, window_spawner).glk_ref;
 		if (win.split_method == winmethod_inherited_placement) {
-			IssueRTP("InvalidWindowSplitMethod", "FW_ConstructGlkWindow: invalid split method.", FWKitRTPs);
+			IssueRTP("InvalidWindowSplitMethod", "FW_CONSTRUCT_WINDOW_R: invalid split method.", FWKitRTPs);
 			rfalse;
 		}
 		method = win.split_method | win.split_dir;
@@ -44,7 +45,7 @@ Handles the actual construction of a window.
 Deconstructing a window is much simpler however.
 
 =
-[ FW_DeconstructGlkWindow win;
+[ FW_DECONSTRUCT_WINDOW_R win;
 	win = parameter_value;
 	FW_glk_window_close(win.glk_ref, 0);
 	win.glk_ref = 0;
@@ -108,17 +109,36 @@ Apply a textual window's background colour.
 	}
 ];
 
+@h Glulx Text Effects.
+Unapplying stylehints.
+
+=
+[ FW_Unapply_Stylehint wintype stylenum hint i;
+	if (stylenum == FW_style_All) {
+		for (i = 0: i < style_NUMSTYLES : i++) {
+			glk_stylehint_clear(wintype, i, hint);
+		}
+	}
+	else {
+		glk_stylehint_clear(wintype, stylenum, hint);
+	}
+];
+
 @h The page margin.
 We try to detect the default page margin colour.
 
 =
 Global default_page_margin_colour = GLK_COLOUR_UNSET;
 
-[ FW_Detect_Page_Margin_Colour res;
-	res = glk_style_measure(Page_Margin_Test_Window.glk_ref, style_Normal, stylehint_BackColor, gg_arguments);
+[ FW_DETECT_PAGE_MARGIN_COLOUR_R res win;
+	! Open the window manually to skip the FW process - for example we don't want to apply styles!
+	win = FW_glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	res = glk_style_measure(win, style_Normal, stylehint_BackColor, gg_arguments);
 	if (res) {
 		default_page_margin_colour = gg_arguments-->0;
 	}
+	FW_glk_window_close(win, 0);
+	rfalse;
 ];
 
 [ FW_Set_Default_Page_Margin_Colour;

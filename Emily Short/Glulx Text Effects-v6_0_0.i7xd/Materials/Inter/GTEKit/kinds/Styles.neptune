@@ -1,0 +1,45 @@
+new base GLK_STYLE_TY {
+	conforms-to: ENUMERATED_VALUE_TY
+	singular: glulx text style
+	plural: glulx text styles
+
+	specification-text: Glulx text styles are used to mark the purpose of text, and allow authors to customise their appearance.
+
+	instance: all-styles                 = style_All           = -1
+	instance: normal-style               = style_Normal_       = 0
+	instance: italic-style               = style_Emphasized_   = 1
+	instance: fixed-letter-spacing-style = style_Preformatted_ = 2
+	instance: header-style               = style_Header_       = 3
+	instance: bold-style                 = style_Subheader_    = 4
+	instance: alert-style                = style_Alert_        = 5
+	instance: note-style                 = style_Note_         = 6
+	instance: blockquote-style           = style_BlockQuote_   = 7
+	instance: input-style                = style_Input_        = 8
+	instance: special-style-1            = style_User1_        = 9
+	instance: special-style-2            = style_User2_        = 10
+}
+
+new base GLK_FONT_WEIGHT_TY {
+	conforms-to: ENUMERATED_VALUE_TY
+	singular: font weight
+	plural: font weights
+
+	specification-text: A Glk stylehint font weight.
+
+	instance: light-weight   = FONT_WEIGHT_LIGHT   = -1
+	instance: regular-weight = FONT_WEIGHT_REGULAR = 0
+	instance: bold-weight    = FONT_WEIGHT_BOLD    = 1
+}
+
+new base GLK_TEXT_JUSTIFICATION_TY {
+	conforms-to: ENUMERATED_VALUE_TY
+	singular: text justification
+	plural: text justifications
+
+	specification-text: A Glk stylehint text justification.
+
+	instance: left-justified       = stylehint_just_LeftFlush_  = 0
+	instance: left-right-justified = stylehint_just_LeftRight_
+	instance: center-justified     = stylehint_just_Centered_
+	instance: right-justified      = stylehint_just_RightFlush_
+}
