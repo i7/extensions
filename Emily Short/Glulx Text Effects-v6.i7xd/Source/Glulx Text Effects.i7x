@@ -30,7 +30,7 @@ all-buffer-windows	italic-style	regular-weight	true
 
 Chapter - Sorting the Table of User Styles - unindexed
 
-Before starting the virtual machine (this is the sort of the Table of User Styles rule):
+Before starting the virtual machine (this is the sort the Table of User Styles rule):
 	now the window type of all-windows is the all-windows-type;
 	[ First change empty windows to all buffer windows, and empty style names to all-styles ]
 	repeat through the Table of User Styles:

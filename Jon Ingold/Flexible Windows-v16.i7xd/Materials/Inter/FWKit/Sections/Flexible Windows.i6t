@@ -9,6 +9,8 @@ A few definitions and globals needed by our functions.
 Constant FW_style_All = -1;
 Constant GLK_COLOUR_UNSET = $4A4123;
 
+Property original_spawner;
+
 Global active_window = Main_Window;
 Global current_focus_window = Main_Window;
 
@@ -20,16 +22,23 @@ Handles the actual construction of a window.
 	win = parameter_value;
 	! Fill in parentwin, method and size if needed
 	if (glk_window_get_root() ~= nothing) {
-		parentwin = GProperty(OBJECT_TY, win, window_spawner).glk_ref;
-		if (win.split_method == winmethod_inherited_placement) {
-			IssueRTP("InvalidWindowSplitMethod", "FW_CONSTRUCT_WINDOW_R: invalid split method.", FWKitRTPs);
-			rfalse;
+		win.original_spawner = win.window_spawner;
+		parentwin = win.original_spawner.glk_ref;
+		method = win.split_method;
+		if (method == winmethod_Constrained) {
+			method = winmethod_Proportional;
 		}
-		method = win.split_method | win.split_dir;
+		else if (method == winmethod_Aspect_Ratio) {
+			method = winmethod_Fixed;
+		}
+		method = method | win.split_dir;
 		if (~~win.split_border) {
 			method = method | winmethod_NoBorder;
 		}
-		size = win.split_size;
+		size = win.measurement;
+	}
+	else {
+		win.original_spawner = 0;
 	}
 	win.glk_ref = FW_glk_window_open(parentwin, method, size, win.glk_window_type, win.glk_rock);
 	rfalse;
@@ -39,6 +48,11 @@ Handles the actual construction of a window.
 	! glk_window_open(window, uint, uint, uint, uint) => window
 	@glk 35 _vararg_count ret;
 	return ret;
+];
+
+[ FW_PROCESS_SPLIT_R;
+	FW_Process_Split(parameter_value);
+	rfalse;
 ];
 
 @h Deconstructing a window.
@@ -147,6 +161,73 @@ Global default_page_margin_colour = GLK_COLOUR_UNSET;
 	}
 	else {
 		glk_stylehint_set(wintype_TextBuffer, style_Normal, stylehint_BackColor, default_page_margin_colour);
+	}
+];
+
+@h Processing window split and measurement.
+With the additional split and measurement approaches this is now quite a complicated process. It also handles checking and resizing windows after screen resizes.
+
+=
+[ FW_Process_Split win  border_and_dir current_method current_size height pairwin parent splitmethod width;
+	parent = win.window_spawner;
+	if (parent == 0) {
+		rfalse;
+	}
+	! Check the author hasn't tried to change the spawning window
+	if (parent ~= win.original_spawner) {
+		IssueRTP("CannotChangeWindowSpawner", "FW_Process_Split: The window spawner cannot be changed.", FWKitRTPs);
+		rfalse;
+	}
+	splitmethod = win.split_method;
+	! Check invalid measurement
+	if (
+		(win.measurement < 0) ||
+		((splitmethod == winmethod_Proportional or winmethod_Constrained) && win.measurement > 100) ||
+		((splitmethod == winmethod_Constrained) && (win.min_size < 0 || win.max_size < 0))
+	) {
+		IssueRTP("InvalidWindowMeasurement", "FW_Process_Split: The window measurement (or min/max size) is invalid.", FWKitRTPs);
+		rfalse;
+	}
+	pairwin = glk_window_get_parent(win.glk_ref);
+	! Get the current method
+	glk_window_get_arrangement(pairwin, gg_arguments, 0, 0);
+	current_method = gg_arguments-->0;
+	! Check and update a constrained window
+	if (splitmethod == winmethod_Constrained) {
+		border_and_dir = current_method & (winmethod_DirMask | winmethod_BorderMask);
+		current_method = current_method & winmethod_DivisionMask;
+		! If we're currently fixed switch to proportional
+		if (current_method == winmethod_Fixed) {
+			glk_window_set_arrangement(pairwin, winmethod_Proportional | border_and_dir, win.measurement, 0);
+		}
+		! Check if we're outside the constraints
+		glk_window_get_size(win.glk_ref, gg_arguments, gg_arguments + WORDSIZE);
+		if (win.split_dir < winmethod_Above) {
+			current_size = gg_arguments-->0;
+		}
+		else {
+			current_size = gg_arguments-->1;
+		}
+		if (current_size < win.min_size) {
+			glk_window_set_arrangement(pairwin, winmethod_Fixed | border_and_dir, win.min_size, 0);
+		}
+		else if (win.max_size > 0 && current_size > win.max_size) {
+			glk_window_set_arrangement(pairwin, winmethod_Fixed | border_and_dir, win.max_size, 0);
+		}
+	}
+	! Fix an aspect ratio window
+	if (splitmethod == winmethod_Aspect_Ratio) {
+		! Get the current size
+		glk_window_get_size(win.glk_ref, gg_arguments, gg_arguments + WORDSIZE);
+		height = gg_arguments-->1;
+		width = gg_arguments-->0;
+		if (win.split_dir < winmethod_Above) {
+			current_size = REAL_NUMBER_TY_to_NUMBER_TY(REAL_NUMBER_TY_Times(NUMBER_TY_to_REAL_NUMBER_TY(height), win.aspect_ratio));
+		}
+		else {
+			current_size = REAL_NUMBER_TY_to_NUMBER_TY(REAL_NUMBER_TY_Divide(NUMBER_TY_to_REAL_NUMBER_TY(width), win.aspect_ratio));
+		}
+		glk_window_set_arrangement(pairwin, current_method, current_size, 0);
 	}
 ];
 

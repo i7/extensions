@@ -5,7 +5,6 @@ new base GLK_WINDOW_POSITION_TY {
 
 	specification-text: Specifies which direction a Glk window will be split off from its parent window.
 
-	instance: inherited    = winmethod_inherited_placement = -1
 	instance: placed left  = winmethod_Left_               = 0
 	instance: placed right = winmethod_Right_              = 1
 	instance: placed above = winmethod_Above_              = 2
@@ -21,4 +20,10 @@ new base GLK_WINDOW_SPLIT_METHOD_TY {
 
 	instance: fixed size           = winmethod_Fixed_        = $10
 	instance: proportionally sized = winmethod_Proportional_ = $20
+	instance: constrained          = winmethod_Constrained   = $100
+	instance: fixed aspect ratio   = winmethod_Aspect_Ratio  = $101
+}
+
+properties of glk window {
+	property: original_spawner
 }

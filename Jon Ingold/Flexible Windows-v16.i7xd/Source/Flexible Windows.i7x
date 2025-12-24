@@ -38,7 +38,7 @@ The split method property is accessible to Inter as "split_method".
 The split method of a glk window is usually proportionally sized.
 
 A glk window has a number called measurement.
-The measurement property is accessible to Inter as "split_size".
+The measurement property is accessible to Inter as "measurement".
 The measurement of a glk window is usually 40.
 
 A glk window can be either split with a border or split without a border.
@@ -81,6 +81,9 @@ This is the open built in windows using Flexible Windows rule:
 
 Rule for refreshing the status window (this is the refresh the status window rule):
 	redraw the status window;
+
+[ No need for this now ]
+The redraw the status line rule is not listed in the glk event handling rules.
 
 Chapter - Object recovery
 
@@ -188,28 +191,16 @@ Section - Constructing a window
 
 Constructing something is an activity on glk windows.
 
-Before constructing a glk window (called win) (this is the fix the split method rule):
-	let parent be the spawner of win;
-	if parent is nothing:
-		continue the activity;
-	[ Check invalid measurement ]
-	if the split method of win is proportionally sized:
-		if the measurement of win > 100 or the measurement of win < 0:
-			issue the run-time problem "InvalidProportionalMeasurement";
-			say "*** Cannot open window with invalid proportionally sized measurement";
-			now win is unrequired;
-			abandon the constructing activity;
-	[ Arrange windows automatically ]
-	if the position of win is inherited:
-		now the position of win is the position of parent;
-
-The construct a g-window rule is listed in the for constructing rules.
-The construct a g-window rule is defined by Inter as "FW_CONSTRUCT_WINDOW_R".
+The construct a glk window rule is listed in the for constructing rules.
+The construct a glk window rule is defined by Inter as "FW_CONSTRUCT_WINDOW_R".
 
 First after constructing a glk window (called win) (this is the check if the window was created rule):
 	if win is off-screen:
 		now win is unrequired;
 		rule fails;
+
+The process window split method rule is listed in the after constructing rules.
+The process window split method rule is defined by Inter as "FW_PROCESS_SPLIT_R".
 
 Section - Deconstructing windows
 
@@ -392,6 +383,29 @@ The try to detect the default page margin colour rule is defined by Inter as "FW
 
 To set the page margin to its default:
 	(- FW_Set_Default_Page_Margin_Colour(); -).
+
+Chapter - Dynamic split methods - unindexed
+
+[ A constrained window is a proportional window which could become fixed if its size is too big or small. ]
+A glk window has a number called minimum size.
+The minimum size property is accessible to Inter as "min_size".
+A glk window has a number called maximum size.
+The maximum size property is accessible to Inter as "max_size".
+
+[ An aspect ratio graphics window tries to keep to a fixed aspect ratio. ]
+A glk window has a real number called aspect ratio.
+The aspect ratio property is accessible to Inter as "aspect_ratio".
+
+Glk event handling rule for a screen resize event (this is the reprocess window split method rule):
+	reprocess split method for the current root window and children;
+
+To reprocess split method for (win - glk window) and children:
+	reprocess split method for win;
+	repeat with child running through on-screen glk windows spawned by win:
+		reprocess split method for child and children;
+
+To reprocess split method for (W - glk window):
+	(- FW_Process_Split({W}); -).
 
 Chapter - Screen measurement
 
