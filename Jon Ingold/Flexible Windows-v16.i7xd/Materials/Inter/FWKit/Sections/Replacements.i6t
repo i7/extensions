@@ -1,0 +1,372 @@
+Replacements.
+
+Replacements of Architecture32Kit code to refer to the Glk Window objects rather than storing their reference IDs separately.
+
+@h Replacements.
+Replace all the functions which reference |gg_mainwin|, |gg_statuswin|, or |gg_quotewin|. If they don't need to be hard coded then refer to the |active_window| variable instead.
+
+=
++replacing(from Architecture32Kit) [ Box__Routine maxwid arr ix lines lastnl parwin;
+	maxwid = 0; ! squash compiler warning
+	lines = arr-->0;
+
+	if (Quote_Window.glk_ref == 0) {
+		gg_arguments-->0 = lines;
+		if (ix == 0) {
+			Quote_Window.glk_ref =
+				glk_window_open(active_window.glk_ref, winmethod_Fixed + winmethod_Above,
+					lines, wintype_TextBuffer, GG_QUOTEWIN_ROCK);
+		}
+	} else {
+		parwin = glk_window_get_parent(Quote_Window.glk_ref);
+		glk_window_set_arrangement(parwin, winmethod_Fixed + winmethod_Above, lines, 0);
+	}
+
+	lastnl = true;
+	if (Quote_Window.glk_ref) {
+		glk_window_clear(Quote_Window.glk_ref);
+		glk_set_window(Quote_Window.glk_ref);
+		lastnl = false;
+	}
+
+	VM_Style(BLOCKQUOTE_VMSTY);
+	for (ix=0 : ix<lines : ix++) {
+		print (string) arr-->(ix+1);
+		if (ix < lines-1 || lastnl) new_line;
+	}
+	VM_Style(NORMAL_VMSTY);
+
+	if (Quote_Window.glk_ref) {
+		glk_set_window(active_window.glk_ref);
+	}
+];
+
++replacing(from BasicInformKit) [ DrawStatusLine width posb;
+	#ifdef TARGET_GLULX;
+		if (Status_Window.glk_ref == 0) return;
+	#endif;
+	@push say__p; @push say__pc;
+	VM_MoveCursorInStatusLine(1, 1);
+	CarryOutActivity(CONSTRUCTING_STATUS_LINE_ACT);
+	VM_MainWindow();
+	ClearParagraphing(18);
+	@pull say__pc; @pull say__p;
+];
+
++replacing(from Architecture32Kit) [ Fatal_Error msg gg_mainwin;
+	gg_mainwin = glk_window_open(0, 0, 0, wintype_TextBuffer, GG_MAINWIN_ROCK);
+	glk_set_window(gg_mainwin);
+	print "Fatal Error: ", (string) msg, "^";
+	quit;
+];
+
++replacing(from Architecture32Kit) [ GLK_EVENT_TY_New ev evtype win_obj val1 val2 text;
+	if (win_obj == 0 && evtype == evtype_CharInput or evtype_LineInput or evtype_MouseInput or evtype_Hyperlink) {
+		win_obj = active_window;
+	}
+	! Event type specific processing
+	switch (evtype) {
+		evtype_LineInput, evtype_Hyperlink:
+			if (~~(win_obj.glk_window_type == wintype_TextBuffer or wintype_TextGrid)) {
+				IssueRTP("EventWrongWindowType", "GLK_EVENT_TY_New: Glk event created for window of wrong type.", Architecture32KitRTPs);
+				return ev;
+			}
+		evtype_MouseInput:
+			if (~~(win_obj.glk_window_type == wintype_Graphics or wintype_TextGrid)) {
+				IssueRTP("EventWrongWindowType", "GLK_EVENT_TY_New: Glk event created for window of wrong type.", Architecture32KitRTPs);
+				return ev;
+			}
+			! Fix the coordinates of grid window mouse events
+			if (win_obj.glk_window_type == wintype_TextGrid) {
+				val1--;
+				val2--;
+			}
+			if (val1 < 0 || val2 < 0) {
+				IssueRTP("EventInvalidMouseCoords", "GLK_EVENT_TY_New: Glk mouse event created with invalid coordinates.", Architecture32KitRTPs);
+				return ev;
+			}
+	}
+	ev-->GLK_EVENT_TYPE_SF = evtype;
+	ev-->GLK_EVENT_WINDOW_SF = win_obj;
+	ev-->GLK_EVENT_VALUE1_SF = val1;
+	ev-->GLK_EVENT_VALUE2_SF = val2;
+	if (text) {
+		ev-->GLK_EVENT_TEXT_SF = CreatePV(TEXT_TY);
+		CopyPV(ev-->GLK_EVENT_TEXT_SF, text);
+	}
+	return ev;
+];
+
++replacing(from Architecture32Kit) [ IDENTIFY_WINDOWS_R;
+	switch (current_glk_object_rock) {
+		GG_MAINWIN_ROCK:
+			!gg_mainwin = current_glk_object_reference;
+			Main_Window.glk_ref = current_glk_object_reference;
+		GG_STATUSWIN_ROCK:
+			!gg_statuswin = current_glk_object_reference;
+			Status_Window.glk_ref = current_glk_object_reference;
+		GG_QUOTEWIN_ROCK:
+			!gg_quotewin = current_glk_object_reference;
+			Quote_Window.glk_ref = current_glk_object_reference;
+	}
+	rfalse;
+];
+
++replacing(from Architecture32Kit) [ RESET_GLK_REFERENCES_R;
+	Main_Window.glk_ref = 0;
+	Main_Window.glk_rock = GG_MAINWIN_ROCK;
+	Status_Window.glk_ref = 0;
+	Status_Window.glk_rock = GG_STATUSWIN_ROCK;
+	Quote_Window.glk_ref = 0;
+	Quote_Window.glk_rock = GG_QUOTEWIN_ROCK;
+	!gg_mainwin = 0;
+	!gg_statuswin = 0;
+	!gg_quotewin = 0;
+	gg_scriptfref = 0;
+	gg_scriptstr = 0;
+	gg_savestr = 0;
+	statuswin_cursize = 0;
+	gg_foregroundchan = 0;
+	gg_backgroundchan = 0;
+#Ifdef COMMAND_STREAM;
+	gg_commandstr = 0;
+	gg_command_reading = false;
+#Endif;
+	rfalse;
+];
+
++replacing(from Architecture32Kit) [ VM_ClearScreen window;
+	if (window == WIN_ALL or WIN_MAIN) {
+		glk_window_clear(active_window.glk_ref);
+		if (Quote_Window.glk_ref) {
+			glk_window_close(Quote_Window.glk_ref, 0);
+			Quote_Window.glk_ref = 0;
+		}
+	}
+	if (Status_Window.glk_ref && window == WIN_ALL or WIN_STATUS) {
+		glk_window_clear(Status_Window.glk_ref);
+	}
+];
+
++replacing(from Architecture32Kit) [ VM_KeyChar win done res ix jx ch;
+	jx = ch; ! squash compiler warnings
+	if (win == 0) win = active_window.glk_ref;
+#Ifdef COMMAND_STREAM;
+	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+		done = glk_get_line_stream(gg_commandstr, gg_arguments, 31);
+		if (done == 0) {
+			glk_stream_close(gg_commandstr, 0);
+			gg_commandstr = 0;
+			gg_command_reading = false;
+			! fall through to normal user input.
+		} else {
+			! Trim the trailing newline
+			if (gg_arguments->(done-1) == 10) done = done-1;
+			res = gg_arguments->0;
+			if (res == '\') {
+				res = 0;
+				for (ix=1 : ix<done : ix++) {
+					ch = gg_arguments->ix;
+					if (ch >= '0' && ch <= '9') {
+						@shiftl res 4 res;
+						res = res + (ch-'0');
+					} else if (ch >= 'a' && ch <= 'f') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'a');
+					} else if (ch >= 'A' && ch <= 'F') {
+						@shiftl res 4 res;
+						res = res + (ch+10-'A');
+					}
+				}
+			}
+			jump KCPContinue;
+		}
+	}
+#Endif;
+	done = false;
+	glk_request_char_event(win);
+	while (~~done) {
+		glk_select(gg_event);
+		switch (gg_event-->0) {
+			evtype_CharInput:
+			if (gg_event-->1 == win) {
+				res = gg_event-->2;
+				done = true;
+			}
+		}
+	}
+#Ifdef COMMAND_STREAM;
+	if (gg_commandstr ~= 0 && gg_command_reading == false) {
+		if (res < 32 || res >= 256 || (res == '\' or ' ')) {
+			glk_put_char_stream(gg_commandstr, '\');
+			done = 0;
+			jx = res;
+			for (ix=0 : ix<8 : ix++) {
+				@ushiftr jx 28 ch;
+				@shiftl jx 4 jx;
+				ch = ch & $0F;
+				if (ch ~= 0 || ix == 7) done = 1;
+				if (done) {
+					if (ch >= 0 && ch <= 9) ch = ch + '0';
+					else                    ch = (ch - 10) + 'A';
+					glk_put_char_stream(gg_commandstr, ch);
+				}
+			}
+		} else {
+			glk_put_char_stream(gg_commandstr, res);
+		}
+		glk_put_char_stream(gg_commandstr, 10); ! newline
+	}
+	.KCPContinue;
+#Endif;
+	return MapGlkKeyCodeToUnicode(res);
+];
+
++replacing(from Architecture32Kit) [ VM_KeyDelay tenths  key done;
+	glk_request_char_event(active_window.glk_ref);
+	glk_request_timer_events(tenths*100);
+	while (~~done) {
+		glk_select(gg_event);
+		if (gg_event-->0 == evtype_Timer or evtype_CharInput) {
+			key = gg_event-->2;
+			done = true;
+		}
+	}
+	glk_cancel_char_event(active_window.glk_ref);
+	glk_request_timer_events(0);
+	return key;
+];
+
++replacing(from Architecture32Kit) [ VM_MainWindow;
+	glk_set_window(active_window.glk_ref); ! set_window
+	statuswin_current = 0;
+];
+
++replacing(from Architecture32Kit) [ VM_MoveCursorInStatusLine line column;
+	if (Status_Window.glk_ref == 0) return;
+	glk_set_window(Status_Window.glk_ref);
+	if (line == 0) { line = 1; column = 1; }
+	glk_window_move_cursor(Status_Window.glk_ref, column-1, line-1);
+	statuswin_current = 1;
+];
+
++replacing(from Architecture32Kit) [ VM_Picture resource_ID;
+	if (glk_gestalt(gestalt_Graphics, 0)) {
+		glk_image_draw(active_window.glk_ref, resource_ID, imagealign_InlineCenter, 0);
+	} else {
+		print "[Picture number ", resource_ID, " here.]^";
+	}
+];
+
++replacing(from Architecture32Kit) [ VM_ReadKeyboard  a_buffer a_table done ix chr;
+#Ifdef COMMAND_STREAM;
+	if (gg_commandstr ~= 0 && gg_command_reading ~= false) {
+		done = glk_get_line_stream_uni(gg_commandstr, a_buffer+WORDSIZE,
+			(INPUT_BUFFER_LEN-1)-1);
+		if (done == 0) {
+			glk_stream_close(gg_commandstr, 0);
+			gg_commandstr = 0;
+			gg_command_reading = false;
+		} else {
+			! Trim the trailing newline
+			if ((a_buffer+WORDSIZE)-->(done-1) == 10) done = done-1;
+			a_buffer-->0 = done;
+			VM_Style(INPUT_VMSTY);
+			glk_put_buffer_uni(a_buffer+WORDSIZE, done);
+			VM_Style(NORMAL_VMSTY);
+			print "^";
+			jump KPContinue;
+		}
+	}
+#Endif;
+	done = false;
+	glk_request_line_event_uni(active_window.glk_ref, a_buffer+WORDSIZE, INPUT_BUFFER_LEN-1, 0);
+	while (~~done) {
+		glk_select(gg_event);
+		switch (gg_event-->0) {
+			evtype_LineInput:
+			if (gg_event-->1 == active_window.glk_ref) {
+				a_buffer-->0 = gg_event-->2;
+				done = true;
+			}
+		}
+	}
+	! Manually echo the command if required
+	if (BasicInformKit`MANUAL_INPUT_ECHOING_CFGF && Cached_Glk_Gestalts-->gestalt_LineInputEcho) {
+		glk_set_style(style_Input);
+		glk_put_buffer_uni(a_buffer + WORDSIZE, a_buffer-->0);
+		glk_set_style(style_Normal);
+		glk_put_char(10); ! newline
+	}
+#Ifdef COMMAND_STREAM;
+	if (gg_commandstr ~= 0 && gg_command_reading == false) {
+		glk_put_buffer_stream(gg_commandstr, a_buffer+WORDSIZE, a_buffer-->0);
+		glk_put_char_stream(gg_commandstr, 10); ! newline
+	}
+	.KPContinue;
+#Endif;
+
+	for ( ix = 1 : ix <= (a_buffer-->0) : ix++ ) {
+		chr = a_buffer-->ix;
+		if ((chr <= 32) || (((chr >= 8192) && (chr <= 8202))))
+		a_buffer-->ix = 32;
+		else {
+		@binarysearch chr WORDSIZE UnicodeWhitespace WORDSIZE UnicodeWhitespaceLen 0 0 chr;
+	if (chr) a_buffer-->ix = 32;
+		}
+	}
+	if (a_table) {
+		VM_Tokenise(a_buffer, a_table);
+	}
+	! It's time to close any quote window we've got going.
+	if (Quote_Window.glk_ref) {
+		glk_window_close(Quote_Window.glk_ref, 0);
+		!gg_quotewin = 0;
+		Quote_Window.glk_ref = 0;
+	}
+];
+
++replacing(from Architecture32Kit) [ VM_ScreenHeight  height;
+	glk_window_get_size(active_window.glk_ref, 0, gg_arguments);
+	height = gg_arguments-->0;
+	if (Status_Window.glk_ref) {
+		glk_window_get_size(Status_Window.glk_ref, 0, gg_arguments);
+		height = height + gg_arguments-->0;
+	}
+	return height;
+];
+
++replacing(from Architecture32Kit) [ VM_ScreenWidth  id;
+	id = active_window.glk_ref;
+	if (Status_Window.glk_ref) {
+		id = Status_Window.glk_ref
+	}
+	glk_window_get_size(id, gg_arguments, 0);
+	return gg_arguments-->0;
+];
+
++replacing(from Architecture32Kit) [ VM_StatusLineHeight hgt;
+	if (Status_Window.glk_ref == 0) return;
+	if (hgt == statuswin_cursize) return;
+	glk_window_set_arrangement(glk_window_get_parent(Status_Window.glk_ref), winmethod_Fixed + winmethod_Above, hgt, 0);
+	statuswin_cursize = hgt;
+];
+
++replacing(from Architecture32Kit) [ VM_TranscriptOn;
+	while (true) {
+		if (gg_scriptfref == 0) {
+			gg_scriptfref = glk_fileref_create_by_prompt($102, $05, GG_SCRIPTFREF_ROCK);
+			if (gg_scriptfref == 0) rfalse;
+		}
+		! stream_open_file
+		gg_scriptstr = glk_stream_open_file_uni(gg_scriptfref, $05, GG_SCRIPTSTR_ROCK);
+		if (gg_scriptstr == 0) {
+			! Could not open selected file; select again
+			glk_fileref_destroy(gg_scriptfref);
+			gg_scriptfref = 0;
+			continue;
+		}
+		glk_window_set_echo_stream(active_window.glk_ref, gg_scriptstr);
+		rtrue;
+	}
+];

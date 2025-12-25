@@ -1,0 +1,17 @@
+{
+    "is": {
+        "type": "extension",
+        "title": "Flexible Windows",
+        "author": "Jon Ingold",
+        "version": "16.0.0"
+    },
+    "compatibility": "Glulx only",
+    "needs": [
+        {
+            "need": {
+                "type": "kit",
+                "title": "FWKit"
+            }
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "is": {
+        "type": "kit",
+        "title": "GTEKit",
+        "version": "6.0.0"
+    },
+    "compatibility": "32-bit",
+    "kit-details": {
+        "has-priority": 1,
+        "defines-Main": false,
+        "provides-kinds": ["Styles.neptune"]
+    }
+}
