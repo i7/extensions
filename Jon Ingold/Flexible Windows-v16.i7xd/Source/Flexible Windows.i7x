@@ -58,7 +58,6 @@ The verb to be descended from implies the reversed spawning relation.
 
 Chapter - The built in windows
 
-[ Set the position of the main window just so that we can automatically arrange windows ]
 The position of the main window is placed below.
 
 The status window is spawned by the main window.
@@ -67,6 +66,7 @@ The split method of the status window is fixed size.
 The measurement of the status window is 1.
 
 The quote window is spawned by the main window.
+The position of the quote window is placed below.
 
 The open built in windows using Flexible Windows rule is listed instead of the open built in windows rule in the for starting the virtual machine rulebook.
 This is the open built in windows using Flexible Windows rule:

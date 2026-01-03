@@ -1,0 +1,45 @@
+Example: ** Constrained Windows - Use dynamic window constraints.
+
+	**: "Constrained Windows"
+	
+	Include Flexible Windows by Jon Ingold.
+
+	The side panel is a text buffer window.
+	The side panel is spawned by the main window.
+	The position of the side panel is placed right.
+	The split method of the side panel is constrained.
+	The measurement of the side panel is 30.
+	The minimum size of the side panel is 20.
+	The maximum size of the side panel is 40.
+	The background colour of the side panel is #DCD0FF.
+
+	Rule for refreshing the side panel:
+		say "This side panel is constrained between 20 and 40 characters wide. Currently: [width of the side panel]";
+
+	The graphics panel is a graphics window.
+	The graphics panel is spawned by the main window.
+	The position of the graphics panel is placed left.
+	The split method of the graphics panel is fixed aspect ratio.
+	The aspect ratio of the graphics panel is 0.25.
+	The background colour of the graphics panel is #4F7942.
+
+	Use no status window.
+
+	Demonstration is a room.
+
+	When play begins:
+		open the side panel;
+		open the graphics panel;
+		say "This demonstration shows some advanced features of Flexible Windows.[paragraph break]The graphics window on the left has a fixed aspect ratio. This is helpful for showing images correctly regardless of the interpreter's size.[paragraph break]We will now show some window details; try resizing the interpreter window, or press Q to end.";
+		while 1 is 1:
+			say screen details;
+			let code be the code of the next pressed key;
+			if code is unicode U+0051 or code is unicode U+0071:
+				stop the game abruptly;
+
+	To say screen details:
+		say "[paragraph break]Screen resolution: [screen width in pixels]x[screen height in pixels]px ([screen aspect ratio])[line break]Landscape: [whether or not screen is landscape], portrait: [whether or not screen is portrait], virtual keyboard: [whether or not there is probably a virtual keyboard on-screen]";
+
+	Glk event handling rule for a screen resize event:
+		say screen details;
+		refresh the side panel;
