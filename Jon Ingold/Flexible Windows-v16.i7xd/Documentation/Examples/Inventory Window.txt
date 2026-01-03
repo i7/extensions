@@ -1,0 +1,24 @@
+Example: * Inventory Window - Show the player's inventory in a side window.
+
+	*: "Inventory Window"
+
+	Include Flexible Windows by Jon Ingold.
+
+	The side panel is a text buffer window.
+	The side panel is spawned by the main window.
+	The position of the side panel is placed right.
+	The split method of the side panel is proportionally sized.
+	The measurement of the side panel is 30.
+
+	When play begins:
+		open the side panel;
+
+	Rule for refreshing the side panel:
+		try taking inventory;
+	
+	Every turn:
+		refresh the side panel;
+
+	The Nursery is a room. In the nursery are some blocks and a toy train.
+
+	Test me with "get blocks / get train".
