@@ -1,0 +1,8 @@
+{
+    "is": {
+        "type": "extension",
+        "title": "Dynamic Tables",
+        "author": "Tara McGrew",
+        "version": "6.0.0"
+    }
+}

@@ -1,0 +1,36 @@
+Example: * The Cubbins Effect
+Description: Creating a new hat every time the player removes the one he's wearing.
+
+	{*}"The Cubbins Effect" by Geodor Theisel
+	
+	Include Dynamic Objects by Tara McGrew.
+	
+	King Derwin's Court is a room. "You have been summoned here for the crime of failing to remove your hat in the king's presence."
+	
+	A hat is a kind of thing.
+	
+	A hat style is a kind of value. The hat styles are red, blue, green, yellow, white, black, brown, zebra-striped, tall, pointy, short, gray, pink, fuzzy, rainbow-colored, and feathered.
+	
+	A hat has a hat style. Before printing the name of a hat, say "[hat style] ". Understand the hat style property as describing a hat.
+	
+	The player wears a hat which is red.
+	
+	Instead of taking off a hat which is worn by the player:
+		now the noun is in the location;
+		if 500 hats are in the location:
+			say "You remove [the noun] and drop it. It seems that was the last one!";
+			end the story finally saying "You have won";
+		otherwise:
+			let the new hat be a new object cloned from the noun;
+			now the player is wearing the new hat;
+			say "You remove [the noun] and drop it, only to find another hat upon your head -- a [hat style of the new hat] one."
+
+	After cloning a new object from a hat (called the original hat):
+		while the hat style of the new object is the hat style of the original hat:
+			now the hat style of the new object is a random hat style.
+	
+	Rule for printing a number of hats (called the particular headwear):
+		say "[listing group size in words] [hat style of the particular headwear] hats".
+	
+	Test me with "remove hat / remove hat / remove hat / i / look".
+

@@ -1,0 +1,58 @@
+Example: * Notlob
+Description: A parrot that assigns a value to everything he hears, and repeats the lines back in his preferred order.
+
+The Table of Parrot Quips holds the lines that the parrot has heard, along with a score indicating how much the parrot likes each one, and a usage count to limit the number of times he repeats each one. We use a dynamic table, rather than three lists, because we need to keep the score and usage count associated with the correct text: table sorting keeps rows together, but lists can only be sorted independently of each other.
+
+	{*}"Notlob"
+	
+	Include Dynamic Tables by Tara McGrew.
+	
+	Pet Shoppe is a room. "A sign reads: 'If you're looking for pets, look no further! Pets are something we sell and you can buy them from us.'"
+	
+	The parrot is an animal in the Pet Shoppe. "A parrot is perched here." Instead of buying the parrot, say "Except that one."
+	
+	Table of Parrot Quips
+	quip text	quip score	usage count
+	indexed text	a number	a number
+	
+	The highest quip score is a number that varies. The highest quip score is 0.
+	
+	After answering the parrot that:
+		let the textual quip be indexed text;
+		let the textual quip be the topic understood;
+		let the current quip score be the calculated quip score of the textual quip;
+		if the number of blank rows in the Table of Parrot Quips is 0, change the Table of Parrot Quips to have (2 * the number of rows in the Table of Parrot Quips) rows;
+		choose a blank row in the Table of Parrot Quips;
+		now the quip text entry is the textual quip;
+		now the quip score entry is the current quip score;
+		now the usage count entry is 0;
+		sort the Table of Parrot Quips in reverse quip score order;
+		if the current quip score is greater than the highest quip score:
+			say "The parrot listens intently, whistling with excitement.";
+			now the highest quip score is the current quip score;
+		otherwise:
+			say "The parrot listens."
+	
+	To decide which number is the calculated quip score of (msg - indexed text):
+		let msg be msg in lower case;
+		let the result be 0;
+		repeat with N running from 1 to the number of characters in msg:
+			let C be character number N in msg;
+			if C is "p" or C is "a" or C is "r" or C is "o" or C is "t", increase the result by 1;
+		decide on the result.
+	
+	Every turn when the highest quip score is greater than 0:
+		choose row 1 in the Table of Parrot Quips;
+		say "The parrot squawks, '[quip text entry]'";
+		increase the usage count entry by 1;
+		if the usage count entry is 3:
+			blank out the whole row;
+			if the number of filled rows in the Table of Parrot Quips is 0:
+				now the highest quip score is 0;
+			otherwise:
+				sort the Table of Parrot Quips in reverse quip score order;
+				choose row 1 in the Table of Parrot Quips;
+				now the highest quip score is the quip score entry.
+	
+	Test me with "say hello polly / say hello polly parrot / say i've got a lovely fresh cuttlefish for you / say pining for the fjords / z / z / z / z".
+
