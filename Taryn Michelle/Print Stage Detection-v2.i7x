@@ -1,4 +1,4 @@
-Version 2.0.241013 of Print Stage Detection by Taryn Michelle begins here.
+Version 2.11 of Print Stage Detection by Taryn Michelle begins here.
 
 "'Printing the name' rules make TWO passes over the same object when Inform needs to determine the appropriate article to print. This is a non-issue for many rules, but 'printing the name' rules with side effects may need to know which stage is currently being processed (article-choosing or name-printing), so that they can avoid double-execution of any side effects.  Updated for compatability with Inform version 10.1.2"
 

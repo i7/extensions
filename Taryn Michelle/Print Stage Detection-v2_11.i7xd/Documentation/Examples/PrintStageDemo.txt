@@ -1,0 +1,59 @@
+Example: ** Print Stage Demo
+Description: A simple demonstration of the two passes the printing the name activity makes when printing an object with an article, and the use of Print Stage Detection to deal with some issues that arise.
+
+	{*}"Print Stage Demo"
+
+	Include Print Stage Detection by Taryn Michelle.
+
+	A thing has a number called the look-examine-count. The look-examine-count of a thing is usually 0.
+	A thing has a number called the times-printed. The times-printed of a thing is usually 0.
+	A thing has a number called the examine-count. The examine-count of a thing is usually 0.
+	A thing has a number called the rule-count. The rule-count of a thing is usually 0.
+	A thing can be tracked. A thing is usually not tracked.
+	A thing can be grammatical or ungrammatical. A thing is usually grammatical. The awful quirkiness is ungrammatical.
+
+	Before printing the name of a grammatical thing (called the target):
+		if the print-stage is name-printing:
+			say "-->";
+
+	After printing the name of a grammatical  thing (called the target):
+		increase rule-count of the target by 1;
+		if the print-stage is name-printing:
+			say "<--";
+			increase times-printed of the target by 1.
+
+	Before printing the name of the awful quirkiness:
+		say "(";
+	
+	After printing the name of the awful quirkiness:
+		say ")";
+		increase rule-count of the quirkiness by 1;
+		increase times-printed of the quirkiness by 1;
+
+	The Chamber of Demonstration is a room. "[chamber-description]".
+
+	To say chamber-description:
+		say "Wherein we shall demonstrate [an awful quirkiness] that can happen when Inform runs TWO printing-the-name passes for a single object. Besides causing side effects to happen TWICE each time the object is printed (see the counts below), it can also cause a WRONG ARTICLE to be printed (as is the case here), depending on what we do in our name-printing rules.[paragraph break]";
+		say "Whereas, notice that [an articulated thing] prints with the proper article, and also that its times-printed count, below, is correct, because we used print-stage checking for this object."
+
+	The articulated thing is scenery in the chamber. The articulated thing is tracked.
+	The awful quirkiness is scenery in the chamber. The quirkiness is tracked.
+
+	To say rule count of (target - a thing):
+		say "<[printed name of target]>";
+		if the target is not tracked:
+			say " is not being tracked";
+		otherwise:
+			say " has been printed (by looking or examining) a total of [look-examine-count of the target] time[s]. It has triggered the printing the name activity [rule-count of the target] time[s]. Within that activity we've counted the times it has been printed as [times-printed of the target][if times-printed of target > look-examine-count of target] (this last value is INCORRECTLY DOUBLED, demonstrating the side effect problem that can happen without print-stage checking)[end if]."
+
+	After looking:
+		repeat with item running through tracked things in the chamber:
+			increase look-examine-count of the item by 1;
+			say "[rule count of item][line break]".
+
+	After examining a tracked thing (called the item):
+		increase the look-examine-count of the item by 1;
+		say "[rule count of item][line break]".
+
+	Test me with "x articulated /  x quirkiness / look".
+

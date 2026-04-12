@@ -1,0 +1,70 @@
+Example: ** Commentary by Gump
+Description: Demonstrating Nested Text Capture in Action
+
+	[The ability to place comments inline with text would be a great feature to see added to the Inform language.]
+	[The following say statements allow us to accomplish that]
+	
+	Include Nested Text Capture by Taryn Michelle.
+	
+	To say /* -- beginning say_slash_slash -- running on: start capturing text.
+	To say */ -- ending say_slash_slash -- running on: stop capturing text.
+
+	To say series of elaborations:
+		say "[one of]Text substitutions in Inform are almost like [xyzzy][/*] (Here we mean to say that they are like magic! ) [*/] But they can sometimes be inscrutable. To begin with, the ability to place comments directly inline with our text allows us to document otherwise obscure substitutions right where they are written.[or][/*]
+
+		[*/]When each alternative text of a series is short, of course, this is accomplished easily enough with regular comments. But if many of the texts span multiple lines, especially if there are many such choices, the large [alakazam] [/*] (prints up as 'blob') [*/] of sentences and paragraphs all mashed together can make it very difficult to see what's going on at a glance.[or][/*]
+
+		[*/]That's at least in part because each alternative can normally be separated from the next only by a substitution such as '[bracket]or[close bracket]', with no extraneous whitespace such as tabs or newlines permitted.[or][/*]
+
+		[*/]Technically speaking, in alternative text substitutions like this one, extra whitespace CAN be included in the text, but of course, that means it will also get printed out - a result we probably aren't going to like.[or][/*]
+
+		[*/]And when texts are stored in Tables, the limitations are even more pronounced. Tables are frequently useful for holding things like speaker dialogue, responses to 'consulting' a reference source about various topics, and the like. But as anyone who has ever constructed such an Inform table of any size well knows, they quickly become difficult to read. With the ability to introduce blocking, and even explanatory comments as necessary, directly into any table text column, tables can be made substantially more readable, and therefore more easily maintainable.[or][/*]
+
+		[*/]In a nutshell, those are the arguments for inline text comments, implented here by way of the pair of segmented substitutions '[bracket]/*[close bracket]' and '[bracket]*/[close bracket]'.[or][/*]
+
+		[*/]Now, it would be even nicer if Inform implented such a feature directly, and the IDE supported syntax coloring of inline text comments to make them stand out even more clearly. And with the present implementation, even though none of the text between the comment braces will get printed up at runtime, it still occupies space in the code and takes up processing cycles at runtime to deal with. The memory space factor is more likely to be an issue for Z-machine builds than for Glulx, and the processing cycles to essentially skip over an inline comments at runtime are minimal, but still, native support would be all the better. For now, though, this approach is workable, and results in immediately more readable code.[or][/*]
+
+		[*/]Of course, since these comments can appear anywhere, in any text, then other code that relies on capturing text output has no way of knowing if or when the output it's capturing might include text with such comments in it, and therefore text that itself relies on the ability to capture text to print up properly. In short, in order for these in-line text comments to be safe to use anywhere, Text Capture needed to be made safely re-entrant.[or][/*]
+
+		[*/]Our very last paragraph (the following one) illustrates an admittedly contrived case of this. We quote Forrest Gump in perhaps the most obtuse way possible, using a segmented substitution that itself makes use of text capture to do so.[or][*/]
+
+		[*/][gump] [/*] (Finally, quoting Forrest Gump here.) [*/][stopping]";
+		
+	To say xyzzy: say "magic".
+	To say alakazam: say "blob".
+	To say gump:
+		say "[begin forrest]That's all I've got to say about that.[end forrest]".
+	
+	[And now, a ridiculously obtuse way to accomplish something via replacing bits of captured text. The example here is admittedly contrived, but more realistic situations can easily arise.]
+	number of times gump quoted is a number that varies.
+
+	To say begin forrest -- beginning say_forrest_gump_quote -- running on:
+		begin text capture;
+		
+	To say end forrest -- ending say_forrest_gump_quote -- running on:
+		end text capture;
+		let T be "[the captured text]";
+		increment the number of times gump quoted;
+		if number of times gump quoted < 2:
+			if character number 1 in T is "T":
+				replace character number 1 in T with "t";
+			say "And ";
+		say T.
+
+
+The above example is intentionally written such that it will compile with or without inclusion of the Nested Text Capture extension. To see why this is potentially problematic, try running it without Nested Text Capture included and see the havoc that results. Thus in code written with the use of this extension in mind, it's suggested to exclusively use the newly-introduced phrases for starting and ending text capture, namely "begin text capture" and "end text capture".  In that way, accidentally omitting inclusion of the Nested Text Capture extension will produce immediate compiler errors, rather than potentially mysterious misbehavior down the road at runtime.
+	
+		
+		
+		
+		
+	
+
+
+
+
+
+
+
+
+
