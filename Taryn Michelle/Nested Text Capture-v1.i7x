@@ -1,4 +1,4 @@
-Version 1.1.241018 of Nested Text Capture by Taryn Michelle begins here.
+Version 1.2 of Nested Text Capture by Taryn Michelle begins here.
 
 "Builds on Eric Eve's text capture extension (with contributions from Dannii Willis) to allow for re-entrance."
 
@@ -38,13 +38,16 @@ Part 1 - Re-Entrant Functionality
 [ // TMV 18 Sep 2024 - Inform 10 Compatability ]
 [ // TMV 12 Oct 2024 - Change capture phrase names so code written for this extension cannot accidentally be run with only Eric Eve's original Text Capture extension included. Old and new names are as follows:
 	Original phrase					New phrase
-	start capturing text				begin text capture
+	------------------------		-----------------------------------
+	start capturing text			begin text capture
 	stop capturing text				end text capture
-	text capturing is active			we're capturing text
+	text capturing is active		we're capturing text
 	
-We now also have two separate pieces of text of possible interest: captured text (everything captured so far) and captured snippet (everything captured by the current, possibly nested invocation of "begin text capture").
-
-]
+We now also have two separate pieces of text of possible interest: captured text (everything captured so far) and captured snippet (everything captured by the current, possibly nested invocation of "begin text capture").]
+[ // TMV 11 Apr 2025 - Inform 10.2/11.0 Compatabililty. 
+	 Also Converted to new "directory" format for extensions. 
+	 Resolved non-working suspend/resume text capture (required for trace_immedate calls to bypass text capture)
+	 Commented out most trace messages, as they are no longer needed, and incur a (small) cost for passing the text around, whether printed out or not ]
 
 Section 1 - Set larger default capture buffer length (for Glulx Only)
 
@@ -66,7 +69,7 @@ To begin text capture:
 	if text_capture_level < 0:
 		trace_immediate "WARNING: text_capture_level < 0 (which should never happen)" as nested_text_capture;
 		now text_capture_level is 0; [This SHOULD never happen. If it does, avert disaster.]
-	trace_immediate "Starting text capture ([text_capture_level])" as nested_text_capture;
+	[trace_immediate "Starting text capture ([text_capture_level])" as nested_text_capture;]
 	let N be text_capture_level;
 	truncate text_capture_context to N entries; [clear out any more deeply-nested prior buffers]
 	extend text_capture_context to N + 1 entries; [add back the next-level buffer, initialized to the empty string ("")]
@@ -74,7 +77,7 @@ To begin text capture:
 		end low-level text capture;
 		let T be "[captured snippet]";
 		now entry N of text_capture_context is entry N of text_capture_context & "[T]";
-		trace_immediate "Capture context [text_capture_level] saved as: [entry N of text_capture_context]" as nested_text_capture;
+		[trace_immediate "Capture context [text_capture_level] saved as: [entry N of text_capture_context]" as nested_text_capture;]
 		begin low-level text capture;
 	increment text_capture_level;
 	begin low-level text capture. 
@@ -83,12 +86,12 @@ To end text capture:
 	if we're capturing text: 
 		let N be text_capture_level; 
 		end low-level text capture;
-		trace_immediate "Stopping text capture ([N - 1]) with captured snippet: [captured snippet]" as nested_text_capture;
+		[trace_immediate "Stopping text capture ([N - 1]) with captured snippet: [captured snippet]" as nested_text_capture;]
 		now entry N of text_capture_context is entry N of text_capture_context & "[captured snippet]";
 		decrement text_capture_level;
 		[trace_immediate "Text Capture ([text_capture_level]) ended with buffer status: [text_capture_context]" as nested_text_capture;]
 		if text_capture_level > 0:
-			trace_immediate "Resuming text capture ([N]) - with buffer data: [text_capture_context]" as nested_text_capture;
+			[trace_immediate "Resuming text capture ([N]) - with buffer data: [text_capture_context]" as nested_text_capture;]
 			begin low-level text capture;
 	otherwise:
 		trace_immediate "WARNING: Mismatched call to end text capture (capture is not active)" as nested_text_capture;
@@ -140,9 +143,9 @@ To resume text capture: do nothing.
 	
 Section 5 - Every turn rule to safely close out any text capturing left active
 
-Every turn (this is the safely close open text capturing contexts rule):
+Last Every turn (this is the safely close open text capturing contexts rule):
 	if we're capturing text or we're low-level capturing text:
-		trace_immediate "End of turn reached with text capture still active ( [current text capture context]) - forcing capture closed and flushing buffered text" as nested_text_capture;
+		[trace_immediate "End of turn reached with text capture still active ( [current text capture context]) - forcing capture closed and flushing buffered text" as nested_text_capture;]
 		end text capture for 1; [close all capture out]
 		if we're tracing nested_text_capture:
 			SAY "[bold type]           *** WARNING: Text Capture still active at end of turn ***[line break]      (check for mismatched begin/end capture statements in your code)[line break][roman type]" (A);
