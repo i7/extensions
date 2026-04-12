@@ -181,7 +181,7 @@ To end low-level text capture:
 To say the/-- captured snippet:
 	(- PrintCapture(); -).
 	
-Part 2B (in place of Part 2F - FyreVM phrases in Text Capture by Eric Eve)
+[Part 2B (in place of Part 2F - FyreVM phrases in Text Capture by Eric Eve) [ // TMV - FyreVM support removed from 11.0 version of Text Capture by Eric Eve ]
 
 Section 2.2 - Low-Level FyreVM phrases  (for Glulx only) (for use with FyreVM Support by TextFyre)
 
@@ -192,7 +192,7 @@ To end low-level text capture:
 	(- FyreVMEndCapture(); -).
 
 To say the/-- captured snippet:
-	(- FyreVMPrintCapture(); -).
+	(- FyreVMPrintCapture(); -).]
 	
 [[ //* TMV 01 Nov 2024 - None of these options work to remove the "To say captured text:" definition from Eric Eve's extension. Redefining the expression within each of these SHOULD technically work, but something else is obviously not right here]
 
