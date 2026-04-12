@@ -1,4 +1,4 @@
-Example: * Which of These Things Is Not Like the Others?
+Example: * Which of These Things Is Not Like the Others
 Description: Arranging items in room descriptions so that the most unusual objects are always at the back of the list.
 
 A common descriptive strategy in listing numerous objects is to save the most astonishing or interesting items for last. In this example, we arrange it so that the most peculiar items in a room are always included at the end of the list, no matter in what order they have been taken or dropped.
