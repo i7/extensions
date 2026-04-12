@@ -37,7 +37,7 @@ In this example, we change the behavior of "preserving relations" so that when t
 
 Section: Handling block value properties
 
-When cloning objects that have properties containing block values (indexed text, stored actions, lists, or dynamic relations), we must indicate which properties those are so the extension can copy their values correctly; otherwise we may encounter unexpected behavior or runtime problem messages if the property values are changed. Use the "fix the cloned _ property" phrase in an "after cloning a new object from" rule:
+When cloning objects that have properties containing block values (text*, stored actions, lists, or dynamic relations), we must indicate which properties those are so the extension can copy their values correctly; otherwise we may encounter unexpected behavior or runtime problem messages if the property values are changed. Use the "fix the cloned _ property" phrase in an "after cloning a new object from" rule:
 
 	A person has a list of numbers called the favorite numbers.
 	
@@ -49,6 +49,40 @@ Chapter: Caveats
 If we plan to clone any rooms or doors, we must disable fast route-finding (which is enabled by default on Glulx):
 
 	Use slow route-finding.
+
+Chapter: Known Issues
+
+*Fixing the cloned ... property, for "block" value properties, which now includes ALL text properties:
+
+Those familiar with older versions of Inform (prior to the Inform 7 6L02 release) likely recall the need to differentiate between dynamic "indexed text" and static "text" types. That distinction no longer exists (a good thing), but that means ALL text is now (potentially) dynamic. Therefore, it's necessary to "fix the cloned ... property" for EVERY TEXT property of any object we clone. Failure to do so will results in cloned objects pointing to the same exact property value as the original object, so that changing that value in any one of the objects in question changes it FOR ALL of the objects.  
+
+This means that, while previously, having to write "after cloning a new object" rules to fix block properties was likely to be rare, it's an absolute necessity now. 
+
+For example, the default "thing" kind alone features the following text properties: description, initial appearance, printed name, printed plural name, indefinite article, list grouping key.
+
+At the moment, this extension does nothing to address this. Rather, at a minimum, if you intend to clone any "things" (or object kinds derived from the "thing" kind) you MUST write an "After cloning a new object from a thing" rule, as well as a similar rule for each derived kind that adds one or more text or other "block" type  properties of its own. 
+
+If there were a straightforward way in either Inform 7 or Inform 6 to iterate over all the properties of an object (or kind) at runtime, this extension could attempt to automatically "fix" any cloned "block"  properties automatically. Unfortunately, there seems to be no straightforward way to accomplish that, and it's beyond the scope of this extension to attempt to resolve that particular problem. 
+
+**Counting objects of a kind 
+
+The standard way to determine how many objects match any sort of description in Inform is just to use
+
+	the number of <description of objects>
+
+This currently works fine with Dynamic Objects *unless the description of objects is just the name of a kind*. Where "widget" is a kind, the expression ...
+
+	the number of widgets
+
+returns ONLY the number of statically defined widgets. If any dynamic objects of the widget kind are created, they are not inlcuded in the count. 
+
+As time permits, I may try to track down a resolution for this. In the meantime, the following "hack" works:
+
+	Definition: A thing is total if: decide yes. 
+
+	let N be the number of total widgets; [Returns a count of ALL widgets, including any that were dynamically created]
+
+I expect this forces Inform to walk through the list of widgets, as will be the case with most descriptions of objects, testing the (in this case always trivially true) condition for each one. Whereas the former almost certain relies either on querying an I6 variable (in which case a simple enough fix should be possible) or else a compile-time constant (in which case any resolution is probably beyond the scope of this extension). 
 
 Chapter: Change log
 
