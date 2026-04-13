@@ -1,4 +1,4 @@
-Example: * Who tests the testers?
+Example: * Who tests the testers
 
 	{*}"Unit Tests"
 	

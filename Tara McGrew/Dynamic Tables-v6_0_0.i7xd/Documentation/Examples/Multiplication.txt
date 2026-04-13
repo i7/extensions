@@ -1,0 +1,69 @@
+Example: ** Multiplication
+Description: Using the "new table" feature to create a 2D multiplication table using cross references.
+
+A table is a two-dimensional structure already, but you can only access columns by name, not by number. This example shows how to create a table that contains references to other tables, so that we can multiply two numbers by looking up the first one in the master table, cross referencing to another table, and looking up the second number in that other table.
+
+	{*}"Multiplication"
+	
+	Include Dynamic Tables by Tara McGrew.
+	
+	[This is the table we'll fill in with references to the other tables.]
+	
+	Table of Multiplication
+	factor		cross reference
+	a number	a table-name
+	with 19 blank rows.
+	
+	[This table only serves to define the "product" column.]
+	
+	Table of Dummy Columns
+	product
+	a number
+	
+	[Here we fill in the multiplication table, creating a cross reference subtable for each row.]
+	
+	When play begins:
+		repeat with R running from 1 to 20:
+			let the subtable be a new table with columns {factor, product} and 20 blank rows;
+			choose row R in the Table of Multiplication;
+			now the factor entry is R;
+			now the cross reference entry is the subtable;
+			repeat with C running from 1 to 20:
+				choose row C in the subtable;
+				now the factor entry is C;
+				now the product entry is R * C.
+	
+	To look up (X - number) times (Y - number) in the multiplication table:
+		if X is a factor listed in the Table of Multiplication:
+			let the subtable be the cross reference entry;
+			if Y is a factor listed in the subtable:
+				say "[X in capitalized words] times [Y in words] is [product entry in words].";
+				stop;
+		[if we get here, either X or Y are unlisted]
+		say "That isn't in the multiplication table."
+	
+	To say (N - number) in capitalized words:
+		let temp be indexed text;
+		let temp be "[N in words]";
+		say temp in sentence case.
+	
+	[Here we need to do some trickery to get around a parser limitation, because Inform normally can't handle two numbers in the same command.]
+	
+	The other factor is a number that varies.
+	
+	After reading a command:
+		if the player's command includes "by/times [number]":
+			now the other factor is the number understood;
+			replace the matched text with "by __num__".
+	
+	Multiplying is an action applying to one number. Understand "multiply [number] by/times __num__" as multiplying.
+	
+	Carry out multiplying:
+		look up the number understood times the other factor in the multiplication table.
+	
+	Classroom is a room. "This is a peaceful place in which to multiply numbers by other numbers."
+	
+	Test me with "multiply 5 times 6 / multiply 12 by 8 / multiply 67 by 91".
+
+(We could do this without the extension by defining all twenty-one tables in the source text, but that's a lot of typing.)
+
