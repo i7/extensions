@@ -4,5 +4,13 @@
         "title": "Print Stage Detection",
         "author": "Taryn Michelle",
         "version": "2.11"
-    }
+    },
+    "needs": [
+        {
+            "need": {
+                "type": "kit",
+                "title": "PSDKit"
+            }
+        }
+    ]
 }

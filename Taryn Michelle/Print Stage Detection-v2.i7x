@@ -11,6 +11,7 @@ Include (- Global article_choosing  =  false;  -) [after "Definitions.i6t"].
 
 [The PrefaceByArticle routine is copied from Printing.i6t and modified to set a global flag which will tell us when PSN__ (the routine that ends up invoking the 'printing the name' activity) is printing to a buffer (to determine what article to choose) or displaying output.]
 
+[ // Inform 10.1 Version]
 Include (- 
 
 [ PrefaceByArticle obj acode pluralise capitalise  i artform findout artval;
@@ -88,6 +89,81 @@ Include (-
 	Cap (artform-->acode, ~~capitalise); ! print article
 	if (pluralise) return;
 	print (PSN__) obj;
+]; -) replacing "PrefaceByArticle"; 
+
+[ // Inform 10.2 / 11.0 current version ]
+
+Include (-
+
+[ PrefaceByArticle obj acode pluralise capitalise i artform findout artval;
+	if ( article_choosing ) { ! prevent reentrant calls from also attempting to choose an article, thereby disrupting article-choosing for the original object. (This is okay -- they will get their turn to print as requested later on, during the name-printing stage for the original object.)
+		print (PSN__) obj; return;
+	}
+    if ((_final_propertyexists(OBJECT_TY, obj, A_articles))) {
+        (artval = ((_final_propertyarray(OBJECT_TY, obj, A_articles))-->((acode + (short_name_case*LanguageCases)))));
+        if (capitalise) {
+            Cap(artval);
+        } else {
+            print (string) artval;
+        }
+        if (pluralise) {
+            rtrue;
+        }
+        PSN__(obj);
+        rtrue;
+    }
+	(i = GetGNAOfObject(obj));
+    if (pluralise) {
+        if ((((i < 3)) || ((((i >= 6)) && ((i < 9)))))) {
+            (i = (i + 3));
+        }
+    }
+    (i = (LanguageGNAsToArticles-->(i)));
+    (artform = (LanguageArticles + (((3*WORDSIZE)*LanguageContractionForms)*(short_name_case + (i*LanguageCases)))));
+    switch (LanguageContractionForms) {
+        2:
+            if (((artform-->(acode)) ~= (artform-->((acode + 3))))) {
+                (findout = 1);
+            }
+            ;
+        3:
+            if (((artform-->(acode)) ~= (artform-->((acode + 3))))) {
+                (findout = 1);
+            }
+            if (((artform-->((acode + 3))) ~= (artform-->((acode + 6))))) {
+                (findout = 1);
+            }
+            ;
+        4:
+            if (((artform-->(acode)) ~= (artform-->((acode + 3))))) {
+                (findout = 1);
+            }
+            if (((artform-->((acode + 3))) ~= (artform-->((acode + 6))))) {
+                (findout = 1);
+            }
+            if (((artform-->((acode + 6))) ~= (artform-->((acode + 9))))) {
+                (findout = 1);
+            }
+            ;
+        default:
+            (findout = 1);
+            ;
+    }
+    if (findout) {
+		article_choosing = true;
+        if (pluralise) {
+            Glulx_PrintAnyToArrayUni(StorageForShortName, SHORT_NAME_BUFFER_LEN, EnglishNumber, pluralise);
+        } else {
+            Glulx_PrintAnyToArrayUni(StorageForShortName, SHORT_NAME_BUFFER_LEN, PSN__, obj);
+        }
+		article_choosing = false;
+        (acode = (acode + (3*LanguageContraction(StorageForShortName))));
+    }
+    Cap((artform-->(acode)), (~~(capitalise)));
+    if (pluralise) {
+        rtrue;
+    }
+    PSN__(obj);
 ]; -) replacing "PrefaceByArticle";
 
 Section - Adding pass-detection to the printing the name activity

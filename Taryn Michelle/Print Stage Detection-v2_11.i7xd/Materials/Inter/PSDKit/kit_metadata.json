@@ -1,0 +1,19 @@
+{
+    "is": {
+        "type": "kit",
+        "title": "PSDKit",
+        "version": "2.1.1"
+    },
+    "kit-details": {
+        "has-priority": 100,
+        "defines-Main": false
+    },
+    "needs": [
+        {
+            "need": {
+                "type": "kit",
+                "title": "BasicInformKit"
+            }
+        }
+    ]
+}
