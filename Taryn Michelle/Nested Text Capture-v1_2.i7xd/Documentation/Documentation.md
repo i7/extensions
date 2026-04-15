@@ -45,7 +45,7 @@ Note that captured text (for any given context) can only be reliably accessed on
 
 All of the above may take a moment or two to think through, but in fact THIS IS ALWAYS GOING TO BE THE BEHAVIOR WE WANT. Nested calls to begin/end text capture should never require awareness of whether or not text capturing was already active when they were invoked, nor should they ever need to be concerned with whether another call to begin/end text capture might happen while they are busy capturing text.
 
-The only paramount rule is that every call to "begin text capture" has a matching "end text capture" call.
+The paramount rule is that every call to "begin text capture" has a matching "end text capture" call.
 
 Section 3 - Testing and Manipulating a specific nested context
 
@@ -67,21 +67,20 @@ As already noted in section 2, our code should be written to be largely, if not 
 	if text capture is active for ctx:
 		...
 
-There is also a phrase to force a specific nested capture context closed (closing any open nested contexts below it closed as well):
+There is also a phrase to force a specific nested capture context closed (forcing any open nested contexts below it closed as well):
 	
 	end text capture for (ctx - a number)  [where ctx is the context value as illustrated above]
 	
-In fact, to avoid any potential confusion, this extension makes use of such a call exactly once, in an Every Turn rule, meant to catch situations in which an author has inadvertantly left one or more calls to "begin text capture" open. If we did not force closed any capture left often at this point, the command prompt -- along with anything the player typed -- would be swallowed up (and thus essentially "invisible").
+This extension makes use of such a call exactly once, in a "last every Turn rule", meant solely to catch situations in which an author has inadvertantly left one or more calls to "begin text capture" open. If we did not force closed any capture left often at this point, the next command prompt -- along with anything the player tryed to type -- would be swallowed up (and thus essentially "invisible").
 
-Even at that, results may not be as intended. Such a situation should in fact never occur by design, and the rule that catches this by default reports it as a likely mistake.
+Even at that, results may not be as intended. Such a situation should in fact never occur by design, and the rule that catches this by default reports it as a likely coding error.
 
 Section - A Use Case for Nested Text Capture
 
-
-As noted earlier, even if we as author's haven't explicitly made use of text capturing in our own code, a number of extensions make use of Text Capture interally to store and manipulate bits of text before they are printed out.
+As noted earlier, even if we as author's haven't explicitly made use of text capturing in our own code, a number of extensions may already use Text Capture interally to store and manipulate bits of text before they are printed out.
 
 If we include such an extension in our project, and subsequently come up with a reason to capture and store, manipulate and/or later print out text of our own, unless we make very sure one capture can never be started while the other is active, or else we write (fairly tricky) code -- much along the lines of this extension, in fact -- to handle such nesting if it ever does occur, one capture is going to step on the other and produce incorrect results.
 
-The following simple example illustrates how two independent reasons for capturing text might occur, and might in fact need to be made safely re-entrant (i.e., nestable)
+The example, "Comments by Gump, illustrates how two independent, if somewhat contrived, reasons for capturing text might occur, and need to be made safely re-entrant (i.e., nestable). 
 
 	
