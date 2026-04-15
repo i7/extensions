@@ -1,24 +1,20 @@
 Replacements.
 
-Replace existing PrefaceByArticle routine in BasicInformKit with our re-entrance aware version
+Replace two routines in BasicInformKit (from Printing.i6t) with reentrant-aware versions
 
-@h Re-Entrance aware PrefaceByArticle.
-This is a copy/paste of the existing PrefaceByArticle Implementation (as of March 2026), with re-entrant aware code to skip RE-CHOOSING an article on the second "printing" pass
+@h Required Global.
 
-While the check may prove useful more generally, the particular problem this aims to solve is the following:
-Let's say we wish to place some sort of semantic markup around object names. Consider a story wherein an angry pelican is an animal in the Wildlife Refuge. The description of the Refuge might then print up:
-	You can see an angry pelican here.
-
-Now let's say your markup is implemented by before and after printing the name of rules, thusly:
-	Before printing the name of a thing: say "<markup>".
-	After printing the name of a thing: say "</markup>".
-
-What Inform prints up in this case is, in fact:
-	You can see a <markup>angry pelican</markup> here.
-This is a result of the SECOND PASS through the routine re-choosing the article, and basing that decision on the first word it finds, "markup" rather than the "angry pelican" that follows.
-
+The article_choosing flag is set when the "printing the name" activity performs a throwaway "test" write (to a buffer) to facilitate choosing the correct indefinite article.
 =
+
 Global article_choosing = false;
+
+@h Rewrite of the PSN__ routine to take manual control of the "printing the name" activity.
+
+The below change stems from the observation that the AFTER rules for the "printing the name of" activity are truly pointless to invoke during the article choosing process. And after rules, in particular, are where an author -- particularly one who might not be especially aware that there might be TWO invocations of "printing the name" -- is most likely to get into trouble. 
+
+We address this by by carrying out the printing the name activity MANUALLY, and if the article_choosing flag is set, ABANDONING the activity rather than ending it normally. This ensures that after rules are simply never run during the "article-choosing" print stage. 
+=
 
 +replacing(from BasicInformKit) [ PSN__ o;
     if (o == 0) { LW_Response('Y'); rtrue; }
@@ -38,14 +34,25 @@ Global article_choosing = false;
 	    EndActivity(PRINTING_THE_NAME_ACT, o); ! We're really printing stuff out now, so finish up with the after rules
 ];
 
+@h Reentrant aware PrefaceByArticle.
+This is a copy/paste of the existing PrefaceByArticle Implementation (as of March 2026), with re-entrant aware code to skip RE-CHOOSING an article on the second "printing" pass
+
+While the check may prove useful more generally, the particular problem this aims to solve is the following:
+Let's say we wish to place some sort of semantic markup around object names. Consider a story wherein an angry pelican is an animal in the Wildlife Refuge. The description of the Refuge might then print up:
+	You can see an angry pelican here.
+
+Now let's say your markup is implemented by before and after printing the name of rules, thusly:
+	Before printing the name of a thing: say "<markup>".
+	After printing the name of a thing: say "</markup>".
+
+What Inform prints up in this case is, in fact:
+	You can see a <markup>angry pelican</markup> here.
+This is a result of the SECOND PASS through the routine re-choosing the article, and basing that decision on the first word it finds, "markup" rather than the "angry pelican" that follows.
+
+Note that the PrefaceByArticle routine in version 10.1 and earlier relied on (up to) two (recursive) passes through per object. The 10.2+ version does not do this, so this extension no longer returns from the routine early when "article choosing" is going on. Instead, at the point that  the routine is about to "print" the object name to a buffer (to facilitate selecting the right indefinite article) we simply set the article_choosing global flag, and clear it when done. (Printing to a buffer MIGHT trigger printing the name of calls for OTHER objects, so we are careful not to only clear the flag once any such recursive calls are out of the way)
+=
+
 +replacing(from BasicInformKit) [ PrefaceByArticle obj acode pluralise capitalise  i artform findout artval reentrant;
-    ! No longer need this - the 10.2+ version of PrefaceByArticle does not rely on recursion the way it's predecessor did
-    !if ( article_choosing ) { ! prevent reentrant calls from also attempting to choose an article, thereby disrupting article-choosing for the original object. (This is okay -- they will get their turn to print as requested later on, during the name-printing stage for the original object.)
-    !    print "// Re-entrance curtailed //";
-	!	print (PSN__) obj; 
-    !    return;
-    !    ! PrintShortName (obj); return;
-	!}
     reentrant = article_choosing; ! set local reentrant flag here -- what we're concerned with are OTHER object names we might be trying to work out while choosing articles for a different object
     if ( article_choosing ) return; 
     if (obj provides articles) {
@@ -58,8 +65,7 @@ Global article_choosing = false;
         if (pluralise) return;
         print (PSN__) obj; return;
     }
-    ! print " // OK 0 / Object did NOT provide articles // ";
-
+    
     i = GetGNAOfObject(obj);
     if (pluralise) {
         if (i < 3 || (i >= 6 && i < 9)) i = i + 3;
@@ -79,7 +85,6 @@ Global article_choosing = false;
 		default: findout = true;
     }
     
-    ! print " // OK 1 / FINDOUT FLAG set to ", findout, " // ";
     #Ifdef TARGET_ZCODE;
     if (standard_interpreter ~= 0 && findout) {
         StorageForShortName-->0 = SHORT_NAME_BUFFER_LEN;
@@ -111,15 +116,10 @@ Global article_choosing = false;
         ! print "*acode set*";
     }
     #Endif; ! TARGET_
-    ! print "OK 3";
 
-    ! print " // Printing article // ";   
     Cap (artform-->acode, ~~capitalise); ! print article
-    ! print " // Testing for pluralise // ";
     if (pluralise) return;
-    ! print " // Printing object // ";
     print (PSN__) obj;
-    ! print " // Object printed // ";
 ];
 
 

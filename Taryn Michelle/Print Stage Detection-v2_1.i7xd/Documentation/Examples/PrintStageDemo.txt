@@ -13,22 +13,23 @@ Description: A simple demonstration of the two passes the printing the name acti
 	A thing can be grammatical or ungrammatical. A thing is usually grammatical. The awful quirkiness is ungrammatical.
 
 	Before printing the name of a grammatical thing (called the target):
+		increase rule-count of the target by 1; [Count the number of times through the "printing the name" rule for the object]
 		if the print-stage is name-printing:
 			say "-->";
+			increase times-printed of the target by 1. [Count the number of times we've actually printed the object.]
 
 	After printing the name of a grammatical  thing (called the target):
-		increase rule-count of the target by 1;
-		if the print-stage is name-printing:
+		if the print-stage is name-printing: [No longer a required check as of version 2.1 ]
 			say "<--";
-			increase times-printed of the target by 1.
 
 	Before printing the name of the awful quirkiness:
-		say "(";
+		increase rule-count of the quirkiness by 1;		[Both of these lines will be executed TWICE each time "[an awful quirkiness]" is printed out]
+		increase times-printed of the quirkiness by 1;	
+		say "(";										[And this will inerfere with selection of the indefinie article]
 	
 	After printing the name of the awful quirkiness:
 		say ")";
-		increase rule-count of the quirkiness by 1;
-		increase times-printed of the quirkiness by 1;
+		
 
 	The Chamber of Demonstration is a room. "[chamber-description]".
 
@@ -40,7 +41,7 @@ Description: A simple demonstration of the two passes the printing the name acti
 	The awful quirkiness is scenery in the chamber. The quirkiness is tracked.
 
 	To say rule count of (target - a thing):
-		say "<[printed name of target]>";
+		say "The <[printed name of target]>"; [This will print a reference to the object WITHOUT triggering "printing the name of ..." rules]
 		if the target is not tracked:
 			say " is not being tracked";
 		otherwise:
