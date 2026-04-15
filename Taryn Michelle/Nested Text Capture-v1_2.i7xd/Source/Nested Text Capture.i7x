@@ -18,22 +18,7 @@ To decide which text is (T1 - text) & (T2 - text):
 
 [Externally include Trace Output extension to enable debugging messages from Nested Text Capture]
 	
-Section - Debugging (for use with Trace Output by Taryn Michelle)
-
-nested_text_capture is a trace-token. the trace-tag is "Text Capture". The description is "DBG Messages for Nested Text Capture". 
-
-to trace_immediate (T - text) as (subject - trace-token):
-	suspend text capture;
-	trace T as subject;
-	resume text capture;
-
-Section - No Debugging (for use without Trace Output by Taryn Michelle)
-
-to trace (T - text) as nested_text_capture: do nothing. 
-to trace_immediate (T - text) as nested_text_capture: do nothing. 
-to decide whether we're tracing nested_text_capture: do nothing. 
-
-Part 1 - Re-Entrant Functionality
+Part - Re-Entrant Functionality
 
 [ // TMV 18 Sep 2024 - Inform 10 Compatability ]
 [ // TMV 12 Oct 2024 - Change capture phrase names so code written for this extension cannot accidentally be run with only Eric Eve's original Text Capture extension included. Old and new names are as follows:
@@ -49,19 +34,19 @@ We now also have two separate pieces of text of possible interest: captured text
 	 Resolved non-working suspend/resume text capture (required for trace_immedate calls to bypass text capture)
 	 Commented out most trace messages, as they are no longer needed, and incur a (small) cost for passing the text around, whether printed out or not ]
 
-Section 1 - Set larger default capture buffer length (for Glulx Only)
+Section - Set larger default capture buffer length (for Glulx Only)
 
 [ // TMV 12 Oct 2024 - When using Glulx, we increase the default capture buffer minimum length to a significantly larger size;
   // TODO: See commented out bit below; per documentation syntax is supposed to support redefinition but this seems to fail in Inform 10.x]
 Use maximum capture buffer length of at least 2048; [ translates as (- Constant CAPTURE_BUFFER_LEN = {N}; -). ]
 
-Section 2 - Create the capture buffer stack
+Section - Create the capture buffer stack
 
 [Avoid public use of these globals, preferring the phrases in Sections 3 (and only if absolutely necessary, Section 4)]
 text_capture_context is a list of texts that varies. text_capture_context is {""}.
 text_capture_level is a number that varies. 
 
-Section 3 - Nested Text capture
+Section - Nested Text capture
 
 To decide whether we're capturing text: decide on whether or not text_capture_level > 0;
 
@@ -108,7 +93,7 @@ To decide which text is the/-- captured text:
 	let N be text_capture_level + 1;
 	decide on entry N of text_capture_context;
 	
-Section 4 - Phrases to micro-manage capture contexts
+Section - Phrases to micro-manage capture contexts
 
 [Use with caution. Internally used to close out any capture contexts left open at the end of a turn.]
 To decide what number is the/-- current text capture context: decide on the text_capture_level.
@@ -128,7 +113,20 @@ To end text capture for (context - a number):
 [Low-level check to see if the underlying Text Capture mechanism is active or not. Use with care.]			
 To decide whether we're low-level capturing text: (- (capture_active > 0) -).
 
-[For when we want to ensure some text is printed to the screen regardless of the state of text capture (such as critical debugging or warning messages). Code executed while text capture is suspended should ideally be self-contained and invoke nothing that might itself trigger additional calls to the text capture machinery. The capability exists primarily to support debugging problems related to the use (or misue) of the nested text capture feature itself. That said, suspending text capture WILL prevent starting/stopping new capture contexts until "resume" is called. IF the suspend/resume calls are properly placed, then we SHOULD be able to get away with invoking other code even if it tries to capture text -- provided the begin/end capture calls are properly paired, of course, and occur entirely between the suspend/resume calls. There are NO GUARANTEES code that was depending on the (now suspended) ability to capture text will behave properly, of course. Attempt at your own risk, and reserve ONLY for the rare case here it's truly critical to push a message to the console immediately, without waiting for any pending text capture to complete.]
+Section - Bypassing text capture 
+
+[Internally used to print an immediate WARNING message to the console in the event of error conditions that SHOULD not occur, and not meant for general usage. If you decide to use the feature anyway, see the important caveats below.]
+
+To say_immediate (T - text):
+	suspend text capture;
+	trace T as subject;
+	resume text capture;
+
+[For when we want to ensure some text is immediately printed to the console regardless of the state of text capture (such as critical debugging or warning messages). Code executed while text capture is suspended should ideally be self-contained and invoke nothing that might itself trigger additional calls to the text capture machinery. 
+
+The capability exists primarily to support debugging problems related to the use (or misue) of the nested text capture feature itself. That said, suspending text capture WILL prevent starting/stopping new capture contexts until "resume" is called. IF the suspend/resume calls are properly placed, then we might be able to get away with invoking other code even if it does normally rely on capturing text. Provided all begin/end capture calls are properly paired, and occur entirely between the suspend/resume calls, things should behave (as in not crash). 
+
+There are NO GUARANTEES other code that epends on the (temporarily suspended) ability to capture text will behave properly, of course. Attempt at your own risk, and reserve ONLY for the rare case it's truly critical to push a message to the console immediately, without waiting for any pending text capture to complete.]
 
 text-capture-suspended is a truth state that varies. 
 
@@ -144,20 +142,22 @@ To resume text capture:
 		now text-capture-suspended is false;
 		end text capture; [... only to immediately end the nested capture (the right way, not at the low-level). Capture will now pick up where it left off at the previous context]
 			
-Section 5 - Every turn rule to safely close out any text capturing left active
+Section - Safely close out any text capturing still active at end of turn
+
+[ Safe, but not necessarily elegant. If this rule kicks in, we've done something wrong elsewhere. Text capture will be stopped, and any captured output will be flushed to the console, but the results may well not be as desired. ]
 
 [ NB: We cannot ensure this is THE last every turn rule, just A last rule. If you make use of capturing text in your own "Last every turn" rule(s), and are concerned about this rule possibly causing conflicts, then simply unlist this rule. If you do unlist it, then for absolute safety, once you're all done capturing text (and have closed the capture context(s) properly, by calling "end text capture"), you should add a line of code to "follow the safely close open text capturing contexts rule" yourself. ]
-Last Every turn (this is the safely close open text capturing contexts rule):
+Last Every turn (this is the safely close text capture contexts left open rule):
 	[We should NOT be capturing text at this point. If we are, it's an error -- we force all capture contexts closed and flush the buffer(s)]
 	if we're capturing text or we're low-level capturing text:
-		trace_immediate "End of turn reached with text capture still active ( [current text capture context]) - forcing capture closed and flushing buffered text" as nested_text_capture;
+		say_immediate "[bold type][line break]WARNING: End of turn reached with text capture still active ( [current text capture context]) - forcing capture closed and flushing buffered text. (Check for mismatched begin/end capture statements in your code)[line break][roman type]" (A);
 		end text capture for 1; [close all capture out]
-		if we're tracing nested_text_capture:
-			SAY "[bold type]           *** WARNING: Text Capture still active at end of turn ***[line break]      (check for mismatched begin/end capture statements in your code)[line break][roman type]" (A);
 		say captured text.
+		if captured text > "":
+			say "[bold type][line break]// END of flushed text capture buffers. Again, this should not have occurred. Check for mismatched begin/end capture statements in your code. //[roman type][line break]" (B);
 
 		
-Section 6 - Remap original Text Capture calls
+Section - Remap original Text Capture calls
 
 [Testing the internal global "capture_active" only detects low-level capturing; we remap the test accordingly]
 To decide whether text capturing [of any level] is active: decide on whether or not we're capturing text;
