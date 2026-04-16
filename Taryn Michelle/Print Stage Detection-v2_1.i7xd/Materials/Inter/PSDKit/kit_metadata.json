@@ -1,0 +1,11 @@
+{
+    "is": {
+        "type": "kit",
+        "title": "PSDKit",
+        "version": "2.1.1"
+    },
+    "kit-details": {
+        "has-priority": 10,
+        "defines-Main": false
+    }
+}

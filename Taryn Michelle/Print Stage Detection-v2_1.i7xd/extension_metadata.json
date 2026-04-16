@@ -1,0 +1,16 @@
+{
+    "is": {
+        "type": "extension",
+        "title": "Print Stage Detection",
+        "author": "Taryn Michelle",
+        "version": "2.1"
+    },
+    "needs": [
+        {
+            "need": {
+                "type": "kit",
+                "title": "PSDKit"
+            }
+        }
+    ]
+}
