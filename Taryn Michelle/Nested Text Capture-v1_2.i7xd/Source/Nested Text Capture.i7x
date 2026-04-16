@@ -13,14 +13,9 @@ Part 0 - Instrumentation
 
 Section - Text Concatenation (for use without Text Basics by Taryn Michelle)
 
-To decide which text is (V1 - value of kind K) & (V2 - Value of kind L):
-	decide on "[V1][V2]";
+To decide which text is (T1 - text) & (T2 - text):
+	decide on "[T1][T2]";
 	
-To decide which K is (T - truth state) ? (V1 - Value of kind K) ! ( V2 - K ):
-	if T is true:
-		decide on V1;
-	decide on V2;
-
 [Externally include Trace Output extension to enable debugging messages from Nested Text Capture]
 	
 Part - Re-Entrant Functionality
@@ -59,7 +54,7 @@ To begin text capture:
 	if text-capture-suspended is true: [Neither begin nor end any sort of text capture while suspended]
 		stop;
 	if text_capture_level < 0:
-		say_immediate "WARNING: Internal Error: text_capture_level < 0 (which should never happen)";
+		say_immediate "[line break][bold type]WARNING: Internal Error: text_capture_level < 0 (which should never happen)[roman type][line break]";
 		now text_capture_level is 0; [This SHOULD never happen. If it does, avert disaster.]
 	[trace_immediate "Starting text capture ([text_capture_level])" as nested_text_capture;]
 	let N be text_capture_level;
@@ -88,7 +83,7 @@ To end text capture:
 			[trace_immediate "Resuming text capture ([N]) - with buffer data: [text_capture_context]" as nested_text_capture;]
 			begin low-level text capture;
 	otherwise:
-		say_immediate "WARNING: Mismatched call to end text capture (capture is not active)";
+		say_immediate "[line break][bold type]WARNING: Mismatched call to end text capture (capture is not active)[roman type][line break]";
 		
 [To say the/-- captured text:
 	let N be text_capture_level + 1;
@@ -124,7 +119,6 @@ Section - Bypassing text capture
 
 To say_immediate (T - text):
 	suspend text capture;
-	push "OUTPUT IMMEDIATE: [T]" to debug_tc;
 	say T;
 	resume text capture;
 
@@ -136,29 +130,17 @@ There are NO GUARANTEES other code that epends on the (temporarily suspended) ab
 
 text-capture-suspended is a truth state that varies. 
 
-debug_tc is a thing.
-the description of debug_tc is "Put errors and warnings and important debug trace stuff here, so we can look at it afterward with 'SHOWME debug_tc'".
-
-To push (T - text) to (debug - a thing):
-	now the description of debug_tc is the description of debug_tc & "[line break][T]";
-
 To suspend text capture: 
-	push "SUSPEND CAPTURE: " & ( whether or not we're low-level capturing text ? "(capture is active with context [current text capture context])" ! "(capture inactive)" ) to debug_tc;
 	if we're capturing text: [ technically we don't really have to test this, but WHY ISN'T THE TEST WORKING HERE?!]
 		begin text capture; [Unintuitive at first, but starting a NEW NESTED CONTEXT does exactly what we need]
-		push "NEW TEMP CAP CTX OPENED ([current text capture context])" & (whether or not we're low-level capturing text ? "(capture is active)" ! "(capture inactive)" ) to debug_tc;
 		end low-level text capture; [Stop capturing text in the NEW context -- note that there is no captured text to worry about saving here, and no need to finagle with any higher-level context(s) on the stack]
-		push "CAPTURE SUSPENDED: " & (whether or not we're low-level capturing text ? "(capture is active)" ! "(capture inactive)" ) to debug_tc;
 		now text-capture-suspended is true; 
 				
 To resume text capture: 
-	push "RESUME CAPTURE: " & ( whether or not we're low-level capturing text ? "(capture is active - AN ERROR)" ! "(capture inactive)" ) to debug_tc;
 	if text-capture-suspended is true:
 		begin low-level text capture; [We are still sitting in our newly nested, EMPTY capture context. Turn the machinery on ... ]
-		push "CAPTURE RESUMED: " & (whether or not we're low-level capturing text ? "(capture is active with context [current text capture context])" ! "(capture inactive)" ) to debug_tc;
 		now text-capture-suspended is false;
 		end text capture; [... only to immediately end the nested capture (the right way, not at the low-level). Capture will now pick up where it left off at the previous context]
-		push "TEMP CAP CTX CLOSED (context reverted to [current text capture context])" & (whether or not we're low-level capturing text ? "(capture is active)" ! "(capture inactive)" ) to debug_tc;
 			
 Section - Safely close out any text capturing still active at end of turn
 
