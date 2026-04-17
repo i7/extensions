@@ -1,0 +1,31 @@
+Glulx Text Effects.
+
+Implementation functions for the Glulx Text Effects extension.
+
+@h The extra styles Glk extension.
+
+=
+Constant gestalt_ExtraStyles = $1102;
+
+[ CACHE_EXTRA_STYLES_GESTALT_R;
+	Cached_Glk_Gestalts-->gestalt_ExtraStyles_FAKE = glk_gestalt(gestalt_ExtraStyles, 0);
+	rfalse;
+];
+
+@h Applying stylehints.
+
+=
+[ GTE_Apply_Stylehint wintype stylenum hint value i;
+	if (stylenum == style_All) {
+		i = style_User2;
+		if (Cached_Glk_Gestalts-->gestalt_ExtraStyles_FAKE) {
+			i = ICOUNT_GLULX_TEXT_STYLE - 2;
+		}
+		while (i >= style_Normal) {
+			glk_stylehint_set(wintype, i--, hint, value);
+		}
+	}
+	else {
+		glk_stylehint_set(wintype, stylenum, hint, value);
+	}
+];

@@ -1,10 +1,20 @@
-Version 6.0.0 of Glulx Text Effects (for Glulx only) by Emily Short begins here.
+Version 6.1.0 of Glulx Text Effects (for Glulx only) by Emily Short begins here.
 
 "Gives control over text formatting in Glulx."
 
 [ Version 6 is rewritten for Inform 11, and uses many new features. But for compatibility reasons the naming of things has been, as much as possible, left as it was. This means we have both the US and Commonwealth spelling of color/colour, and we refer to "Glulx" styles rather than Glk styles, as they more accurately should be called. ]
 
 Use authorial modesty.
+
+Chapter - Extra styles feature
+
+Extra styles feature is a glk feature.
+The extra styles feature value is accessible to Inter as "gestalt_ExtraStyles_FAKE".
+
+The cache the extra styles gestalt rule is listed in the reset glk references rules.
+The cache the extra styles gestalt rule translates into Inter as "CACHE_EXTRA_STYLES_GESTALT_R".
+
+Definition: a glulx text style is custom defined if it is greater than special-style-2.
 
 Chapter - Extra windows
 
@@ -64,12 +74,6 @@ Chapter - Apply the styles - unindexed
 
 [ We're planning ahead here, for the benefit of Flexible Windows. ]
 
-The apply the Glulx Text Effects styles rule is listed instead of the set default stylehints rule in the before starting the virtual machine rules.
-Before starting the virtual machine (this is the apply the Glulx Text Effects styles rule):
-	apply styles for the not a glk window;
-
-To decide which glk window is the not a glk window: (- (nothing) -).
-
 To apply styles for (W - glk window):
 	repeat through the Table of User Styles:
 		let window be the window entry;
@@ -82,45 +86,45 @@ To apply styles for (W - glk window):
 		otherwise if window is not all-windows:
 			if W is nothing or window is not W:
 				next;
+		let style be the style name entry;
+		if the extra styles feature is unsupported and style is custom defined:
+			next;
 		if there is a background color entry:
-			apply window style (style name entry) stylehint 8 of (background color entry);
+			apply (window) style (style) stylehint 8 of (background color entry);
 		if there is a color entry:
-			apply window style (style name entry) stylehint 7 of (color entry);
+			apply (window) style (style) stylehint 7 of (color entry);
 		if there is a first line indentation entry:
-			apply window style (style name entry) stylehint 1 of (first line indentation entry);
+			apply (window) style (style) stylehint 1 of (first line indentation entry);
 		if there is a fixed width entry:
 			let proportional be 1;
 			if the fixed width entry is true:
 				now proportional is 0;
-			apply window style (style name entry) stylehint 6 of (proportional);
+			apply (window) style (style) stylehint 6 of (proportional);
 		if there is a font weight entry:
-			apply window style (style name entry) stylehint 4 of (font weight entry);
+			apply (window) style (style) stylehint 4 of (font weight entry);
 		if there is a indentation entry:
-			apply window style (style name entry) stylehint 0 of (indentation entry);
+			apply (window) style (style) stylehint 0 of (indentation entry);
 		if there is a italic entry:
-			apply window style (style name entry) stylehint 5 of (italic entry);
+			apply (window) style (style) stylehint 5 of (italic entry);
 		if there is a justification entry:
-			apply window style (style name entry) stylehint 2 of (justification entry);
+			apply (window) style (style) stylehint 2 of (justification entry);
 		if there is a relative size entry:
-			apply window style (style name entry) stylehint 3 of (relative size entry);
+			apply (window) style (style) stylehint 3 of (relative size entry);
 		if there is a reversed entry:
-			apply window style (style name entry) stylehint 9 of (reversed entry);
+			apply (window) style (style) stylehint 9 of (reversed entry);
 
 To apply (W - a glk window) style (S - a glulx text style) stylehint (H - a number) of (V - a value):
 	(- GTE_Apply_Stylehint({W}.glk_window_type, {S}, {H}, {V}); -).
 
-Include (-
-[ GTE_Apply_Stylehint wintype stylenum hint value i;
-	if (stylenum == style_All) {
-		for (i = 0: i < style_NUMSTYLES : i++) {
-			glk_stylehint_set(wintype, i, hint, value);
-		}
-	}
-	else {
-		glk_stylehint_set(wintype, stylenum, hint, value);
-	}
-];
--).
+To decide which glk window is the not a glk window: (- (nothing) -).
+
+Section - Rule for applying styles
+
+[ Put this rule in a section by itself so that FW can replace it. ]
+
+The apply the Glulx Text Effects styles rule is listed instead of the set default stylehints rule in the before starting the virtual machine rules.
+Before starting the virtual machine (this is the apply the Glulx Text Effects styles rule):
+	apply styles for the not a glk window;
 
 Chapter - Additional style phrases
 
@@ -164,5 +168,8 @@ To say special/custom/user style 2:
 	(- glk_set_style(style_User2); -).
 To say second special/custom/user style:
 	(- glk_set_style(style_User2); -).
+
+To say (style - a glulx text style) letters:
+	(- glk_set_style({style}); -).
 
 Glulx Text Effects ends here.

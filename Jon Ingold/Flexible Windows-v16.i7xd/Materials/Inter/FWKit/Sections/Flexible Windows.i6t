@@ -11,7 +11,6 @@ Constant GLK_COLOUR_UNSET = $4A4123;
 
 Property original_spawner;
 
-Global active_window = Main_Window;
 Global current_focus_window = Main_Window;
 
 @h Constructing a window.
@@ -111,15 +110,27 @@ Apply a textual window's background colour.
 [ FW_Apply_Background_Colour win wintype col i;
 	wintype = win.glk_window_type;
 	col = win.background_colour;
-	for (i = 0: i < style_NUMSTYLES : i++) {
-		glk_stylehint_set(wintype, i, stylehint_BackColor, col);
+	i = style_User2;
+#ifdef gestalt_ExtraStyles_FAKE;
+	if (Cached_Glk_Gestalts-->gestalt_ExtraStyles_FAKE) {
+		i = ICOUNT_GLULX_TEXT_STYLE - 2;
+	}
+#endif;
+	while (i >= style_Normal) {
+		glk_stylehint_set(wintype, i--, stylehint_BackColor, col);
 	}
 ];
 
 [ FW_Unapply_Background_Colour win wintype i;
 	wintype = win.glk_window_type;
-	for (i = 0: i < style_NUMSTYLES : i++) {
-		glk_stylehint_clear(wintype, i, stylehint_BackColor);
+	i = style_User2;
+#ifdef gestalt_ExtraStyles_FAKE;
+	if (Cached_Glk_Gestalts-->gestalt_ExtraStyles_FAKE) {
+		i = ICOUNT_GLULX_TEXT_STYLE - 2;
+	}
+#endif;
+	while (i >= style_Normal) {
+		glk_stylehint_clear(wintype, i--, stylehint_BackColor);
 	}
 ];
 
@@ -129,8 +140,14 @@ Unapplying stylehints.
 =
 [ FW_Unapply_Stylehint wintype stylenum hint i;
 	if (stylenum == FW_style_All) {
-		for (i = 0: i < style_NUMSTYLES : i++) {
-			glk_stylehint_clear(wintype, i, hint);
+		i = style_User2;
+#ifdef gestalt_ExtraStyles_FAKE;
+		if (Cached_Glk_Gestalts-->gestalt_ExtraStyles_FAKE) {
+			i = ICOUNT_GLULX_TEXT_STYLE - 2;
+		}
+#endif;
+		while (i >= style_Normal) {
+			glk_stylehint_clear(wintype, i--, hint);
 		}
 	}
 	else {

@@ -3,6 +3,8 @@ new base GLK_STYLE_TY {
 	singular: glulx text style
 	plural: glulx text styles
 
+	compare-function: signed
+
 	specification-text: Glulx text styles are used to mark the purpose of text, and allow authors to customise their appearance.
 
 	instance: all-styles                 = style_All           = -1
@@ -23,6 +25,8 @@ new base GLK_FONT_WEIGHT_TY {
 	conforms-to: ENUMERATED_VALUE_TY
 	singular: font weight
 	plural: font weights
+
+	compare-function: signed
 
 	specification-text: A Glk stylehint font weight.
 

@@ -3,7 +3,7 @@
         "type": "extension",
         "title": "Flexible Windows",
         "author": "Jon Ingold",
-        "version": "16.0.0"
+        "version": "16.1.0"
     },
     "compatibility": "Glulx only",
     "needs": [
