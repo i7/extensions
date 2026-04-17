@@ -6,4 +6,3 @@ Licence: Creative Commons Atribution 4.0 license.
 
 Sections
 	Flexible Windows
-	Replacements

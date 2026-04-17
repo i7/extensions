@@ -1,4 +1,4 @@
-Version 16.0.0 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 16.1.0 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Gives control over the Glk windows system in Glulx."
 
@@ -309,19 +309,15 @@ To unapply the background colour of (W - a glk window):
 
 Chapter - Glulx Text Effects (for use with Glulx Text Effects by Emily Short)
 
-[ This doesn't work, filed as https://inform7.atlassian.net/browse/I7-2644 ]
-[The apply the Glulx Text Effects styles rule is not listed in the before starting the virtual machine rules.]
-
-[ So instead just unapply them... ]
-The unapply the Glulx Text Effects styles rule is listed after the apply the Glulx Text Effects styles rule in the before starting the virtual machine rules.
-Before starting the virtual machine (this is the unapply the Glulx Text Effects styles rule):
-	unapply styles for the not a glk window;
-
 Before constructing a textual glk window (called win) (this is the apply window styles rule):
 	apply styles for win;
 
 After constructing a textual glk window (called win) (this is the unapply window styles rule):
 	unapply styles for win;
+
+Section - Don't apply default styles (in place of Section - Rule for applying styles in Glulx Text Effects by Emily Short)
+
+The set default stylehints rule is not listed in the before starting the virtual machine rules.
 
 Section - Unapplying styles - unindexed
 
@@ -337,26 +333,29 @@ To unapply styles for (W - glk window):
 		otherwise if window is not all-windows:
 			if W is nothing or window is not W:
 				next;
+		let style be the style name entry;
+		if the extra styles feature is unsupported and style is custom defined:
+			next;
 		if there is a background color entry:
-			unapply window style (style name entry) stylehint 8;
+			unapply (window) style (style) stylehint 8;
 		if there is a color entry:
-			unapply window style (style name entry) stylehint 7;
+			unapply (window) style (style) stylehint 7;
 		if there is a first line indentation entry:
-			unapply window style (style name entry) stylehint 1;
+			unapply (window) style (style) stylehint 1;
 		if there is a fixed width entry:
-			unapply window style (style name entry) stylehint 6;
+			unapply (window) style (style) stylehint 6;
 		if there is a font weight entry:
-			unapply window style (style name entry) stylehint 4;
+			unapply (window) style (style) stylehint 4;
 		if there is a indentation entry:
-			unapply window style (style name entry) stylehint 0;
+			unapply (window) style (style) stylehint 0;
 		if there is a italic entry:
-			unapply window style (style name entry) stylehint 5;
+			unapply (window) style (style) stylehint 5;
 		if there is a justification entry:
-			unapply window style (style name entry) stylehint 2;
+			unapply (window) style (style) stylehint 2;
 		if there is a relative size entry:
-			unapply window style (style name entry) stylehint 3;
+			unapply (window) style (style) stylehint 3;
 		if there is a reversed entry:
-			unapply window style (style name entry) stylehint 9;
+			unapply (window) style (style) stylehint 9;
 
 To unapply (W - a glk window) style (S - a glulx text style) stylehint (H - a number):
 	(- FW_Unapply_Stylehint({W}.glk_window_type, {S}, {H}); -).

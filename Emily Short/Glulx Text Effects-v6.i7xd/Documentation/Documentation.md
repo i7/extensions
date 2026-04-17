@@ -13,7 +13,7 @@ There are eleven of these styles:
 | italic-style | used for italic text (this is what the `[italic type]` phrase uses) |
 | bold-style | used for bold text (this is what the `[bold type]` phrase uses) |
 | fixed-letter-spacing-style | used for monospaced text (this is what the `[fixed letter spacing]` phrase uses) |
-| alert-style | used when printing an end of game message such as "\*\*\* You have died. \*\*\*" |
+| alert-style | used when printing an end of game message such as `"*** You have died. ***"` |
 | blockquote-style | used for printing box quotations |
 | header-style | used to print the title of the game |
 | input-style | used for the player's own input |
@@ -22,6 +22,19 @@ There are eleven of these styles:
 | special-style-2 | |
 
 Additionally, when defining styles you can set `all-styles` which will define all eleven styles at once.
+
+Adding extra styles
+-------------------
+
+Eleven styles doesn't give you much flexibility, so there is now a [Glk extension](https://curiousdannii.github.io/if/misc-glk.html#additional-styles) that lets you define more styles. It is not widely supported by Glulx interpreters, but it is supported by Parchment. You can check if it is supported in the current interpreter by testing `if the extra styles feature is supported`. It is safe to use these new styles even in an interpreter that does not support them; your text will just be displayed in the normal style instead.
+
+You can, for example, define a new style for a subtitle by simply writing
+
+```
+Subtitle is a glulx text style.
+```
+
+And then use it in your Table of User Styles definitions. You can say text in that style with `[subtitle letters]`.
 
 Defining styles
 ---------------
@@ -72,17 +85,18 @@ You may invoke the text styles by using the following phrases
 
 | Style name | Phrase |
 |------------|--------|
-| normal-style | `[roman type]` |
-| italic-style | `[italic type]` |
-| bold-style | `[bold type]` |
-| fixed-letter-spacing-style | `[fixed letter spacing]` (Return to regular variable spaced type with either `[variable letter spacing]` or just `[roman type]`) |
-| alert-style | `[alert style]` |
-| blockquote-style | `[blockquote style]` |
-| header-style | `[header style]` |
-| input-style | `[input style]` |
-| note-style | `[note style]` |
-| special-style-1 | `[special-style-1]`, `[first special style]`, `[first custom style]`, etc. (there are multiple options to support older code) |
-| special-style-2 | `[special-style-2]`, `[second special style]`, `[second custom style]`, etc. |
+| normal-style | `say "[roman type]"` |
+| italic-style | `say "[italic type]"` |
+| bold-style | `say "[bold type]"` |
+| fixed-letter-spacing-style | `say "[fixed letter spacing]"` (Return to regular variable spaced type with either `say "[variable letter spacing]"` or just `say "[roman type]"`) |
+| alert-style | `say "[alert style]"` |
+| blockquote-style | `say "[blockquote style]"` |
+| header-style | `say "[header style]"` |
+| input-style | `say "[input style]"` |
+| note-style | `say "[note style]"` |
+| special-style-1 | `say "[special-style-1]"`, `say "[first special style]"`, `say "[first custom style]"`, etc. (there are multiple options to support older code) |
+| special-style-2 | `say "[special-style-2]"`, `say "[second special style]"`, `say "[second custom style]"`, etc. |
+| any | `say "[(glulx text style) letters]"` |
 
 About this extension
 --------------------

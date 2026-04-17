@@ -5,3 +5,4 @@ Language: Inform 6
 Licence: Creative Commons Atribution 4.0 license.
 
 Sections
+	Glulx Text Effects

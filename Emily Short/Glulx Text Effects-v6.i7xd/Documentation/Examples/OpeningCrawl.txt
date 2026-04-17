@@ -1,0 +1,37 @@
+Example: ** Opening Crawl - Use custom styles to write a full title page.
+
+	*: "Space Wars Episode 4" by Georgia Lucifer.
+	
+	The story headline is "A Space Conflict".
+	
+	Outer space is a room.
+
+	Include Glulx Text Effects by Emily Short.
+
+	Grand title is a glulx text style.
+	Subtitle is a glulx text style.
+	Author byline is a glulx text style.
+	Producer byline is a glulx text style.
+	Opening crawl is a glulx text style.
+
+	Table of User Styles (continued)
+	style name	justification	relative size
+	grand title	center-justified	15
+	subtitle	center-justified	10
+	author byline	center-justified	5
+	producer byline	center-justified	-5
+	opening crawl	center-justified
+
+	When play begins:
+		now the left hand status line is "";
+		now right hand status line is "";
+		say "[grand title letters]Space Wars Episode 4";
+		say "[line break][subtitle letters]A Space Conflict";
+		say "[paragraph break][author byline letters]Written and directed by Georgia Lucifer";
+		say "[line break][producer byline letters]Produced by J J Bincs";
+		say "[paragraph break][opening crawl letters]It is a period of stellar war.";
+		say "Between the stars fly spaceships, and sometimes, space bombs.";
+		say "The space senate fights back against the space empire.";
+		say "Long the space emperor has sought after the space king's daughter,[line break]";
+		say "but now it looks like she might be falling into his hands...[paragraph break]";
+		pause the game;
