@@ -433,10 +433,10 @@ Rule for listing plausible quips (this is the standard quip plausibility rule):
 			say "[quip-suggestion-phrase][the prepared list delimited in disjunctive style]." (A);
 
 Before printing the name of a questioning quip while listing plausible quips or listing peripheral quips (this is the prefix-ask rule):
-	say "ask " (A).
+	say "[regarding the player][ask] about " (A).
 
 Before printing the name of an informative quip while listing plausible quips or listing peripheral quips (this is the prefix-say rule):
-	say "say " (A).
+	say "[regarding the player][tell] about " (A).
 
 
 Part Two - Customizing Listing Plausible Quips
