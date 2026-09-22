@@ -1,4 +1,4 @@
-Version 15/220305 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
+Version 15.1.0 of Flexible Windows (for Glulx only) by Jon Ingold begins here.
 
 "Exposes the Glk windows system so authors can completely control the creation and use of windows"
 
@@ -16,9 +16,9 @@ Version 15/220305 of Flexible Windows (for Glulx only) by Jon Ingold begins here
 
 Use authorial modesty.
 
-Include version 1/140516 of Alternative Startup Rules by Dannii Willis.
-Include version 10/160919 of Glulx Entry Points by Emily Short.
-Include version 5/140516 of Glulx Text Effects by Emily Short.
+Include Alternative Startup Rules by Dannii Willis.
+Include Glulx Entry Points by Emily Short.
+Include Glulx Text Effects by Emily Short.
 
 
 
@@ -166,8 +166,20 @@ The gg_quotewin variable translates into I6 as "gg_quotewin".
 
 [ We often wrap a phrase or rule around a core glk function, so that there is no good name to give to the actual function's phrase. So instead let's just define them using the I6 function's name here. This also means we can reduce the number of unindexed sections. ]
 
+The ref number property translates into Inter as "fw_ref_number".
+The scale method property translates into Inter as "fw_scale_method".
+The position property translates into Inter as "fw_position".
+The minimum size property translates into Inter as "fw_minimum_size".
+The measurement property translates into Inter as "fw_measurement".
+The border hint property translates into Inter as "fw_border_hint".
+The type property translates into Inter as "fw_type".
+The rock number property translates into Inter as "fw_rock_number".
+The g-present property translates into Inter as "g_present".
+
+The main window object translates into Inter as "Main_Window".
+
 To call glk_set_window for (win - a g-window):
-	(- glk_set_window( {win}.(+ ref number +) ); -).
+	(- glk_set_window( {win}.fw_ref_number ); -).
 
 To call FW_glk_window_close for (ref - a number):
 	(- FW_glk_window_close( {ref}, 0 ); -).
@@ -181,10 +193,44 @@ Include (-
 -).
 
 To call glk_window_clear for (win - a g-window):
-	(- glk_window_clear( {win}.(+ ref number +) ); -).
+	(- glk_window_clear( {win}.fw_ref_number ); -).
 
 To set the background color of (win - a g-window) to (T - a text):
-	(- glk_window_set_background_color( {win}.(+ ref number +), GTE_ConvertColour( {-by-reference:T} ) ); -).
+	(- glk_window_set_background_color( {win}.fw_ref_number, GTE_ConvertColour( {-by-reference:T} ) ); -).
+
+To decide what number is the raw glk window open with parent (p - a number) method (m - a number) size (s - a number) type (t - a number) rock (r - a number):
+	(- FW_glk_window_open({p}, {m}, {s}, {t}, {r}) -).
+
+Include (-
+[ FW_glk_window_open _vararg_count ret;
+  ! glk_window_open(window, uint, uint, uint, uint) => window
+  @glk 35 _vararg_count ret;
+  return ret;
+];
+-).
+
+To decide what number is (a - a number) bit-or (b - a number):
+	(- ({a} | {b}) -).
+To decide what number is glk-winmethod-proportional:
+	(- winmethod_Proportional -).
+To decide what number is glk-winmethod-fixed:
+	(- winmethod_Fixed -).
+To decide what number is glk-winmethod-noborder:
+	(- winmethod_NoBorder -).
+To decide what number is glk-winmethod-left:
+	(- winmethod_Left -).
+To decide what number is glk-winmethod-right:
+	(- winmethod_Right -).
+To decide what number is glk-winmethod-above:
+	(- winmethod_Above -).
+To decide what number is glk-winmethod-below:
+	(- winmethod_Below -).
+To decide what number is glk-wintype-text-buffer:
+	(- wintype_TextBuffer -).
+To decide what number is glk-wintype-text-grid:
+	(- wintype_TextGrid -).
+To decide what number is glk-wintype-graphics:
+	(- wintype_Graphics -).
 
 [ Fix spurious line breaks from being printed in the main window after running the refreshing activity ]
 To safely carry out the (A - activity on value of kind K) activity with (val - K):
@@ -292,45 +338,37 @@ Before constructing a g-window (called win) (this is the fix method and measurem
 			now the scale method of win is g-using-minimum;
 
 The construct a g-window rule is listed in the for constructing rules.
-The construct a g-window rule translates into I6 as "FW_ConstructGWindow".
-Include (-
-[ FW_ConstructGWindow win parentwin method size type rock;
-	win = parameter_value;
-	! Fill in parentwin, method and size only if the window is not the main window
-	if ( win ~= (+ main window +) )
-	{
-		parentwin = parent( win ).(+ ref number +);
-		if ( win.(+ scale method +) == (+ g-proportional +) )
-		{
-			method = winmethod_Proportional;
-		}
-		else
-		{
-			method = winmethod_Fixed;
-		}
-		method = method + win.(+ position +) - 2;
-		if ( win.(+ scale method +) == (+ g-using-minimum +) )
-		{
-			size = win.(+ minimum size +);
-		}
-		else
-		{
-			size = win.(+ measurement +);
-		}
-		if ( ~~win.(+ border hint +) ) method = method | winmethod_NoBorder;
-	}
-	type = win.(+ type +) + 2;
-	rock = win.(+ rock number +);
-	win.(+ ref number +) = FW_glk_window_open( parentwin, method, size, type, rock );
-	rfalse;
-];
-
-[ FW_glk_window_open _vararg_count ret;
-  ! glk_window_open(window, uint, uint, uint, uint) => window
-  @glk 35 _vararg_count ret;
-  return ret;
-];
--).
+For constructing a g-window (called win) (this is the construct a g-window rule):
+	let parentwin be 0;
+	let method be 0;
+	let size be 0;
+	if win is not the main window:
+		let parent win be the parent of win;
+		now parentwin is the ref number of parent win;
+		if the scale method of win is g-proportional:
+			now method is glk-winmethod-proportional;
+		otherwise:
+			now method is glk-winmethod-fixed;
+		if the position of win is g-placeleft:
+			now method is method plus glk-winmethod-left;
+		otherwise if the position of win is g-placeright:
+			now method is method plus glk-winmethod-right;
+		otherwise if the position of win is g-placeabove:
+			now method is method plus glk-winmethod-above;
+		otherwise if the position of win is g-placebelow:
+			now method is method plus glk-winmethod-below;
+		if the scale method of win is g-using-minimum:
+			now size is the minimum size of win;
+		otherwise:
+			now size is the measurement of win;
+		if the border hint of win is false:
+			now method is method bit-or glk-winmethod-noborder;
+	let type code be glk-wintype-text-buffer;
+	if the type of win is g-text-grid:
+		now type code is glk-wintype-text-grid;
+	otherwise if the type of win is g-graphics:
+		now type code is glk-wintype-graphics;
+	now the ref number of win is the raw glk window open with parent parentwin method method size size type type code rock the rock number of win;
 
 First after constructing a g-window (called win) (this is the check if the window was created rule):
 	if the ref number of win is zero:
@@ -426,25 +464,30 @@ To set (win - a g-present textual g-window) as the acting main window:
 Chapter - Grid window cursors
 
 To set (win - a text grid g-window) cursor to row (row - a number) and/-- column (col - a number):
-	(-  glk_window_move_cursor({win}.(+ ref number +), {col} - 1, {row} - 1); -).
+	(-  glk_window_move_cursor({win}.fw_ref_number, {col} - 1, {row} - 1); -).
 
 Chapter - Window measurements
 
 To decide what number is the height of (win - a g-window):
-	(- FW_WindowSize( {win}, 1 ) -).
+	if win is g-present:
+		decide on the glk height of the ref number of win;
+	decide on 0.
 
 To decide what number is the width of (win - a g-window):
-	(- FW_WindowSize( {win}, 0 ) -).
+	if win is g-present:
+		decide on the glk width of the ref number of win;
+	decide on 0.
+
+To decide what number is the glk width of (ref - a number):
+	(- FW_WindowSizeRef( {ref}, 0 ) -).
+
+To decide what number is the glk height of (ref - a number):
+	(- FW_WindowSizeRef( {ref}, 1 ) -).
 
 Include (-  
-[ FW_WindowSize win index;
-	! if win is g-present:
-	if ( GetEitherOrProperty( win, (+ g-present +) ) )
-	{
-		glk_window_get_size( win.(+ ref number +), gg_arguments, gg_arguments + WORDSIZE );
-		return gg_arguments-->index;
-	}
-	return 0;
+[ FW_WindowSizeRef ref index;
+	glk_window_get_size( ref, gg_arguments, gg_arguments + WORDSIZE );
+	return gg_arguments-->index;
 ];
 -).
 
@@ -539,11 +582,6 @@ Chapter - Interjecting for windows we don't control - unindexed
 [ To account for the template code which creates and destroys windows we will hijack the I6 glk functions and take over if possible ]
 
 Include (-
-Replace glk_window_open;
-Replace glk_window_close;
--) before "Glulx.i6t".
-
-Include (-
 ! Replacement functions from Flexible Windows by Jon Ingold
 [ glk_window_open parent method size type rock result;
 	result = ( (+ handling an unscheduled construction +)-->1 )( parent, method, size, type, rock );
@@ -553,12 +591,14 @@ Include (-
 	}
 	return result;
 ];
+-) replacing "glk_window_open".
 
+Include (-
 [ glk_window_close ref;
 	( (+ handling an unscheduled deconstruction +)-->1 )( ref );
 	return 0;
 ];
--) after "Infglk" in "Glulx.i6t".
+-) replacing "glk_window_close".
 
 To decide which number is the result from handling an unscheduled construction from (parent - a number) with method (method - a number) and size (size - a number) and type (type - a number) and rock (rock - a number) (this is handling an unscheduled construction):
 	let parent win be the window with ref parent;
@@ -581,42 +621,34 @@ To handle an unscheduled deconstruction from (ref - a number) (this is handling 
 		close win;
 
 To decide which g-window position is the position from (method - a number):
-	(- FW_PositionFromNum( {method} ) -).
+	let dir be the glk direction bits of method;
+	if dir is glk-winmethod-left:
+		decide on g-placeleft;
+	if dir is glk-winmethod-right:
+		decide on g-placeright;
+	if dir is glk-winmethod-above:
+		decide on g-placeabove;
+	if dir is glk-winmethod-below:
+		decide on g-placebelow;
+	decide on g-placenull.
 
 To decide which g-window scale methods is the scale method from (method - a number):
-	(- FW_ScaleMethodFromNum( {method} ) -).
+	if the glk division bits of method is glk-winmethod-fixed:
+		decide on g-fixed-size;
+	decide on g-proportional.
 
 To decide which g-window type is the type from (type - a number):
-	(- FW_TypeFromNum( {type} ) -).
+	if type is glk-wintype-text-grid:
+		decide on g-text-grid;
+	if type is glk-wintype-graphics:
+		decide on g-graphics;
+	decide on g-text-buffer.
 
-Include (-
-[ FW_PositionFromNum method;
-	switch ( method & winmethod_DirMask )
-	{
-		winmethod_Left: return (+ g-placeleft +);
-		winmethod_Right: return (+ g-placeright +);
-		winmethod_Above: return (+ g-placeabove +);
-		winmethod_Below: return (+ g-placebelow +);
-	}
-];
+To decide what number is the glk direction bits of (method - a number):
+	(- ({method} & winmethod_DirMask) -).
 
-[ FW_ScaleMethodFromNum method;
-	switch ( method & winmethod_DivisionMask )
-	{
-		winmethod_Fixed: return (+ g-fixed-size +);
-		winmethod_Proportional: return (+ g-proportional +);
-	}
-];
-
-[ FW_TypeFromNum type;
-	switch ( type )
-	{
-		wintype_TextBuffer: return (+ g-text-buffer +);
-		wintype_TextGrid: return (+ g-text-grid +);
-		wintype_Graphics: return (+ g-graphics +);
-	}
-];
--).
+To decide what number is the glk division bits of (method - a number):
+	(- ({method} & winmethod_DivisionMask) -).
 
 
 
@@ -720,38 +752,61 @@ To set reversed of wintype (W - a number) for (style - a glulx text style) to (N
 [ And some phrases to clear them again. ]
 
 To clear the background color of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_BackColor, ); -).
+	clear stylehint stylehint-backcolor of wintype W for style.
 
 To clear the color of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_TextColor ); -).
+	clear stylehint stylehint-textcolor of wintype W for style.
 
 To clear the first line indentation of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_ParaIndentation ); -).
+	clear stylehint stylehint-paraindentation of wintype W for style.
 
 To clear fixed width of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Proportional ); -).
+	clear stylehint stylehint-proportional of wintype W for style.
 
 To clear the font weight of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Weight ); -).
+	clear stylehint stylehint-weight of wintype W for style.
 
 To clear the indentation of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Indentation ); -).
+	clear stylehint stylehint-indentation of wintype W for style.
 
 To clear italic of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Oblique ); -).
+	clear stylehint stylehint-oblique of wintype W for style.
 
 To clear the justification of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Justification ); -).
+	clear stylehint stylehint-justification of wintype W for style.
 
 To clear the relative size of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_Size ); -).
+	clear stylehint stylehint-size of wintype W for style.
 
 To clear reversed of wintype (W - a number) for (style - a glulx text style):
-	(- FW_ClearStylehint( {W}, {style}, stylehint_ReverseColor ); -).
+	clear stylehint stylehint-reversecolor of wintype W for style.
+
+To decide what number is stylehint-backcolor: (- stylehint_BackColor -).
+To decide what number is stylehint-textcolor: (- stylehint_TextColor -).
+To decide what number is stylehint-paraindentation: (- stylehint_ParaIndentation -).
+To decide what number is stylehint-proportional: (- stylehint_Proportional -).
+To decide what number is stylehint-weight: (- stylehint_Weight -).
+To decide what number is stylehint-indentation: (- stylehint_Indentation -).
+To decide what number is stylehint-oblique: (- stylehint_Oblique -).
+To decide what number is stylehint-justification: (- stylehint_Justification -).
+To decide what number is stylehint-size: (- stylehint_Size -).
+To decide what number is stylehint-reversecolor: (- stylehint_ReverseColor -).
+
+To clear stylehint (hint - a number) of wintype (W - a number) for (style - a glulx text style):
+	if style is all-styles:
+		FW-clear-all-styles of wintype W hint hint;
+	otherwise:
+		FW-clear-one-style style of wintype W hint hint.
+
+To FW-clear-all-styles of wintype (W - a number) hint (hint - a number):
+	(- FW_ClearStylehint({W}, -1, {hint}); -).
+
+To FW-clear-one-style (style - a glulx text style) of wintype (W - a number) hint (hint - a number):
+	(- FW_ClearStylehint({W}, {style}, {hint}); -).
 
 Include (-
-[ FW_ClearStylehint wintype style hint i;
-	if ( style == (+ all-styles +) )
+[ FW_ClearStylehint wintype stylenum hint i;
+	if ( stylenum == -1 )
 	{
 		for ( i = 0: i < style_NUMSTYLES : i++ )
 		{
@@ -760,7 +815,7 @@ Include (-
 	}
 	else
 	{
-		glk_stylehint_clear( wintype, style - 2, hint );
+		glk_stylehint_clear( wintype, stylenum - 2, hint );
 	}
 ];
 -).
