@@ -1,4 +1,4 @@
-Version 3/140513 of Basic Hyperlinks (for Glulx only) by Emily Short begins here.
+Version 3.1 of Basic Hyperlinks (for Glulx only) by Emily Short begins here.
 
 "Allows the author to set hyperlinks in the main window and give instructions about what is to result from performing them."
 
@@ -23,25 +23,24 @@ To perform glulx hyperlink request:
 	(-  if (glk_gestalt(gestalt_Hyperlinks, 0)) DoLink(); -)
 
 Include (-
- [ DoLink;
-	setlink(); 
+[ DoLink;
+	SetLink();
 	playHyperlink(gg_event-->2);
- ]; 
+];
 
 [ playHyperlink n;
 	(+ current link number +) = n;
-	if (n > 0) { 
+	if (n > 0) {
 		glk_cancel_hyperlink_event(gg_mainwin);
-		FollowRulebook( (+ clicking hyperlink rules +) ); 
+		FollowRulebook( (+ clicking hyperlink rules +) );
 		SetLink();
 	};
 ];
 
-[ Setlink ;
-            if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_mainwin);
+[ SetLink;
+	if (glk_gestalt(gestalt_Hyperlinks, 0)) glk_request_hyperlink_event(gg_mainwin);
 ];
-
--)
+-).
 
 The clicking hyperlink rules are a rulebook.
 
@@ -81,7 +80,7 @@ We will also need to cause a result when the link is clicked; this is where the 
 		begin;
 			if the current link number is linknum entry
 			begin; 
-				change the glulx replacement command to replacement entry;
+				now the glulx replacement command is replacement entry;
 				rule succeeds;
 			end if;
 		end repeat;
