@@ -1,4 +1,4 @@
-Version 1/140516 of Alternative Startup Rules (for Glulx only) by Dannii Willis begins here.
+Version 1.1 of Alternative Startup Rules (for Glulx only) by Dannii Willis begins here.
 
 "Refactors the Startup Rules so that it can be more easily altered"
 
@@ -29,9 +29,6 @@ The alternative initialise memory rule translates into I6 as "INITIALISE_MEMORY_
 The position player in model world rule is not listed in the startup rules.
 The alternative position player in model world rule is listed in the before starting the virtual machine rules.
 The alternative position player in model world rule translates into I6 as "POSITION_PLAYER_IN_MODEL_R".
-
-The enable Glulx acceleration rule is not listed in the for starting the virtual machine rules.
-The enable Glulx acceleration rule is listed in the before starting the virtual machine rules.
 
 The seed random number generator rule is not listed in the startup rules.
 The alternative seed random number generator rule is listed in the before starting the virtual machine rules.
@@ -89,17 +86,17 @@ Include (-
 [ Instead of introducing adding a new rule for the FIX_RNG code, we'll add it into the seed random number generator rule ]
 Include (- 
 [ SEED_RANDOM_NUMBER_GENERATOR_R i;
-	#ifdef FIX_RNG;
-	@random 10000 i;
-	i = -i-2000;
-	print "[Random number generator seed is ", i, "]^";
-	@setrandom i;
-	#endif; ! FIX_RNG
-	if ({-value:rng_seed_at_start_of_play}) VM_Seed_RNG({-value:rng_seed_at_start_of_play});
+	if (KIT_CONFIGURATION_BITMAP & FIX_RNG_TCBIT) {
+		@random 10000 i;
+		i = -i-2000;
+		print "[Random number generator seed is ", i, "]^";
+		@setrandom i;
+	}
+	if (RNG_SEED_AT_START_OF_PLAY) VM_Seed_RNG(RNG_SEED_AT_START_OF_PLAY);
 	for (i=1: i<=100: i++) random(i);
 	rfalse;
 ];
--) instead of "Seed Random Number Generator Rule" in "OrderOfPlay.i6t".
+-) replacing "SEED_RANDOM_NUMBER_GENERATOR_R".
 
 The open built-in windows rule is listed in the for starting the virtual machine rules.
 The open built-in windows rule translates into I6 as "ASR_OpenBuiltInWindows".
