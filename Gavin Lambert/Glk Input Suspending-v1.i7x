@@ -1,8 +1,8 @@
-Version 1/200930 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
+Version 1.1 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a mechanism to 'suspend' line and character inputs in progress to allow something to be printed, and then input resumed afterwards."
 
-Include Version 2/200807 of Glk Events by Dannii Willis.
+Include Glulx Entry Points by Emily Short.
 
 Use authorial modesty.
 
@@ -28,9 +28,19 @@ To replace the current glk input event with text input (command - text), silentl
 
 Section - Input Suspending
 
+[Disable echo before cancelling so interpreters do not print a newline after the
+ existing prompt. That lets replacement commands appear on the same line as ">".]
 To suspend the current glk input event in window ref (win - number):
+	disable line input echoing in window ref win;
 	if glk line-event for window ref win is pending, cancel pending glk line-event for window ref win;
-	if glk char-event for window ref win is pending, cancel pending glk char-event for window ref win.
+	if glk char-event for window ref win is pending, cancel pending glk char-event for window ref win;
+	enable line input echoing in window ref win.
+
+To disable line input echoing in window ref (win - number):
+	(- glk_set_echo_line_event({win}, 0); -).
+
+To enable line input echoing in window ref (win - number):
+	(- glk_set_echo_line_event({win}, 1); -).
 
 Section - Input Resuming/Replacement
 
@@ -42,7 +52,7 @@ To resume the current glk input event in window ref (win - number):
 To replace the current glk input event in window ref (win - number) with text input (command - text), silently:
 	if command is empty:
 		if glk line-event for window ref win is resumable:
-			print prompt;
+			[Prompt is still on-screen: suspend cancelled with echo off.]
 			redraw the status line;
 			resume glk line-event;
 		otherwise if glk char-event for window ref win is resumable:
@@ -69,13 +79,9 @@ Section - Input Display
 
 [Allow for easy replacement of this section by another extension.]
 
-[ note that this unavoidably is printed on a new line, not on the same line as the command prompt.
-   the Glk spec specifies that cancelled line input must print a newline unless echo was off before the
-   line input request was first started (and at that point we didn't know we'd be getting interrupted).
-   we could turn echo off always, and handle printing the command ourselves as needed, but that
-   may cause issues if interpreters treat that as password entry or something and conceal typed text. ]
+[Suspend cancels with echo off, so the original ">" remains; print only the
+ replacement command in input style on that same line.]
 To show the glk input event replacement (command - text):
-	print prompt;
 	say "[input-style-for-glulx][command][roman type][line break]".
 
 Section - Event Acknowledgement
@@ -162,29 +168,8 @@ Section - Lowest Level - unindexed
  use case is to interrupt one kind of input to do the other one and then resume the original.]
 
 Include (-
-Replace glk_request_line_event;
-Replace glk_cancel_line_event;
-Replace glk_request_char_event;
-Replace glk_cancel_char_event;
--) before "Glulx.i6t".
-
-Include (-
 Array captured_glk_line_event --> 5;
 Array captured_glk_char_event --> 2;
-
-[ glk_request_line_event win buf maxlen initlen;
-	captured_glk_line_event-->0 = 1;
-	captured_glk_line_event-->1 = win;
-	captured_glk_line_event-->2 = buf;
-	captured_glk_line_event-->3 = maxlen;
-	captured_glk_line_event-->4 = initlen;
-	@push initlen;
-	@push maxlen;
-	@push buf;
-	@push win;
-	@glk 208 4 0;
-	return 0;
-];
 
 [ resume_glk_line_event  win buf maxlen initlen;
 	win = captured_glk_line_event-->1;
@@ -199,6 +184,43 @@ Array captured_glk_char_event --> 2;
 	captured_glk_line_event-->0 = 1;
 ];
 
+[ acknowledge_glk_line_event win;
+	if (captured_glk_line_event-->1 == win) {
+		captured_glk_line_event-->0 = 0;
+	}
+];
+
+[ resume_glk_char_event  win;
+	win = captured_glk_char_event-->1;
+	@push win;
+	@glk 210 1 0;
+	captured_glk_char_event-->0 = 1;
+];
+
+[ acknowledge_glk_char_event win;
+	if (captured_glk_char_event-->1 == win) {
+		captured_glk_char_event-->0 = 0;
+	}
+];
+-).
+
+Include (-
+[ glk_request_line_event win buf maxlen initlen;
+	captured_glk_line_event-->0 = 1;
+	captured_glk_line_event-->1 = win;
+	captured_glk_line_event-->2 = buf;
+	captured_glk_line_event-->3 = maxlen;
+	captured_glk_line_event-->4 = initlen;
+	@push initlen;
+	@push maxlen;
+	@push buf;
+	@push win;
+	@glk 208 4 0;
+	return 0;
+];
+-) replacing "glk_request_line_event".
+
+Include (-
 [ glk_cancel_line_event win event;
 	if (captured_glk_line_event-->0 == 1 && captured_glk_line_event-->1 == win) {
 		if (event == GLK_NULL) event = gg_event;
@@ -219,14 +241,9 @@ Array captured_glk_char_event --> 2;
 	}
 	return 0;
 ];
+-) replacing "glk_cancel_line_event".
 
-[ acknowledge_glk_line_event win;
-	if (captured_glk_line_event-->1 == win) {
-		captured_glk_line_event-->0 = 0;
-	}
-];
-
-
+Include (-
 [ glk_request_char_event win;
 	captured_glk_char_event-->0 = 1;
 	captured_glk_char_event-->1 = win;
@@ -234,14 +251,9 @@ Array captured_glk_char_event --> 2;
 	@glk 210 1 0;
 	return 0;
 ];
+-) replacing "glk_request_char_event".
 
-[ resume_glk_char_event  win;
-	win = captured_glk_char_event-->1;
-	@push win;
-	@glk 210 1 0;
-	captured_glk_char_event-->0 = 1;
-];
-
+Include (-
 [ glk_cancel_char_event win;
 	if (captured_glk_char_event-->0 == 1 && captured_glk_char_event-->1 == win) {
 		captured_glk_char_event-->0 = 2;
@@ -252,13 +264,7 @@ Array captured_glk_char_event --> 2;
 	@glk 211 1 0;
 	return 0;
 ];
-
-[ acknowledge_glk_char_event win;
-	if (captured_glk_char_event-->1 == win) {
-		captured_glk_char_event-->0 = 0;
-	}
-];
--) after "Infglk" in "Glulx.i6t".
+-) replacing "glk_cancel_char_event".
 
 Glk Input Suspending ends here.
 
