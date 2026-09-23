@@ -1,4 +1,4 @@
-Version 2/200930 of Inline Hyperlinks (for Glulx only) by Gavin Lambert begins here.
+Version 2.1 of Inline Hyperlinks (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a simple HTML-inspired syntax for adding hyperlinks within any say phrases."
 
