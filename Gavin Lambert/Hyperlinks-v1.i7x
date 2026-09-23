@@ -1,4 +1,4 @@
-Version 1/200807 of Hyperlinks (for Glulx only) by Gavin Lambert begins here.
+Version 1.1 of Hyperlinks (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a core processing loop for hyperlinks.  This is a basic interface intended to be used by other extensions rather than directly in stories."
 
