@@ -1,4 +1,4 @@
-Version 1/200930 of Hyperlink Extension Registry (for Glulx only) by Gavin Lambert begins here.
+Version 1.1 of Hyperlink Extension Registry (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a framework to allow multiple hyperlink-processing extensions to co-exist without stepping on each others' toes."
 
