@@ -1,11 +1,11 @@
-Version 2/161024 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
+Version 2.1 of Common Commands Sidebar (for Glulx only) by Alice Grove begins here.
 
-"Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For version 6L or 6M of Inform 7."
+"Displays a list of common parser commands in a sidebar as a reference for novice players. Includes actions to turn the sidebar off and on. Story author can tailor the command list and the appearance of the sidebar, or just plug and play. For Inform 7 version 10.1."
 
 
 Part - Required Extensions
 
-Include version 15/161003 of Flexible Windows by Jon Ingold. [See documentation about where to find this version.]
+Include Flexible Windows by Jon Ingold.
 Include Basic Screen Effects by Emily Short.
 
 
@@ -789,13 +789,11 @@ Section:  About the Required Extensions
 
 Common Commands Sidebar requires
 
-	Version 15/161003 of Flexible Windows (for Glulx only) by Jon Ingold
+	Flexible Windows by Jon Ingold (Version 15.1.0 or later for Inform 10.1)
 	
-	http://raw.githubusercontent.com/i7/extensions/master/Jon%20Ingold/Flexible%20Windows.i7x
+	https://github.com/i7/extensions (10.1 branch)
 
-which in turn requires various other extensions that can be found at https://github.com/i7/extensions. See Flexible Windows for the version numbers required.
-	
-(Basic Screen Effects is also required, but any relatively recent version will do.)
+which in turn requires Alternative Startup Rules and Glulx Entry Points (also on that branch).
 
 Note that Flexible Windows uses the container relation for windows, so we'll need to be cautious about iterating through all containers. Also note that Spatterlight is liable to crash when Flexible Windows is used. If Common Commands Sidebar detects Spatterlight, the player will be warned to switch interpreters.
 
