@@ -1,4 +1,4 @@
-Version 10.0.250425 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
+Version 10.1.0 of Glulx Entry Points (for Glulx only) by Emily Short begins here.
 
 "Provides hooks to allow the author to write specialized multimedia behavior that would normally go through HandleGlkEvent. This is a rather dull utility library that will be of most use to authors wanting to write Glulx extensions compatible with other Glulx extensions already in use."
 
@@ -340,7 +340,7 @@ The glulx input handling rules are a g-event based rulebook.
 
 Section - Intercepting glk_select()
 
-[ Rather than implementing HandleGlkEvent() as GEP did, we will intercept glk_select(). This allows us to intercept events before the Inform 7 template starts processing them. ]
+[ Rather than implementing HandleGlkEvent() as GEP did, we will intercept glk_select(). This allows us to intercept events before the Inform 7 template starts processing them. Inform 7 will still call HandleGlkEvent(), so we'll just store a return code for it to return. ]
 
 Include (-
 ! Replacement function from Glk Events by Dannii Willis
@@ -355,10 +355,10 @@ Include (-
 	GE_Event_Struct_val1 = event_struct-->2;
 	GE_Event_Struct_val2 = event_struct-->3;
 	
-	! Run the glulx input handling rules (but disable rules debugging because it crashes if keyboard input events are pending)
+	! Run the glulx input handling rules and stash the return code (but disable rules debugging because it crashes if keyboard input events are pending)
 	@push debug_rules; @push say__p; @push say__pc;
 	debug_rules = false; ClearParagraphing(1);
-	FollowRulebook( (+ the glulx input handling rules +), GE_Event_Struct_type, true );
+	(+ GEP internal glk event result +) = ((+ handle glk event rule +)-->1)();
 	@pull say__pc; @pull say__p; @pull debug_rules;
 
 	! Copy back to the original event structure
@@ -386,7 +386,7 @@ Use direct event handling translates as (- Constant DIRECT_GLK_EVENT_HANDLING; -
 
 Section - Global variables
 
-Glulx replacement command is some indexed text that varies.
+Glulx replacement command is some text that varies.
 
 Library input context is a number variable. [This describes the event context in which input was received, e.g. whether the Inform library was awaiting line input or char input. If 0, the library was awaiting line input, if 1, char input. This is not as useful as an event-typed value would be; with such a value, we could detect any input context--e.g., we are waiting for hyperlink input. Perhaps a future version of Glulx Entry Points will discard the old convention in favor of a more expansive system.]
 
@@ -453,22 +453,30 @@ To decide what number is the value returned by glk event handling (this is the h
 		follow the command-showing rules;
 		follow the command-pasting rules;
 		if the [command-pasting] rule succeeded:
-			decide on GEP internal input replacement.
+			decide on GEP internal input replacement;
+	decide on GEP internal input continuation.
+
+GEP internal glk event result is a number that varies.
+GEP internal glk event result is initially 0.
 
 
 Section - HandleGlkEvent routine
 
 Include (- Array evGlobal --> 4; -) before "Glulx.i6t".
 
-[Include (- 
+[HandleGlkEvent must still exist for the template keyboard loop, but the real work already happened in glk_select. Return the stored code only.]
+To decide what number is the stashed glk event result (this is the unstash glk event rule):
+	decide on GEP internal glk event result.
+
+Include (- 
 
   [ HandleGlkEvent ev context abortres newcmd cmdlen i ;
       for (i=0:i<3:i++) evGlobal-->i = ev-->i;
       (+ library input context +) = context;
-      return (+ value returned by glk event handling +) ;
+      return ((+ unstash glk event rule +)-->1)();
   ];
 
--) before "Glulx.i6t".]
+-) replacing "HandleGlkEvent".
 
 
 Section - Useful function wrappers
@@ -590,10 +598,19 @@ Section - Input-cancelling rules
 	
 The input-cancelling rules are a rulebook.
 
+[Disable line echo before cancelling so interpreters do not print a newline after the prompt; command-showing then prints the replacement on the same line. Re-enable echo afterward for normal typed input.]
 An input-cancelling rule (this is the cancelling input in the main window rule):
+	disable line input echoing in the main window;
 	cancel line input in the main window;
 	cancel character input in the main window;
+	enable line input echoing in the main window;
 	
+To disable line input echoing in the/-- main window:
+	(- glk_set_echo_line_event(gg_mainwin, 0); -)
+
+To enable line input echoing in the/-- main window:
+	(- glk_set_echo_line_event(gg_mainwin, 1); -)
+
 To cancel line input in the/-- main window:
 	(- glk_cancel_line_event(gg_mainwin, GLK_NULL); -)
 	
@@ -686,7 +703,7 @@ Chapter: Replacement Commands
 
 One of the things we may want to do -- especially with mouse input or hyperlinks -- is generate a command for the player. To do this, we set the value of Glulx replacement command to whatever string of text we want to turn into the player's command. If we do this, Inform will treat whatever command we issued in "Glulx replacement command" as though the player had typed it at the command prompt. The extension Basic Hyperlinks builds on this infrastructure and provides an example of how to make use of these features. 
 
-Because the Glulx replacement command is indexed text, it is possible to build on to the string automatically, if for some reason we need to auto-generate our recommended commands. 
+Because the Glulx replacement command is text, it is possible to build on to the string automatically, if for some reason we need to auto-generate our recommended commands. 
 
 
 
