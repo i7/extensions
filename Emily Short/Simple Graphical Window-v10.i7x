@@ -1,12 +1,13 @@
-Version 10/161003 of Simple Graphical Window (for Glulx only) by Emily Short begins here.
+Version 10.1 of Simple Graphical Window (for Glulx only) by Emily Short begins here.
 
 "Provides a graphics window in one part of the screen, in which the author can place images; with provision for scaling, tiling, or centering images automatically. Glulx only."
 
 [ Version 10 updated by Dannii Willis to build off Flexible Windows ]
+[ Version 10.1 updated for Inform 7 v10 ]
 
 Use authorial modesty.
 
-Include version 15/160929 of Flexible Windows by Jon Ingold.
+Include Flexible Windows by Jon Ingold.
 
 
 
@@ -112,10 +113,10 @@ To tile (image - a figure-name) in (win - a graphics g-window):
 		increase x by image width;
 
 To draw (image - a figure-name) in (win - a graphics g-window) at x (x - a number) and y (y - a number):
-	(- glk_image_draw( {win}.(+ ref number +), ResourceIDsOfFigures-->( {image} ), {x}, {y} ); -).
+	(- glk_image_draw( {win}.fw_ref_number, ResourceIDsOfFigures-->( {image} ), {x}, {y} ); -).
 
 To draw (image - a figure-name) in (win - a graphics g-window) at x (x - a number) and y (y - a number) scaled to width (width - a number) and height (height - a number):
-	(- glk_image_draw_scaled( {win}.(+ ref number +), ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
+	(- glk_image_draw_scaled( {win}.fw_ref_number, ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
 
 
 
@@ -128,7 +129,7 @@ To decide what number is current graphics window width (deprecated):
 	decide on the width of the graphics window;
 
 To draw (image - a figure-name) from (x - a number) by (y - a number) to (width - a number) by (height - a number) (deprecated):
-	(- glk_image_draw_scaled( (+ graphics window +).(+ ref number +), ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
+	(- glk_image_draw_scaled( (+ graphics window +).fw_ref_number, ResourceIDsOfFigures-->( {image} ), {x}, {y}, {width}, {height} ); -).
 
 
 
