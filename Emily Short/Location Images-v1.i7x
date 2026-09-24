@@ -1,4 +1,4 @@
-Location Images (for Glulx only) by Emily Short begins here.
+Version 1.1 of Location Images (for Glulx only) by Emily Short begins here.
 
 "Allows the author to set per-room images and show these as the player moves from room to room. Requires Simple Graphical Window by Emily Short."
 
@@ -24,7 +24,10 @@ For example, the source text
 
 	Figure of Shadefruit is the file "SmallShadefruit.jpg".
 	Figure of Frostweed is the file "Smallfrostweed.jpg". 
-	
+
+	Before starting the virtual machine:
+		now the current graphics drawing rule is the standard placement rule.
+
 	Frosty Ground is a room. The room-illustration is Figure of Frostweed. 
 
 	Shaded Area is west of Frosty Ground. The room-illustration is Figure of Shadefruit.
