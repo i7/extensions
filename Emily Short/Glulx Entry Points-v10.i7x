@@ -55,10 +55,10 @@ To decide whether glk/glulx mouse input is supported:
 	(- glk_gestalt( gestalt_MouseInput, 0 ) -).
 
 To decide whether glk/glulx graphic-window mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_Graphics ) -).
+	(- glk_gestalt( gestalt_MouseInput, wintype_Graphics ) -).
 
 To decide whether glk/glulx text-grid mouse input is supported:
-	(- glk_gestalt( gestalt_MouseInput, winType_TextGrid ) -).
+	(- glk_gestalt( gestalt_MouseInput, wintype_TextGrid ) -).
 
 To decide whether glk/glulx timekeeping is supported:
 	(- glk_gestalt( gestalt_Timer, 0 ) -).
@@ -67,10 +67,10 @@ To decide whether glk/glulx graphics are/is supported:
 	(- glk_gestalt( gestalt_Graphics, 0 ) -).
 
 To decide whether glk/glulx text-buffer graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_TextBuffer ) -).
+	(- glk_gestalt( gestalt_DrawImage, wintype_TextBuffer ) -).
 
 To decide whether glk/glulx graphic-window graphics are/is supported:
-	(- glk_gestalt( gestalt_DrawImage, winType_Graphics ) -).
+	(- glk_gestalt( gestalt_DrawImage, wintype_Graphics ) -).
 
 To decide whether glk/glulx basic/-- sounds/sound are/is supported:
 	(- glk_gestalt( gestalt_Sound, 0 ) -).
