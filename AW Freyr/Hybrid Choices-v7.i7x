@@ -524,7 +524,7 @@ For refreshing the choice window (this is the construct choices rule):
 To set choice-window:
 	open up choice window.
 To unset choice-window:
-	shut down choice window.
+	close choice window.
 To refresh choices:
 	refresh the choice window;
 
