@@ -1,4 +1,4 @@
-Version 1.1 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
+Version 1.2 of Glk Input Suspending (for Glulx only) by Gavin Lambert begins here.
 
 "Provides a mechanism to 'suspend' line and character inputs in progress to allow something to be printed, and then input resumed afterwards."
 
@@ -28,19 +28,18 @@ To replace the current glk input event with text input (command - text), silentl
 
 Section - Input Suspending
 
-[Disable echo before cancelling so interpreters do not print a newline after the
- existing prompt. That lets replacement commands appear on the same line as ">".]
+[Anything said while input is suspended is captured, then printed below the original prompt
+ (followed by a fresh prompt, for line input) when input is resumed or replaced.  Styles are not
+ preserved in the captured text.]
 To suspend the current glk input event in window ref (win - number):
-	disable line input echoing in window ref win;
-	if glk line-event for window ref win is pending, cancel pending glk line-event for window ref win;
-	if glk char-event for window ref win is pending, cancel pending glk char-event for window ref win;
-	enable line input echoing in window ref win.
-
-To disable line input echoing in window ref (win - number):
-	(- glk_set_echo_line_event({win}, 0); -).
-
-To enable line input echoing in window ref (win - number):
-	(- glk_set_echo_line_event({win}, 1); -).
+	let suspended be false;
+	if glk line-event for window ref win is pending:
+		cancel pending glk line-event for window ref win;
+		now suspended is true;
+	if glk char-event for window ref win is pending:
+		cancel pending glk char-event for window ref win;
+		now suspended is true;
+	if suspended is true, start capturing suspended output.
 
 Section - Input Resuming/Replacement
 
@@ -50,9 +49,9 @@ To resume the current glk input event in window ref (win - number):
 	replace the current glk input event in window ref win with text input "".
 
 To replace the current glk input event in window ref (win - number) with text input (command - text), silently:
+	show suspended output in window ref win;
 	if command is empty:
 		if glk line-event for window ref win is resumable:
-			[Prompt is still on-screen: suspend cancelled with echo off.]
 			redraw the status line;
 			resume glk line-event;
 		otherwise if glk char-event for window ref win is resumable:
@@ -79,14 +78,14 @@ Section - Input Display
 
 [Allow for easy replacement of this section by another extension.]
 
-[Suspend cancels with echo off, so the original ">" remains; print only the
- replacement command in input style on that same line.]
 To show the glk input event replacement (command - text):
+	show suspended output in window ref (the main window's ref);
 	say "[input-style-for-glulx][command][roman type][line break]".
 
 Section - Event Acknowledgement
 
 First glulx input handling rule for a line-event (this is the acknowledge successful line-event rule):
+	echo completed glk line-event for window ref glk event window ref with length glk event value 1;
 	acknowledge pending glk line-event for window ref glk event window ref.
 
 First glulx input handling rule for a char-event (this is the acknowledge successful char-event rule):
@@ -118,6 +117,15 @@ To cancel pending glk char-event for window ref (W - number):
 
 To acknowledge pending glk line-event for window ref (W - number):
 	(- acknowledge_glk_line_event({W}); -).
+
+To echo completed glk line-event for window ref (W - number) with length (N - number):
+	(- echo_glk_line_event({W}, {N}); -).
+
+To start capturing suspended output:
+	(- gis_start_capture(); -).
+
+To show suspended output in window ref (W - number):
+	(- gis_show_suspended_output({W}); -).
 
 To acknowledge pending glk char-event for window ref (W - number):
 	(- acknowledge_glk_char_event({W}); -).
@@ -168,7 +176,7 @@ Section - Lowest Level - unindexed
  use case is to interrupt one kind of input to do the other one and then resume the original.]
 
 Include (-
-Array captured_glk_line_event --> 5;
+Array captured_glk_line_event --> 6;
 Array captured_glk_char_event --> 2;
 
 [ resume_glk_line_event  win buf maxlen initlen;
@@ -187,6 +195,56 @@ Array captured_glk_char_event --> 2;
 [ acknowledge_glk_line_event win;
 	if (captured_glk_line_event-->1 == win) {
 		captured_glk_line_event-->0 = 0;
+	}
+];
+
+! The library does not echo when we requested with echo off, so print the
+! completed line ourselves, as the Glk spec prescribes.
+[ echo_glk_line_event win len  str;
+	if (captured_glk_line_event-->0 ~= 1 || captured_glk_line_event-->1 ~= win) return;
+	if (captured_glk_line_event-->5 == 0) return;
+	str = glk_window_get_stream(win);
+	glk_set_style_stream(str, style_Input);
+	glk_put_buffer_stream(str, captured_glk_line_event-->2, len);
+	glk_set_style_stream(str, style_Normal);
+	glk_put_char_stream(str, 10);
+];
+
+Constant GIS_CAPTURE_LEN = 2048;
+Array gis_capture_buf --> GIS_CAPTURE_LEN;
+Array gis_capture_result --> 2;
+Global gis_capture_str = 0;
+Global gis_capture_old = 0;
+
+[ gis_start_capture;
+	if (gis_capture_str) return;
+	gis_capture_old = glk_stream_get_current();
+	gis_capture_str = glk_stream_open_memory_uni(gis_capture_buf, GIS_CAPTURE_LEN, filemode_Write, 0);
+	glk_stream_set_current(gis_capture_str);
+];
+
+[ gis_show_suspended_output win  start len str line;
+	if (gis_capture_str == 0) return;
+	glk_stream_set_current(gis_capture_old);
+	glk_stream_close(gis_capture_str, gis_capture_result);
+	gis_capture_str = 0;
+	len = gis_capture_result-->1;
+	if (len > GIS_CAPTURE_LEN) len = GIS_CAPTURE_LEN;
+	while (len > 0 && gis_capture_buf-->(len-1) == 10) len--;
+	start = 0;
+	while (start < len && gis_capture_buf-->start == 10) start++;
+	if (start >= len) return;
+	line = (captured_glk_line_event-->0 == 2 && captured_glk_line_event-->1 == win);
+	str = glk_window_get_stream(win);
+	glk_set_style_stream(str, style_Normal);
+	! Without echo suppression, cancelling already ended the prompt line.
+	if (~~(line && captured_glk_line_event-->5 == 0)) glk_put_char_stream(str, 10);
+	glk_put_buffer_stream_uni(str, gis_capture_buf + start*WORDSIZE, len - start);
+	glk_put_char_stream(str, 10);
+	glk_put_char_stream(str, 10);
+	if (line) {
+		ClearParagraphing(17);
+		PrintPrompt();
 	}
 ];
 
@@ -211,6 +269,13 @@ Include (-
 	captured_glk_line_event-->2 = buf;
 	captured_glk_line_event-->3 = maxlen;
 	captured_glk_line_event-->4 = initlen;
+	! Echo must be off before the request: glk_set_echo_line_event does not
+	! affect a pending request, so suspending cannot toggle it mid-input.
+	captured_glk_line_event-->5 = 0;
+	if (glk_window_get_type(win) == wintype_TextBuffer && glk_gestalt(gestalt_LineInputEcho, 0)) {
+		glk_set_echo_line_event(win, 0);
+		captured_glk_line_event-->5 = 1;
+	}
 	@push initlen;
 	@push maxlen;
 	@push buf;
